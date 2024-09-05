@@ -27,6 +27,7 @@
 #include <QComboBox>
 #include <QSettings>
 #include <QLineEdit>
+#include <QSpinBox>
 #include <QToolBar>
 #include <QLayout>
 #include <qmath.h>
@@ -245,6 +246,12 @@ void SceneEditor::init(bool applyValues)
     QLabel *nameLabel = new QLabel(tr("Scene name:"));
     m_nameEdit = new QLineEdit();
 
+    QLabel *priorityLabel = new QLabel(tr("Priority:"));
+    m_priorityEdit = new QSpinBox;
+    m_priorityEdit->setMinimum(0);
+    m_priorityEdit->setMaximum(100000);
+    m_priorityEdit->setSingleStep(1);// Will increment the current value with 1 (if you use up arrow key) (if you use down arrow key => -1)
+
     // Connections
     connect(m_enableCurrentAction, SIGNAL(triggered(bool)),
             this, SLOT(slotEnableCurrent()));
@@ -299,6 +306,8 @@ void SceneEditor::init(bool applyValues)
     toolBar->addSeparator();
     toolBar->addWidget(nameLabel);
     toolBar->addWidget(m_nameEdit);
+    toolBar->addWidget(priorityLabel);
+    toolBar->addWidget(m_priorityEdit);
 
     /* Tab widget */
     connect(m_tab, SIGNAL(currentChanged(int)),
@@ -314,6 +323,9 @@ void SceneEditor::init(bool applyValues)
     m_nameEdit->setSelection(0, m_nameEdit->text().length());
     connect(m_nameEdit, SIGNAL(textEdited(const QString&)),
             this, SLOT(slotNameEdited(const QString&)));
+
+    m_priorityEdit->setValue(m_scene->priority());
+    connect(m_priorityEdit, SIGNAL(valueChanged(int)), this, SLOT(slotPriorityEdited(int)));
 
     // Channels groups tab
     QList<quint32> chGrpIds = m_scene->channelGroups();
@@ -1265,6 +1277,11 @@ void SceneEditor::slotNameEdited(const QString& name)
     m_scene->setName(name);
     if (m_speedDials != NULL)
         m_speedDials->setWindowTitle(m_scene->name());
+}
+
+void SceneEditor::slotPriorityEdited(const int priority)
+{
+    m_scene->setPriority(priority);
 }
 
 void SceneEditor::slotAddFixtureClicked()

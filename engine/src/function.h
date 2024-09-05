@@ -47,6 +47,7 @@ class FunctionUiState;
 
 #define KXMLQLCFunction QString("Function")
 #define KXMLQLCFunctionName QString("Name")
+#define KXMLQLCFunctionPriority QString("Priority")
 #define KXMLQLCFunctionID QString("ID")
 #define KXMLQLCFunctionType QString("Type")
 #define KXMLQLCFunctionData QString("Data")
@@ -75,6 +76,7 @@ class FunctionUiState;
 typedef struct
 {
     QString m_name;
+    int m_priority;
     qreal m_value;
     qreal m_min;
     qreal m_max;
@@ -95,6 +97,7 @@ class Function : public QObject
     Q_DISABLE_COPY(Function)
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(int name READ priority WRITE setPriority NOTIFY priorityChanged)
     Q_PROPERTY(quint32 id READ id CONSTANT)
     Q_PROPERTY(Type type READ type CONSTANT)
     Q_PROPERTY(quint32 totalDuration READ totalDuration WRITE setTotalDuration NOTIFY totalDurationChanged)
@@ -226,17 +229,22 @@ public:
      */
     void setName(const QString& name);
 
+    void setPriority(const int priority);
+
     /**
      * Return the name of this function
      */
     QString name() const;
+    int priority() const;
 
 signals:
     /** Signal telling that the name of this function have changed */
     void nameChanged(quint32 fid);
+    void priorityChanged(quint32 fid);
 
 private:
     QString m_name;
+    int m_priority;
 
     /*********************************************************************
      * Type

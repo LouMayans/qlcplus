@@ -168,6 +168,7 @@ bool Function::copyFrom(const Function* function)
         return false;
 
     m_name = function->name();
+    m_priority = function->priority();
     m_runOrder = function->runOrder();
     m_direction = function->direction();
     m_tempoType = function->tempoType();
@@ -219,9 +220,24 @@ void Function::setName(const QString& name)
     emit nameChanged(m_id);
 }
 
+void Function::setPriority(int priority)
+{
+    if (m_priority == priority)
+        return;
+
+    m_priority = priority;
+
+    emit priorityChanged(m_id);
+}
+
 QString Function::name() const
 {
     return m_name;
+}
+
+int Function::priority() const
+{
+    return m_priority == NULL ? 0 : m_priority;
 }
 
 /*****************************************************************************
@@ -333,6 +349,7 @@ bool Function::saveXMLCommon(QXmlStreamWriter *doc) const
     doc->writeAttribute(KXMLQLCFunctionID, QString::number(id()));
     doc->writeAttribute(KXMLQLCFunctionType, Function::typeToString(type()));
     doc->writeAttribute(KXMLQLCFunctionName, name());
+    doc->writeAttribute(KXMLQLCFunctionPriority, QString::number(priority()));
     if (isVisible() == false)
         doc->writeAttribute(KXMLQLCFunctionHidden, "True");
     if (path(true).isEmpty() == false)
@@ -869,6 +886,7 @@ bool Function::loader(QXmlStreamReader &root, Doc* doc)
     /* Get common information from the tag's attributes */
     quint32 id = attrs.value(KXMLQLCFunctionID).toString().toUInt();
     QString name = attrs.value(KXMLQLCFunctionName).toString();
+    int priority = attrs.value(KXMLQLCFunctionPriority).toInt();
     Type type = Function::stringToType(attrs.value(KXMLQLCFunctionType).toString());
     QString path;
     bool visible = true;
@@ -914,6 +932,7 @@ bool Function::loader(QXmlStreamReader &root, Doc* doc)
         return false;
 
     function->setName(name);
+    function->setPriority(priority);
     function->setPath(path);
     function->setVisible(visible);
     function->setBlendMode(blendMode);

@@ -131,6 +131,7 @@ private:
 
     QComboBox* m_chaserCombo;
     QLineEdit* m_nameEdit;
+    QSpinBox* m_priorityEdit;
 
     /*********************************************************************
      * General tab
@@ -144,6 +145,7 @@ private:
 
 private slots:
     void slotNameEdited(const QString& name);
+    void slotPriorityEdited(int priority);
     void slotAddFixtureClicked();
     void slotRemoveFixtureClicked();
 
