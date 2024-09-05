@@ -167,9 +167,9 @@ msys.path = $$INSTALLROOT/$$LIBSDIR
 msys.files += $$SYS_LIBS_PATH/libstdc++-6.dll
 msys.files += $$SYS_LIBS_PATH/libgcc_s_dw2-1.dll
 msys.files += $$SYS_LIBS_PATH/libwinpthread-1.dll
-msys.files += $$SYS_LIBS_PATH/libicuin74.dll
-msys.files += $$SYS_LIBS_PATH/libicuuc74.dll
-msys.files += $$SYS_LIBS_PATH/libicudt74.dll
+msys.files += $$SYS_LIBS_PATH/libicuin75.dll
+msys.files += $$SYS_LIBS_PATH/libicuuc75.dll
+msys.files += $$SYS_LIBS_PATH/libicudt75.dll
 msys.files += $$SYS_LIBS_PATH/libmd4c.dll
 msys.files += $$SYS_LIBS_PATH/libusb-1.0.dll
 
