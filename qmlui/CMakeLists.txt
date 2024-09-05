@@ -88,7 +88,7 @@ if(ANDROID)
         ${module_name}
         PROPERTIES LIBRARY_OUTPUT_NAME qlcplus)
 else()
-    add_executable(${module_name} WIN32
+    add_executable(${module_name} WIN32 MACOSX_BUNDLE
         ${SRC_FILES}
         ${QM_FILES}
     )

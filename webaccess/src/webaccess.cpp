@@ -497,12 +497,12 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
         else if (cmdList.at(1) == "REBOOT")
         {
             QProcess *rebootProcess = new QProcess();
-            rebootProcess->start("sudo", QStringList() << "shutdown" << "-r" << "now");
+            rebootProcess->start("reboot", QStringList());
         }
         else if (cmdList.at(1) == "HALT")
         {
             QProcess *haltProcess = new QProcess();
-            haltProcess->start("sudo", QStringList() << "shutdown" << "-h" << "now");
+            haltProcess->start("halt", QStringList());
         }
     }
 #endif
@@ -769,7 +769,7 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
     {
         uchar value = cmdList[1].toInt();
         m_doc->inputOutputMap()->setGrandMasterValue(value);
-        return;
+
     }
     else if (cmdList[0] == "POLL")
         return;
@@ -913,17 +913,6 @@ void WebAccess::slotFunctionStopped(quint32 fid)
 bool WebAccess::sendFile(QHttpResponse *response, QString filename, QString contentType)
 {
     QFile resFile(filename);
-#if defined(WIN32) || defined(Q_OS_WIN)
-    // If coming from a Windows hack, restore a path like
-    // /c//tmp/pic.jpg back to C:\tmp\pic.jpg
-    if (resFile.exists() == false)
-    {
-        filename.remove(0, 1);
-        filename.replace("//", ":\\");
-        filename.replace('/', '\\');
-        resFile.setFileName(filename);
-    }
-#endif
     if (resFile.open(QIODevice::ReadOnly))
     {
         QByteArray resContent = resFile.readAll();
@@ -954,20 +943,10 @@ QString WebAccess::getWidgetBackgroundImage(VCWidget *widget)
     if (widget == NULL || widget->backgroundImage().isEmpty())
         return QString();
 
-    QString imgPath = widget->backgroundImage();
-#if defined(WIN32) || defined(Q_OS_WIN)
-    // Hack for Windows to cheat the browser
-    // Turn a path like C:\tmp\pic.jpg to /c//tmp/pic.jpg
-    if (imgPath.contains(':'))
-    {
-        imgPath.prepend('/');
-        imgPath.replace(':', '/');
-    }
-#endif
-    QString str = QString("background-image: url(%1); ").arg(imgPath);
+    QString str = QString("background-image: url(%1); ").arg(widget->backgroundImage());
     str += "background-position: center; ";
     str += "background-repeat: no-repeat; ";
-    str += "background-size: cover; "; // or contain
+    //str += "background-size: cover; ";
 
     return str;
 }

@@ -190,7 +190,7 @@ QString VCWidget::typeToString(int type)
         case SliderWidget: return QString(tr("Slider"));
         case FrameWidget: return QString(tr("Frame"));
         case SoloFrameWidget: return QString(tr("Solo Frame"));
-        case SpeedWidget: return QString(tr("Speed"));
+        case SpeedDialWidget: return QString(tr("Speed Dial"));
         case XYPadWidget: return QString(tr("XY Pad"));
         case CueListWidget: return QString(tr("Cue list"));
         case LabelWidget: return QString(tr("Label"));
@@ -199,7 +199,7 @@ QString VCWidget::typeToString(int type)
         case ClockWidget: return QString(tr("Clock"));
         case UnknownWidget:
         default:
-            return QString(tr("Unknown"));
+             return QString(tr("Unknown"));
     }
     return QString(tr("Unknown"));
 }
@@ -212,7 +212,7 @@ QString VCWidget::typeToIcon(int type)
         case SliderWidget: return QString("qrc:/slider.svg");
         case FrameWidget: return QString("qrc:/frame.svg");
         case SoloFrameWidget: return QString("qrc:/soloframe.svg");
-        case SpeedWidget: return QString("qrc:/speed.svg");
+        case SpeedDialWidget: return QString("qrc:/speed.svg");
         case XYPadWidget: return QString("qrc:/xypad.svg");
         case CueListWidget: return QString("qrc:/cuelist.svg");
         case LabelWidget: return QString("qrc:/label.svg");
@@ -234,7 +234,7 @@ VCWidget::WidgetType VCWidget::stringToType(QString str)
     else if (str == "XYPad") return XYPadWidget;
     else if (str == "Frame") return FrameWidget;
     else if (str == "Solo frame") return SoloFrameWidget;
-    else if (str == "Speed") return SpeedWidget;
+    else if (str == "Speed dial") return SpeedDialWidget;
     else if (str == "Cue list") return CueListWidget;
     else if (str == "Label") return LabelWidget;
     else if (str == "Audio Triggers") return AudioTriggersWidget;
@@ -1111,55 +1111,33 @@ bool VCWidget::loadXMLInputSource(QXmlStreamReader &root, const quint8 &id)
 
     QXmlStreamAttributes attrs = root.attributes();
 
-    quint32 uni = UINT_MAX;
-    quint32 ch = UINT_MAX;
-    quint8 iId = id;
+    quint32 uni = attrs.value(KXMLQLCVCWidgetInputUniverse).toString().toUInt();
+    quint32 ch = attrs.value(KXMLQLCVCWidgetInputChannel).toString().toUInt();
     uchar min = 0, max = UCHAR_MAX, mon = UCHAR_MAX;
-    QString key;
 
-    if (attrs.hasAttribute(KXMLQLCVCWidgetInputId))
-        iId = attrs.value(KXMLQLCVCWidgetInputId).toString().toUInt();
-    if (attrs.hasAttribute(KXMLQLCVCWidgetInputUniverse))
-        uni = attrs.value(KXMLQLCVCWidgetInputUniverse).toString().toUInt();
-    if (attrs.hasAttribute(KXMLQLCVCWidgetInputChannel))
-        ch = attrs.value(KXMLQLCVCWidgetInputChannel).toString().toUInt();
-    if (attrs.hasAttribute(KXMLQLCVCWidgetKey))
-        key = attrs.value(KXMLQLCVCWidgetKey).toString();
+    QSharedPointer<QLCInputSource>inputSource = QSharedPointer<QLCInputSource>(new QLCInputSource(uni, ch));
+    inputSource->setID(id);
 
-    // check for valid input source
-    if (uni != UINT_MAX && ch != UINT_MAX)
-    {
-        QSharedPointer<QLCInputSource>inputSource = QSharedPointer<QLCInputSource>(new QLCInputSource(uni, ch));
-        inputSource->setID(iId);
+    if (attrs.hasAttribute(KXMLQLCVCWidgetInputLowerValue))
+        min = uchar(attrs.value(KXMLQLCVCWidgetInputLowerValue).toString().toUInt());
+    if (attrs.hasAttribute(KXMLQLCVCWidgetInputUpperValue))
+        max = uchar(attrs.value(KXMLQLCVCWidgetInputUpperValue).toString().toUInt());
+    if (attrs.hasAttribute(KXMLQLCVCWidgetInputMonitorValue))
+        mon = uchar(attrs.value(KXMLQLCVCWidgetInputMonitorValue).toString().toUInt());
 
-        if (attrs.hasAttribute(KXMLQLCVCWidgetInputLowerValue))
-            min = uchar(attrs.value(KXMLQLCVCWidgetInputLowerValue).toString().toUInt());
-        if (attrs.hasAttribute(KXMLQLCVCWidgetInputUpperValue))
-            max = uchar(attrs.value(KXMLQLCVCWidgetInputUpperValue).toString().toUInt());
-        if (attrs.hasAttribute(KXMLQLCVCWidgetInputMonitorValue))
-            mon = uchar(attrs.value(KXMLQLCVCWidgetInputMonitorValue).toString().toUInt());
+    inputSource->setFeedbackValue(QLCInputFeedback::LowerValue, min);
+    inputSource->setFeedbackValue(QLCInputFeedback::UpperValue, max);
+    inputSource->setFeedbackValue(QLCInputFeedback::MonitorValue, mon);
 
-        inputSource->setFeedbackValue(QLCInputFeedback::LowerValue, min);
-        inputSource->setFeedbackValue(QLCInputFeedback::UpperValue, max);
-        inputSource->setFeedbackValue(QLCInputFeedback::MonitorValue, mon);
+    // load feedback extra params
+    if (attrs.hasAttribute(KXMLQLCVCWidgetInputLowerParams))
+        inputSource->setFeedbackExtraParams(QLCInputFeedback::LowerValue, attrs.value(KXMLQLCVCWidgetInputLowerParams).toInt());
+    if (attrs.hasAttribute(KXMLQLCVCWidgetInputUpperParams))
+        inputSource->setFeedbackExtraParams(QLCInputFeedback::UpperValue, attrs.value(KXMLQLCVCWidgetInputUpperParams).toInt());
+    if (attrs.hasAttribute(KXMLQLCVCWidgetInputMonitorParams))
+        inputSource->setFeedbackExtraParams(QLCInputFeedback::MonitorValue, attrs.value(KXMLQLCVCWidgetInputMonitorParams).toInt());
 
-        // load feedback extra params
-        if (attrs.hasAttribute(KXMLQLCVCWidgetInputLowerParams))
-            inputSource->setFeedbackExtraParams(QLCInputFeedback::LowerValue, attrs.value(KXMLQLCVCWidgetInputLowerParams).toInt());
-        if (attrs.hasAttribute(KXMLQLCVCWidgetInputUpperParams))
-            inputSource->setFeedbackExtraParams(QLCInputFeedback::UpperValue, attrs.value(KXMLQLCVCWidgetInputUpperParams).toInt());
-        if (attrs.hasAttribute(KXMLQLCVCWidgetInputMonitorParams))
-            inputSource->setFeedbackExtraParams(QLCInputFeedback::MonitorValue, attrs.value(KXMLQLCVCWidgetInputMonitorParams).toInt());
-
-        addInputSource(inputSource);
-    }
-
-    // check for valid key sequence
-    if (!key.isEmpty())
-    {
-        QKeySequence seq(key);
-        addKeySequence(seq, iId);
-    }
+    addInputSource(inputSource);
 
     root.skipCurrentElement();
 
@@ -1305,34 +1283,26 @@ bool VCWidget::saveXMLWindowState(QXmlStreamWriter *doc)
     return true;
 }
 
-bool VCWidget::saveXMLInputControl(QXmlStreamWriter *doc, quint8 controlId, bool unified, QString tagName)
+bool VCWidget::saveXMLInputControl(QXmlStreamWriter *doc, quint8 controlId, QString tagName)
 {
     Q_ASSERT(doc != nullptr);
 
-    bool controlTagWritten = false;
-    bool inputTagWritten = false;
+    bool tagWritten = false;
 
-    for (QSharedPointer<QLCInputSource> &source : m_inputSources) // C++11
+    for (QSharedPointer<QLCInputSource> source : m_inputSources) // C++11
     {
         if (source->id() != controlId)
             continue;
 
-        if (controlTagWritten == false && tagName.isEmpty() == false)
+        if (tagWritten == false && tagName.isEmpty() == false)
         {
             doc->writeStartElement(tagName);
-            controlTagWritten = true;
+            tagWritten = true;
         }
 
-        if (unified == false || (unified == true && inputTagWritten == false))
-        {
-            doc->writeStartElement(KXMLQLCVCWidgetInput);
-            doc->writeAttribute(KXMLQLCVCWidgetInputId, QString::number(controlId));
-            inputTagWritten = true;
-        }
-
+        doc->writeStartElement(KXMLQLCVCWidgetInput);
         doc->writeAttribute(KXMLQLCVCWidgetInputUniverse, QString("%1").arg(source->universe()));
         doc->writeAttribute(KXMLQLCVCWidgetInputChannel, QString("%1").arg(source->channel()));
-
         if (source->feedbackValue(QLCInputFeedback::LowerValue) != 0)
             doc->writeAttribute(KXMLQLCVCWidgetInputLowerValue, QString::number(source->feedbackValue(QLCInputFeedback::LowerValue)));
         if (source->feedbackValue(QLCInputFeedback::UpperValue) != UCHAR_MAX)
@@ -1355,6 +1325,8 @@ bool VCWidget::saveXMLInputControl(QXmlStreamWriter *doc, quint8 controlId, bool
 
         if (extraParams.isValid() && extraParams.type() == QVariant::Int && extraParams.toInt() != -1)
             doc->writeAttribute(KXMLQLCVCWidgetInputMonitorParams, QString::number(extraParams.toInt()));
+
+        doc->writeEndElement();
     }
 
     auto i = m_keySequenceMap.constBegin();
@@ -1366,31 +1338,18 @@ bool VCWidget::saveXMLInputControl(QXmlStreamWriter *doc, quint8 controlId, bool
             continue;
         }
 
-        if (controlTagWritten == false && tagName.isEmpty() == false)
+        if (tagWritten == false && tagName.isEmpty() == false)
         {
             doc->writeStartElement(tagName);
-            controlTagWritten = true;
+            tagWritten = true;
         }
 
-        if (unified == true && inputTagWritten == false)
-        {
-            doc->writeStartElement(KXMLQLCVCWidgetInput);
-            doc->writeAttribute(KXMLQLCVCWidgetInputId, QString::number(controlId));
-            inputTagWritten = true;
-        }
-
-        if (unified == false)
-            doc->writeTextElement(KXMLQLCVCWidgetKey, i.key().toString());
-        else
-            doc->writeAttribute(KXMLQLCVCWidgetKey, i.key().toString());
+        doc->writeTextElement(KXMLQLCVCWidgetKey, i.key().toString());
 
         ++i;
     }
 
-    if (inputTagWritten)
-        doc->writeEndElement();
-
-    if (controlTagWritten)
+    if (tagWritten == true)
         doc->writeEndElement();
 
     return true;

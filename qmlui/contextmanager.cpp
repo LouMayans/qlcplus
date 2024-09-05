@@ -475,6 +475,7 @@ void ContextManager::handleKeyPress(QKeyEvent *e)
         }
     }
 
+
     for (PreviewContext *context : m_contextsMap.values()) // C++11
         context->handleKeyEvent(e, true);
 }

@@ -114,8 +114,8 @@ bool VCButton::copyFrom(const VCWidget* widget)
     setActionType(button->actionType());
     setState(button->state());
 
-    setFlashForceLTP(button->flashForceLTP());
-    setFlashOverride(button->flashOverrides());
+    m_flashForceLTP = button->flashForceLTP();
+    m_flashOverrides = button->flashOverrides();
 
     /* Copy common stuff */
     return VCWidget::copyFrom(widget);
@@ -299,7 +299,6 @@ void VCButton::setFlashOverride(bool shouldOverride)
 {
     if (m_flashOverrides == shouldOverride)
         return;
-
     m_flashOverrides = shouldOverride;
     emit flashOverrideChanged(shouldOverride);
 }
@@ -313,7 +312,6 @@ void VCButton::setFlashForceLTP(bool forceLTP)
 {
     if (m_flashForceLTP == forceLTP)
         return;
-
     m_flashForceLTP = forceLTP;
     emit flashForceLTPChanged(forceLTP);
 }
@@ -656,7 +654,7 @@ bool VCButton::saveXML(QXmlStreamWriter *doc)
     doc->writeEndElement();
 
     /* External control */
-    saveXMLInputControl(doc, INPUT_PRESSURE_ID, false);
+    saveXMLInputControl(doc, INPUT_PRESSURE_ID);
 
     /* Intensity adjustment */
     if (startupIntensityEnabled())

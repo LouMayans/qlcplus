@@ -9,12 +9,12 @@
         <translation>O aplikaci Q Light Controller Plus</translation>
     </message>
     <message>
-        <location filename="aboutbox.ui" line="87"/>
+        <location filename="aboutbox.ui" line="88"/>
         <source>Contributors</source>
         <translation>Spolupracovníci</translation>
     </message>
     <message>
-        <location filename="aboutbox.ui" line="132"/>
+        <location filename="aboutbox.ui" line="135"/>
         <source>This application is licensed under the terms of the Apache 2.0 license.</source>
         <oldsource>This application is licensed under the terms of GNU GPL version 2.</oldsource>
         <translation>Tato aplikace je licencována dle podmínek Apache verze 2.0.</translation>
@@ -193,7 +193,7 @@
         <translation>Počet nalezených šablon zařízení: %1</translation>
     </message>
     <message>
-        <location filename="addfixture.cpp" line="627"/>
+        <location filename="addfixture.cpp" line="624"/>
         <source>Dimmers</source>
         <translatorcomment>Dimmery</translatorcomment>
         <translation>Stmívače</translation>
@@ -2143,12 +2143,12 @@ Zvolený soubor byl asi smazán nebo přesunut.</translation>
         <translation>Ukázat co EFX efekt udělá, když poběží</translation>
     </message>
     <message>
-        <location filename="efxeditor.cpp" line="733"/>
+        <location filename="efxeditor.cpp" line="731"/>
         <source>Remove fixtures</source>
         <translation>Odebrat zařízení</translation>
     </message>
     <message>
-        <location filename="efxeditor.cpp" line="734"/>
+        <location filename="efxeditor.cpp" line="732"/>
         <source>Do you want to remove the selected fixture(s)?</source>
         <translation>Opravdu si přejete odebrat označená zařízení? </translation>
     </message>
@@ -2288,15 +2288,13 @@ Zvolený soubor byl asi smazán nebo přesunut.</translation>
     </message>
     <message>
         <location filename="fixturemanager.cpp" line="913"/>
-        <source>Move channel group up...</source>
-        <oldsource>Move group up...</oldsource>
-        <translation type="unfinished">Posunout skupinu nahoru...</translation>
+        <source>Move group up...</source>
+        <translation>Posunout skupinu nahoru...</translation>
     </message>
     <message>
         <location filename="fixturemanager.cpp" line="919"/>
-        <source>Move channel group down...</source>
-        <oldsource>Move group down...</oldsource>
-        <translation type="unfinished">Posunout skupinu dolů...</translation>
+        <source>Move group down...</source>
+        <translation>Posunout skupinu dolů...</translation>
     </message>
     <message>
         <location filename="fixturemanager.cpp" line="925"/>
@@ -3871,121 +3869,121 @@ Note that the wizard cannot tell the difference between a knob and a slider so y
 <context>
     <name>Monitor</name>
     <message>
-        <location filename="monitor/monitor.cpp" line="337"/>
+        <location filename="monitor/monitor.cpp" line="336"/>
         <source>Fixture Monitor</source>
         <translation>Sledování zařízení</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="378"/>
+        <location filename="monitor/monitor.cpp" line="377"/>
         <source>2D View</source>
         <translation>2D pohled</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="385"/>
+        <location filename="monitor/monitor.cpp" line="384"/>
         <source>Font</source>
         <translation>Styl písma</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="394"/>
+        <location filename="monitor/monitor.cpp" line="393"/>
         <source>DMX Channels</source>
         <translation>DMX kanály</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="395"/>
+        <location filename="monitor/monitor.cpp" line="394"/>
         <source>Show absolute DMX channel numbers</source>
         <translation>Zobrazit absolutní číslo DMX kanálu</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="405"/>
+        <location filename="monitor/monitor.cpp" line="404"/>
         <source>Relative Channels</source>
         <translation>Relativní kanály</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="406"/>
+        <location filename="monitor/monitor.cpp" line="405"/>
         <source>Show channel numbers relative to fixture</source>
         <translation>Zobrazit číslo kanálu relativně k zařízení</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="422"/>
+        <location filename="monitor/monitor.cpp" line="421"/>
         <source>DMX Values</source>
         <translation>DMX hodnoty</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="423"/>
+        <location filename="monitor/monitor.cpp" line="422"/>
         <source>Show DMX values 0-255</source>
         <translation>Zobrazit hodnoty DMX 0-255</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="434"/>
+        <location filename="monitor/monitor.cpp" line="433"/>
         <source>Percent Values</source>
         <translation>Procentuální hodnoty</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="435"/>
+        <location filename="monitor/monitor.cpp" line="434"/>
         <source>Show percentage values 0-100%</source>
         <translation>Zobrazit procentuální hodnoty 0-100%</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="448"/>
+        <location filename="monitor/monitor.cpp" line="447"/>
         <source>Universe</source>
         <oldsource>Universe:</oldsource>
         <translation>Větev</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="453"/>
+        <location filename="monitor/monitor.cpp" line="452"/>
         <source>All universes</source>
         <translation>Všechny větve</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="469"/>
-        <location filename="monitor/monitor.cpp" line="550"/>
+        <location filename="monitor/monitor.cpp" line="468"/>
+        <location filename="monitor/monitor.cpp" line="549"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="470"/>
-        <location filename="monitor/monitor.cpp" line="551"/>
+        <location filename="monitor/monitor.cpp" line="469"/>
+        <location filename="monitor/monitor.cpp" line="550"/>
         <source>Close this window</source>
         <translation>Zavřít tohle okno</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="489"/>
+        <location filename="monitor/monitor.cpp" line="488"/>
         <source>DMX View</source>
         <translation>DMX hodnoty</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="495"/>
+        <location filename="monitor/monitor.cpp" line="494"/>
         <source>Size</source>
         <oldsource>Size:</oldsource>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="519"/>
+        <location filename="monitor/monitor.cpp" line="518"/>
         <source>Meters</source>
         <translation>metrů</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="520"/>
+        <location filename="monitor/monitor.cpp" line="519"/>
         <source>Feet</source>
         <translation>stop</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="529"/>
+        <location filename="monitor/monitor.cpp" line="528"/>
         <source>Add fixture</source>
         <translation>Přidat zařízení</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="531"/>
+        <location filename="monitor/monitor.cpp" line="530"/>
         <source>Remove fixture</source>
         <translation>Odebrat zařízení</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="536"/>
+        <location filename="monitor/monitor.cpp" line="535"/>
         <source>Set a background picture</source>
         <translation>Nastavit obrázek pozadí</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="539"/>
+        <location filename="monitor/monitor.cpp" line="538"/>
         <source>Show/hide labels</source>
         <translation>Zobrazit/skrýt popisky</translation>
     </message>
@@ -4788,17 +4786,17 @@ Note that the wizard cannot tell the difference between a knob and a slider so y
         <translation>Žádná skupina zařízení k ovládání</translation>
     </message>
     <message>
-        <location filename="rgbmatrixeditor.cpp" line="880"/>
+        <location filename="rgbmatrixeditor.cpp" line="878"/>
         <source>Select image</source>
         <translation>Volba obrázku</translation>
     </message>
     <message>
-        <location filename="rgbmatrixeditor.cpp" line="882"/>
+        <location filename="rgbmatrixeditor.cpp" line="880"/>
         <source>Images</source>
         <translation>Obrázky</translation>
     </message>
     <message>
-        <location filename="rgbmatrixeditor.cpp" line="1168"/>
+        <location filename="rgbmatrixeditor.cpp" line="1165"/>
         <source>Sequence</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5262,211 +5260,211 @@ Délka: %3
 <context>
     <name>ShowManager</name>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="199"/>
+        <location filename="showmanager/showmanager.cpp" line="198"/>
         <source>New s&amp;how</source>
         <translation>Nové Představeníí (CTRL+&amp;h)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="211"/>
+        <location filename="showmanager/showmanager.cpp" line="210"/>
         <source>New s&amp;equence</source>
         <translation>Nová Sekvence (CTRL+&amp;e)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="217"/>
+        <location filename="showmanager/showmanager.cpp" line="216"/>
         <source>New &amp;audio</source>
         <translation>Nový zvuk (CTRL+&amp;a)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="223"/>
+        <location filename="showmanager/showmanager.cpp" line="222"/>
         <source>New vi&amp;deo</source>
         <translation>Nové vi&amp;deo</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="230"/>
+        <location filename="showmanager/showmanager.cpp" line="229"/>
         <source>&amp;Copy</source>
         <translation>Kopírovat (CTRL+&amp;C)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="237"/>
+        <location filename="showmanager/showmanager.cpp" line="236"/>
         <source>&amp;Paste</source>
         <translation>Vložit (CTRL+&amp;P)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="244"/>
+        <location filename="showmanager/showmanager.cpp" line="243"/>
         <source>&amp;Delete</source>
         <translation>Smazat (CTRL+&amp;D)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="251"/>
+        <location filename="showmanager/showmanager.cpp" line="250"/>
         <source>Change Co&amp;lor</source>
         <translation>Změnit Barvu (CTRL+&amp;L)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="272"/>
+        <location filename="showmanager/showmanager.cpp" line="271"/>
         <source>Snap to &amp;Grid</source>
         <translation>Přichytit k mřížce (CTRL+&amp;G)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="279"/>
+        <location filename="showmanager/showmanager.cpp" line="278"/>
         <source>St&amp;op</source>
         <translation>Zastavit (CTRL+&amp;O)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="285"/>
+        <location filename="showmanager/showmanager.cpp" line="284"/>
         <source>&amp;Play</source>
         <translation>Přehrát (CTRL+&amp;P)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="344"/>
+        <location filename="showmanager/showmanager.cpp" line="343"/>
         <source>Time division:</source>
         <translation>Časový dělič:</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="349"/>
+        <location filename="showmanager/showmanager.cpp" line="348"/>
         <source>Time</source>
         <translation>Čas</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="561"/>
+        <location filename="showmanager/showmanager.cpp" line="560"/>
         <source>New Show</source>
         <translation>Nové Představení</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="562"/>
+        <location filename="showmanager/showmanager.cpp" line="561"/>
         <source>Show name setup</source>
         <translation>Nastavení názvu představení</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="563"/>
+        <location filename="showmanager/showmanager.cpp" line="562"/>
         <source>Show name:</source>
         <translation>Název představení:</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="205"/>
+        <location filename="showmanager/showmanager.cpp" line="204"/>
         <source>Add a &amp;track or an existing function</source>
         <translation>Přidat S&amp;topu nebo existující funkci</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="258"/>
+        <location filename="showmanager/showmanager.cpp" line="257"/>
         <source>Lock item</source>
         <translation>Zamknout položku</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="265"/>
+        <location filename="showmanager/showmanager.cpp" line="264"/>
         <source>Item start time and duration</source>
         <translation>Začátek a délka položky</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="687"/>
-        <location filename="showmanager/showmanager.cpp" line="803"/>
+        <location filename="showmanager/showmanager.cpp" line="686"/>
+        <location filename="showmanager/showmanager.cpp" line="802"/>
         <source> (Copy)</source>
         <translation>(Kopie)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="756"/>
+        <location filename="showmanager/showmanager.cpp" line="755"/>
         <source>Track %1</source>
         <translation>Stopa %1</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="785"/>
-        <location filename="showmanager/showmanager.cpp" line="871"/>
+        <location filename="showmanager/showmanager.cpp" line="784"/>
+        <location filename="showmanager/showmanager.cpp" line="870"/>
         <source>New Sequence</source>
         <translation>Nová Sekvence</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="849"/>
-        <location filename="showmanager/showmanager.cpp" line="926"/>
-        <location filename="showmanager/showmanager.cpp" line="984"/>
+        <location filename="showmanager/showmanager.cpp" line="848"/>
+        <location filename="showmanager/showmanager.cpp" line="925"/>
+        <location filename="showmanager/showmanager.cpp" line="983"/>
         <source>Overlapping error</source>
         <translation>Chyba překrývání</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="849"/>
-        <location filename="showmanager/showmanager.cpp" line="926"/>
-        <location filename="showmanager/showmanager.cpp" line="984"/>
+        <location filename="showmanager/showmanager.cpp" line="848"/>
+        <location filename="showmanager/showmanager.cpp" line="925"/>
+        <location filename="showmanager/showmanager.cpp" line="983"/>
         <source>Overlapping not allowed. Operation canceled.</source>
         <translation>Překrývání není možné. Operace zrušena.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="859"/>
+        <location filename="showmanager/showmanager.cpp" line="858"/>
         <source>Scene for %1 - Track %2</source>
         <translation>Scéna pro %1 - Stopa %2</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="884"/>
+        <location filename="showmanager/showmanager.cpp" line="883"/>
         <source>Open Audio File</source>
         <translation>Otevřít soubor zvuku</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="893"/>
+        <location filename="showmanager/showmanager.cpp" line="892"/>
         <source>Audio Files (%1)</source>
         <translation>Zvukové soubory (%1)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="895"/>
-        <location filename="showmanager/showmanager.cpp" line="953"/>
+        <location filename="showmanager/showmanager.cpp" line="894"/>
+        <location filename="showmanager/showmanager.cpp" line="952"/>
         <source>All Files (*.*)</source>
         <translation>Všechny soubory (*.*)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="897"/>
-        <location filename="showmanager/showmanager.cpp" line="955"/>
+        <location filename="showmanager/showmanager.cpp" line="896"/>
+        <location filename="showmanager/showmanager.cpp" line="954"/>
         <source>All Files (*)</source>
         <translation>Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="919"/>
+        <location filename="showmanager/showmanager.cpp" line="918"/>
         <source>Unsupported audio file</source>
         <translation>Nepodporovaný soubor zvuku</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="919"/>
+        <location filename="showmanager/showmanager.cpp" line="918"/>
         <source>This audio file cannot be played with QLC+. Sorry.</source>
         <translation>Tento soubor zvuku nemůže být přehrán v QLC+. Je nám to moc líto.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="942"/>
+        <location filename="showmanager/showmanager.cpp" line="941"/>
         <source>Open Video File</source>
         <translation>Otevřít soubor videa</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="951"/>
+        <location filename="showmanager/showmanager.cpp" line="950"/>
         <source>Video Files (%1)</source>
         <translation>Video soubory (%1)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="977"/>
+        <location filename="showmanager/showmanager.cpp" line="976"/>
         <source>Unsupported video file</source>
         <translation>Nepodporovaný soubor videa</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="977"/>
+        <location filename="showmanager/showmanager.cpp" line="976"/>
         <source>This video file cannot be played with QLC+. Sorry.</source>
         <translation>Tento soubor videa nemůže být přehrán v QLC+. Je nám to moc líto.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1019"/>
-        <location filename="showmanager/showmanager.cpp" line="1073"/>
+        <location filename="showmanager/showmanager.cpp" line="1018"/>
+        <location filename="showmanager/showmanager.cpp" line="1072"/>
         <source>Paste error</source>
         <translation>Chyba vložení</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1019"/>
+        <location filename="showmanager/showmanager.cpp" line="1018"/>
         <source>Overlapping paste not allowed. Operation canceled.</source>
         <translation>Překrývání není možné. Operace zrušena.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1073"/>
+        <location filename="showmanager/showmanager.cpp" line="1072"/>
         <source>Trying to paste on an incompatible Scene. Operation canceled.</source>
         <translation>Pokoušíte se vložit nekompatibilní Scénu. Operace byla zrušena.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1408"/>
+        <location filename="showmanager/showmanager.cpp" line="1393"/>
         <source>Track name setup</source>
         <translation>Nastavená názvu stopy</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1409"/>
+        <location filename="showmanager/showmanager.cpp" line="1394"/>
         <source>Track name:</source>
         <translation>Název stopy:</translation>
     </message>
@@ -6831,18 +6829,13 @@ Délka: %3
 <context>
     <name>VCSlider</name>
     <message>
-        <location filename="virtualconsole/vcslider.cpp" line="233"/>
+        <location filename="virtualconsole/vcslider.cpp" line="229"/>
         <source>Slider %1</source>
         <translation>Šavle %1</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcslider.cpp" line="624"/>
+        <location filename="virtualconsole/vcslider.cpp" line="611"/>
         <source>Reset channels override</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="virtualconsole/vcslider.cpp" line="1060"/>
-        <source>Flash Function</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7090,57 +7083,52 @@ Délka: %3
         <translation>Odebrat zvolenou funkci z této šavle</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="527"/>
-        <source>Flash Button</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="550"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="540"/>
         <source>Make the slider control a function</source>
         <translation>Šavle bude ovládat funkci</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="553"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="543"/>
         <source>Switch to Playback Mode</source>
         <translation>Přepnout do režimu přehrávání</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="561"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="551"/>
         <source>Submaster</source>
         <translation>Submaster</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="567"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="557"/>
         <source>Slider submaster mode is active</source>
         <translation>Režim submaster je aktivní</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="590"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="580"/>
         <source>Make the slider act as a submaster</source>
         <translation>Šavle bude sloužit jako submaster</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="593"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="583"/>
         <source>Switch to Submaster Mode</source>
         <translation>Přepnout do režimu submaster</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.cpp" line="165"/>
+        <location filename="virtualconsole/vcsliderproperties.cpp" line="178"/>
         <source>Override reset control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.cpp" line="656"/>
+        <location filename="virtualconsole/vcsliderproperties.cpp" line="640"/>
         <source>Select channels by group</source>
         <translation>Zvolit kanály podle skupiny</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.cpp" line="657"/>
+        <location filename="virtualconsole/vcsliderproperties.cpp" line="641"/>
         <source>Select a channel group</source>
         <translation>Zvolist skupinu kanálů</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.cpp" line="724"/>
+        <location filename="virtualconsole/vcsliderproperties.cpp" line="703"/>
         <source>No function</source>
         <translation>Bez funkce</translation>
     </message>

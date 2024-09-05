@@ -10,12 +10,12 @@
         <translation>Acerca Q Light Controller Plus</translation>
     </message>
     <message>
-        <location filename="aboutbox.ui" line="87"/>
+        <location filename="aboutbox.ui" line="88"/>
         <source>Contributors</source>
         <translation>Colaboradores</translation>
     </message>
     <message>
-        <location filename="aboutbox.ui" line="132"/>
+        <location filename="aboutbox.ui" line="135"/>
         <source>This application is licensed under the terms of the Apache 2.0 license.</source>
         <oldsource>This application is licensed under the terms of GNU GPL version 2.</oldsource>
         <translation>Esta aplicación está licenciada bajo los términos de la licencia Apache 2.0.</translation>
@@ -194,7 +194,7 @@
         <translation>Fixtures encontrados: %1</translation>
     </message>
     <message>
-        <location filename="addfixture.cpp" line="627"/>
+        <location filename="addfixture.cpp" line="624"/>
         <source>Dimmers</source>
         <translation>Dimmers</translation>
     </message>
@@ -2148,12 +2148,12 @@ El archivo seleccionado ha sido movido o borrado.</translation>
         <translation>Ver qué hace el EFX cuando se ejecuta</translation>
     </message>
     <message>
-        <location filename="efxeditor.cpp" line="733"/>
+        <location filename="efxeditor.cpp" line="731"/>
         <source>Remove fixtures</source>
         <translation>Quitar fixtures</translation>
     </message>
     <message>
-        <location filename="efxeditor.cpp" line="734"/>
+        <location filename="efxeditor.cpp" line="732"/>
         <source>Do you want to remove the selected fixture(s)?</source>
         <translation>¿Quiere quitar los fixtures seleccionados?</translation>
     </message>
@@ -2293,15 +2293,13 @@ El archivo seleccionado ha sido movido o borrado.</translation>
     </message>
     <message>
         <location filename="fixturemanager.cpp" line="913"/>
-        <source>Move channel group up...</source>
-        <oldsource>Move group up...</oldsource>
-        <translation>Mover grupo de canales hacia arriba...</translation>
+        <source>Move group up...</source>
+        <translation>Mover grupo hacia arriba...</translation>
     </message>
     <message>
         <location filename="fixturemanager.cpp" line="919"/>
-        <source>Move channel group down...</source>
-        <oldsource>Move group down...</oldsource>
-        <translation>Mover grupo de canales hacia abajo...</translation>
+        <source>Move group down...</source>
+        <translation>Mover grupo hacia abajo...</translation>
     </message>
     <message>
         <location filename="fixturemanager.cpp" line="925"/>
@@ -3882,121 +3880,121 @@ Tenga en cuenta que el asistente no puede diferenciar entre una perilla y un sli
 <context>
     <name>Monitor</name>
     <message>
-        <location filename="monitor/monitor.cpp" line="337"/>
+        <location filename="monitor/monitor.cpp" line="336"/>
         <source>Fixture Monitor</source>
         <translation>Monitor de Fixtures</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="378"/>
+        <location filename="monitor/monitor.cpp" line="377"/>
         <source>2D View</source>
         <translation>Vista 2D</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="385"/>
+        <location filename="monitor/monitor.cpp" line="384"/>
         <source>Font</source>
         <translation>Fuente</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="394"/>
+        <location filename="monitor/monitor.cpp" line="393"/>
         <source>DMX Channels</source>
         <translation>Canales DMX</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="395"/>
+        <location filename="monitor/monitor.cpp" line="394"/>
         <source>Show absolute DMX channel numbers</source>
         <translation>Mostrar números absolutos de DMX</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="405"/>
+        <location filename="monitor/monitor.cpp" line="404"/>
         <source>Relative Channels</source>
         <translation>Canales Relativos</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="406"/>
+        <location filename="monitor/monitor.cpp" line="405"/>
         <source>Show channel numbers relative to fixture</source>
         <translation>Muestra los numeros de canales relativos al fixture</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="422"/>
+        <location filename="monitor/monitor.cpp" line="421"/>
         <source>DMX Values</source>
         <translation>Valores DMX</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="423"/>
+        <location filename="monitor/monitor.cpp" line="422"/>
         <source>Show DMX values 0-255</source>
         <translation>Muestra Valores DMX 0-255</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="434"/>
+        <location filename="monitor/monitor.cpp" line="433"/>
         <source>Percent Values</source>
         <translation>Valores porcentuales</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="435"/>
+        <location filename="monitor/monitor.cpp" line="434"/>
         <source>Show percentage values 0-100%</source>
         <translation>Muestra los valores en porcentaje 0-100%</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="448"/>
+        <location filename="monitor/monitor.cpp" line="447"/>
         <source>Universe</source>
         <oldsource>Universe:</oldsource>
         <translation>Universo</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="453"/>
+        <location filename="monitor/monitor.cpp" line="452"/>
         <source>All universes</source>
         <translation>Todos los universos</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="469"/>
-        <location filename="monitor/monitor.cpp" line="550"/>
+        <location filename="monitor/monitor.cpp" line="468"/>
+        <location filename="monitor/monitor.cpp" line="549"/>
         <source>Close</source>
         <translation>Cerrar</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="470"/>
-        <location filename="monitor/monitor.cpp" line="551"/>
+        <location filename="monitor/monitor.cpp" line="469"/>
+        <location filename="monitor/monitor.cpp" line="550"/>
         <source>Close this window</source>
         <translation>Cerrar esta ventana</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="489"/>
+        <location filename="monitor/monitor.cpp" line="488"/>
         <source>DMX View</source>
         <translation>Vista DMX</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="495"/>
+        <location filename="monitor/monitor.cpp" line="494"/>
         <source>Size</source>
         <oldsource>Size:</oldsource>
         <translation>Tamaño</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="519"/>
+        <location filename="monitor/monitor.cpp" line="518"/>
         <source>Meters</source>
         <translation>Metros</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="520"/>
+        <location filename="monitor/monitor.cpp" line="519"/>
         <source>Feet</source>
         <translation>Pies</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="529"/>
+        <location filename="monitor/monitor.cpp" line="528"/>
         <source>Add fixture</source>
         <translation>Añadir fixture</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="531"/>
+        <location filename="monitor/monitor.cpp" line="530"/>
         <source>Remove fixture</source>
         <translation>Eliminar fixture</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="536"/>
+        <location filename="monitor/monitor.cpp" line="535"/>
         <source>Set a background picture</source>
         <translation>Establecer una imagen de fondo</translation>
     </message>
     <message>
-        <location filename="monitor/monitor.cpp" line="539"/>
+        <location filename="monitor/monitor.cpp" line="538"/>
         <source>Show/hide labels</source>
         <translation>Mostrar/ocultar etiquetas</translation>
     </message>
@@ -4799,17 +4797,17 @@ Tenga en cuenta que el asistente no puede diferenciar entre una perilla y un sli
         <translation>Ningún grupo para controlar</translation>
     </message>
     <message>
-        <location filename="rgbmatrixeditor.cpp" line="880"/>
+        <location filename="rgbmatrixeditor.cpp" line="878"/>
         <source>Select image</source>
         <translation>Seleccionar imagen</translation>
     </message>
     <message>
-        <location filename="rgbmatrixeditor.cpp" line="882"/>
+        <location filename="rgbmatrixeditor.cpp" line="880"/>
         <source>Images</source>
         <translation>Imágenes</translation>
     </message>
     <message>
-        <location filename="rgbmatrixeditor.cpp" line="1168"/>
+        <location filename="rgbmatrixeditor.cpp" line="1165"/>
         <source>Sequence</source>
         <translation>Secuencia</translation>
     </message>
@@ -5273,211 +5271,211 @@ Duración: %3
 <context>
     <name>ShowManager</name>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="199"/>
+        <location filename="showmanager/showmanager.cpp" line="198"/>
         <source>New s&amp;how</source>
         <translation>Nuevo S&amp;how</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="211"/>
+        <location filename="showmanager/showmanager.cpp" line="210"/>
         <source>New s&amp;equence</source>
         <translation>Nueva &amp;secuencia</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="217"/>
+        <location filename="showmanager/showmanager.cpp" line="216"/>
         <source>New &amp;audio</source>
         <translation>Nuevo &amp;audio</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="223"/>
+        <location filename="showmanager/showmanager.cpp" line="222"/>
         <source>New vi&amp;deo</source>
         <translation>Nuevo &amp;video</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="230"/>
+        <location filename="showmanager/showmanager.cpp" line="229"/>
         <source>&amp;Copy</source>
         <translation>&amp;Copiar</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="237"/>
+        <location filename="showmanager/showmanager.cpp" line="236"/>
         <source>&amp;Paste</source>
         <translation>&amp;Pegar</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="244"/>
+        <location filename="showmanager/showmanager.cpp" line="243"/>
         <source>&amp;Delete</source>
         <translation>&amp;Eliminar</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="251"/>
+        <location filename="showmanager/showmanager.cpp" line="250"/>
         <source>Change Co&amp;lor</source>
         <translation>Cambiar Co&amp;lor</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="272"/>
+        <location filename="showmanager/showmanager.cpp" line="271"/>
         <source>Snap to &amp;Grid</source>
         <translation>Ajustar a &amp;grilla</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="279"/>
+        <location filename="showmanager/showmanager.cpp" line="278"/>
         <source>St&amp;op</source>
         <translation>&amp;Detener</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="285"/>
+        <location filename="showmanager/showmanager.cpp" line="284"/>
         <source>&amp;Play</source>
         <translation>&amp;Reroducir</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="344"/>
+        <location filename="showmanager/showmanager.cpp" line="343"/>
         <source>Time division:</source>
         <translation>División de tiempo:</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="349"/>
+        <location filename="showmanager/showmanager.cpp" line="348"/>
         <source>Time</source>
         <translation>Tiempo</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="561"/>
+        <location filename="showmanager/showmanager.cpp" line="560"/>
         <source>New Show</source>
         <translation>Nuevo Show</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="562"/>
+        <location filename="showmanager/showmanager.cpp" line="561"/>
         <source>Show name setup</source>
         <translation>Edición de nombre de Show</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="563"/>
+        <location filename="showmanager/showmanager.cpp" line="562"/>
         <source>Show name:</source>
         <translation>Nombre de Show:</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="205"/>
+        <location filename="showmanager/showmanager.cpp" line="204"/>
         <source>Add a &amp;track or an existing function</source>
         <translation>Añadir una nueva pis&amp;ta o una función existente</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="258"/>
+        <location filename="showmanager/showmanager.cpp" line="257"/>
         <source>Lock item</source>
         <translation>Bloquear elemento</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="265"/>
+        <location filename="showmanager/showmanager.cpp" line="264"/>
         <source>Item start time and duration</source>
         <translation>Tiempo de inicio y duración del elemento</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="687"/>
-        <location filename="showmanager/showmanager.cpp" line="803"/>
+        <location filename="showmanager/showmanager.cpp" line="686"/>
+        <location filename="showmanager/showmanager.cpp" line="802"/>
         <source> (Copy)</source>
         <translation> (Copiar)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="756"/>
+        <location filename="showmanager/showmanager.cpp" line="755"/>
         <source>Track %1</source>
         <translation>Pista %1</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="785"/>
-        <location filename="showmanager/showmanager.cpp" line="871"/>
+        <location filename="showmanager/showmanager.cpp" line="784"/>
+        <location filename="showmanager/showmanager.cpp" line="870"/>
         <source>New Sequence</source>
         <translation>Nueva Secuencia</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="849"/>
-        <location filename="showmanager/showmanager.cpp" line="926"/>
-        <location filename="showmanager/showmanager.cpp" line="984"/>
+        <location filename="showmanager/showmanager.cpp" line="848"/>
+        <location filename="showmanager/showmanager.cpp" line="925"/>
+        <location filename="showmanager/showmanager.cpp" line="983"/>
         <source>Overlapping error</source>
         <translation>Error de superposición</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="849"/>
-        <location filename="showmanager/showmanager.cpp" line="926"/>
-        <location filename="showmanager/showmanager.cpp" line="984"/>
+        <location filename="showmanager/showmanager.cpp" line="848"/>
+        <location filename="showmanager/showmanager.cpp" line="925"/>
+        <location filename="showmanager/showmanager.cpp" line="983"/>
         <source>Overlapping not allowed. Operation canceled.</source>
         <translation>Superposición no permitida. Operación cancelada.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="859"/>
+        <location filename="showmanager/showmanager.cpp" line="858"/>
         <source>Scene for %1 - Track %2</source>
         <translation>Escena para %1 - Pista %2</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="884"/>
+        <location filename="showmanager/showmanager.cpp" line="883"/>
         <source>Open Audio File</source>
         <translation>Abrir archivo de Audio</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="893"/>
+        <location filename="showmanager/showmanager.cpp" line="892"/>
         <source>Audio Files (%1)</source>
         <translation>Archivos de Audio (%1)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="895"/>
-        <location filename="showmanager/showmanager.cpp" line="953"/>
+        <location filename="showmanager/showmanager.cpp" line="894"/>
+        <location filename="showmanager/showmanager.cpp" line="952"/>
         <source>All Files (*.*)</source>
         <translation>Todos los archivos (*.*)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="897"/>
-        <location filename="showmanager/showmanager.cpp" line="955"/>
+        <location filename="showmanager/showmanager.cpp" line="896"/>
+        <location filename="showmanager/showmanager.cpp" line="954"/>
         <source>All Files (*)</source>
         <translation>Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="919"/>
+        <location filename="showmanager/showmanager.cpp" line="918"/>
         <source>Unsupported audio file</source>
         <translation>Archivo de audio no soportado</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="919"/>
+        <location filename="showmanager/showmanager.cpp" line="918"/>
         <source>This audio file cannot be played with QLC+. Sorry.</source>
         <translation>Este archivo de audio no puede ser rerpoducido con QLC+. Mil disculpas.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="942"/>
+        <location filename="showmanager/showmanager.cpp" line="941"/>
         <source>Open Video File</source>
         <translation>Abrir Archivo de video</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="951"/>
+        <location filename="showmanager/showmanager.cpp" line="950"/>
         <source>Video Files (%1)</source>
         <translation>Archivos de Video (%1)</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="977"/>
+        <location filename="showmanager/showmanager.cpp" line="976"/>
         <source>Unsupported video file</source>
         <translation>Archivo de video no soportado</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="977"/>
+        <location filename="showmanager/showmanager.cpp" line="976"/>
         <source>This video file cannot be played with QLC+. Sorry.</source>
         <translation>Este archivo de video no puede ser rerpoducido con QLC+. Mil disculpas.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1019"/>
-        <location filename="showmanager/showmanager.cpp" line="1073"/>
+        <location filename="showmanager/showmanager.cpp" line="1018"/>
+        <location filename="showmanager/showmanager.cpp" line="1072"/>
         <source>Paste error</source>
         <translation>Error de pegado</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1019"/>
+        <location filename="showmanager/showmanager.cpp" line="1018"/>
         <source>Overlapping paste not allowed. Operation canceled.</source>
         <translation>Superposición no permitida. Operación cancelada.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1073"/>
+        <location filename="showmanager/showmanager.cpp" line="1072"/>
         <source>Trying to paste on an incompatible Scene. Operation canceled.</source>
         <translation>Intentando pegar en una Escena incompatible. Operación cancelada.</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1408"/>
+        <location filename="showmanager/showmanager.cpp" line="1393"/>
         <source>Track name setup</source>
         <translation>Ajuste de nombre de Pista</translation>
     </message>
     <message>
-        <location filename="showmanager/showmanager.cpp" line="1409"/>
+        <location filename="showmanager/showmanager.cpp" line="1394"/>
         <source>Track name:</source>
         <translation>Nombre de Pista:</translation>
     </message>
@@ -6844,19 +6842,14 @@ Duración: %3
 <context>
     <name>VCSlider</name>
     <message>
-        <location filename="virtualconsole/vcslider.cpp" line="233"/>
+        <location filename="virtualconsole/vcslider.cpp" line="229"/>
         <source>Slider %1</source>
         <translation>Slider %1</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcslider.cpp" line="624"/>
+        <location filename="virtualconsole/vcslider.cpp" line="611"/>
         <source>Reset channels override</source>
         <translation>Restaurar el override de canales</translation>
-    </message>
-    <message>
-        <location filename="virtualconsole/vcslider.cpp" line="1060"/>
-        <source>Flash Function</source>
-        <translation>Función Flash</translation>
     </message>
 </context>
 <context>
@@ -6973,17 +6966,12 @@ Duración: %3
         <translation>Desenlazar la función actual de este slider</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="527"/>
-        <source>Flash Button</source>
-        <translation>Botón Flash</translation>
-    </message>
-    <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="550"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="540"/>
         <source>Make the slider control a function</source>
         <translation>Hacer que el slider controle una función</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="553"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="543"/>
         <source>Switch to Playback Mode</source>
         <translation>Cambiar a Modo Reproducción</translation>
     </message>
@@ -7119,42 +7107,42 @@ Duración: %3
         <translation>Cambiar a Modo Nivel</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="561"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="551"/>
         <source>Submaster</source>
         <translation>Submaster</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="567"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="557"/>
         <source>Slider submaster mode is active</source>
         <translation>Modo submaster del slider está activo</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="590"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="580"/>
         <source>Make the slider act as a submaster</source>
         <translation>Hace que el slider actúe como submaster</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.ui" line="593"/>
+        <location filename="virtualconsole/vcsliderproperties.ui" line="583"/>
         <source>Switch to Submaster Mode</source>
         <translation>Cambiar a Modo Submaster</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.cpp" line="165"/>
+        <location filename="virtualconsole/vcsliderproperties.cpp" line="178"/>
         <source>Override reset control</source>
         <translation>Control del override de canales</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.cpp" line="656"/>
+        <location filename="virtualconsole/vcsliderproperties.cpp" line="640"/>
         <source>Select channels by group</source>
         <translation>Seleccionar canales por grupo</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.cpp" line="657"/>
+        <location filename="virtualconsole/vcsliderproperties.cpp" line="641"/>
         <source>Select a channel group</source>
         <translation>Seleccionar un Grupo de Canales</translation>
     </message>
     <message>
-        <location filename="virtualconsole/vcsliderproperties.cpp" line="724"/>
+        <location filename="virtualconsole/vcsliderproperties.cpp" line="703"/>
         <source>No function</source>
         <translation>Ninguna función</translation>
     </message>

@@ -390,24 +390,18 @@ void MainView2D::updateFixtureItem(Fixture *fixture, quint16 headIndex, quint16 
     }
 
     quint32 masterDimmerChannel = fixture->masterIntensityChannel();
-    qreal masterDimmerValue = masterDimmerChannel != QLCChannel::invalid() ?
-                              qreal(fixture->channelValueAt(int(masterDimmerChannel))) / 255.0 : 1.0;
+    qreal masterDimmerValue = qreal(fixture->channelValueAt(int(masterDimmerChannel))) / 255.0;
 
     for (int headIdx = 0; headIdx < fixture->heads(); headIdx++)
     {
         quint32 headDimmerChannel = fixture->channelNumber(QLCChannel::Intensity, QLCChannel::MSB, headIdx);
         if (headDimmerChannel == QLCChannel::invalid())
-            headDimmerChannel = masterDimmerChannel;
+            headDimmerChannel = fixture->masterIntensityChannel();
 
-        //qDebug() << "Head" << headIdx << "dimmer channel:" << headDimmerChannel;
+        //qDebug() << "Head" << headIdx << "dimmer channel:" << mdIndex;
         qreal intensityValue = 1.0;
-        bool hasDimmer = false;
-
         if (headDimmerChannel != QLCChannel::invalid())
-        {
             intensityValue = (qreal)fixture->channelValueAt(headDimmerChannel) / 255;
-            hasDimmer = true;
-        }
 
         if (headDimmerChannel != masterDimmerChannel)
             intensityValue *= masterDimmerValue;
@@ -416,7 +410,7 @@ void MainView2D::updateFixtureItem(Fixture *fixture, quint16 headIndex, quint16 
                 Q_ARG(QVariant, headIdx),
                 Q_ARG(QVariant, intensityValue));
 
-        color = FixtureUtils::headColor(fixture, hasDimmer, headIdx);
+        color = FixtureUtils::headColor(fixture, headIdx);
 
         QMetaObject::invokeMethod(fxItem, "setHeadRGBColor",
                                   Q_ARG(QVariant, headIdx),

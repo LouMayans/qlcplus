@@ -24,6 +24,9 @@
 #include "vcspeeddialfunction.h"
 #include "function.h"
 
+#define KXMLQLCSequenceSceneValues "Values"
+#define KXMLQLCStepNote "Note"
+
 VCSpeedDialFunction::VCSpeedDialFunction(quint32 aFid, SpeedMultiplier aFadeIn,
                                          SpeedMultiplier aFadeOut, SpeedMultiplier aDuration)
     : functionId(aFid)

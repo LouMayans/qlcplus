@@ -1,17 +1,3 @@
-qlcplus (4.13.2) stable; urgency=low
-
-  * engine: add stopOnExit, waitFunctionStart and waitFunctionStop commands to Script - see documentation (thanks to ldebs)
-  * Web Access: fix grand master stopping running functions
-  * RGB scripts: fix Vertical Fall not allowing different colors when cloned
-  * New fixtures: GLP Impression X5, Ayrton Rivale Profile (thanks to Masatoshi Fujino)
-  * New fixture: Eurolite LED Mini Strobe Cluster SMD 48 (thanks to Oliver)
-  * New fixture: Ayra Compar Kit 3 (thanks to Robert)
-  * New fixtures: Acme Pixel Line IP, Ayrton Domino LT (thanks to Yestalgia)
-  * New fixture: GLP JDC1 (thanks to Flo Edelmann)
-  * New fixture: Shehds 2 Eyes 200W LED COB Cool Warm White (thanks to Devsider)
-
-  -- Massimo Callegari <massimocallegari@yahoo.it>  Sun, 21 Sep 2024 18:19:20 +0200
-
 qlcplus (4.13.1) stable; urgency=low
 
   * engine: fix blackout not working

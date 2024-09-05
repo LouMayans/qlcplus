@@ -14,7 +14,7 @@ TEMPLATE = subdirs
    }
  }
  !macx:!win32:SUBDIRS += dmx4linux
- SUBDIRS              += velleman
+ #SUBDIRS              += velleman
  SUBDIRS              += enttecwing
  SUBDIRS              += hid
  !macx:!win32:SUBDIRS += spi

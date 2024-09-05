@@ -1564,7 +1564,7 @@ bool VCSlider::saveXML(QXmlStreamWriter *doc)
 
     /* Override reset external control */
     if (sliderMode() == Level && monitorEnabled() == true)
-        saveXMLInputControl(doc, INPUT_SLIDER_RESET_ID, false, KXMLQLCVCSliderOverrideReset);
+        saveXMLInputControl(doc, INPUT_SLIDER_RESET_ID, KXMLQLCVCSliderOverrideReset);
 
     /* Level */
     doc->writeStartElement(KXMLQLCVCSliderLevel);
@@ -1602,7 +1602,11 @@ bool VCSlider::saveXML(QXmlStreamWriter *doc)
         doc->writeEndElement();
 
         if (adjustFlashEnabled())
-            saveXMLInputControl(doc, INPUT_SLIDER_FLASH_ID, false, KXMLQLCVCSliderFunctionFlash);
+        {
+            //doc->writeStartElement(KXMLQLCVCSliderFunctionFlash);
+            saveXMLInputControl(doc, INPUT_SLIDER_FLASH_ID, KXMLQLCVCSliderFunctionFlash);
+            //doc->writeEndElement();
+        }
     }
 
     /* End the <Slider> tag */

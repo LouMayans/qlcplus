@@ -22,29 +22,17 @@
 
 #include "vcwidget.h"
 
-#define KXMLQLCVCAnimation             QString("Matrix")
-#define KXMLQLCVCAnimationFunction     QString("Function")
-#define KXMLQLCVCAnimationFunctionID   QString("ID")
-#define KXMLQLCVCAnimationInstantApply QString("InstantApply")
-#define KXMLQLCVCAnimationStartColor   QString("StartColor")
-#define KXMLQLCVCAnimationEndColor     QString("EndColor")
-#define KXMLQLCVCAnimationVisibilityMask QString("Visibility")
-
-class RGBMatrix;
+#define KXMLQLCVCAnimation              QString("Control")
+#define KXMLQLCVCAnimationID            QString("ID")
+#define KXMLQLCVCAnimationType          QString("Type")
+#define KXMLQLCVCAnimationColor         QString("Color")
+#define KXMLQLCVCAnimationResource      QString("Resource")
+#define KXMLQLCVCAnimationProperty      QString("Property")
+#define KXMLQLCVCAnimationPropertyName  QString("Name")
 
 class VCAnimation : public VCWidget
 {
     Q_OBJECT
-
-    Q_PROPERTY(quint32 visibilityMask READ visibilityMask WRITE setVisibilityMask NOTIFY visibilityMaskChanged)
-    Q_PROPERTY(quint32 functionID READ functionID WRITE setFunctionID NOTIFY functionIDChanged)
-    Q_PROPERTY(int faderLevel READ faderLevel WRITE setFaderLevel NOTIFY faderLevelChanged FINAL)
-    Q_PROPERTY(bool instantChanges READ instantChanges WRITE setInstantChanges NOTIFY instantChangesChanged FINAL)
-
-    Q_PROPERTY(QColor startColor READ startColor WRITE setStartColor NOTIFY startColorChanged)
-    Q_PROPERTY(QColor endColor READ endColor WRITE setEndColor NOTIFY endColorChanged)
-    Q_PROPERTY(QStringList algorithms READ algorithms CONSTANT)
-    Q_PROPERTY(int algorithmIndex READ algorithmIndex WRITE setAlgorithmIndex NOTIFY algorithmIndexChanged FINAL)
 
     /*********************************************************************
      * Initialization
@@ -68,17 +56,6 @@ public:
     /** @reimp */
     VCWidget *createCopy(VCWidget *parent);
 
-    enum Visibility
-    {
-        Nothing = 0,
-        Fader           = 1 << 0,
-        Label           = 1 << 1,
-        StartColor      = 1 << 2,
-        EndColor        = 1 << 3,
-        PresetCombo     = 1 << 4
-    };
-    Q_ENUM(Visibility)
-
 protected:
     /** @reimp */
     bool copyFrom(const VCWidget* widget);
@@ -87,88 +64,37 @@ private:
     FunctionParent functionParent() const;
 
     /*********************************************************************
-     * UI elements visibility
+     * Type
      *********************************************************************/
 public:
-    quint32 defaultVisibilityMask();
-
-    /** Get/Set the widget's elements visibility bitmask */
-    quint32 visibilityMask() const;
-    void setVisibilityMask(quint32 mask);
 
 signals:
-    void visibilityMaskChanged();
 
 private:
-    quint32 m_visibilityMask;
 
     /*********************************************************************
-     * Function control
+     * Data
      *********************************************************************/
 public:
-    /** Get/Set the controlled RGBMatrix Function */
-    quint32 functionID() const;
-    void setFunctionID(quint32 newFunctionID);
 
-    /** Get/Set the fader level */
-    int faderLevel() const;
-    void setFaderLevel(int level);
-
-    /** Get/Set a flag to instantly apply changes on property change */
-    bool instantChanges() const;
-    void setInstantChanges(bool newInstantChanges);
+protected slots:
 
 signals:
-    void functionIDChanged();
-    void faderLevelChanged();
-    void instantChangesChanged();
 
 private:
-    quint32 m_functionID;
-    RGBMatrix *m_matrix;
-    int m_faderLevel;
-    bool m_instantChanges;
 
     /*********************************************************************
-     * Colors and presets
+     * Functions connections
      *********************************************************************/
 public:
-    /** Get/set the start color of the current algorithm */
-    QColor startColor() const;
-    void setStartColor(QColor color);
-
-    /** Get/set the end color of the current algorithm */
-    QColor endColor() const;
-    void setEndColor(QColor color);
-
-    /** Returns the list of available algorithms */
-    QStringList algorithms() const;
-
-    /** Get/Set the algorithm index to run */
-    int algorithmIndex() const;
-    void setAlgorithmIndex(int index);
 
 signals:
-    void startColorChanged();
-    void endColorChanged();
-    void algorithmIndexChanged();
 
-    /*********************************************************************
-     * External input
-     *********************************************************************/
-
-public:
-    /** @reimp */
-    void updateFeedback();
-
-public slots:
-    /** @reimp */
-    void slotInputValueChanged(quint8 id, uchar value);
+private:
 
     /*********************************************************************
      * Load & Save
      *********************************************************************/
-
 public:
     bool loadXML(QXmlStreamReader &root);
     bool saveXML(QXmlStreamWriter *doc);

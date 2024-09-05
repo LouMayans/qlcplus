@@ -27,7 +27,7 @@ add_library(${module_name}
 )
 
 if(WIN32)
-    set(FTD2XXDIR "C:/projects/D2XXSDK")
+    set(FTD2XXDIR "C:/msys64/home/Louma/QLC+/D2XXSDK")
     target_link_libraries(${module_name} PRIVATE ${FTD2XXDIR}/amd64/libftd2xx.a)
     target_include_directories(${module_name} PRIVATE ${FTD2XXDIR})
 	message("Building with FTD2xx support.")
