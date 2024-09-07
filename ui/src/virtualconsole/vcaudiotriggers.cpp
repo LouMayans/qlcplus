@@ -275,6 +275,7 @@ void VCAudioTriggers::slotUpdateVolumeSlider(int volume)
 
 void VCAudioTriggers::writeDMX(MasterTimer *timer, QList<Universe *> universes)
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]";
     Q_UNUSED(timer);
 
     if (mode() == Doc::Design)
@@ -295,6 +296,7 @@ void VCAudioTriggers::writeDMX(MasterTimer *timer, QList<Universe *> universes)
                 fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
                 if (fader.isNull())
                 {
+                    qDebug() << "[" << Q_FUNC_INFO << "]1";
                     fader = universes[universe]->requestFader();
                     fader->adjustIntensity(intensity());
                     m_fadersMap[universe] = fader;
@@ -303,7 +305,7 @@ void VCAudioTriggers::writeDMX(MasterTimer *timer, QList<Universe *> universes)
                 fader->setEnabled(m_button->isChecked() ? true : false);
             }
 
-            FadeChannel *fc = fader->getChannelFader(m_doc, universes[universe], Fixture::invalidId(), absAddress);           
+            FadeChannel *fc = fader->getChannelFader(m_doc, universes[universe], Fixture::invalidId(), absAddress);
             fc->setStart(fc->current());
             fc->setTarget(m_volumeBar->m_value);
             fc->setReady(false);
@@ -324,6 +326,7 @@ void VCAudioTriggers::writeDMX(MasterTimer *timer, QList<Universe *> universes)
                     fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
                     if (fader == NULL)
                     {
+                        qDebug() << "[" << Q_FUNC_INFO << "]2";
                         fader = universes[universe]->requestFader();
                         fader->adjustIntensity(intensity());
                         m_fadersMap[universe] = fader;

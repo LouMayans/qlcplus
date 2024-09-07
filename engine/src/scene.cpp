@@ -676,6 +676,7 @@ void Scene::writeDMX(MasterTimer *timer, QList<Universe *> ua)
                 QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
                 if (fader.isNull())
                 {
+                    qDebug() << "[" << Q_FUNC_INFO << "]";
                     fader = ua[universe]->requestFader(m_flashOverrides ? Universe::Flashing : Universe::Auto);
 
                     fader->adjustIntensity(getAttributeValue(Intensity));
@@ -718,6 +719,7 @@ void Scene::processValue(MasterTimer *timer, QList<Universe*> ua, uint fadeIn, S
     QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
     if (fader.isNull())
     {
+        qDebug() << "[" << Q_FUNC_INFO << "]";
         fader = ua[universe]->requestFader();
         fader->adjustIntensity(getAttributeValue(Intensity));
         fader->setBlendMode(blendMode());
@@ -725,6 +727,9 @@ void Scene::processValue(MasterTimer *timer, QList<Universe*> ua, uint fadeIn, S
         fader->setParentFunctionID(id());
         fader->setParentIntensity(getAttributeValue(ParentIntensity));
         fader->setHandleSecondary(true);
+        fader->setLouPriority(priority());
+        qDebug() << "[" << Q_FUNC_INFO << "]" << "PRIORITY : " << priority();
+
         m_fadersMap[universe] = fader;
     }
 
@@ -807,7 +812,7 @@ void Scene::handleFadersEnd(MasterTimer *timer)
 
 void Scene::write(MasterTimer *timer, QList<Universe*> ua)
 {
-    //qDebug() << Q_FUNC_INFO << elapsed();
+    // qDebug() << Q_FUNC_INFO << elapsed();
 
     if (m_values.count() == 0 && m_palettes.count() == 0)
     {

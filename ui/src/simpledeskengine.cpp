@@ -283,6 +283,7 @@ FadeChannel *SimpleDeskEngine::getFader(QList<Universe *> universes, quint32 uni
     QSharedPointer<GenericFader> fader = m_fadersMap.value(universeID, QSharedPointer<GenericFader>());
     if (fader.isNull())
     {
+        qDebug() << "[" << Q_FUNC_INFO << "]";
         fader = universes[universeID]->requestFader(Universe::SimpleDesk);
         m_fadersMap[universeID] = fader;
     }

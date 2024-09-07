@@ -150,7 +150,7 @@ bool InputOutputMap::addUniverse(quint32 id)
         }
         else if (id > universesCount())
         {
-            qDebug() << Q_FUNC_INFO
+            qDebug() << "[inputOutputmap][]" << Q_FUNC_INFO
                 << "Gap between universe" << (universesCount() - 1)
                 << "and universe" << id << ", filling the gap...";
             while (id > universesCount())
@@ -158,6 +158,7 @@ bool InputOutputMap::addUniverse(quint32 id)
                 uni = new Universe(universesCount(), m_grandMaster);
                 connect(doc()->masterTimer(), SIGNAL(tickReady()), uni, SLOT(tick()), Qt::QueuedConnection);
                 connect(uni, SIGNAL(universeWritten(quint32,QByteArray)), this, SIGNAL(universeWritten(quint32,QByteArray)));
+                connect(uni, SIGNAL(updateDebugTextT(QString)), this, SIGNAL(updateDebugTextT(QString)));
                 m_universeArray.append(uni);
             }
         }
@@ -165,6 +166,7 @@ bool InputOutputMap::addUniverse(quint32 id)
         uni = new Universe(id, m_grandMaster);
         connect(doc()->masterTimer(), SIGNAL(tickReady()), uni, SLOT(tick()), Qt::QueuedConnection);
         connect(uni, SIGNAL(universeWritten(quint32,QByteArray)), this, SIGNAL(universeWritten(quint32,QByteArray)));
+        connect(uni, SIGNAL(updateDebugTextT(QString)), this, SIGNAL(updateDebugTextT(QString)));
         m_universeArray.append(uni);
     }
 
@@ -425,13 +427,13 @@ bool InputOutputMap::setInputPatch(quint32 universe, const QString &pluginName,
         int lIdx = inputs.indexOf(inputUID);
         if (lIdx != -1)
         {
-            qDebug() << "[IOMAP] Found match on input by name on universe" << universe << "-" << input << "vs" << lIdx;
+            qDebug() << "[inputOutputmap][]" << "Found match on input by name on universe" << universe << "-" << input << "vs" << lIdx;
             input = lIdx;
         }
         else
         {
-            qDebug() << "[IOMAP] !!No match found!! for input on universe" << universe << "-" << input << inputUID;
-            qDebug() << plugin->inputs();
+            qDebug() << "[inputOutputmap][]" << "!!No match found!! for input on universe" << universe << "-" << input << inputUID;
+            qDebug() << "[inputOutputmap][]" << plugin->inputs();
         }
     }
 
@@ -499,13 +501,13 @@ bool InputOutputMap::setOutputPatch(quint32 universe, const QString &pluginName,
         int lIdx = inputs.indexOf(outputUID);
         if (lIdx != -1)
         {
-            qDebug() << "[IOMAP] Found match on output by name on universe" << universe << "-" << output << "vs" << lIdx;
+            qDebug() << "[inputOutputmap][]" << "Found match on output by name on universe" << universe << "-" << output << "vs" << lIdx;
             output = lIdx;
         }
         else
         {
-            qDebug() << "[IOMAP] !!No match found!! for output on universe" << universe << "-" << output << outputUID;
-            qDebug() << plugin->outputs();
+            qDebug() << "[inputOutputmap][]" << "!!No match found!! for output on universe" << universe << "-" << output << outputUID;
+            qDebug() << "[inputOutputmap][]" << plugin->outputs();
         }
     }
 
@@ -991,7 +993,7 @@ void InputOutputMap::setBeatGeneratorType(InputOutputMap::BeatGeneratorType type
         return;
 
     m_beatGeneratorType = type;
-    qDebug() << "[InputOutputMap] setting beat type:" << m_beatGeneratorType;
+    qDebug() << "[inputOutputmap][]" << "setting beat type:" << m_beatGeneratorType;
 
     switch (m_beatGeneratorType)
     {
@@ -1054,7 +1056,7 @@ void InputOutputMap::setBpmNumber(int bpm)
     if (m_beatGeneratorType == Disabled || bpm == m_currentBPM)
         return;
 
-    //qDebug() << "[InputOutputMap] set BPM to" << bpm;
+    //qDebug() << "[inputOutputmap][]" << "[InputOutputMap] set BPM to" << bpm;
     m_currentBPM = bpm;
 
     if (bpm != 0)
@@ -1087,7 +1089,7 @@ void InputOutputMap::slotPluginBeat(quint32 universe, quint32 channel, uchar val
     if (m_beatGeneratorType != Plugin || value == 0 || key != "beat")
         return;
 
-    qDebug() << "Plugin beat:" << channel << m_beatTime->elapsed();
+    qDebug() << "[inputOutputmap][]" << "Plugin beat:" << channel << m_beatTime->elapsed();
 
     // process the timer as first thing, to avoid wasting time
     // with the operations below

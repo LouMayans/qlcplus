@@ -28,7 +28,7 @@
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
 #include <QRandomGenerator>
 #endif
- 
+
 #include "genericfader.h"
 #include "fadechannel.h"
 #include "mastertimer.h"
@@ -666,6 +666,7 @@ QString Script::handleSetFixture(const QList<QStringList>& tokens, QList<Univers
                 QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
                 if (fader.isNull())
                 {
+                    qDebug() << "[" << Q_FUNC_INFO << "]";
                     fader = universes[universe]->requestFader();
                     fader->adjustIntensity(getAttributeValue(Intensity));
                     fader->setBlendMode(blendMode());

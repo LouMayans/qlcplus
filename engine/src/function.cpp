@@ -237,7 +237,7 @@ QString Function::name() const
 
 int Function::priority() const
 {
-    return m_priority == NULL ? 0 : m_priority;
+    return m_priority ?: 0;
 }
 
 /*****************************************************************************
@@ -532,7 +532,7 @@ void Function::setTempoType(const Function::TempoType &type)
                     this, SLOT(slotBPMChanged(int)));
         break;
         default:
-            qDebug() << "Error. Unhandled tempo type" << type;
+            qDebug() << "[FUNCTION.CPP]" << "Error. Unhandled tempo type" << type;
         break;
     }
 
@@ -1015,7 +1015,7 @@ void Function::preRun(MasterTimer *timer)
 {
     Q_UNUSED(timer);
 
-    qDebug() << "Function preRun. Name:" << m_name << "ID:" << m_id << "type:" << typeToString(type());
+    qDebug() << "[FUNCTION.CPP]" << "Function preRun. Name:" << m_name << "ID:" << m_id << "type:" << typeToString(type());
     m_running = true;
 
     emit running(m_id);
@@ -1023,6 +1023,7 @@ void Function::preRun(MasterTimer *timer)
 
 void Function::write(MasterTimer *timer, QList<Universe *> universes)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     Q_UNUSED(timer);
     Q_UNUSED(universes);
 }
@@ -1032,7 +1033,7 @@ void Function::postRun(MasterTimer *timer, QList<Universe *> universes)
     Q_UNUSED(timer);
     Q_UNUSED(universes);
 
-    qDebug() << "Function postRun. Name:" << m_name << "ID: " << m_id;
+    qDebug() << "[FUNCTION.CPP]" << "Function postRun. Name:" << m_name << "ID: " << m_id;
 
     {
         QMutexLocker locker(&m_stopMutex);
@@ -1089,7 +1090,7 @@ quint32 Function::elapsedBeats() const
 
 void Function::resetElapsed()
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "[FUNCTION.CPP]" << Q_FUNC_INFO;
     m_elapsed = 0;
     m_elapsedBeats = 0;
 }
@@ -1123,7 +1124,7 @@ void Function::roundElapsed(quint32 roundTime)
 void Function::start(MasterTimer* timer, FunctionParent source, quint32 startTime,
                      uint overrideFadeIn, uint overrideFadeOut, uint overrideDuration, TempoType overrideTempoType)
 {
-    qDebug() << "Function start(). Name:" << m_name << "ID: " << m_id << "source:" << source.type() << source.id() << ", startTime:" << startTime;
+    qDebug() << "[FUNCTION.CPP]" << "Function start(). Name:" << m_name << "ID: " << m_id << "source:" << source.type() << source.id() << ", startTime:" << startTime;
 
     Q_ASSERT(timer != NULL);
 
@@ -1165,7 +1166,7 @@ void Function::setPause(bool enable)
 
 void Function::stop(FunctionParent source, bool preserveAttributes)
 {
-    qDebug() << "Function stop(). Name:" << m_name << "ID: " << m_id << "source:" << source.type() << source.id();
+    qDebug() << "[FUNCTION.CPP]" << "Function stop(). Name:" << m_name << "ID: " << m_id << "source:" << source.type() << source.id();
 
     QMutexLocker sourcesLocker(&m_sourcesMutex);
 
@@ -1290,7 +1291,7 @@ int Function::requestAttributeOverride(int attributeIndex, qreal value)
         attributeID = m_lastOverrideAttributeId;
         m_overrideMap[attributeID] = override;
 
-        qDebug() << name() << "Override requested for new attribute" << attributeIndex << "value" << value << "new ID" << attributeID;
+        qDebug() << "[FUNCTION.CPP]" << name() << "Override requested for new attribute" << attributeIndex << "value" << value << "new ID" << attributeID;
 
         calculateOverrideValue(attributeIndex);
 
@@ -1298,7 +1299,7 @@ int Function::requestAttributeOverride(int attributeIndex, qreal value)
     }
     else
     {
-        qDebug() << name() << "Override requested for existing attribute" << attributeIndex << "value" << value << "single ID" << attributeID;
+        qDebug() << "[FUNCTION.CPP]" << name() << "Override requested for existing attribute" << attributeIndex << "value" << value << "single ID" << attributeID;
     }
 
     // actually apply the new override value
@@ -1318,7 +1319,7 @@ void Function::releaseAttributeOverride(int attributeId)
 
     calculateOverrideValue(attributeIndex);
 
-    qDebug() << name() << "Attribute override released" << attributeId;
+    qDebug() << "[FUNCTION.CPP]" << name() << "Attribute override released" << attributeId;
 }
 
 bool Function::unregisterAttribute(QString name)

@@ -141,6 +141,9 @@ public:
       * all the intensity channels will be updated */
     void setFadeOut(bool enable, uint fadeTime);
 
+    void setLouPriority(int priority);
+    int louPriority() const;
+
     /**
      * Set the blend mode to be applied in the write method
      *
@@ -173,6 +176,7 @@ private:
     bool m_deleteRequest;
     Universe::BlendMode m_blendMode;
     bool m_monitoring;
+    int m_louPriority;
 };
 
 /** @} */

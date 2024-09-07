@@ -653,7 +653,7 @@ void Chaser::write(MasterTimer* timer, QList<Universe *> universes)
 
     if (m_startupAction.m_action == ChaserPauseRequest)
     {
-        qDebug() << "[Chaser] Request PAUSE" << m_startupAction.m_fadeMode;
+        qDebug() << "[chaser.cpp] " << "[Chaser] Request PAUSE" << m_startupAction.m_fadeMode;
         m_runner->setAction(m_startupAction);
         m_startupAction.m_action = ChaserNoAction;
     }

@@ -178,14 +178,14 @@ void FunctionManager::slotFunctionAdded(quint32 id)
 
 void FunctionManager::showEvent(QShowEvent* ev)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "[FunctionManager] " << Q_FUNC_INFO;
     emit functionManagerActive(true);
     QWidget::showEvent(ev);
 }
 
 void FunctionManager::hideEvent(QHideEvent* ev)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "[FunctionManager] " << Q_FUNC_INFO;
     emit functionManagerActive(false);
     QWidget::hideEvent(ev);
 }
@@ -429,7 +429,7 @@ void FunctionManager::slotAddAudio()
     QStringList extList = m_doc->audioPluginCache()->getSupportedFormats();
 
     QStringList filters;
-    qDebug() << Q_FUNC_INFO << "Extensions: " << extList.join(" ");
+    qDebug() << "[FunctionManager] " << Q_FUNC_INFO << "Extensions: " << extList.join(" ");
     filters << tr("Audio Files (%1)").arg(extList.join(" "));
 #if defined(WIN32) || defined(Q_OS_WIN)
     filters << tr("All Files (*.*)");
@@ -482,7 +482,7 @@ void FunctionManager::slotAddVideo()
     QStringList extList = Video::getVideoCapabilities();
 
     QStringList filters;
-    qDebug() << Q_FUNC_INFO << "Extensions: " << extList.join(" ");
+    qDebug() << "[FunctionManager] " << Q_FUNC_INFO << "Extensions: " << extList.join(" ");
     filters << tr("Video Files (%1)").arg(extList.join(" "));
 #if defined(WIN32) || defined(Q_OS_WIN)
     filters << tr("All Files (*.*)");

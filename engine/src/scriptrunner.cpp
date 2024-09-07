@@ -155,6 +155,7 @@ bool ScriptRunner::write(MasterTimer *timer, QList<Universe *> universes)
             QSharedPointer<GenericFader> fader = m_fadersMap.value(val.m_universe, QSharedPointer<GenericFader>());
             if (fader.isNull())
             {
+                qDebug() << "[" << Q_FUNC_INFO << "]";
                 fader = universes[val.m_universe]->requestFader();
                 //fader->adjustIntensity(getAttributeValue(Intensity));
                 //fader->setBlendMode(blendMode());

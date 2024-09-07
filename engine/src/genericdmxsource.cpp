@@ -16,7 +16,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-
+#include <QDebug>
 #include "genericdmxsource.h"
 #include "genericfader.h"
 #include "mastertimer.h"
@@ -120,6 +120,7 @@ void GenericDMXSource::writeDMX(MasterTimer* timer, QList<Universe *> ua)
             QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
             if (fader.isNull())
             {
+                qDebug() << "[" << Q_FUNC_INFO << "]";
                 fader = ua[universe]->requestFader();
                 m_fadersMap[universe] = fader;
             }

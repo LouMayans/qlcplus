@@ -373,6 +373,7 @@ void VCXYPad::writeDMX(MasterTimer* timer, QList<Universe *> universes)
 
 void VCXYPad::writeXYFixtures(MasterTimer *timer, QList<Universe *> universes)
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]";
     Q_UNUSED(timer);
 
     if (m_area->hasPositionChanged() == false)
@@ -400,6 +401,7 @@ void VCXYPad::writeXYFixtures(MasterTimer *timer, QList<Universe *> universes)
             QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
             if (fader.isNull())
             {
+                qDebug() << "[" << Q_FUNC_INFO << "]";
                 fader = universes[universe]->requestFader();
                 fader->adjustIntensity(intensity());
                 m_fadersMap[universe] = fader;
@@ -440,6 +442,7 @@ void VCXYPad::writeScenePositions(MasterTimer *timer, QList<Universe *> universe
         QSharedPointer<GenericFader> fader = m_fadersMap.value(sc.m_universe, QSharedPointer<GenericFader>());
         if (fader.isNull())
         {
+            qDebug() << "[" << Q_FUNC_INFO << "]";
             fader = universes[sc.m_universe]->requestFader();
             fader->adjustIntensity(intensity());
             m_fadersMap[sc.m_universe] = fader;

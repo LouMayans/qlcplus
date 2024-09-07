@@ -266,6 +266,7 @@ signals:
     void universeAdded(quint32 id);
     void universeRemoved(quint32 id);
     void universeWritten(quint32 index, const QByteArray& universesData);
+    void updateDebugTextT(QString message);
 
 private:
     /** The values of all universes */

@@ -355,7 +355,7 @@ QList<SceneValue> Fixture::positionToValues(int type, int degrees, bool isRelati
             if (panLSB != QLCChannel::invalid())
                 posList.append(SceneValue(id(), panLSB, static_cast<uchar>(degToDmx & 0x00FF)));
 
-            qDebug() << "[positionToValues] Pan MSB:" << msbValue << "LSB:" << lsbValue;
+            qDebug() << "[fixture][]" << "[positionToValues] Pan MSB:" << msbValue << "LSB:" << lsbValue;
 
             chDone.append(panMSB);
         }
@@ -392,7 +392,7 @@ QList<SceneValue> Fixture::positionToValues(int type, int degrees, bool isRelati
             if (tiltLSB != QLCChannel::invalid())
                 posList.append(SceneValue(id(), tiltLSB, static_cast<uchar>(degToDmx & 0x00FF)));
 
-            qDebug() << "[positionToValues] Tilt MSB:" << msbValue << "LSB:" << lsbValue;
+            qDebug() << "[fixture][]" << "[positionToValues] Tilt MSB:" << msbValue << "LSB:" << lsbValue;
 
             chDone.append(tiltMSB);
         }
@@ -416,7 +416,7 @@ QList<SceneValue> Fixture::zoomToValues(float degrees, bool isRelative)
     float deltaDegrees = phy.lensDegreesMax() - phy.lensDegreesMin();
     // delta : 0xFFFF = deg : x
     quint16 degToDmx = ((degrees - (isRelative ? 0 : float(phy.lensDegreesMin()))) * 65535.0) / deltaDegrees;
-    //qDebug() << "Degrees" << degrees << "DMX" << QString::number(degToDmx, 16);
+    //qDebug() << "[fixture][]" << "Degrees" << degrees << "DMX" << QString::number(degToDmx, 16);
 
     for (quint32 i = 0; i < quint32(m_fixtureMode->channels().size()); i++)
     {
@@ -437,7 +437,7 @@ QList<SceneValue> Fixture::zoomToValues(float degrees, bool isRelative)
             qreal divider = ch->controlByte() == QLCChannel::MSB ? 256.0 : 65536.0;
             float chDegrees = float((phy.lensDegreesMax() - phy.lensDegreesMin()) / divider) * float(channelValueAt(i));
 
-            //qDebug() << "Relative channel degrees:" << chDegrees << "MSB?" << ch->controlByte();
+            //qDebug() << "[fixture][]" << "Relative channel degrees:" << chDegrees << "MSB?" << ch->controlByte();
 
             quint16 currDmxVal = (chDegrees * 65535.0) / deltaDegrees;
             degToDmx += currDmxVal;
@@ -536,7 +536,7 @@ void Fixture::setChannelModifier(quint32 idx, ChannelModifier *mod)
         return;
     }
 
-    qDebug() << Q_FUNC_INFO << idx << mod->name();
+    qDebug() << "[fixture][]" << Q_FUNC_INFO << idx << mod->name();
     m_channelModifiers[idx] = mod;
 }
 
@@ -1124,10 +1124,10 @@ bool Fixture::loadXML(QXmlStreamReader &xmlDoc, Doc *doc,
                     .arg(doc->getWorkspacePath()).arg(QDir::separator())
                     .arg(man.replace(" ", "-")).arg(mod.replace(" ", "-")).arg(KExtFixture);
 
-            qDebug() << "Fixture not found. Fallback to:" << path;
+            qDebug() << "[fixture][]" << "Fixture not found. Fallback to:" << path;
 
             if (fixtureDefCache->loadQXF(path, true) == false)
-                qDebug() << "Failed to load definition" << path;
+                qDebug() << "[fixture][]" << "Failed to load definition" << path;
 
             fixtureDef = fixtureDefCache->fixtureDef(manufacturer, model);
             if (fixtureDef == NULL)

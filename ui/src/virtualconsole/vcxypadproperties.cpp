@@ -462,6 +462,7 @@ void VCXYPadProperties::slotTiltInputValueChanged(quint32 uni, quint32 ch)
 
 void VCXYPadProperties::writeDMX(MasterTimer *timer, QList<Universe *> universes)
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]";
     Q_UNUSED(timer);
 
     if (m_tab->currentIndex() != 2 || m_xyArea->hasPositionChanged() == false)
@@ -492,6 +493,7 @@ void VCXYPadProperties::writeDMX(MasterTimer *timer, QList<Universe *> universes
         QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
         if (fader.isNull())
         {
+            qDebug() << "[" << Q_FUNC_INFO << "]";
             fader = universes[universe]->requestFader();
             m_fadersMap[universe] = fader;
         }

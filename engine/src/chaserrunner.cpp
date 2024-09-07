@@ -834,6 +834,6 @@ void ChaserRunner::postRun(MasterTimer *timer, QList<Universe*> universes)
     Q_UNUSED(universes);
     Q_UNUSED(timer);
 
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "[FunctionManager][postRun] " << Q_FUNC_INFO;
     clearRunningList();
 }

@@ -118,7 +118,7 @@ QFile::FileError ChannelModifier::saveXML(const QString &fileName)
 
     doc.writeTextElement(KXMLQLCChannelModName, m_name);
 
-    qDebug() << "Got map with" << m_map.count() << "handlers";
+    qDebug() << "[channelmodifier] " << "Got map with" << m_map.count() << "handlers";
     for (int i = 0; i < m_map.count(); i++)
     {
         QPair<uchar, uchar> mapElement = m_map.at(i);

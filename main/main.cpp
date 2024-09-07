@@ -98,7 +98,7 @@ namespace QLCArgs
     QtMsgType debugLevel = QtCriticalMsg;
 
     /** Log to file flag */
-    bool logToFile = false;
+    bool logToFile = true;
 
     QFile logFile;
 
@@ -115,18 +115,23 @@ void qlcMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
 {
     Q_UNUSED(context)
 
-    QByteArray localMsg = msg.toLocal8Bit();
+    QByteArray localMsg = msg.toUtf8();
     if (type >= QLCArgs::debugLevel)
     {
-        if (QLCArgs::logToFile == true && QLCArgs::logFile.isOpen())
-        {
-            QLCArgs::logFile.write(localMsg);
-            QLCArgs::logFile.write((char *)"\n");
-            QLCArgs::logFile.flush();
-        }
-        fprintf(stderr, "%s\n", localMsg.constData());
-        fflush(stderr);
     }
+
+    if(localMsg == NULL){
+        return;
+    }
+
+    if (QLCArgs::logToFile == true && QLCArgs::logFile.isOpen())
+    {
+        QLCArgs::logFile.write(localMsg);
+        QLCArgs::logFile.write((char *)"\n");
+        QLCArgs::logFile.flush();
+    }
+    fprintf(stderr, "%s\n", localMsg.constData());
+    fflush(stderr);
 }
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
@@ -215,7 +220,7 @@ bool parseArgs()
         else if (arg == "-g" || arg == "--log")
         {
             QLCArgs::logToFile = true;
-            QString logFilename = QDir::homePath() + QDir::separator() + "QLC+.log";
+            QString logFilename = QDir::homePath() + QDir::separator() + "QLCT+.log";
             QLCArgs::logFile.setFileName(logFilename);
             QLCArgs::logFile.open(QIODevice::Append);
         }

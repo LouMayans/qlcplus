@@ -451,7 +451,7 @@ void Collection::setBlendMode(Universe::BlendMode mode)
     if (mode == blendMode())
         return;
 
-    qDebug() << "Collection" << name() << "blend mode set to" << Universe::blendModeToString(mode);
+    qDebug() << "[Collection][setBlendMode]" << name() << "blend mode set to" << Universe::blendModeToString(mode);
 
     if (isRunning())
     {

@@ -150,7 +150,7 @@ uint Cue::duration() const
 
 bool Cue::loadXML(QXmlStreamReader &root)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "[cue][loadXML] " << Q_FUNC_INFO;
 
     if (root.name() != KXMLQLCCue)
     {
@@ -185,7 +185,7 @@ bool Cue::loadXML(QXmlStreamReader &root)
 
 bool Cue::saveXML(QXmlStreamWriter *doc) const
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "[cue][saveXML] " << Q_FUNC_INFO;
     Q_ASSERT(doc != NULL);
 
     doc->writeStartElement(KXMLQLCCue);

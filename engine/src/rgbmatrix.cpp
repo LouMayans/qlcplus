@@ -681,6 +681,7 @@ FadeChannel *RGBMatrix::getFader(QList<Universe *> universes, quint32 universeID
     QSharedPointer<GenericFader> fader = m_fadersMap.value(universeID, QSharedPointer<GenericFader>());
     if (fader.isNull())
     {
+        qDebug() << "[" << Q_FUNC_INFO << "]";
         fader = universes[universeID]->requestFader();
         fader->adjustIntensity(getAttributeValue(Intensity));
         fader->setBlendMode(blendMode());

@@ -90,7 +90,7 @@ Doc::Doc(QObject* parent, int universes)
 #if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
     qsrand(QTime::currentTime().msec());
 #endif
-    
+
 }
 
 Doc::~Doc()
@@ -275,7 +275,7 @@ QSharedPointer<AudioCapture> Doc::audioInputCapture()
 {
     if (!m_inputCapture)
     {
-        qDebug() << "Creating new audio capture";
+        qDebug() << "[doc][]" << "Creating new audio capture";
         m_inputCapture = QSharedPointer<AudioCapture>(
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 #if defined(__APPLE__) || defined(Q_OS_MAC)
@@ -299,7 +299,7 @@ void Doc::destroyAudioCapture()
 {
     if (m_inputCapture.isNull() == false)
     {
-        qDebug() << "Destroying audio capture";
+        qDebug() << "[doc][]" << "Destroying audio capture";
         m_inputCapture.clear();
     }
 }
@@ -346,7 +346,7 @@ void Doc::setMode(Doc::Mode mode)
         Function *func = function(m_startupFunctionId);
         if (func != NULL)
         {
-            qDebug() << Q_FUNC_INFO << "Starting startup function. (" << m_startupFunctionId << ")";
+            qDebug() << "[doc][]" << Q_FUNC_INFO << "Starting startup function. (" << m_startupFunctionId << ")";
             func->start(masterTimer(), FunctionParent::master());
         }
         else
@@ -710,7 +710,7 @@ void Doc::slotFixtureChanged(quint32 id)
         it.next();
         if (it.value() == id)
         {
-            qDebug() << Q_FUNC_INFO << " remove: " << it.key() << " val: " << it.value();
+            qDebug() << "[doc][]" << Q_FUNC_INFO << " remove: " << it.key() << " val: " << it.value();
             it.remove();
         }
     }
@@ -872,10 +872,10 @@ bool Doc::moveChannelGroup(quint32 id, int direction)
     if (idx + direction < 0 || idx + direction >= m_orderedGroups.count())
         return false;
 
-    qDebug() << Q_FUNC_INFO << m_orderedGroups;
+    qDebug() << "[doc][]" << Q_FUNC_INFO << m_orderedGroups;
     m_orderedGroups.takeAt(idx);
     m_orderedGroups.insert(idx + direction, id);
-    qDebug() << Q_FUNC_INFO << m_orderedGroups;
+    qDebug() << "[doc][]" << Q_FUNC_INFO << m_orderedGroups;
 
     setModified();
     return true;
@@ -1173,7 +1173,7 @@ QList<quint32> Doc::getUsage(quint32 fid)
                     if (l.at(i) == fid)
                     {
                         if (i + 1 >= l.count()) {
-                            qDebug() << "Doc::getUsage: Index entry missing on " << f->name();
+                            qDebug() << "[doc][]" << "Doc::getUsage: Index entry missing on " << f->name();
                             break;
                         }
                         usageList.append(s->id());
@@ -1256,7 +1256,7 @@ bool Doc::loadXML(QXmlStreamReader &doc, bool loadIO)
 
     while (doc.readNextStartElement())
     {
-        //qDebug() << "Doc tag:" << doc.name();
+        //qDebug() << "[doc][]" << "Doc tag:" << doc.name();
         if (doc.name() == KXMLFixture)
         {
             Fixture::loader(doc, this);
@@ -1276,7 +1276,7 @@ bool Doc::loadXML(QXmlStreamReader &doc, bool loadIO)
         }
         else if (doc.name() == KXMLQLCFunction)
         {
-            //qDebug() << doc.attributes().value("Name").toString();
+            //qDebug() << "[doc][]" << doc.attributes().value("Name").toString();
             Function::loader(doc, this);
         }
         else if (doc.name() == KXMLQLCBus)

@@ -110,7 +110,7 @@ void MasterTimer::timerTick()
     Q_ASSERT(doc != NULL);
 
 #ifdef DEBUG_MASTERTIMER
-    qDebug() << "[MasterTimer] *********** tick:" << ticksCount++ << "**********";
+    qDebug() << "[mastertimer][]" << "[MasterTimer] *********** tick:" << ticksCount++ << "**********";
 #endif
 
     switch (m_beatSourceType)
@@ -118,7 +118,7 @@ void MasterTimer::timerTick()
         case Internal:
         {
             int elapsedTime = qRound((double)m_beatTimer->nsecsElapsed() / 1000000) + m_lastBeatOffset;
-            //qDebug() << "Elapsed beat:" << elapsedTime;
+            //qDebug() << "[mastertimer][]" << "Elapsed beat:" << elapsedTime;
             if (elapsedTime >= m_beatTimeDuration)
             {
                 // it's time to fire a beat
@@ -126,7 +126,7 @@ void MasterTimer::timerTick()
 
                 // restart the time for the next beat, starting at a delta
                 // milliseconds, otherwise it will generate an unpleasant drift
-                //qDebug() << "Elapsed:" << elapsedTime << ", delta:" << elapsedTime - m_beatTimeDuration;
+                //qDebug() << "[mastertimer][]" << "Elapsed:" << elapsedTime << ", delta:" << elapsedTime - m_beatTimeDuration;
                 m_lastBeatOffset = elapsedTime - m_beatTimeDuration;
                 m_beatTimer->restart();
 
@@ -153,7 +153,7 @@ void MasterTimer::timerTick()
 
     m_beatRequested = false;
 
-    //qDebug() << ">>>>>>>> MASTERTIMER TICK";
+    //qDebug() << "[mastertimer][]" << ">>>>>>>> MASTERTIMER TICK";
     emit tickReady();
 }
 
@@ -228,6 +228,7 @@ int MasterTimer::runningFunctions() const
 
 void MasterTimer::timerTickFunctions(QList<Universe *> universes)
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]";
     // List of m_functionList indices that should be removed at the end of this
     // function. The functions at the indices have been stopped.
     QList<int> removeList;
@@ -260,7 +261,7 @@ void MasterTimer::timerTickFunctions(QList<Universe *> universes)
                         function->stop(FunctionParent::master());
                     /* Function should be stopped instead */
                     function->postRun(this, universes);
-                    //qDebug() << "[MasterTimer] Add function (ID: " << function->id() << ") to remove list ";
+                    //qDebug() << "[mastertimer][]" << "[MasterTimer] Add function (ID: " << function->id() << ") to remove list ";
                     removeList << i; // Don't remove the item from the list just yet.
                     functionListHasChanged = true;
                     stoppedAFunction = true;
@@ -323,6 +324,7 @@ void MasterTimer::timerTickFunctions(QList<Universe *> universes)
 
 void MasterTimer::registerDMXSource(DMXSource *source)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     Q_ASSERT(source != NULL);
 
     QMutexLocker lock(&m_dmxSourceListMutex);
@@ -332,6 +334,7 @@ void MasterTimer::registerDMXSource(DMXSource *source)
 
 void MasterTimer::unregisterDMXSource(DMXSource *source)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     Q_ASSERT(source != NULL);
 
     QMutexLocker lock(&m_dmxSourceListMutex);
@@ -348,7 +351,7 @@ void MasterTimer::timerTickDMXSources(QList<Universe *> universes)
         Q_ASSERT(source != NULL);
 
 #ifdef DEBUG_MASTERTIMER
-        qDebug() << "[MasterTimer] ticking DMX source" << i;
+        qDebug() << "[mastertimer][]" << "[MasterTimer] ticking DMX source" << i;
 #endif
 
         /* Get DMX data from the source */

@@ -1153,6 +1153,7 @@ void VCSlider::writeDMXLevel(MasterTimer* timer, QList<Universe *> universes)
             QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>(nullptr));
             if (fader.isNull())
             {
+                qDebug() << "[" << Q_FUNC_INFO << "]";
                 fader = universes[universe]->requestFader(m_monitorEnabled ? Universe::Override : Universe::Auto);
                 m_fadersMap[universe] = fader;
             }

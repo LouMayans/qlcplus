@@ -387,7 +387,7 @@ void EFX::calculatePoint(float iterator, float *x, float *y) const
         *x = round(cos(iterator));
         *y = round(sin(iterator));
         break;
-		
+
 	case SquareTrue:
         if (iterator < M_PI / 2)
         {
@@ -1076,6 +1076,7 @@ QSharedPointer<GenericFader> EFX::getFader(QList<Universe *> universes, quint32 
     QSharedPointer<GenericFader> fader = m_fadersMap.value(universeID, QSharedPointer<GenericFader>());
     if (fader.isNull())
     {
+        qDebug() << "[" << Q_FUNC_INFO << "]";
         fader = universes[universeID]->requestFader();
         fader->adjustIntensity(getAttributeValue(Intensity));
         fader->setBlendMode(blendMode());

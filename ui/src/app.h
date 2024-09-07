@@ -25,6 +25,7 @@
 #include <QString>
 #include <QList>
 #include <QFile>
+#include <QLineEdit>
 
 #include "dmxdumpfactoryproperties.h"
 #include "qlcfixturedefcache.h"
@@ -124,9 +125,11 @@ public:
 private slots:
     void slotDocModified(bool state);
     void slotUniverseWritten(quint32 idx, const QByteArray& ua);
+    void updateDebugText(const QString message);
 
 private:
     void initDoc();
+    int universeWrittenCount = 0;
 
 private:
     Doc* m_doc;
@@ -200,6 +203,8 @@ private:
     QAction* m_quitAction;
     QMenu* m_fileOpenMenu;
     QMenu* m_fadeAndStopMenu;
+
+    QLineEdit* m_debugText;
 
 private:
     QToolBar* m_toolbar;

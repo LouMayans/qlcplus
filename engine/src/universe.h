@@ -366,6 +366,7 @@ protected:
 
 signals:
     void universeWritten(quint32 universeID, const QByteArray& universeData);
+    void updateDebugTextT(QString message);
 
 protected:
     QSemaphore m_semaphore;
@@ -473,6 +474,7 @@ protected:
     /** A list of non-intensity channels to optimize operations on HTP/LTP channels */
     QVector<int> m_nonIntensityChannels;
     /** Array of values BEFORE the Grand Master changes */
+    QVector<int> m_channelLouPriority;
     QScopedPointer<QByteArray> m_preGMValues;
     /** Array of values AFTER the Grand Master changes (applyGM) */
     QScopedPointer<QByteArray> m_postGMValues;
@@ -517,7 +519,7 @@ public:
      *
      * @return true if successful, otherwise false
      */
-    bool write(int address, uchar value, bool forceLTP = false);
+    bool write(int address, uchar value,int addressPriority = 0, bool forceLTP = false);
 
     /**
      * Write a value representing one or multiple channels
@@ -527,7 +529,7 @@ public:
      * @param channelCount number of channels that value represents
      * @return always true
      */
-    bool writeMultiple(int address, quint32 value, int channelCount);
+    bool writeMultiple(int address, quint32 value, int channelCount,int addressPriority = 0);
 
     /**
      * Write a relative value to a DMX channel, taking Grand Master and HTP into
@@ -553,7 +555,7 @@ public:
      *
      * @return true if successful, otherwise false
      */
-    bool writeBlended(int address, quint32 value, int channelCount, BlendMode blend);
+    bool writeBlended(int address, quint32 value, int channelCount, BlendMode blend,int addressPriority = 0);
 
     /*********************************************************************
      * Load & Save
