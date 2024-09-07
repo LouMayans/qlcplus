@@ -107,6 +107,7 @@ private:
 
 private slots:
     void slotNameEdited(const QString &text);
+    void slotLouPriorityEdited(int louPriority);
     void slotSpeedDialToggle(bool state);
     void slotFixtureItemChanged(QTreeWidgetItem* item, int column);
     void slotFixtureModeChanged(int index);

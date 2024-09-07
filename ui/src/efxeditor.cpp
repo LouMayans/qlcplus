@@ -139,6 +139,13 @@ void EFXEditor::initGeneralPage()
     m_nameEdit->setText(m_efx->name());
     m_nameEdit->setSelection(0, m_nameEdit->text().length());
 
+
+    m_louPriority->setValue(m_efx->priority());
+    m_louPriority->setMinimum(0);
+    m_louPriority->setMaximum(100000);
+    m_louPriority->setSingleStep(1);
+    connect(m_louPriority, SIGNAL(valueChanged(int)), this, SLOT(slotLouPriorityEdited(int)));
+
     /* Put all of the EFX's fixtures to the tree view */
     updateFixtureTree();
 
@@ -190,6 +197,13 @@ void EFXEditor::initGeneralPage()
             this, SLOT(slotRestartTest()));
     connect(m_asymmetricRadio, SIGNAL(toggled(bool)),
             this, SLOT(slotRestartTest()));
+}
+
+void EFXEditor::slotLouPriorityEdited(const int louPriority)
+{
+    qDebug() << Q_FUNC_INFO << m_efx->priority();
+    m_efx->setPriority(louPriority);
+    qDebug() << Q_FUNC_INFO << m_efx->priority();
 }
 
 void EFXEditor::initMovementPage()

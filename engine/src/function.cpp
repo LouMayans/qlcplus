@@ -1124,7 +1124,7 @@ void Function::roundElapsed(quint32 roundTime)
 void Function::start(MasterTimer* timer, FunctionParent source, quint32 startTime,
                      uint overrideFadeIn, uint overrideFadeOut, uint overrideDuration, TempoType overrideTempoType)
 {
-    qDebug() << "[FUNCTION.CPP]" << "Function start(). Name:" << m_name << "ID: " << m_id << "source:" << source.type() << source.id() << ", startTime:" << startTime;
+    qDebug() << "[FUNCTION.CPP]" << "Function start(). Name:" << m_name << "ID: " << m_id << "source:" << source.type() << source.id() << ", startTime:" << startTime << " PRIORITY: " << priority();
 
     Q_ASSERT(timer != NULL);
 
