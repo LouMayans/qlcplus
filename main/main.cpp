@@ -220,9 +220,12 @@ bool parseArgs()
         else if (arg == "-g" || arg == "--log")
         {
             QLCArgs::logToFile = true;
+
             QString logFilename = QDir::homePath() + QDir::separator() + "QLCT+.log";
             QLCArgs::logFile.setFileName(logFilename);
             QLCArgs::logFile.open(QIODevice::Append);
+            QLCArgs::logFile.resize(0);
+            QLCArgs::logFile.write(QDir::rootPath().toUtf8());
         }
         else if (arg == "-f" || arg == "--fullscreen")
         {
