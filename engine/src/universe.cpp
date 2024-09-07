@@ -334,7 +334,6 @@ void Universe::processFaders()
 
     if (dataChanged){
         emit universeWritten(id(), postGM);
-        // emit updateDebugTextT("AAA" + QString(m_postGMValues->mid(0, m_usedChannels)));
 
         int arr[postGM.count()];
 
@@ -345,7 +344,6 @@ void Universe::processFaders()
         }
 
         memcpy(arr,postGM.data(),postGM.count());
-        emit updateDebugTextT("Universe Updated : " + My_String);
     }
 }
 

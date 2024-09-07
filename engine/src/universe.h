@@ -366,7 +366,6 @@ protected:
 
 signals:
     void universeWritten(quint32 universeID, const QByteArray& universeData);
-    void updateDebugTextT(QString message);
 
 protected:
     QSemaphore m_semaphore;

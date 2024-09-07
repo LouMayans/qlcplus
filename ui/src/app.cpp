@@ -293,9 +293,6 @@ void App::init()
     connect(m_doc->inputOutputMap(), SIGNAL(universeWritten(quint32, const QByteArray&)),
             this, SLOT(slotUniverseWritten(quint32, const QByteArray&)));
 
-    connect(m_doc->inputOutputMap(), SIGNAL(updateDebugTextT(QString)),
-        this, SLOT(updateDebugText(QString)));
-
     // Enable/Disable panic button
     connect(m_doc->masterTimer(), SIGNAL(functionListChanged()), this, SLOT(slotRunningFunctionsChanged()));
     slotRunningFunctionsChanged();
@@ -511,13 +508,6 @@ void App::slotUniverseWritten(quint32 idx, const QByteArray &ua)
 
         fixture->setChannelValues(ua);
     }
-
-    // updateDebugText(QStringLiteral("UNIVERSE WRITTEN ") + QString::number(++universeWrittenCount));
-    //qDebug() << "UNIVERSE WRITTEN ";
-}
-
-void App::updateDebugText(QString message){
-    m_debugText->setText(m_debugText->text() +  "||"  + message);
 }
 
 /*****************************************************************************
@@ -739,9 +729,6 @@ void App::initToolBar()
     m_toolbar->addAction(m_controlFullScreenAction);
     m_toolbar->addAction(m_helpIndexAction);
     m_toolbar->addAction(m_helpAboutAction);
-
-    m_debugText = new QLineEdit();
-    m_toolbar->addWidget(m_debugText);
 
     if (QLCFile::hasWindowManager() == false)
         m_toolbar->addAction(m_quitAction);
@@ -1103,9 +1090,6 @@ void App::slotRunningFunctionsChanged()
         m_controlPanicAction->setEnabled(true);
     else
         m_controlPanicAction->setEnabled(false);
-
-    //updateDebugText(QStringLiteral("HELLO ") + QString::number(m_doc->masterTimer()->runningFunctions()));
-    // updateDebugText(m_doc->masterTimer()->runningFunctions());
 }
 
 void App::slotDumpDmxIntoFunction()

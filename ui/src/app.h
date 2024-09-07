@@ -125,7 +125,6 @@ public:
 private slots:
     void slotDocModified(bool state);
     void slotUniverseWritten(quint32 idx, const QByteArray& ua);
-    void updateDebugText(const QString message);
 
 private:
     void initDoc();
@@ -203,9 +202,6 @@ private:
     QAction* m_quitAction;
     QMenu* m_fileOpenMenu;
     QMenu* m_fadeAndStopMenu;
-
-    QLineEdit* m_debugText;
-
 private:
     QToolBar* m_toolbar;
 
