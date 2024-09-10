@@ -77,6 +77,7 @@ VCWidget::VCWidget(QWidget* parent, Doc* doc)
     m_hasCustomForegroundColor = false;
     m_backgroundImage = QString();
     m_hasCustomFont = false;
+
     m_frameStyle = KVCFrameStyleNone;
 
     m_resizeMode = false;
@@ -102,6 +103,14 @@ VCWidget::~VCWidget()
 /*****************************************************************************
  * ID
  *****************************************************************************/
+
+int VCWidget::louPriority() const{
+    return m_louPriority ?: 0;
+}
+
+void VCWidget::setLouPriority(const int louPriority){
+    m_louPriority = louPriority;
+}
 
 void VCWidget::setID(quint32 id)
 {
@@ -813,6 +822,7 @@ void VCWidget::postLoad()
 
 bool VCWidget::loadXMLCommon(QXmlStreamReader &root)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     if (root.device() == NULL || root.hasError())
         return false;
 
@@ -830,11 +840,15 @@ bool VCWidget::loadXMLCommon(QXmlStreamReader &root)
     if (attrs.hasAttribute(KXMLQLCVCWidgetPage))
         setPage(attrs.value(KXMLQLCVCWidgetPage).toString().toInt());
 
+    setLouPriority(attrs.value(KXMLQLCFunctionPriority).toInt());
+    qDebug() << "LOUUU" << louPriority();
+
     return true;
 }
 
 bool VCWidget::loadXMLAppearance(QXmlStreamReader &root)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     if (root.device() == NULL || root.hasError())
         return false;
 
@@ -924,6 +938,7 @@ QSharedPointer<QLCInputSource> VCWidget::getXMLInput(QXmlStreamReader &root)
 
 bool VCWidget::loadXMLInput(QXmlStreamReader &root, const quint8 &id)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     if (root.device() == NULL || root.hasError())
         return false;
 
@@ -941,6 +956,7 @@ bool VCWidget::loadXMLInput(QXmlStreamReader &root, const quint8 &id)
 
 QString VCWidget::loadXMLSources(QXmlStreamReader &root, quint8 sourceID)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     QString keyText;
     while (root.readNextStartElement())
     {
@@ -963,6 +979,7 @@ QString VCWidget::loadXMLSources(QXmlStreamReader &root, quint8 sourceID)
 
 bool VCWidget::loadXMLInput(QXmlStreamReader &root, quint32* uni, quint32* ch) const
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     if (root.name() != KXMLQLCVCWidgetInput)
     {
         qWarning() << Q_FUNC_INFO << "Input node not found!";
@@ -1000,6 +1017,7 @@ bool VCWidget::saveXMLCommon(QXmlStreamWriter *doc)
 
     /* Caption */
     doc->writeAttribute(KXMLQLCVCCaption, caption());
+    doc->writeAttribute(KXMLQLCFunctionPriority, QString::number(louPriority()));
 
     /* ID */
     if (id() != VCWidget::invalidId())
@@ -1137,6 +1155,7 @@ bool VCWidget::saveXMLWindowState(QXmlStreamWriter *doc)
 bool VCWidget::loadXMLWindowState(QXmlStreamReader &tag, int* x, int* y,
                                   int* w, int* h, bool* visible)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     if (tag.device() == NULL || x == NULL || y == NULL || w == NULL || h == NULL ||
             visible == NULL)
         return false;
@@ -1144,6 +1163,7 @@ bool VCWidget::loadXMLWindowState(QXmlStreamReader &tag, int* x, int* y,
     if (tag.name() == KXMLQLCWindowState)
     {
         QXmlStreamAttributes attrs = tag.attributes();
+        // setLouPriority(attrs.value(KXMLQLCFunctionPriority).toInt());
         *x = attrs.value(KXMLQLCWindowStateX).toString().toInt();
         *y = attrs.value(KXMLQLCWindowStateY).toString().toInt();
         *w = attrs.value(KXMLQLCWindowStateWidth).toString().toInt();

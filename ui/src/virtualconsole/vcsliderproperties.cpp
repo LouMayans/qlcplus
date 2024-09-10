@@ -29,6 +29,7 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QAction>
+#include <QDebug>
 
 #include "qlccapability.h"
 #include "qlcchannel.h"
@@ -99,6 +100,13 @@ VCSliderProperties::VCSliderProperties(VCSlider* slider, Doc* doc)
 
     /* Name */
     m_nameEdit->setText(m_slider->caption());
+
+    qDebug() << "[" << Q_FUNC_INFO << "]";
+    qDebug() << "[" << Q_FUNC_INFO << "]" << m_slider->louPriority();
+    m_louPriority->setValue(m_slider->louPriority());
+    m_louPriority->setMinimum(0);
+    m_louPriority->setMaximum(100000);
+    m_louPriority->setSingleStep(1);
 
     /* Widget appearance */
     if (m_slider->widgetStyle() == VCSlider::WKnob)
@@ -846,6 +854,7 @@ void VCSliderProperties::accept()
     else
         m_slider->setCatchValues(false);
 
+
     /* Level page */
     bool limitDiff =
         (m_slider->levelLowLimit() != m_levelLowLimitSpin->value()) ||
@@ -896,6 +905,7 @@ void VCSliderProperties::accept()
     }
 
     m_slider->setCaption(m_nameEdit->text());
+    m_slider->setLouPriority(m_louPriority->value());
 
     /* Value style */
     if (m_valueExactRadio->isChecked() == true)

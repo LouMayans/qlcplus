@@ -307,7 +307,7 @@ void Universe::processFaders()
     {
 
         QSharedPointer<GenericFader> fader = it.next();
-        qDebug() << "[" << Q_FUNC_INFO << "]" << "FADER COUNT " << i++ << fader->louPriority();
+        qDebug() << "[" << Q_FUNC_INFO << "]" << "FADER COUNT " << i++ << fader->louPriority() << fader.isNull() << fader->isFadingOut() << fader->isEnabled();
         if (fader.isNull())
             continue;
 
@@ -927,12 +927,15 @@ bool Universe::write(int address, uchar value,int addressPriority, bool forceLTP
     Q_ASSERT(address < UNIVERSE_SIZE);
 
     //qDebug() << "[Universe]" << id() << ": write channel" << address << ", value:" << value;
+    qDebug() << "[" << Q_FUNC_INFO << "] CHECKING" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address) << m_channelsMask->at(address);
 
     if (address >= m_usedChannels)
         m_usedChannels = address + 1;
 
+    qDebug() << "[" << Q_FUNC_INFO << "] HTP? " << HTP << (m_channelsMask->at(address) & HTP);
     if (m_channelsMask->at(address) & HTP)
     {
+        qDebug() << "[" << Q_FUNC_INFO << "] values? " << value << (uchar)m_preGMValues->at(address);
         if(addressPriority < m_channelLouPriority.at(address)){
             qDebug() << "[Universe] Didnt pass lous vibe check" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
             return false;
@@ -1019,7 +1022,7 @@ bool Universe::writeRelative(int address, quint32 value, int channelCount)
 
 bool Universe::writeBlended(int address, quint32 value, int channelCount, Universe::BlendMode blend,int addressPriority)
 {
-    // qDebug() << "[" << Q_FUNC_INFO << "]" << " START ";
+    qDebug() << "[" << Q_FUNC_INFO << "]" << " START " << blend;
     if (address + channelCount >= m_usedChannels)
         m_usedChannels = address + channelCount;
 

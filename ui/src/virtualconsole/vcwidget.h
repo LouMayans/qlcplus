@@ -61,6 +61,7 @@ class QFile;
 
 #define KXMLQLCVCWidgetKey                  QString("Key")
 #define KXMLQLCVCWidgetInput                QString("Input")
+#define KXMLQLCFunctionPriority             QString("Priority")
 #define KXMLQLCVCWidgetInputUniverse        QString("Universe")
 #define KXMLQLCVCWidgetInputChannel         QString("Channel")
 #define KXMLQLCVCWidgetInputLowerValue      QString("LowerValue")
@@ -112,10 +113,12 @@ public:
      * Get the value for an invalid widget ID (for comparison etc.)
      */
     static quint32 invalidId();
+    int louPriority() const;
+    void setLouPriority(const int louPriority);
 
 private:
     quint32 m_id;
-
+    int m_louPriority;
     /*********************************************************************
      * Type
      *********************************************************************/
@@ -197,7 +200,6 @@ public:
 protected:
     /** Copy the contents for this widget from the given widget */
     virtual bool copyFrom(const VCWidget* widget);
-
     /*********************************************************************
      * Background image
      *********************************************************************/

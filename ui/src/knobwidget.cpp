@@ -82,6 +82,7 @@ void KnobWidget::prepareCursor()
 
 void KnobWidget::prepareBody()
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     int shortSide = height();
     if (width() < shortSide)
         shortSide = width();
@@ -114,6 +115,7 @@ void KnobWidget::prepareBody()
 
 void KnobWidget::resizeEvent(QResizeEvent *e)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     QDial::resizeEvent(e);
 
     prepareBody();

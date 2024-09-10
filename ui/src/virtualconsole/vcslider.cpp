@@ -327,6 +327,8 @@ void VCSlider::hideEvent(QHideEvent *)
 
 void VCSlider::editProperties()
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
+    qDebug() << "[" << Q_FUNC_INFO << "]" << louPriority();
     VCSliderProperties prop(this, m_doc);
     if (prop.exec() == QDialog::Accepted)
     {
@@ -344,6 +346,7 @@ void VCSlider::editProperties()
 
 void VCSlider::slotModeChanged(Doc::Mode mode)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     if (mode == Doc::Operate)
     {
         enableWidgetUI(true);
@@ -643,6 +646,7 @@ bool VCSlider::channelsMonitorEnabled() const
 
 void VCSlider::setLevelValue(uchar value, bool external)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     QMutexLocker locker(&m_levelValueMutex);
     m_levelValue = CLAMP(value, levelLowLimit(), levelHighLimit());
     if (m_monitorEnabled == true)
@@ -819,6 +823,7 @@ void VCSlider::setClickAndGoWidgetFromLevel(uchar level)
 
 void VCSlider::slotClickAndGoLevelChanged(uchar level)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     setSliderValue(level, false, false);
     updateFeedback();
 
@@ -831,6 +836,7 @@ void VCSlider::slotClickAndGoLevelChanged(uchar level)
 
 void VCSlider::slotClickAndGoColorChanged(QRgb color)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     QColor col(color);
     m_cngRGBvalue = col;
     QPixmap px(42, 42);
@@ -847,6 +853,7 @@ void VCSlider::slotClickAndGoColorChanged(QRgb color)
 
 void VCSlider::slotClickAndGoLevelAndPresetChanged(uchar level, QImage img)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]";
     setSliderValue(level, false, false);
     updateFeedback();
 
@@ -1204,6 +1211,7 @@ void VCSlider::writeDMXLevel(MasterTimer *timer, QList<Universe *> universes)
                 qDebug() << "[" << Q_FUNC_INFO << "]";
                 fader = universes[universe]->requestFader(m_monitorEnabled ? Universe::Override : Universe::Auto);
                 fader->adjustIntensity(intensity());
+                fader->setLouPriority(louPriority());
                 m_fadersMap[universe] = fader;
                 if (m_monitorEnabled)
                 {

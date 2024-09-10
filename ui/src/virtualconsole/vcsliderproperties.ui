@@ -212,6 +212,24 @@
          </property>
         </spacer>
        </item>
+       <item row="7" column="0" colspan="2">
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QLabel" name="m_nameLabel">
+           <property name="text">
+            <string>Priority</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="m_louPriority">
+           <property name="toolTip">
+            <string>Priority of the sldier</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="Level">
