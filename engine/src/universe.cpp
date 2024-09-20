@@ -63,7 +63,7 @@ Universe::Universe(quint32 id, GrandMaster *gm, QObject *parent)
     , m_blackoutValues(new QByteArray(UNIVERSE_SIZE, char(0)))
     , m_passthroughValues()
 {
-    m_channelLouPriority.fill(0,UNIVERSE_SIZE);
+    m_channelLouPriority.fill(-1000,UNIVERSE_SIZE);
     m_modifiers.fill(NULL, UNIVERSE_SIZE);
 
     m_name = QString("Universe %1").arg(id + 1);
@@ -301,13 +301,14 @@ void Universe::processFaders()
     flushInput();
     zeroIntensityChannels();
     // qDebug() << "[" << Q_FUNC_INFO << "]" << "Processing faders";
+    m_channelLouPriority.fill(-1000);
     QMutableListIterator<QSharedPointer<GenericFader> > it(m_faders);
-    int i = 0;
+    // int i = 0;
     while (it.hasNext())
     {
 
         QSharedPointer<GenericFader> fader = it.next();
-        qDebug() << "[" << Q_FUNC_INFO << "]" << "FADER COUNT " << i++ << fader->louPriority() << fader.isNull() << fader->isFadingOut() << fader->isEnabled();
+        // qDebug() << "[" << Q_FUNC_INFO << "]" << "FADER COUNT " << i++ << fader->louPriority() << fader.isNull() << fader->isFadingOut() << fader->isEnabled();
         if (fader.isNull())
             continue;
 
@@ -378,7 +379,7 @@ void Universe::run()
 void Universe::reset()
 {
     m_preGMValues->fill(0);
-    m_channelLouPriority.fill(0);
+    m_channelLouPriority.fill(-1000);
     m_blackoutValues->fill(0);
 
     if (m_passthrough)
@@ -914,7 +915,7 @@ void Universe::updateIntensityChannelsRanges()
     if (currentPos != -1)
         m_intensityChannelsRanges.append((currentPos << 16) | currentSize);
 
-    qDebug() << Q_FUNC_INFO << ":" << m_intensityChannelsRanges.size() << "ranges";
+    // qDebug() << Q_FUNC_INFO << ":" << m_intensityChannelsRanges.size() << "ranges";
 }
 
 /****************************************************************************
@@ -923,27 +924,27 @@ void Universe::updateIntensityChannelsRanges()
 
 bool Universe::write(int address, uchar value,int addressPriority, bool forceLTP)
 {
-    qDebug() << "[" << Q_FUNC_INFO << "]" << " START";
+    // qDebug() << "[" << Q_FUNC_INFO << "]" << " START";
     Q_ASSERT(address < UNIVERSE_SIZE);
 
     //qDebug() << "[Universe]" << id() << ": write channel" << address << ", value:" << value;
-    qDebug() << "[" << Q_FUNC_INFO << "] CHECKING" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address) << m_channelsMask->at(address);
+    // qDebug() << "[" << Q_FUNC_INFO << "] CHECKING" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address) << m_channelsMask->at(address);
 
     if (address >= m_usedChannels)
         m_usedChannels = address + 1;
 
-    qDebug() << "[" << Q_FUNC_INFO << "] HTP? " << HTP << (m_channelsMask->at(address) & HTP);
+    // qDebug() << "[" << Q_FUNC_INFO << "] HTP? " << HTP << (m_channelsMask->at(address) & HTP);
     if (m_channelsMask->at(address) & HTP)
     {
-        qDebug() << "[" << Q_FUNC_INFO << "] values? " << value << (uchar)m_preGMValues->at(address);
+        // qDebug() << "[" << Q_FUNC_INFO << "] values? " << value << (uchar)m_preGMValues->at(address);
         if(addressPriority < m_channelLouPriority.at(address)){
-            qDebug() << "[Universe] Didnt pass lous vibe check" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
+            // qDebug() << "[Universe] Didnt pass lous vibe check" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
             return false;
         }
 
         if (forceLTP == false && value < (uchar)m_preGMValues->at(address))
         {
-            qDebug() << "[Universe] HTP check not passed" << address << value;
+            // qDebug() << "[Universe] HTP check not passed" << address << value;
             return false;
         }
     }
@@ -969,7 +970,7 @@ bool Universe::writeMultiple(int address, quint32 value, int channelCount,int ad
         //qDebug() << "[Universe]" << id() << ": write channel" << (address + i) << ", value:" << QString::number(((uchar *)&value)[channelCount - 1 - i]);
 
         if(addressPriority < m_channelLouPriority.at(address)){
-            qDebug() << "[Universe] Didnt pass lous vibe check" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
+            // qDebug() << "[Universe] Didnt pass lous vibe check" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
             return false;
         } else if ((m_channelsMask->at(address + i) & HTP) == 0){
             (*m_blackoutValues)[address + i] = ((uchar *)&value)[channelCount - 1 - i];
@@ -1022,7 +1023,7 @@ bool Universe::writeRelative(int address, quint32 value, int channelCount)
 
 bool Universe::writeBlended(int address, quint32 value, int channelCount, Universe::BlendMode blend,int addressPriority)
 {
-    qDebug() << "[" << Q_FUNC_INFO << "]" << " START " << blend;
+    // qDebug() << "[" << Q_FUNC_INFO << "]" << " START " << blend;
     if (address + channelCount >= m_usedChannels)
         m_usedChannels = address + channelCount;
 
@@ -1034,13 +1035,13 @@ bool Universe::writeBlended(int address, quint32 value, int channelCount, Univer
     {
         case NormalBlend:
         {
-            qDebug() << "[Universe] CHECCKING" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
+            // qDebug() << "[Universe] CHECCKING" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
             if(addressPriority < m_channelLouPriority.at(address)){
-                qDebug() << "[Universe] Didnt pass lous vibe check" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
+                // qDebug() << "[Universe] Didnt pass lous vibe check" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
                 return false;
             }else if ((m_channelsMask->at(address) & HTP) && value < currentValue && addressPriority == m_channelLouPriority.at(address))
             {
-                qDebug() << "[Universe] HTP check not passed" << address << value;
+                // qDebug() << "[Universe] HTP check not passed" << address << value;
                 return false;
             }
         }
@@ -1049,7 +1050,7 @@ bool Universe::writeBlended(int address, quint32 value, int channelCount, Univer
         {
             if (value)
             {
-                qDebug() << "Current value" << currentValue << "value" << value;
+                // qDebug() << "Current value" << currentValue << "value" << value;
                 if (currentValue)
                     value = float(currentValue) * (float(value) / pow(255.0, channelCount));
                 else

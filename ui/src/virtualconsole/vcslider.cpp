@@ -346,6 +346,7 @@ void VCSlider::editProperties()
 
 void VCSlider::slotModeChanged(Doc::Mode mode)
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]" << " START ";
     qDebug() << "[" << Q_FUNC_INFO << "]";
     if (mode == Doc::Operate)
     {
@@ -485,6 +486,7 @@ VCSlider::SliderMode VCSlider::sliderMode() const
 
 void VCSlider::setSliderMode(SliderMode mode)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]" << "";
     Q_ASSERT(mode >= Level && mode <= Submaster);
 
     m_sliderMode = mode;
@@ -607,6 +609,7 @@ uchar VCSlider::levelHighLimit() const
 
 void VCSlider::setChannelsMonitorEnabled(bool enable)
 {
+    qDebug() << "[" << Q_FUNC_INFO << "]" << "";
     m_monitorEnabled = enable;
 
     if (m_resetButton != NULL)
@@ -1208,10 +1211,11 @@ void VCSlider::writeDMXLevel(MasterTimer *timer, QList<Universe *> universes)
             QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
             if (fader.isNull())
             {
-                qDebug() << "[" << Q_FUNC_INFO << "]";
+                qDebug() << "[" << Q_FUNC_INFO << "]" << m_isOverriding;
                 fader = universes[universe]->requestFader(m_monitorEnabled ? Universe::Override : Universe::Auto);
                 fader->adjustIntensity(intensity());
-                fader->setLouPriority(louPriority());
+
+                fader->setLouPriority(m_isOverriding ? louPriority() : -1);
                 m_fadersMap[universe] = fader;
                 if (m_monitorEnabled)
                 {
@@ -1268,6 +1272,8 @@ void VCSlider::writeDMXLevel(MasterTimer *timer, QList<Universe *> universes)
             fc->setTarget(modLevel);
             fc->setReady(false);
             fc->setElapsed(0);
+
+            fader->setLouPriority(m_isOverriding ? louPriority() : -1);
 
             //qDebug() << "VC Slider write channel" << fc->target();
         }
@@ -1380,6 +1386,7 @@ void VCSlider::setSliderValue(uchar value, bool scale, bool external)
                 m_resetButton->setStyleSheet(QString("QToolButton{ background: red; }"));
                 m_isOverriding = true;
             }
+            qDebug() << "[" << Q_FUNC_INFO << "]" << m_isOverriding;
             setLevelValue(val, external);
             setClickAndGoWidgetFromLevel(val);
         }
@@ -1606,7 +1613,7 @@ void VCSlider::slotInputValueChanged(quint32 universe, quint32 channel, uchar va
 void VCSlider::adjustIntensity(qreal val)
 {
     VCWidget::adjustIntensity(val);
-
+    qDebug() << "[" << Q_FUNC_INFO << "]" << m_isOverriding;
     if (sliderMode() == Playback)
     {
         Function* function = m_doc->function(m_playbackFunction);
@@ -1620,8 +1627,10 @@ void VCSlider::adjustIntensity(qreal val)
     {
         foreach (QSharedPointer<GenericFader> fader, m_fadersMap.values())
         {
-            if (!fader.isNull())
+            if (!fader.isNull()){
                 fader->adjustIntensity(val);
+                fader->setLouPriority(m_isOverriding ? louPriority() : -1);
+            }
         }
     }
 }

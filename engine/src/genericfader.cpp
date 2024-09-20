@@ -246,7 +246,7 @@ void GenericFader::write(Universe *universe)
         //qDebug() << "[genericfader][]" << "[GenericFader] >>> uni:" << universe->id() << ", address:" << (address + i) << ", value:" << value << "int:" << compIntensity;
         if (flags & FadeChannel::Override)
         {
-            qDebug() << "[" << Q_FUNC_INFO << "]" << " WRITING TO UNIVERSE";
+            // qDebug() << "[" << Q_FUNC_INFO << "]" << " WRITING TO UNIVERSE";
             universe->write(address, value, louPriority(),true);
             continue;
         }
