@@ -120,7 +120,7 @@ void GenericDMXSource::writeDMX(MasterTimer* timer, QList<Universe *> ua)
             QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
             if (fader.isNull())
             {
-                // qDebug() << "[" << Q_FUNC_INFO << "]";
+                qDebug() << "[" << Q_FUNC_INFO << "]" << "Requesting Fader";
                 fader = ua[universe]->requestFader();
                 m_fadersMap[universe] = fader;
             }

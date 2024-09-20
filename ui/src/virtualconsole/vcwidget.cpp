@@ -841,7 +841,7 @@ bool VCWidget::loadXMLCommon(QXmlStreamReader &root)
         setPage(attrs.value(KXMLQLCVCWidgetPage).toString().toInt());
 
     setLouPriority(attrs.value(KXMLQLCFunctionPriority).toInt());
-    qDebug() << "LOUUU" << louPriority();
+    // qDebug() << "LOUUU" << louPriority();
 
     return true;
 }

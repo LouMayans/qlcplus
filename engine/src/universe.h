@@ -528,7 +528,7 @@ public:
      * @param channelCount number of channels that value represents
      * @return always true
      */
-    bool writeMultiple(int address, quint32 value, int channelCount,int addressPriority = 0);
+    bool writeMultiple(int address, quint32 value, int channelCount,bool debug,int addressPriority = 0);
 
     /**
      * Write a relative value to a DMX channel, taking Grand Master and HTP into

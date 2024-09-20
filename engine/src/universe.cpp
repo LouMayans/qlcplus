@@ -962,15 +962,17 @@ bool Universe::write(int address, uchar value,int addressPriority, bool forceLTP
     return true;
 }
 
-bool Universe::writeMultiple(int address, quint32 value, int channelCount,int addressPriority)
+bool Universe::writeMultiple(int address, quint32 value, int channelCount,bool debug,int addressPriority)
 {
     // qDebug() << "[" << Q_FUNC_INFO << "]" << " START";
     for (int i = 0; i < channelCount; i++)
     {
-        //qDebug() << "[Universe]" << id() << ": write channel" << (address + i) << ", value:" << QString::number(((uchar *)&value)[channelCount - 1 - i]);
-
+        if(debug){
+            // qDebug() << "[Universe]" << id() << ": write channel" << (address + i) << ", value:" << QString::number(((uchar *)&value)[channelCount - 1 - i]);
+            qDebug() << "[Universe] hahaheck " << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
+        }
         if(addressPriority < m_channelLouPriority.at(address)){
-            // qDebug() << "[Universe] Didnt pass lous vibe check" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
+            qDebug() << "[Universe] Didnt pass lous vibe check" << " | " << address << " | " << value << " | " << addressPriority <<  " | " <<m_channelLouPriority.at(address);
             return false;
         } else if ((m_channelsMask->at(address + i) & HTP) == 0){
             (*m_blackoutValues)[address + i] = ((uchar *)&value)[channelCount - 1 - i];
@@ -1048,6 +1050,7 @@ bool Universe::writeBlended(int address, quint32 value, int channelCount, Univer
         break;
         case MaskBlend:
         {
+            qDebug() << "[" << Q_FUNC_INFO << "]" << " START " << "MASKBLEND";
             if (value)
             {
                 // qDebug() << "Current value" << currentValue << "value" << value;
@@ -1060,6 +1063,7 @@ bool Universe::writeBlended(int address, quint32 value, int channelCount, Univer
         break;
         case AdditiveBlend:
         {
+            qDebug() << "[" << Q_FUNC_INFO << "]" << " START " << "AdditiveBlend";
             //qDebug() << "Universe write additive channel" << channel << ", value:" << currVal << "+" << value;
             value = fmin(float(currentValue + value), pow(255.0, channelCount));
         }
@@ -1078,7 +1082,7 @@ bool Universe::writeBlended(int address, quint32 value, int channelCount, Univer
         break;
     }
 
-    writeMultiple(address, value, channelCount,addressPriority);
+    writeMultiple(address, value, channelCount,false,addressPriority);
 
     return true;
 }

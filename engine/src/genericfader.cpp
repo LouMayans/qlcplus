@@ -110,7 +110,7 @@ void GenericFader::add(const FadeChannel& ch)
     else
     {
         m_channels.insert(hash, ch);
-        qDebug() << "[genericfader][]" << "Added new fader with hash" << hash;
+        // qDebug() << "[genericfader][]" << "Added new fader with hash" << hash;
     }
 }
 
@@ -252,11 +252,13 @@ void GenericFader::write(Universe *universe)
         }
         else if (flags & FadeChannel::Relative)
         {
+            qDebug() << "[" << Q_FUNC_INFO << "]" << " RELATIVE FADE";
             universe->writeRelative(address, value, channelCount);
         }
         else if (flags & FadeChannel::Flashing)
         {
-            universe->writeMultiple(address, value, channelCount,louPriority());
+            qDebug() << "[" << Q_FUNC_INFO << "]" << " FLASHING " << louPriority();
+            universe->writeMultiple(address, value, channelCount,true,louPriority());
             continue;
         }
         else

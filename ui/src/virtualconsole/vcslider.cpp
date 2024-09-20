@@ -649,7 +649,7 @@ bool VCSlider::channelsMonitorEnabled() const
 
 void VCSlider::setLevelValue(uchar value, bool external)
 {
-    qDebug() << "[" << Q_FUNC_INFO << "]";
+    // qDebug() << "[" << Q_FUNC_INFO << "]";
     QMutexLocker locker(&m_levelValueMutex);
     m_levelValue = CLAMP(value, levelLowLimit(), levelHighLimit());
     if (m_monitorEnabled == true)
@@ -1386,7 +1386,7 @@ void VCSlider::setSliderValue(uchar value, bool scale, bool external)
                 m_resetButton->setStyleSheet(QString("QToolButton{ background: red; }"));
                 m_isOverriding = true;
             }
-            qDebug() << "[" << Q_FUNC_INFO << "]" << m_isOverriding;
+            // qDebug() << "[" << Q_FUNC_INFO << "]" << m_isOverriding;
             setLevelValue(val, external);
             setClickAndGoWidgetFromLevel(val);
         }

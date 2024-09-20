@@ -666,7 +666,7 @@ QString Script::handleSetFixture(const QList<QStringList>& tokens, QList<Univers
                 QSharedPointer<GenericFader> fader = m_fadersMap.value(universe, QSharedPointer<GenericFader>());
                 if (fader.isNull())
                 {
-                    qDebug() << "[" << Q_FUNC_INFO << "]";
+                    qDebug() << "[" << Q_FUNC_INFO << "]" << "Requesting Fader";
                     fader = universes[universe]->requestFader();
                     fader->adjustIntensity(getAttributeValue(Intensity));
                     fader->setBlendMode(blendMode());
