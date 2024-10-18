@@ -140,7 +140,7 @@ void EFXEditor::initGeneralPage()
     m_nameEdit->setSelection(0, m_nameEdit->text().length());
 
 
-    m_louPriority->setValue(m_efx->priority());
+    m_louPriority->setValue(m_efx->getLouPriority());
     m_louPriority->setMinimum(0);
     m_louPriority->setMaximum(100000);
     m_louPriority->setSingleStep(1);
@@ -201,9 +201,9 @@ void EFXEditor::initGeneralPage()
 
 void EFXEditor::slotLouPriorityEdited(const int louPriority)
 {
-    qDebug() << Q_FUNC_INFO << m_efx->priority();
-    m_efx->setPriority(louPriority);
-    qDebug() << Q_FUNC_INFO << m_efx->priority();
+    // qDebug() << Q_FUNC_INFO << m_efx->getLouPriority();
+    m_efx->setLouPriority(louPriority);
+    // qDebug() << Q_FUNC_INFO << m_efx->getLouPriority();
 }
 
 void EFXEditor::initMovementPage()

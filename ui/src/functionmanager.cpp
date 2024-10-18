@@ -708,11 +708,12 @@ void FunctionManager::initSplitterView()
 void FunctionManager::initTree()
 {
     m_tree = new FunctionsTreeWidget(m_doc, this);
+    m_tree->setColumnCount(2)
     Q_ASSERT(m_hsplitter != NULL);
     m_hsplitter->addWidget(m_tree);
 
     QStringList labels;
-    labels << tr("Function"); // << "Path";
+    labels << tr("Function") << tr("Priority"); // << "Path";
     m_tree->setHeaderLabels(labels);
     m_tree->setRootIsDecorated(true);
     m_tree->setAllColumnsShowFocus(true);

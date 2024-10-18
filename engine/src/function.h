@@ -97,7 +97,7 @@ class Function : public QObject
     Q_DISABLE_COPY(Function)
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(int name READ priority WRITE setPriority NOTIFY priorityChanged)
+    Q_PROPERTY(int priority READ getLouPriority WRITE setLouPriority NOTIFY priorityChanged)
     Q_PROPERTY(quint32 id READ id CONSTANT)
     Q_PROPERTY(Type type READ type CONSTANT)
     Q_PROPERTY(quint32 totalDuration READ totalDuration WRITE setTotalDuration NOTIFY totalDurationChanged)
@@ -229,13 +229,13 @@ public:
      */
     void setName(const QString& name);
 
-    void setPriority(const int priority);
+    void setLouPriority(const int priority);
 
     /**
      * Return the name of this function
      */
     QString name() const;
-    int priority() const;
+    int getLouPriority() const;
 
 signals:
     /** Signal telling that the name of this function have changed */
@@ -244,7 +244,7 @@ signals:
 
 private:
     QString m_name;
-    int m_priority;
+    int louPriority;
 
     /*********************************************************************
      * Type

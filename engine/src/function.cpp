@@ -97,7 +97,7 @@ Function::Function(QObject *parent)
     , m_preserveAttributes(false)
     , m_blendMode(Universe::NormalBlend)
 {
-
+    louPriority = 0;
 }
 
 Function::Function(Doc* doc, Type t)
@@ -129,6 +129,7 @@ Function::Function(Doc* doc, Type t)
 {
     Q_ASSERT(doc != NULL);
     registerAttribute(tr("Intensity"), Multiply | Single);
+    louPriority = 0;
 }
 
 Function::~Function()
@@ -168,7 +169,7 @@ bool Function::copyFrom(const Function* function)
         return false;
 
     m_name = function->name();
-    m_priority = function->priority();
+    louPriority = function->getLouPriority();
     m_runOrder = function->runOrder();
     m_direction = function->direction();
     m_tempoType = function->tempoType();
@@ -220,12 +221,12 @@ void Function::setName(const QString& name)
     emit nameChanged(m_id);
 }
 
-void Function::setPriority(int priority)
+void Function::setLouPriority(int priority)
 {
-    if (m_priority == priority)
+    if (louPriority == priority)
         return;
 
-    m_priority = priority;
+    louPriority = priority;
 
     emit priorityChanged(m_id);
 }
@@ -235,9 +236,9 @@ QString Function::name() const
     return m_name;
 }
 
-int Function::priority() const
+int Function::getLouPriority() const
 {
-    return m_priority ?: 0;
+    return louPriority ?: 0;
 }
 
 /*****************************************************************************
@@ -349,7 +350,7 @@ bool Function::saveXMLCommon(QXmlStreamWriter *doc) const
     doc->writeAttribute(KXMLQLCFunctionID, QString::number(id()));
     doc->writeAttribute(KXMLQLCFunctionType, Function::typeToString(type()));
     doc->writeAttribute(KXMLQLCFunctionName, name());
-    doc->writeAttribute(KXMLQLCFunctionPriority, QString::number(priority()));
+    doc->writeAttribute(KXMLQLCFunctionPriority, QString::number(getLouPriority()));
     if (isVisible() == false)
         doc->writeAttribute(KXMLQLCFunctionHidden, "True");
     if (path(true).isEmpty() == false)
@@ -932,7 +933,7 @@ bool Function::loader(QXmlStreamReader &root, Doc* doc)
         return false;
 
     function->setName(name);
-    function->setPriority(priority);
+    function->setLouPriority(priority);
     function->setPath(path);
     function->setVisible(visible);
     function->setBlendMode(blendMode);
@@ -1124,7 +1125,7 @@ void Function::roundElapsed(quint32 roundTime)
 void Function::start(MasterTimer* timer, FunctionParent source, quint32 startTime,
                      uint overrideFadeIn, uint overrideFadeOut, uint overrideDuration, TempoType overrideTempoType)
 {
-    qDebug() << "[FUNCTION.CPP]" << "Function start(). Name:" << m_name << "ID: " << m_id << "source:" << source.type() << source.id() << ", startTime:" << startTime << " PRIORITY: " << priority();
+    qDebug() << "[FUNCTION.CPP]" << "Function start(). Name:" << m_name << "ID: " << m_id << "source:" << source.type() << source.id() << ", startTime:" << startTime << " PRIORITY: " << getLouPriority();
 
     Q_ASSERT(timer != NULL);
 

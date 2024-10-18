@@ -25,6 +25,7 @@
 #include "doc.h"
 
 #define COL_NAME 0
+#define COL_PRIORITY 1
 #define COL_PATH 1
 
 FunctionsTreeWidget::FunctionsTreeWidget(Doc *doc, QWidget *parent) :
@@ -103,6 +104,7 @@ void FunctionsTreeWidget::updateFunctionItem(QTreeWidgetItem* item, const Functi
     Q_ASSERT(item != NULL);
     Q_ASSERT(function != NULL);
     item->setText(COL_NAME, function->name());
+    item->setText(COL_PRIORITY,function->getLouPriority());
     item->setIcon(COL_NAME, function->getIcon());
     item->setData(COL_NAME, Qt::UserRole, function->id());
     item->setData(COL_NAME, Qt::UserRole + 1, function->type());
@@ -123,6 +125,7 @@ QTreeWidgetItem* FunctionsTreeWidget::parentItem(const Function* function)
         QTreeWidgetItem* item = new QTreeWidgetItem(this);
         item->setText(COL_NAME, basePath);
         item->setIcon(COL_NAME, function->getIcon());
+        item->setText(COL_PRIORITY,function->getLouPriority());
         item->setData(COL_NAME, Qt::UserRole, Function::invalidId());
         item->setData(COL_NAME, Qt::UserRole + 1, function->type());
         item->setText(COL_PATH, QString(basePath + "/"));

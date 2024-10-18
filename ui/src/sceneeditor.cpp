@@ -324,7 +324,7 @@ void SceneEditor::init(bool applyValues)
     connect(m_nameEdit, SIGNAL(textEdited(const QString&)),
             this, SLOT(slotNameEdited(const QString&)));
 
-    m_priorityEdit->setValue(m_scene->priority());
+    m_priorityEdit->setValue(m_scene->getLouPriority());
     connect(m_priorityEdit, SIGNAL(valueChanged(int)), this, SLOT(slotPriorityEdited(int)));
 
     // Channels groups tab
@@ -1281,7 +1281,7 @@ void SceneEditor::slotNameEdited(const QString& name)
 
 void SceneEditor::slotPriorityEdited(const int priority)
 {
-    m_scene->setPriority(priority);
+    m_scene->setLouPriority(priority);
 }
 
 void SceneEditor::slotAddFixtureClicked()
