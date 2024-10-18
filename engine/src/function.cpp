@@ -229,6 +229,7 @@ void Function::setLouPriority(int priority)
     louPriority = priority;
 
     emit priorityChanged(m_id);
+    emit nameChanged(m_id);
 }
 
 QString Function::name() const

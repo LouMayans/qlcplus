@@ -215,6 +215,7 @@ QMap<QString, QVariant> InputPatch::getPluginParameters()
 void InputPatch::slotValueChanged(quint32 universe, quint32 input, quint32 channel,
                                   uchar value, const QString& key)
 {
+    // qDebug() << Q_FUNC_INFO << " Universe: "<< universe << " input:" << input << " channel:" << channel << " value:" << value << " key:" << key;
     // In case we have several lines connected to the same plugin, emit only
     // such values that belong to this particular patch.
     if (input == m_pluginLine)

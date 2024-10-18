@@ -1274,6 +1274,7 @@ void SceneEditor::removeFixtureItem(quint32 fixtureID)
 
 void SceneEditor::slotNameEdited(const QString& name)
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]" << "Name Changed";
     m_scene->setName(name);
     if (m_speedDials != NULL)
         m_speedDials->setWindowTitle(m_scene->name());

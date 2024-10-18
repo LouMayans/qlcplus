@@ -111,6 +111,7 @@ void FunctionEditor::setFunctionName(QString functionName)
     Tardis::instance()->enqueueAction(Tardis::FunctionSetName, m_function->id(), m_function->name(), functionName);
 
     m_function->setName(functionName);
+    // qDebug() << "[" << Q_FUNC_INFO << "]" << "Name Changed";
     emit functionNameChanged(functionName);
 }
 

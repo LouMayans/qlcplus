@@ -358,7 +358,7 @@ void OSCController::handlePacket(QUdpSocket* socket, QByteArray const& datagram,
         QString path = msg.first;
         QByteArray values = msg.second;
 
-        qDebug() << "[OSC] message has path:" << path << "values:" << values.length();
+        // qDebug() << "[OSC] message has path:" << path << "values:" << values.length();
         if (values.isEmpty())
             continue;
 
@@ -374,11 +374,16 @@ void OSCController::handlePacket(QUdpSocket* socket, QByteArray const& datagram,
                     for (int i = 0; i < values.length(); i++)
                     {
                         QString modPath = QString("%1_%2").arg(path).arg(i);
+                        // qDebug() << Q_FUNC_INFO << " QString() "<< QString("%1_%2") << " modPath: "<< modPath << " path:" << path << " i:" << i;
                         emit valueChanged(universe, m_line, getHash(modPath), (uchar)values.at(i), modPath);
                     }
                 }
-                else
+                else{
+                    // qDebug() << Q_FUNC_INFO << " getHash(path) "<< getHash(path) << " path:" << path;
+                    // qDebug() << path.toUtf8().data();
                     emit valueChanged(universe, m_line, getHash(path), (uchar)values.at(0), path);
+
+                }
             }
         }
     }
