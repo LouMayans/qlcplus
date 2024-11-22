@@ -1237,7 +1237,7 @@ void FunctionManager::setChannelValue(quint32 fxID, quint32 channel, uchar value
 
 void FunctionManager::addFunctionTreeItem(Function *func)
 {
-    if (func == nullptr || func->isVisible() == false)
+    if (func == nullptr)// || func->isVisible() == false)
         return;
 
     bool expandAll = m_searchFilter.length() >= SEARCH_MIN_CHARS;

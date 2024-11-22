@@ -27,6 +27,7 @@
 
 #define COL_NAME 0
 #define COL_PRIORITY 1
+#define COL_VISIBLE 2
 #define COL_PATH 1
 
 FunctionsTreeWidget::FunctionsTreeWidget(Doc *doc, QWidget *parent) :
@@ -83,7 +84,7 @@ void FunctionsTreeWidget::functionNameChanged(quint32 fid)
 QTreeWidgetItem *FunctionsTreeWidget::addFunction(quint32 fid)
 {
     Function* function = m_doc->function(fid);
-    if (function == NULL || function->isVisible() == false)
+    if (function == NULL)// || function->isVisible() == false)
         return NULL;
 
     QTreeWidgetItem* item = functionItem(function);
@@ -107,6 +108,7 @@ void FunctionsTreeWidget::updateFunctionItem(QTreeWidgetItem* item, const Functi
     item->setText(COL_NAME, function->name());
     // qDebug() << "[" << Q_FUNC_INFO << "]" << function->getLouPriority();
     item->setText(COL_PRIORITY,QString::number(function->getLouPriority()));
+    item->setText(COL_VISIBLE,QString::number(function->isVisible()));
     item->setIcon(COL_NAME, function->getIcon());
     item->setData(COL_NAME, Qt::UserRole, function->id());
     item->setData(COL_NAME, Qt::UserRole + 1, function->type());
@@ -117,8 +119,8 @@ QTreeWidgetItem* FunctionsTreeWidget::parentItem(const Function* function)
 {
     Q_ASSERT(function != NULL);
 
-    if (function->isVisible() == false)
-        return NULL;
+    // if (function->isVisible() == false)
+    //     return NULL;
 
     QString basePath = Function::typeToString(function->type());
     if (m_foldersMap.contains(QString(basePath + "/")) == false)
@@ -129,6 +131,7 @@ QTreeWidgetItem* FunctionsTreeWidget::parentItem(const Function* function)
         item->setIcon(COL_NAME, function->getIcon());
         // qDebug() << "[" << Q_FUNC_INFO << "]" << function->getLouPriority();
         item->setText(COL_PRIORITY,QString::number(function->getLouPriority()));
+        item->setText(COL_VISIBLE,QString::number(function->isVisible()));
         item->setData(COL_NAME, Qt::UserRole, Function::invalidId());
         item->setData(COL_NAME, Qt::UserRole + 1, function->type());
         item->setText(COL_PATH, QString(basePath + "/"));
@@ -165,8 +168,8 @@ QTreeWidgetItem* FunctionsTreeWidget::functionItem(const Function* function)
 {
     Q_ASSERT(function != NULL);
 
-    if (function->isVisible() == false)
-        return NULL;
+    // if (function->isVisible() == false)
+    //     return NULL;
 
     QTreeWidgetItem* parent = parentItem(function);
     Q_ASSERT(parent != NULL);
