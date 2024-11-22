@@ -37,6 +37,7 @@ GenericFader::GenericFader(QObject *parent)
     , m_blendMode(Universe::NormalBlend)
     , m_monitoring(false)
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]"  << " faderCreated " << m_fid;
 }
 
 GenericFader::~GenericFader()
@@ -112,12 +113,14 @@ void GenericFader::add(const FadeChannel& ch)
         m_channels.insert(hash, ch);
         // qDebug() << "[genericfader][]" << "Added new fader with hash" << hash;
     }
+    // qDebug() << "[" << Q_FUNC_INFO << "]"  << " faderId " << m_fid << " m_channels" << m_channels.count();
 }
 
 void GenericFader::replace(const FadeChannel &ch)
 {
     quint32 hash = channelHash(ch.fixture(), ch.channel());
     m_channels.insert(hash, ch);
+    // qDebug() << "[" << Q_FUNC_INFO << "]"  << " faderId " << m_fid << " m_channels" << m_channels.count();
 }
 
 void GenericFader::remove(FadeChannel *ch)
@@ -128,10 +131,13 @@ void GenericFader::remove(FadeChannel *ch)
     quint32 hash = channelHash(ch->fixture(), ch->channel());
     if (m_channels.remove(hash) == 0)
         qDebug() << "[genericfader][]" << "No FadeChannel found with hash" << hash;
+
+    // qDebug() << "[" << Q_FUNC_INFO << "]"  << " faderId " << m_fid << " m_channels" << m_channels.count();
 }
 
 void GenericFader::removeAll()
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]"  << " faderId " << m_fid << " m_channels" << m_channels.count();
     m_channels.clear();
 }
 
@@ -183,11 +189,13 @@ FadeChannel *GenericFader::getChannelFader(const Doc *doc, Universe *universe, q
     m_channels[hash] = fc;
     //qDebug() << "[genericfader][]" << "Added new fader with hash" << hash;
 
+    // qDebug() << "[" << Q_FUNC_INFO << "]"  << " faderId " << m_fid << " m_channels" << m_channels.count();
     return &m_channels[hash];
 }
 
 const QHash<quint32, FadeChannel> &GenericFader::channels() const
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]"  << " faderId " << m_fid << " m_channels" << m_channels.count();
     return m_channels;
 }
 
@@ -198,16 +206,17 @@ int GenericFader::channelsCount() const
 
 void GenericFader::write(Universe *universe)
 {
+    // qDebug() << "[" << Q_FUNC_INFO << "]"  << " faderId " << m_fid;
     if (m_monitoring)
         emit preWriteData(universe->id(), universe->preGMValues());
 
     qreal compIntensity = intensity() * parentIntensity();
 
-    //qDebug() << "[genericfader][]" << "[GenericFader] writing channels: " << this << m_channels.count();
-
     QMutableHashIterator <quint32,FadeChannel> it(m_channels);
+    // int i = 0;
     while (it.hasNext() == true)
     {
+        // qDebug() << "[" << Q_FUNC_INFO << "]" << " FadeChannel# " << ++i;
         FadeChannel& fc(it.next().value());
         int flags = fc.flags();
         int address = int(fc.addressInUniverse());
@@ -264,7 +273,7 @@ void GenericFader::write(Universe *universe)
         else
         {
             // treat value as a whole, so do this just once per FadeChannel
-            // QDebug() << checkingPriority(priority());
+            // qDebug() << "[" << Q_FUNC_INFO << "]" << " ELSE";
             universe->writeBlended(address, value, channelCount, m_blendMode,louPriority());
         }
 
@@ -274,12 +283,16 @@ void GenericFader::write(Universe *universe)
         {
             // Remove all channels that reach their target _zero_ value.
             // They have no effect either way so removing them saves a bit of CPU.
-            if (fc.current() == 0 && fc.target() == 0 && fc.isReady())
-                it.remove();
+            if (fc.current() == 0 && fc.target() == 0 && fc.isReady()){
+                // qDebug() << "[" << Q_FUNC_INFO << "]" << " REMOVEDD1";
+                // it.remove();
+            }
         }
 
-        if (flags & FadeChannel::AutoRemove && value == fc.target())
+        if (flags & FadeChannel::AutoRemove && value == fc.target()){
+            // qDebug() << "[" << Q_FUNC_INFO << "]" << " REMOVEDD1";
             it.remove();
+        }
     }
 
     // self-request deletion when fadeout is complete

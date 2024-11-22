@@ -812,16 +812,18 @@ void Scene::handleFadersEnd(MasterTimer *timer)
 
 void Scene::write(MasterTimer *timer, QList<Universe*> ua)
 {
-    // qDebug() << Q_FUNC_INFO << elapsed();
+    // qDebug() << "[" << Q_FUNC_INFO << "]0 " << m_values.count() << " " << m_palettes.count() << " " << m_fadersMap.size();
 
     if (m_values.count() == 0 && m_palettes.count() == 0)
     {
+        // qDebug() << "[" << Q_FUNC_INFO << "] " << 1;
         stop(FunctionParent::master());
         return;
     }
 
     if (m_fadersMap.isEmpty())
     {
+        // qDebug() << "[" << Q_FUNC_INFO << "]1 " << palettes().size();
         uint fadeIn = overrideFadeInSpeed() == defaultSpeed() ? fadeInSpeed() : overrideFadeInSpeed();
 
         foreach (quint32 paletteID, palettes())
@@ -848,6 +850,7 @@ void Scene::write(MasterTimer *timer, QList<Universe*> ua)
 
     if (isPaused() == false)
     {
+        // qDebug() << "[" << Q_FUNC_INFO << "]3 ";
         incrementElapsed();
         if (timer->isBeat() && tempoType() == Beats)
             incrementElapsedBeats();

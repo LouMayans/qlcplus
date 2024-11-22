@@ -61,7 +61,7 @@ void OSCPacketizer::setupOSCGeneric(QByteArray &data, QString &path, QString typ
     data.clear();
     if (path.isEmpty())
     {
-        qDebug() << Q_FUNC_INFO << "Empty path, can't create packet";
+        //qDebug() << Q_FUNC_INFO << "Empty path, can't create packet";
         return;
     }
 

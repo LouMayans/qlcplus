@@ -297,7 +297,7 @@ void OSCController::sendFeedback(const quint32 universe, quint32 channel, uchar 
     if (key.isEmpty())
         path = m_hashMap.key(channel);
 
-    qDebug() << "[OSC] sendFeedBack - Key:" << path << "value:" << value;
+    //qDebug() << "[OSC] sendFeedBack - Key:" << path << "value:" << value;
 
     QByteArray values;
     QByteArray oscPacket;

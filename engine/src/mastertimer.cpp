@@ -146,6 +146,12 @@ void MasterTimer::timerTick()
 
     QList<Universe *> universes = doc->inputOutputMap()->claimUniverses();
 
+    // foreach (Universe *universe, universes)
+    // {
+    //     qDebug() << "[" << Q_FUNC_INFO << "] faders sizes : " << universe->faders().size();
+
+    // }
+
     timerTickFunctions(universes);
     timerTickDMXSources(universes);
 
@@ -228,7 +234,6 @@ int MasterTimer::runningFunctions() const
 
 void MasterTimer::timerTickFunctions(QList<Universe *> universes)
 {
-    // qDebug() << "[" << Q_FUNC_INFO << "]";
     // List of m_functionList indices that should be removed at the end of this
     // function. The functions at the indices have been stopped.
     QList<int> removeList;
@@ -251,8 +256,12 @@ void MasterTimer::timerTickFunctions(QList<Universe *> universes)
                 /* Run the function unless it's supposed to be stopped */
                 if (function->stopped() == false && m_stopAllFunctions == false)
                 {
-                    if (firstIteration)
+                    // qDebug() << "[" << Q_FUNC_INFO << "] first iteration : " << firstIteration;
+                    if (firstIteration){
+                        // qDebug() << "[" << Q_FUNC_INFO << "] writing function : " << function->name();
                         function->write(this, universes);
+
+                    }
                 }
                 else
                 {
