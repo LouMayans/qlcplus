@@ -561,6 +561,13 @@ void VCButton::slotInputValueChanged(quint32 universe, quint32 channel, uchar va
             }
             else
             {
+                Function* f = NULL;
+                f = m_doc->function(m_function);
+                if (f == NULL)
+                    return;
+
+                f->stop(functionParent());
+                resetIntensityOverrideAttribute();
                 // Work around the "internal" feedback of some controllers
                 // by updating feedback state after button release.
                 updateFeedback();
@@ -607,6 +614,8 @@ QString VCButton::actionToString(VCButton::Action action)
         return QString(KXMLQLCVCButtonActionBlackout);
     else if (action == StopAll)
         return QString(KXMLQLCVCButtonActionStopAll);
+    else if (action == Restart)
+        return QString(KXMLQLCVCButtonActionRestart);
     else
         return QString(KXMLQLCVCButtonActionToggle);
 }
@@ -617,6 +626,8 @@ VCButton::Action VCButton::stringToAction(const QString& str)
         return Flash;
     else if (str == KXMLQLCVCButtonActionBlackout)
         return Blackout;
+    else if (str == KXMLQLCVCButtonActionRestart)
+        return Restart;
     else if (str == KXMLQLCVCButtonActionStopAll)
         return StopAll;
     else
@@ -710,7 +721,7 @@ void VCButton::pressFunction()
         return;
 
     Function* f = NULL;
-    if (m_action == Toggle)
+    if (m_action == Toggle || m_action == Restart)
     {
         f = m_doc->function(m_function);
         if (f == NULL)
@@ -719,13 +730,19 @@ void VCButton::pressFunction()
         // if the button is in a SoloFrame and the function is running but was
         // started by a different function (a chaser or collection), turn other
         // functions off and start this one.
-        if (state() == Active && !(isChildOfSoloFrame() && f->startedAsChild()))
+        if (m_action != Restart && state() == Active && !(isChildOfSoloFrame() && f->startedAsChild()))
         {
             f->stop(functionParent());
             resetIntensityOverrideAttribute();
         }
         else
         {
+            resetIntensityOverrideAttribute();
+            // if(state() == Active){
+            //     f->stop(functionParent());
+            //     resetIntensityOverrideAttribute();
+            // }
+
             adjustFunctionIntensity(f, intensity());
 
             // starting a Chaser is a special case, since it is necessary
@@ -807,7 +824,7 @@ void VCButton::slotFunctionRunning(quint32 fid)
 
 void VCButton::slotFunctionStopped(quint32 fid)
 {
-    if (fid == m_function && m_action == Toggle)
+    if (fid == m_function && (m_action == Toggle || m_action == Restart))
     {
         resetIntensityOverrideAttribute();
         setState(Inactive);

@@ -53,6 +53,16 @@
        </widget>
       </item>
       <item>
+        <widget class="QRadioButton" name="m_restart">
+         <property name="toolTip">
+          <string>Restart the assigned function on with this button</string>
+         </property>
+         <property name="text">
+          <string>Restart function</string>
+         </property>
+        </widget>
+       </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="QRadioButton" name="m_flash">

@@ -50,6 +50,7 @@ class QEvent;
 #define KXMLQLCVCButtonAction           QString("Action")
 #define KXMLQLCVCButtonActionFlash      QString("Flash")
 #define KXMLQLCVCButtonActionToggle     QString("Toggle")
+#define KXMLQLCVCButtonActionRestart      QString("Restart")
 #define KXMLQLCVCButtonActionBlackout   QString("Blackout")
 #define KXMLQLCVCButtonActionStopAll    QString("StopAll")
 
@@ -259,7 +260,7 @@ public:
      * Blackout: Toggle blackout on/off.
      * StopAll: Stop all functions (panic button).
      */
-    enum Action { Toggle, Flash, Blackout, StopAll };
+    enum Action { Toggle, Flash, Blackout, StopAll, Restart };
 
     /** Set this button's action */
     void setAction(Action action);

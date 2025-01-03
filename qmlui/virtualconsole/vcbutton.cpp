@@ -220,7 +220,7 @@ void VCButton::notifyFunctionStarting(VCWidget *widget, quint32 fid, qreal fInte
 
     qDebug() << "notifyFunctionStarting" << widget->caption() << fid << fIntensity;
 
-    if (m_functionID == Function::invalidId() || actionType() != VCButton::Toggle)
+    if (m_functionID == Function::invalidId() || (actionType() != VCButton::Toggle && actionType != VCButton::Restart))
         return;
 
     Function *f = m_doc->function(m_functionID);
@@ -245,7 +245,7 @@ void VCButton::notifyFunctionStarting(VCWidget *widget, quint32 fid, qreal fInte
 
 void VCButton::slotFunctionRunning(quint32 fid)
 {
-    if (fid == m_functionID && actionType() == Toggle)
+    if (fid == m_functionID && (actionType() == Toggle || actionType() == Restart))
     {
         if (state() == Inactive)
             setState(Monitoring);
@@ -255,7 +255,7 @@ void VCButton::slotFunctionRunning(quint32 fid)
 
 void VCButton::slotFunctionStopped(quint32 fid)
 {
-    if (fid == m_functionID && actionType() == Toggle)
+    if (fid == m_functionID && (actionType() == Toggle || actionType() == Restart))
     {
         resetIntensityOverrideAttribute();
         setState(Inactive);
@@ -273,7 +273,7 @@ void VCButton::slotFunctionFlashing(quint32 fid, bool state)
 
     // if the function was flashed by another button, and the function is still running, keep the button pushed
     Function* f = m_doc->function(m_functionID);
-    if (state == false && actionType() == Toggle && f != nullptr && f->isRunning())
+    if (state == false && (actionType() == Toggle || actionType() == Restart) && f != nullptr && f->isRunning())
     {
         return;
     }
@@ -367,6 +367,30 @@ void VCButton::requestStateChange(bool pressed)
             }
         }
         break;
+        case Restart:
+        {
+            Function *f = m_doc->function(m_functionID);
+            if (f == nullptr)
+                return;
+
+            if (state() != Active && pressed == true)
+            {
+                if (hasSoloParent())
+                    emit functionStarting(this, m_functionID);
+                else
+                    notifyFunctionStarting(this, m_functionID, 1.0);
+            }
+            else if (state() == Active && pressed == false)
+            {
+                if (f->isRunning())
+                {
+                    f->stop(functionParent());
+                    resetIntensityOverrideAttribute();
+                    setState(Inactive);
+                }
+            }
+        }
+        break;
         case Flash:
         {
             Function *f = m_doc->function(m_functionID);
@@ -435,6 +459,8 @@ QString VCButton::actionToString(VCButton::ButtonAction action)
         return QString(KXMLQLCVCButtonActionBlackout);
     else if (action == StopAll)
         return QString(KXMLQLCVCButtonActionStopAll);
+    else if (action == Restart)
+        return QString(KXMLQLCVCButtonActionRestart);
     else
         return QString(KXMLQLCVCButtonActionToggle);
 }
@@ -445,6 +471,8 @@ VCButton::ButtonAction VCButton::stringToAction(const QString& str)
         return Flash;
     else if (str == KXMLQLCVCButtonActionBlackout)
         return Blackout;
+    else if (str == KXMLQLCVCButtonActionRestart)
+        return Restart;
     else if (str == KXMLQLCVCButtonActionStopAll)
         return StopAll;
     else
