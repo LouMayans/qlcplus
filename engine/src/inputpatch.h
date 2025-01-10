@@ -127,12 +127,17 @@ signals:
     void inputValueChanged(quint32 inputUniverse, quint32 channel,
                            uchar value, const QString& key = 0);
 
+    void inputValueFeedback(quint32 inputUniverse, quint32 channel,
+                           uchar value, const QString& key = 0);
+
     void inputNameChanged();
     void pluginNameChanged();
     void profileNameChanged();
 
 private slots:
     void slotValueChanged(quint32 universe, quint32 input,
+                          quint32 channel, uchar value, const QString& key = 0);
+    void slotValueFeedback(quint32 universe, quint32 input,
                           quint32 channel, uchar value, const QString& key = 0);
 
 private:
@@ -170,6 +175,9 @@ public:
 
     QMutex m_inputBufferMutex;
     QHash<quint32, InputValue> m_inputBuffer;
+
+    QMutex m_inputFeedbackBufferMutex;
+    QHash<quint32, InputValue> m_inputFeedbackBuffer;
 };
 
 /** @} */

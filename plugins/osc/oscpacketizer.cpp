@@ -133,7 +133,7 @@ bool OSCPacketizer::parseMessage(QByteArray const& data, QString& path, QByteArr
     int left = (typeArray.count() + 1) % 4;
     currPos += 3 - left;
 
-    qDebug () << "[OSC] Tags found:" << typeArray.count() << "currpos at" << currPos;
+    // qDebug () << "[OSC] Tags found:" << typeArray.count() << "currpos at" << currPos;
 
     foreach (TagType tag, typeArray)
     {
@@ -155,7 +155,7 @@ bool OSCPacketizer::parseMessage(QByteArray const& data, QString& path, QByteArr
                 else
                     values.append((char)(iVal / 0xFFFFFF));
 
-                qDebug() << "[OSC] iVal:" << iVal;
+                // qDebug() << "[OSC] iVal:" << iVal;
                 currPos += 4;
             }
             break;
@@ -170,9 +170,18 @@ bool OSCPacketizer::parseMessage(QByteArray const& data, QString& path, QByteArr
                 *((uchar*)(&fVal) + 1) = data.at(currPos + 2);
                 *((uchar*)(&fVal) + 0) = data.at(currPos + 3);
 
-                values.append((char)(255.0 * fVal));
-
-                qDebug() << "[OSC] fVal:" << fVal;
+                if(fVal == -1){
+                    values.append((char)(-1));
+                }else{
+                    values.append((char)(255.0 * fVal));
+                }
+                // qDebug() << Q_FUNC_INFO << "OSC RECEIVED";
+                // qDebug() << "[OSC] fVal:" << fVal;
+                // qDebug() << "[OSC] values:" << 255.0 * fVal;
+                // qDebug() << "[OSC] values:" << (int)(255.0 * fVal);
+                // qDebug() << "[OSC] values:" << (int)((char)(255.0));
+                // qDebug() << "[OSC] values:" << (int)((char)(-1));
+                // qDebug() << ((char)(-1) < 0);
 
                 currPos += 4;
             }
@@ -234,6 +243,7 @@ QList<QPair<QString, QByteArray> > OSCPacketizer::parsePacket(QByteArray const& 
         QByteArray values;
 
         // check wether we need to parse a bundle or a single message
+        qDebug() << Q_FUNC_INFO << data.at(bufPos);
         if (data.at(bufPos) == '#')
         {
             if (data.size() < 20 || data.startsWith("#bundle") == false)

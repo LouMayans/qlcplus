@@ -239,6 +239,8 @@ bool OSCPlugin::openInput(quint32 input, quint32 universe)
                                                         OSCController::Input, input, this);
         connect(controller, SIGNAL(valueChanged(quint32,quint32,quint32,uchar,QString)),
                 this, SIGNAL(valueChanged(quint32,quint32,quint32,uchar,QString)));
+        connect(controller, SIGNAL(valueFeedback(quint32,quint32,quint32,uchar,QString)),
+            this, SIGNAL(valueFeedback(quint32,quint32,quint32,uchar,QString)));
         m_IOmapping[input].controller = controller;
     }
 

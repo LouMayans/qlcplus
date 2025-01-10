@@ -744,8 +744,16 @@ void Universe::slotInputValueChanged(quint32 universe, quint32 channel, uchar va
             updatePostGMValue(channel);
         }
     }
-    else
+    else{
+        // qDebug() << "HERE??FF " << value;
         emit inputValueChanged(universe, channel, value, key);
+    }
+}
+
+void Universe::slotInputValueFeedback(quint32 universe, quint32 channel, uchar value, const QString &key)
+{
+    // qDebug() << Q_FUNC_INFO;
+    emit inputValueFeedback(universe, channel, value, key);
 }
 
 void Universe::connectInputPatch()
@@ -753,12 +761,20 @@ void Universe::connectInputPatch()
     if (m_inputPatch == NULL)
         return;
 
-    if (!m_passthrough)
+    if (!m_passthrough){
+        // qDebug() << Q_FUNC_INFO << '1';
         connect(m_inputPatch, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),
                 this, SIGNAL(inputValueChanged(quint32,quint32,uchar,QString)));
-    else
+        connect(m_inputPatch, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)),
+                this, SIGNAL(inputValueFeedback(quint32,quint32,uchar,QString)));
+    }
+    else{
+        // qDebug() << Q_FUNC_INFO;
         connect(m_inputPatch, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),
                 this, SLOT(slotInputValueChanged(quint32,quint32,uchar,const QString&)));
+        connect(m_inputPatch, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)),
+                this, SLOT(slotInputValueFeedback(quint32,quint32,uchar,const QString&)));
+    }
 }
 
 void Universe::disconnectInputPatch()
@@ -766,12 +782,18 @@ void Universe::disconnectInputPatch()
     if (m_inputPatch == NULL)
         return;
 
-    if (!m_passthrough)
+    if (!m_passthrough){
         disconnect(m_inputPatch, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),
                 this, SIGNAL(inputValueChanged(quint32,quint32,uchar,QString)));
-    else
+        disconnect(m_inputPatch, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)),
+                this, SIGNAL(inputValueFeedback(quint32,quint32,uchar,QString)));
+    }
+    else{
         disconnect(m_inputPatch, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),
                 this, SLOT(slotInputValueChanged(quint32,quint32,uchar,const QString&)));
+        disconnect(m_inputPatch, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)),
+                this, SLOT(slotInputValueFeedback(quint32,quint32,uchar,const QString&)));
+    }
 }
 
 /************************************************************************

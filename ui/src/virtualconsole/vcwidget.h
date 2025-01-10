@@ -469,6 +469,7 @@ protected slots:
      * @param value New value for universe & value
      */
     virtual void slotInputValueChanged(quint32 universe, quint32 channel, uchar value);
+    virtual void slotInputValueFeedback(quint32 universe, quint32 channel, uchar value);
 
     /**
      * Slot called when an input profile has been changed and

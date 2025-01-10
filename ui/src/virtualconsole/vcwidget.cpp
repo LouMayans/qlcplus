@@ -601,6 +601,8 @@ void VCWidget::setInputSource(QSharedPointer<QLCInputSource> const& source, quin
     {
         connect(m_doc->inputOutputMap(), SIGNAL(inputValueChanged(quint32,quint32,uchar)),
                 this, SLOT(slotInputValueChanged(quint32,quint32,uchar)));
+        connect(m_doc->inputOutputMap(), SIGNAL(inputValueFeedback(quint32,quint32,uchar)),
+                this, SLOT(slotInputValueFeedback(quint32,quint32,uchar)));
         connect(m_doc->inputOutputMap(), SIGNAL(profileChanged(quint32,QString)),
                 this, SLOT(slotInputProfileChanged(quint32,QString)));
     }
@@ -610,6 +612,8 @@ void VCWidget::setInputSource(QSharedPointer<QLCInputSource> const& source, quin
     {
         disconnect(m_inputs.value(id).data(), SIGNAL(inputValueChanged(quint32,quint32,uchar)),
                 this, SLOT(slotInputValueChanged(quint32,quint32,uchar)));
+        disconnect(m_inputs.value(id).data(), SIGNAL(inputValueFeedback(quint32,quint32,uchar)),
+                this, SLOT(slotInputValueFeedback(quint32,quint32,uchar)));
         m_inputs.remove(id);
     }
 
@@ -644,6 +648,8 @@ void VCWidget::setInputSource(QSharedPointer<QLCInputSource> const& source, quin
                         source->setSensitivity(ich->movementSensitivity());
                         connect(source.data(), SIGNAL(inputValueChanged(quint32,quint32,uchar)),
                                 this, SLOT(slotInputValueChanged(quint32,quint32,uchar)));
+                        connect(source.data(), SIGNAL(inputValueFeedback(quint32,quint32,uchar)),
+                                this, SLOT(slotInputValueFeedback(quint32,quint32,uchar)));
                     }
                     else if (ich->type() == QLCInputChannel::Encoder)
                     {
@@ -651,6 +657,8 @@ void VCWidget::setInputSource(QSharedPointer<QLCInputSource> const& source, quin
                         source->setSensitivity(ich->movementSensitivity());
                         connect(source.data(), SIGNAL(inputValueChanged(quint32,quint32,uchar)),
                                 this, SLOT(slotInputValueChanged(quint32,quint32,uchar)));
+                        connect(source.data(), SIGNAL(inputValueFeedback(quint32,quint32,uchar)),
+                                this, SLOT(slotInputValueFeedback(quint32,quint32,uchar)));
                     }
                     else if (ich->type() == QLCInputChannel::Button)
                     {
@@ -659,6 +667,8 @@ void VCWidget::setInputSource(QSharedPointer<QLCInputSource> const& source, quin
                             source->setSendExtraPressRelease(true);
                             connect(source.data(), SIGNAL(inputValueChanged(quint32,quint32,uchar)),
                                     this, SLOT(slotInputValueChanged(quint32,quint32,uchar)));
+                            connect(source.data(), SIGNAL(inputValueFeedback(quint32,quint32,uchar)),
+                                    this, SLOT(slotInputValueFeedback(quint32,quint32,uchar)));
                         }
 
                         // user custom feedback have precedence over input profile custom feedback
@@ -682,6 +692,8 @@ void VCWidget::setInputSource(QSharedPointer<QLCInputSource> const& source, quin
     {
         disconnect(m_doc->inputOutputMap(), SIGNAL(inputValueChanged(quint32,quint32,uchar)),
                    this, SLOT(slotInputValueChanged(quint32,quint32,uchar)));
+        disconnect(m_doc->inputOutputMap(), SIGNAL(inputValueFeedback(quint32,quint32,uchar)),
+                this, SLOT(slotInputValueFeedback(quint32,quint32,uchar)));
         disconnect(m_doc->inputOutputMap(), SIGNAL(profileChanged(quint32,QString)),
                    this, SLOT(slotInputProfileChanged(quint32,QString)));
     }
@@ -732,6 +744,14 @@ void VCWidget::sendFeedback(int value, QSharedPointer<QLCInputSource> src, QVari
 
 void VCWidget::slotInputValueChanged(quint32 universe, quint32 channel, uchar value)
 {
+    Q_UNUSED(universe);
+    Q_UNUSED(channel);
+    Q_UNUSED(value);
+}
+
+void VCWidget::slotInputValueFeedback(quint32 universe, quint32 channel, uchar value)
+{
+    // qDebug() << Q_FUNC_INFO;
     Q_UNUSED(universe);
     Q_UNUSED(channel);
     Q_UNUSED(value);

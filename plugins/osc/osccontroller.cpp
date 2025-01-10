@@ -362,6 +362,7 @@ void OSCController::handlePacket(QUdpSocket* socket, QByteArray const& datagram,
         if (values.isEmpty())
             continue;
 
+        // qDebug() << Q_FUNC_INFO << sender() << values;
         for (QMap<quint32, UniverseInfo>::iterator it = m_universeMap.begin(); it != m_universeMap.end(); ++it)
         {
             quint32 universe = it.key();
@@ -374,14 +375,23 @@ void OSCController::handlePacket(QUdpSocket* socket, QByteArray const& datagram,
                     for (int i = 0; i < values.length(); i++)
                     {
                         QString modPath = QString("%1_%2").arg(path).arg(i);
-                        // qDebug() << Q_FUNC_INFO << " QString() "<< QString("%1_%2") << " modPath: "<< modPath << " path:" << path << " i:" << i;
-                        emit valueChanged(universe, m_line, getHash(modPath), (uchar)values.at(i), modPath);
+                        // qDebug() << Q_FUNC_INFO << " QString() "<< QString("%1_%2") << " modPath: "<< modPath << " path:" << path << " i:" << values.at(i);
+                        if(values.at(i) == -1){
+
+                        }else{
+                            emit valueChanged(universe, m_line, getHash(modPath), (uchar)values.at(i), modPath);
+                        }
                     }
                 }
                 else{
                     // qDebug() << Q_FUNC_INFO << " getHash(path) "<< getHash(path) << " path:" << path;
                     // qDebug() << path.toUtf8().data();
-                    emit valueChanged(universe, m_line, getHash(path), (uchar)values.at(0), path);
+                    // qDebug() << Q_FUNC_INFO << " QString() "<< QString("%1_%2")<< " path:" << path;
+                    if(values.at(0) == -1){
+                        emit valueFeedback(universe, m_line, getHash(path), (uchar)values.at(0), path);
+                    }else{
+                        emit valueChanged(universe, m_line, getHash(path), (uchar)values.at(0), path);
+                    }
 
                 }
             }

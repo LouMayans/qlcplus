@@ -143,6 +143,7 @@ private slots:
 
 signals:
     void valueChanged(quint32 universe, quint32 input, quint32 channel, uchar value, QString key);
+    void valueFeedback(quint32 universe, quint32 input, quint32 channel, uchar value, QString key);
 
 private:
     /** The controller IP address as QHostAddress */

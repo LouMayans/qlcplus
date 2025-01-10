@@ -249,6 +249,7 @@ public:
 
 protected slots:
     void slotInputValueChanged(quint32 universe, quint32 channel, uchar value);
+    void slotInputValueFeedback(quint32 universe, quint32 channel, uchar value);
 
     /*********************************************************************
      * Button action

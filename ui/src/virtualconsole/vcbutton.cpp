@@ -541,8 +541,14 @@ void VCButton::slotInputValueChanged(quint32 universe, quint32 channel, uchar va
     if (acceptsInput() == false)
         return;
 
+    // qDebug() << Q_FUNC_INFO << value << "|" << state();
+    // qDebug() << Q_FUNC_INFO << channel;
+    // qDebug() << Q_FUNC_INFO << universe;
+    // qDebug() << Q_FUNC_INFO << page();
+    // qDebug() << Q_FUNC_INFO << sender();
     if (checkInputSource(universe, (page() << 16) | channel, value, sender()))
     {
+        // qDebug() << Q_FUNC_INFO << m_action << "|" << Toggle;
         if (m_action == Flash)
         {
             // Keep the button depressed only while the external button is kept down.
@@ -554,12 +560,17 @@ void VCButton::slotInputValueChanged(quint32 universe, quint32 channel, uchar va
         }
         else
         {
-            if (value > 0)
+            if (value > 0 && state() == Inactive)
             {
                 // Only toggle when the external button is pressed.
                 pressFunction();
+                updateFeedback();
             }
-            else
+            // else if(value == -1){
+            //     qDebug() << Q_FUNC_INFO << "-1 UPDATE FEEDBACK";
+            //     updateFeedback();
+            // }
+            else if (value == 0 && state() == Active)
             {
                 Function* f = NULL;
                 f = m_doc->function(m_function);
@@ -573,6 +584,24 @@ void VCButton::slotInputValueChanged(quint32 universe, quint32 channel, uchar va
                 updateFeedback();
             }
         }
+    }
+}
+
+void VCButton::slotInputValueFeedback(quint32 universe, quint32 channel, uchar value)
+{
+    // qDebug() << Q_FUNC_INFO;
+    /* Don't let input data through in design mode or if disabled */
+    if (acceptsInput() == false)
+        return;
+
+    // qDebug() << Q_FUNC_INFO << value << "|" << state();
+    // qDebug() << Q_FUNC_INFO << channel;
+    // qDebug() << Q_FUNC_INFO << universe;
+    // qDebug() << Q_FUNC_INFO << page();
+    // qDebug() << Q_FUNC_INFO << sender();
+    if (checkInputSource(universe, (page() << 16) | channel, value, sender()))
+    {
+        updateFeedback();
     }
 }
 

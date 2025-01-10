@@ -104,6 +104,8 @@ bool InputPatch::set(QLCIOPlugin* plugin, quint32 input, QLCInputProfile* profil
     {
         connect(m_plugin, SIGNAL(valueChanged(quint32,quint32,quint32,uchar,QString)),
                 this, SLOT(slotValueChanged(quint32,quint32,quint32,uchar,QString)));
+        connect(m_plugin, SIGNAL(valueFeedback(quint32,quint32,quint32,uchar,QString)),
+                this, SLOT(slotValueFeedback(quint32,quint32,quint32,uchar,QString)));
         result = m_plugin->openInput(m_pluginLine, m_universe);
 
         if (m_profile != NULL)
@@ -215,6 +217,8 @@ QMap<QString, QVariant> InputPatch::getPluginParameters()
 void InputPatch::slotValueChanged(quint32 universe, quint32 input, quint32 channel,
                                   uchar value, const QString& key)
 {
+
+    // qDebug() << Q_FUNC_INFO << sender();
     // qDebug() << Q_FUNC_INFO << " Universe: "<< universe << " input:" << input << " channel:" << channel << " value:" << value << " key:" << key;
     // In case we have several lines connected to the same plugin, emit only
     // such values that belong to this particular patch.
@@ -232,6 +236,7 @@ void InputPatch::slotValueChanged(quint32 universe, quint32 input, quint32 chann
                     // Every ON/OFF changes must pass through
                     if (curVal.value == 0 || val.value == 0)
                     {
+                        // qDebug() << "HERE??VV " << curVal.value;
                         emit inputValueChanged(m_universe, channel, curVal.value, curVal.key);
                     }
                     m_inputBuffer.insert(channel, val);
@@ -240,6 +245,36 @@ void InputPatch::slotValueChanged(quint32 universe, quint32 input, quint32 chann
             else
             {
                 m_inputBuffer.insert(channel, val);
+            }
+        }
+    }
+}
+
+void InputPatch::slotValueFeedback(quint32 universe, quint32 input, quint32 channel,
+                                  uchar value, const QString& key)
+{
+
+    // qDebug() << Q_FUNC_INFO << sender();
+    // qDebug() << Q_FUNC_INFO << " Universe: "<< universe << " input:" << input << " channel:" << channel << " value:" << value << " key:" << key;
+    // In case we have several lines connected to the same plugin, emit only
+    // such values that belong to this particular patch.
+    if (input == m_pluginLine)
+    {
+        if (universe == UINT_MAX || universe == m_universe)
+        {
+            QMutexLocker inputBufferLocker(&m_inputFeedbackBufferMutex);
+            InputValue val(value, key);
+            if (m_inputFeedbackBuffer.contains(channel))
+            {
+                InputValue const& curVal = m_inputFeedbackBuffer.value(channel);
+                if (curVal.value != val.value)
+                {
+                    m_inputFeedbackBuffer.insert(channel, val);
+                }
+            }
+            else
+            {
+                m_inputFeedbackBuffer.insert(channel, val);
             }
         }
     }
@@ -290,5 +325,14 @@ void InputPatch::flush(quint32 universe)
             emit inputValueChanged(m_universe, it.key(), it.value().value, it.value().key);
         }
         m_inputBuffer.clear();
+
+
+        QMutexLocker inputFeedbackBufferLocker(&m_inputFeedbackBufferMutex);
+        for (QHash<quint32, InputValue>::const_iterator it = m_inputFeedbackBuffer.begin(); it != m_inputFeedbackBuffer.end(); ++it)
+        {
+            // qDebug() << Q_FUNC_INFO << "LOOKING FOR WAY TO SEND FEEEDBACKKS " << sender() <<  it.value().value;
+            emit inputValueFeedback(m_universe, it.key(), it.value().value, it.value().key);
+        }
+        m_inputFeedbackBuffer.clear();
     }
 }

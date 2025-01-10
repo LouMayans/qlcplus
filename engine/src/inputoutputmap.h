@@ -521,6 +521,7 @@ signals:
 
     /** Everyone interested in input data should connect to this signal */
     void inputValueChanged(quint32 universe, quint32 channel, uchar value, const QString& key = 0);
+    void inputValueFeedback(quint32 universe, quint32 channel, uchar value, const QString& key = 0);
 
     /*************************************************************************
      * Input profiles

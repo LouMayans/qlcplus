@@ -259,11 +259,15 @@ void QLCInputSource::updateInputValue(uchar value)
             m_sensitivity = qAbs(m_sensitivity);
         m_inputValue = CLAMP(m_inputValue + (char)m_sensitivity, 0, UCHAR_MAX);
         locker.unlock();
+
+        // qDebug() << "HERE??a " << m_inputValue;
+
         emit inputValueChanged(m_universe, m_channel, m_inputValue);
     }
     else if (m_emitExtraPressRelease == true)
     {
         locker.unlock();
+        // qDebug() << "HERE??b " << m_upper.value();
         emit inputValueChanged(m_universe, m_channel, m_upper.value());
         emit inputValueChanged(m_universe, m_channel, m_lower.value());
     }
@@ -306,9 +310,11 @@ void QLCInputSource::run()
                 dValue = CLAMP(dValue, 0, 255);
 
                 uchar newDmxValue = uchar(dValue);
-                qDebug() << "double value:" << dValue << "uchar val:" << newDmxValue;
-                if (newDmxValue != m_outputValue)
+                // qDebug() << "double value:" << dValue << "uchar val:" << newDmxValue;
+                if (newDmxValue != m_outputValue){
+                    // qDebug() << "HERE??c " << inputValueCopy << "  " << newDmxValue;
                     emit inputValueChanged(m_universe, m_channel, newDmxValue);
+                }
 
                 movementOn = true;
             }

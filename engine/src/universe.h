@@ -243,10 +243,12 @@ public:
 protected slots:
     /** Slot called every time an input patch sends data */
     void slotInputValueChanged(quint32 universe, quint32 channel, uchar value, const QString& key = 0);
+    void slotInputValueFeedback(quint32 universe, quint32 channel, uchar value, const QString& key = 0);
 
 signals:
     /** Everyone interested in input data should connect to this signal */
     void inputValueChanged(quint32 universe, quint32 channel, uchar value, const QString& key = 0);
+    void inputValueFeedback(quint32 universe, quint32 channel, uchar value, const QString& key = 0);
 
     /** Notify the listeners that the input patch has changed */
     void inputPatchChanged();
