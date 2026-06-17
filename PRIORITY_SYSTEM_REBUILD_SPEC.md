@@ -68,12 +68,17 @@ Engine (core — UI independent):
 - `engine/src/universe.h` / `universe.cpp` — per-channel priority arbitration (the core).
 - `engine/src/scene.cpp` — propagate scene priority to its faders.
 - `engine/src/efx.cpp` — propagate EFX priority to its fader.
-- *(gap)* `engine/src/rgbmatrix.cpp`, `engine/src/cuestack.cpp` — **not** wired in the
-  current branch; decide whether to include (see §5 + §7 bug #7).
+- `engine/src/rgbmatrix.cpp` — **REQUIRED** (decided): propagate RGBMatrix priority to its
+  fader. (Was a gap in the old branch.)
+- `engine/src/cuestack.cpp` — **REQUIRED** (decided): propagate CueStack priority to its
+  faders. CueStack is not a `Function`, so it needs its own priority field sourced from its
+  owner (see §4.4 + §5.6). (Was a gap in the old branch.)
 
 Classic UI (to set/show priority):
 - `ui/src/sceneeditor.h` / `sceneeditor.cpp` — Priority spin box in the Scene editor.
 - `ui/src/efxeditor.h` / `efxeditor.cpp` / `efxeditor.ui` — Priority spin box in the EFX editor.
+- `ui/src/rgbmatrixeditor.{cpp,ui}` — **REQUIRED** (decided): Priority spin box in the RGB
+  Matrix editor, so RGBMatrix priority can be set (same pattern as Scene/EFX, §5.6).
 - `ui/src/functionmanager.cpp` — extra tree columns.
 - `ui/src/functionstreewidget.cpp` — populate the columns + show hidden functions.
 - `ui/src/virtualconsole/vcwidget.h` / `vcwidget.cpp` — `louPriority` on the VC widget base + XML.
@@ -230,19 +235,40 @@ else
 Every place a function requests/creates its `GenericFader`, call `fader->setPriority2(getPriority())`
 right after `requestFader(...)`:
 
-| Function type | File / method | In branch? |
-|---|---|---|
-| Scene (DMX write) | `scene.cpp` `writeDMX()` | ✅ yes |
-| Scene (per-value) | `scene.cpp` `processValue()` | ✅ yes |
-| EFX | `efx.cpp` `getFader()` | ✅ yes |
-| RGBMatrix | `rgbmatrix.cpp` `getFader()` | ❌ **missing** (bug #7) |
-| CueStack (legacy VC cue list) | `cuestack.cpp` `getFader()`/`writeDMX()` | ❌ **missing** (bug #7) |
-| Chaser / Collection / Sequence | — | n/a: they run **member** functions, which write through their own faders and so already carry their own priority. A chaser does not write DMX directly. |
+| Function type | File / method | Required | Source of priority |
+|---|---|---|---|
+| Scene (DMX write) | `scene.cpp` `writeDMX()` | ✅ | `getPriority()` (own Function priority) |
+| Scene (per-value) | `scene.cpp` `processValue()` | ✅ | `getPriority()` |
+| EFX | `efx.cpp` `getFader()` | ✅ | `getPriority()` |
+| **RGBMatrix** | `rgbmatrix.cpp` `getFader()` | ✅ **(decided — was missing)** | `getPriority()` |
+| **CueStack** | `cuestack.cpp` `getFader()` + `writeDMX()` | ✅ **(decided — was missing)** | own priority field, set by owner (see below) |
+| Chaser / Collection / Sequence | — | n/a | run **member** functions, which write through their own faders and already carry their own priority. A chaser does not write DMX directly. |
+
+**Decision (confirmed by user): RGBMatrix and CueStack participate in priority.**
+
+- **RGBMatrix** is a `Function`, so it already has `getPriority()` from the base class. Just
+  add `fader->setPriority2(getPriority());` in `rgbmatrix.cpp::getFader()` right after
+  `requestFader(...)`. To *set* the value, add a Priority spin box to the RGB Matrix editor
+  (§5.6).
+- **CueStack is NOT a `Function`** — it has no `getPriority()`. Give `CueStack` its own
+  `int m_priority = 0;` with `setPriority2(int)` / `priority2()`, stamp it on the fader in
+  both `getFader()` and `writeDMX()` (`fader->setPriority2(priority2());`), and have its
+  **owner set it**: in current upstream, `CueStack` is driven by the classic VirtualConsole
+  **Cue List** (`VCCueList`) and by **SimpleDesk**. The owner (which is a `VCWidget` with its
+  own `louPriority` — §5.4) should call `cueStack->setPriority2(louPriority())` when it
+  configures/starts the stack. The rebuild should confirm the exact ownership in current
+  upstream (`grep -rn "new CueStack\|CueStack(" ui/src qmlui engine`) and source the priority
+  from there. Persist it in `CueStack::saveXML`/`loadXML` (new `Priority` attribute) if you
+  want it to survive save/reload independently of the widget.
 
 For a clean rebuild, wire **all** fader-creating functions (Scene, EFX, RGBMatrix, CueStack)
 so behaviour is consistent. With the `m_userPriority = 0` default (4.3), any function you
 don't wire simply behaves as priority 0 — but **only if you fix bug #1**, otherwise it reads
 garbage.
+
+> **Find every fader site in current upstream** (it moved 1376 commits since the fork):
+> `grep -rn "requestFader(" engine ui qmlui` and make sure each DMX-writing source stamps a
+> priority. Any new fader-creating function added upstream since the fork must be wired too.
 
 ---
 
@@ -281,9 +307,8 @@ In `functionstreewidget.cpp`:
 - (Optional) showing hidden functions is a separate UX choice — only comment out the
   `isVisible()==false` guards if you actually want hidden functions visible in the manager.
 
-> The Priority column here is **read-only display**. Priority is *edited* in the Scene/EFX
-> editors (5.1/5.2). There is currently no priority editor for RGBMatrix/Chaser/etc. in the
-> UI — add one if you wire those types.
+> The Priority column here is **read-only display**. Priority is *edited* in the per-type
+> editors (Scene §5.1, EFX §5.2, RGB Matrix §5.6).
 
 ### 5.4 VC Widget base — `ui/src/virtualconsole/vcwidget.{h,cpp}`
 - Add `int m_louPriority;` + `int louPriority() const;` + `void setLouPriority(int);`.
@@ -306,6 +331,23 @@ In `functionstreewidget.cpp`:
   > Reconsider the `-1` sentinel in a clean build: if your channel "unwritten" sentinel is
   > `INT_MIN`, then a non-overriding slider at `-1` still beats truly-unwritten channels but
   > loses to any priority-0 function. Confirm that's the behaviour you want, or use `0`.
+
+### 5.6 RGB Matrix editor + CueStack owner (decided additions)
+**RGB Matrix editor** — `ui/src/rgbmatrixeditor.{cpp,ui}` (classic UI):
+- Same pattern as the Scene editor (§5.1): add a `QSpinBox` (range `0..100000`, step `1`) with
+  a `"Priority"` label, init from `m_matrix->getPriority()`, connect `valueChanged(int)` →
+  slot → `m_matrix->setPriority(value)`. (Confirm the editor's actual class/file name in
+  current upstream — it may be `rgbmatrixeditor` or live under a different path.)
+
+**CueStack priority source** — there is no dedicated editor; CueStack inherits its priority
+from its **owning widget**:
+- The classic VirtualConsole **Cue List** (`VCCueList`, a `VCWidget`) already has a
+  `louPriority` (§5.4) settable in its properties dialog. When `VCCueList` configures/starts
+  its `CueStack`, call `cueStack->setPriority2(louPriority())`.
+- **SimpleDesk** also owns a `CueStack`; decide whether SimpleDesk cues should assert priority
+  (likely leave at default `0`).
+- If you want the cue-list priority editable directly, add a Priority spin box to
+  `VCCueListProperties` (mirrors the slider/button property dialogs).
 
 ---
 
@@ -389,8 +431,8 @@ These are the most likely reasons "all my changes seem to make lots of bugs":
    `memcpy`). Non-standard, unbounded stack alloc, no effect. → delete.
 6. **`getLouPriority()` uses GCC `?:`** (`louPriority ?: 0`) — non-standard and a no-op. → `return m_priority;`.
 7. **RGBMatrix and CueStack don't propagate priority** (their `getFader()` never calls
-   `setLouPriority`). Combined with bug #1 they arbitrate on garbage. → wire them, or rely on a
-   correct `0` default.
+   `setLouPriority`). Combined with bug #1 they arbitrate on garbage. → **wire both** (decided —
+   see §4.4/§5.6): RGBMatrix from its own `getPriority()`, CueStack from its owner widget's priority.
 8. **Tree column index collision** in `functionstreewidget.cpp`: `COL_PRIORITY` and `COL_PATH`
    are both `1`. → give every column a distinct index.
 9. **`writeMultiple` arbitrates on the first channel only** but writes/stamps per channel. →
@@ -415,11 +457,14 @@ These are the most likely reasons "all my changes seem to make lots of bugs":
       per-channel stamping (§4.2). Fix bugs #4, #5, #9.
    c. `GenericFader`: add `m_userPriority(=0)`, getter/setter, pass into universe writes,
       keep upstream cleanup (§4.3). Fix bugs #1, #3.
-   d. Propagation in `scene.cpp`, `efx.cpp` (+ `rgbmatrix.cpp`, `cuestack.cpp` if wanted) (§4.4).
+   d. Propagation in `scene.cpp`, `efx.cpp`, **`rgbmatrix.cpp`, and `cuestack.cpp`** (all
+      required — §4.4). For CueStack add its own priority field + owner wiring.
    → **Test headless:** two scenes on the same channels, different priorities; confirm higher
-   wins regardless of value, equal falls back to HTP, save/reload preserves priority.
-2. **Classic UI** to set/show it: Scene editor, EFX editor, function tree columns (§5.1–5.3).
-3. **VC widget priority**: base class + slider (§5.4–5.5).
+   wins regardless of value, equal falls back to HTP, save/reload preserves priority. Repeat
+   the cross-priority test with an RGB Matrix vs a Scene to confirm matrix priority works.
+2. **Classic UI** to set/show it: Scene editor, EFX editor, **RGB Matrix editor**, function
+   tree columns (§5.1–5.3, §5.6).
+3. **VC widget priority**: base class + slider + Cue List owner-priority wiring (§5.4–5.6).
 4. **Optional features** (§6), each as its own commit so they can be reverted independently:
    Restart action, external-0-stop, OSC `-1` feedback path.
 5. Run the existing engine tests (`engine/test/`); note the branch modified
