@@ -53,3 +53,8 @@ coverage/
 # CMake build
 CMakeLists.txt.user
 build*
+
+# Keep in-repo project memory tracked (override build* etc. above)
+!.claude/
+!.claude/memory/
+!.claude/memory/**
