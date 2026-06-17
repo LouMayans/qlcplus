@@ -21,6 +21,8 @@
 #include "ftd2xx-interface.h"
 #include "enttecdmxusbpro.h"
 
+#include <QDebug>
+
 #include <ftd2xx.h>
 
 #define EEPROM_VID_OFFSET       1
