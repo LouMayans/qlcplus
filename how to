@@ -1,0 +1,5 @@
+C:\msys64 go to mingw64.exe.
+navigate to the QLC+ build folder
+do make install
+it should go to
+C:\qlcplus folder
