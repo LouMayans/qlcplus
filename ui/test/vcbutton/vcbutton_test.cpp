@@ -649,10 +649,10 @@ void VCButton_Test::input()
     QCOMPARE(btn.state(), VCButton::Active);
     QCOMPARE(sc->getAttributeValue(Function::Intensity), btn.startupIntensity());
 
-    btn.slotInputValueChanged(0, 0, 0);
+    btn.slotInputValueChanged(0, 0, 255);
     QCOMPARE(sc->m_stop, false);
 
-    btn.slotInputValueChanged(0, 0, 255);
+    btn.slotInputValueChanged(0, 0, 0);
     QCOMPARE(sc->m_stop, true);
 
     // Test that blackout gets toggled thru ext input

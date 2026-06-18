@@ -1095,6 +1095,7 @@ QSharedPointer<GenericFader> EFX::getFader(QList<Universe *> universes, quint32 
         fader->setBlendMode(blendMode());
         fader->setName(name());
         fader->setParentFunctionID(id());
+        fader->setPriority2(getPriority());
         fader->setHandleSecondary(true);
         m_fadersMap[universeID] = fader;
     }

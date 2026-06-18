@@ -72,6 +72,8 @@ VCButtonProperties::VCButtonProperties(VCButton* button, Doc* doc)
         m_blackout->setChecked(true);
     else if (button->action() == VCButton::StopAll)
         m_stopAll->setChecked(true);
+    else if (button->action() == VCButton::Restart)
+        m_restart->setChecked(true);
     else
         m_toggle->setChecked(true);
     m_fadeOutTime = m_button->stopAllFadeTime();
@@ -93,6 +95,7 @@ VCButtonProperties::VCButtonProperties(VCButton* button, Doc* doc)
     connect(m_detachFunction, SIGNAL(clicked()), this, SLOT(slotSetFunction()));
 
     connect(m_toggle, SIGNAL(toggled(bool)), this, SLOT(slotActionToggled()));
+    connect(m_restart, SIGNAL(toggled(bool)), this, SLOT(slotActionToggled()));
     connect(m_blackout, SIGNAL(toggled(bool)), this, SLOT(slotActionToggled()));
     connect(m_stopAll, SIGNAL(toggled(bool)), this, SLOT(slotActionToggled()));
     connect(m_flash, SIGNAL(toggled(bool)), this, SLOT(slotActionToggled()));
@@ -222,6 +225,8 @@ void VCButtonProperties::accept()
 
     if (m_toggle->isChecked() == true)
         m_button->setAction(VCButton::Toggle);
+    else if (m_restart->isChecked() == true)
+        m_button->setAction(VCButton::Restart);
     else if (m_blackout->isChecked() == true)
         m_button->setAction(VCButton::Blackout);
     else if (m_stopAll->isChecked() == true)

@@ -104,6 +104,29 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QLabel" name="m_priorityLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Priority</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="m_priorityEdit">
+       <property name="toolTip">
+        <string>A higher priority wins a DMX channel over lower ones, overriding HTP/LTP</string>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="1" column="0" colspan="5">

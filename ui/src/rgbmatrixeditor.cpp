@@ -130,6 +130,8 @@ void RGBMatrixEditor::init()
     m_nameEdit->setText(m_matrix->name());
     m_nameEdit->setSelection(0, m_matrix->name().length());
 
+    m_priorityEdit->setValue(m_matrix->getPriority());
+
     /* Running order */
     switch (m_matrix->runOrder())
     {
@@ -208,6 +210,8 @@ void RGBMatrixEditor::init()
 
     connect(m_nameEdit, SIGNAL(textEdited(const QString&)),
             this, SLOT(slotNameEdited(const QString&)));
+    connect(m_priorityEdit, SIGNAL(valueChanged(int)),
+            this, SLOT(slotPriorityEdited(int)));
     connect(m_speedDialButton, SIGNAL(toggled(bool)),
             this, SLOT(slotSpeedDialToggle(bool)));
     connect(m_saveToSequenceButton, SIGNAL(clicked()),
@@ -806,6 +810,11 @@ void RGBMatrixEditor::slotNameEdited(const QString& text)
     m_matrix->setName(text);
     if (m_speedDials != NULL)
         m_speedDials->setWindowTitle(text);
+}
+
+void RGBMatrixEditor::slotPriorityEdited(int value)
+{
+    m_matrix->setPriority(value);
 }
 
 void RGBMatrixEditor::slotSpeedDialToggle(bool state)

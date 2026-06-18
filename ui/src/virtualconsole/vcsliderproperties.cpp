@@ -101,6 +101,8 @@ VCSliderProperties::VCSliderProperties(VCSlider* slider, Doc* doc)
     /* Name */
     m_nameEdit->setText(m_slider->caption());
 
+    m_priorityEdit->setValue(m_slider->louPriority());
+
     /* Widget appearance */
     if (m_slider->widgetStyle() == VCSlider::WKnob)
         m_widgetKnobRadio->setChecked(true);
@@ -904,6 +906,7 @@ void VCSliderProperties::accept()
     }
 
     m_slider->setCaption(m_nameEdit->text());
+    m_slider->setLouPriority(m_priorityEdit->value());
 
     /* Value style */
     if (m_valueExactRadio->isChecked() == true)

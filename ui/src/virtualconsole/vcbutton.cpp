@@ -560,21 +560,44 @@ void VCButton::slotInputValueChanged(quint32 universe, quint32 channel, uchar va
             else if (state() == Active && value == 0)
                 releaseFunction();
         }
-        else
+        else if (m_action == Toggle || m_action == Restart)
         {
             if (value > 0)
             {
-                // Only toggle when the external button is pressed.
-                pressFunction();
+                if (m_action == Restart || state() == Inactive)
+                    pressFunction();
+                updateFeedback();
+            }
+            else if (state() == Active)
+            {
+                Function *f = m_doc->function(m_function);
+                if (f != NULL)
+                    f->stop(functionParent());
+                resetIntensityOverrideAttribute();
+                updateFeedback();
             }
             else
             {
-                // Work around the "internal" feedback of some controllers
-                // by updating feedback state after button release.
                 updateFeedback();
             }
         }
+        else
+        {
+            if (value > 0)
+                pressFunction();
+            else
+                updateFeedback();
+        }
     }
+}
+
+void VCButton::slotInputValueFeedback(quint32 universe, quint32 channel, uchar value)
+{
+    if (acceptsInput() == false)
+        return;
+
+    if (checkInputSource(universe, (page() << 16) | channel, value, sender()))
+        updateFeedback();
 }
 
 /*****************************************************************************
@@ -615,6 +638,8 @@ QString VCButton::actionToString(VCButton::Action action)
         return QString(KXMLQLCVCButtonActionBlackout);
     else if (action == StopAll)
         return QString(KXMLQLCVCButtonActionStopAll);
+    else if (action == Restart)
+        return QString(KXMLQLCVCButtonActionRestart);
     else
         return QString(KXMLQLCVCButtonActionToggle);
 }
@@ -627,6 +652,8 @@ VCButton::Action VCButton::stringToAction(const QString& str)
         return Blackout;
     else if (str == KXMLQLCVCButtonActionStopAll)
         return StopAll;
+    else if (str == KXMLQLCVCButtonActionRestart)
+        return Restart;
     else
         return Toggle;
 }
@@ -757,6 +784,32 @@ void VCButton::pressFunction()
             emit functionStarting(m_function);
         }
     }
+    else if (m_action == Restart)
+    {
+        f = m_doc->function(m_function);
+        if (f == NULL)
+            return;
+
+        resetIntensityOverrideAttribute();
+        adjustFunctionIntensity(f, intensity());
+
+        if (f->type() == Function::ChaserType || f->type() == Function::SequenceType)
+        {
+            ChaserAction action;
+            action.m_action = ChaserSetStepIndex;
+            action.m_stepIndex = 0;
+            action.m_masterIntensity = intensity();
+            action.m_stepIntensity = 1.0;
+            action.m_fadeMode = Chaser::FromFunction;
+
+            Chaser *chaser = qobject_cast<Chaser*>(f);
+            chaser->setAction(action);
+        }
+
+        f->start(m_doc->masterTimer(), functionParent());
+        setState(Active);
+        emit functionStarting(m_function);
+    }
     else if (m_action == Flash && state() == Inactive)
     {
         f = m_doc->function(m_function);
@@ -805,7 +858,7 @@ void VCButton::releaseFunction()
 
 void VCButton::slotFunctionRunning(quint32 fid)
 {
-    if (fid == m_function && m_action == Toggle)
+    if (fid == m_function && (m_action == Toggle || m_action == Restart))
     {
         if (state() == Inactive)
             setState(Monitoring);
@@ -815,7 +868,7 @@ void VCButton::slotFunctionRunning(quint32 fid)
 
 void VCButton::slotFunctionStopped(quint32 fid)
 {
-    if (fid == m_function && m_action == Toggle)
+    if (fid == m_function && (m_action == Toggle || m_action == Restart))
     {
         resetIntensityOverrideAttribute();
         setState(Inactive);
@@ -1066,7 +1119,7 @@ void VCButton::paintEvent(QPaintEvent* e)
         option.state = QStyle::State_Sunken;
 
     /* Custom icons are always enabled, to see them in full color also in design mode */
-    if (m_action == Toggle || m_action == Flash)
+    if (m_action == Toggle || m_action == Flash || m_action == Restart)
         option.state |= QStyle::State_Enabled;
 
     /* Icon */

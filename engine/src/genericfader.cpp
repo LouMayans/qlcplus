@@ -27,6 +27,7 @@ GenericFader::GenericFader(QObject *parent)
     : QObject(parent)
     , m_fid(Function::invalidId())
     , m_priority(Universe::Auto)
+    , m_userPriority(0)
     , m_handleSecondary(false)
     , m_intensity(1.0)
     , m_parentIntensity(1.0)
@@ -71,6 +72,16 @@ int GenericFader::priority() const
 void GenericFader::setPriority(int priority)
 {
     m_priority = priority;
+}
+
+int GenericFader::priority2() const
+{
+    return m_userPriority;
+}
+
+void GenericFader::setPriority2(int priority)
+{
+    m_userPriority = priority;
 }
 
 bool GenericFader::handleSecondary() const
@@ -281,7 +292,7 @@ void GenericFader::write(Universe *universe, uint elapsedMs)
         //qDebug() << "[GenericFader] >>> uni:" << universe->id() << ", address:" << address << ", value:" << value << "int:" << compIntensity;
         if (flags & FadeChannel::Override)
         {
-            universe->write(address, value, true);
+            universe->write(address, value, true, priority2());
             continue;
         }
         else if (flags & FadeChannel::Relative)
@@ -292,13 +303,13 @@ void GenericFader::write(Universe *universe, uint elapsedMs)
         {
             for (int i = 0; i < channelCount; i++)
                 universe->write(address + i, ((uchar *)&value)[channelCount - 1 - i],
-                                flags & FadeChannel::ForceLTP ? true : false);
+                                flags & FadeChannel::ForceLTP ? true : false, priority2());
             continue;
         }
         else
         {
             // treat value as a whole, so do this just once per FadeChannel
-            universe->writeBlended(address, value, channelCount, m_blendMode);
+            universe->writeBlended(address, value, channelCount, m_blendMode, priority2());
         }
 
         if (((flags & FadeChannel::Intensity) &&

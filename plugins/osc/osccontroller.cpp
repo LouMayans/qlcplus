@@ -370,9 +370,14 @@ void OSCController::handlePacket(QUdpSocket* socket, QByteArray const& datagram,
                     for (int i = 0; i < values.length(); i++)
                     {
                         QString modPath = QString("%1_%2").arg(path).arg(i);
-                        emit valueChanged(universe, m_line, getHash(modPath), (uchar)values.at(i), modPath);
+                        if ((signed char)values.at(i) == -1)
+                            emit valueFeedback(universe, m_line, getHash(modPath), (uchar)values.at(i), modPath);
+                        else
+                            emit valueChanged(universe, m_line, getHash(modPath), (uchar)values.at(i), modPath);
                     }
                 }
+                else if ((signed char)values.at(0) == -1)
+                    emit valueFeedback(universe, m_line, getHash(path), (uchar)values.at(0), path);
                 else
                     emit valueChanged(universe, m_line, getHash(path), (uchar)values.at(0), path);
             }

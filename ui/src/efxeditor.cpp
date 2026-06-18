@@ -139,6 +139,8 @@ void EFXEditor::initGeneralPage()
     m_nameEdit->setText(m_efx->name());
     m_nameEdit->setSelection(0, m_nameEdit->text().length());
 
+    m_priorityEdit->setValue(m_efx->getPriority());
+
     /* Put all of the EFX's fixtures to the tree view */
     updateFixtureTree();
 
@@ -156,6 +158,9 @@ void EFXEditor::initGeneralPage()
 
     connect(m_nameEdit, SIGNAL(textEdited(const QString&)),
             this, SLOT(slotNameEdited(const QString&)));
+
+    connect(m_priorityEdit, SIGNAL(valueChanged(int)),
+            this, SLOT(slotPriorityEdited(int)));
 
     connect(m_tree, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
             this, SLOT(slotFixtureItemChanged(QTreeWidgetItem*,int)));
@@ -580,6 +585,11 @@ void EFXEditor::slotNameEdited(const QString &text)
     m_efx->setName(text);
     if (m_speedDials)
         m_speedDials->setWindowTitle(text);
+}
+
+void EFXEditor::slotPriorityEdited(int value)
+{
+    m_efx->setPriority(value);
 }
 
 void EFXEditor::slotSpeedDialToggle(bool state)

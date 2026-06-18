@@ -53,6 +53,7 @@ class FunctionUiState;
 #define KXMLQLCFunctionPath      QStringLiteral("Path")
 #define KXMLQLCFunctionHidden    QStringLiteral("Hidden")
 #define KXMLQLCFunctionBlendMode QStringLiteral("BlendMode")
+#define KXMLQLCFunctionPriority  QStringLiteral("Priority")
 
 #define KXMLQLCFunctionValue     QStringLiteral("Value")
 #define KXMLQLCFunctionValueType QStringLiteral("Type")
@@ -96,6 +97,7 @@ class Function : public QObject
     Q_DISABLE_COPY(Function)
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(int priority READ getPriority WRITE setPriority NOTIFY priorityChanged)
     Q_PROPERTY(quint32 id READ id CONSTANT)
     Q_PROPERTY(Type type READ type CONSTANT)
     Q_PROPERTY(quint32 totalDuration READ totalDuration WRITE setTotalDuration NOTIFY totalDurationChanged)
@@ -293,6 +295,17 @@ public:
 
 private:
     bool m_visible;
+
+public:
+    void setPriority(int priority);
+
+    int getPriority() const;
+
+signals:
+    void priorityChanged(quint32 fid);
+
+private:
+    int m_priority;
 
     /*********************************************************************
      * Common XML

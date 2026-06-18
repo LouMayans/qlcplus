@@ -56,6 +56,7 @@ VCWidget::VCWidget(QWidget* parent, Doc* doc)
     : QWidget(parent)
     , m_doc(doc)
     , m_id(invalidId())
+    , m_louPriority(0)
     , m_disableState(false)
     , m_page(0)
     , m_allowChildren(false)
@@ -118,6 +119,16 @@ quint32 VCWidget::id() const
 quint32 VCWidget::invalidId()
 {
     return UINT_MAX;
+}
+
+int VCWidget::louPriority() const
+{
+    return m_louPriority;
+}
+
+void VCWidget::setLouPriority(int priority)
+{
+    m_louPriority = priority;
 }
 
 /*********************************************************************
@@ -599,6 +610,8 @@ void VCWidget::setInputSource(QSharedPointer<QLCInputSource> const& source, quin
     {
         connect(m_doc->inputOutputMap(), SIGNAL(inputValueChanged(quint32,quint32,uchar)),
                 this, SLOT(slotInputValueChanged(quint32,quint32,uchar)));
+        connect(m_doc->inputOutputMap(), SIGNAL(inputValueFeedback(quint32,quint32,uchar)),
+                this, SLOT(slotInputValueFeedback(quint32,quint32,uchar)));
         connect(m_doc->inputOutputMap(), SIGNAL(profileChanged(quint32,QString)),
                 this, SLOT(slotInputProfileChanged(quint32,QString)));
     }
@@ -680,6 +693,8 @@ void VCWidget::setInputSource(QSharedPointer<QLCInputSource> const& source, quin
     {
         disconnect(m_doc->inputOutputMap(), SIGNAL(inputValueChanged(quint32,quint32,uchar)),
                    this, SLOT(slotInputValueChanged(quint32,quint32,uchar)));
+        disconnect(m_doc->inputOutputMap(), SIGNAL(inputValueFeedback(quint32,quint32,uchar)),
+                   this, SLOT(slotInputValueFeedback(quint32,quint32,uchar)));
         disconnect(m_doc->inputOutputMap(), SIGNAL(profileChanged(quint32,QString)),
                    this, SLOT(slotInputProfileChanged(quint32,QString)));
     }
@@ -738,6 +753,13 @@ void VCWidget::sendFeedback(int value, QSharedPointer<QLCInputSource> src, QVari
 }
 
 void VCWidget::slotInputValueChanged(quint32 universe, quint32 channel, uchar value)
+{
+    Q_UNUSED(universe);
+    Q_UNUSED(channel);
+    Q_UNUSED(value);
+}
+
+void VCWidget::slotInputValueFeedback(quint32 universe, quint32 channel, uchar value)
 {
     Q_UNUSED(universe);
     Q_UNUSED(channel);
@@ -838,6 +860,9 @@ bool VCWidget::loadXMLCommon(QXmlStreamReader &root)
     /* ID */
     if (attrs.hasAttribute(KXMLQLCVCWidgetID))
         setID(attrs.value(KXMLQLCVCWidgetID).toString().toUInt());
+
+    if (attrs.hasAttribute(KXMLQLCVCWidgetPriority))
+        setLouPriority(attrs.value(KXMLQLCVCWidgetPriority).toInt());
 
     /* Caption */
     if (attrs.hasAttribute(KXMLQLCVCCaption))
@@ -1021,6 +1046,9 @@ bool VCWidget::saveXMLCommon(QXmlStreamWriter *doc) const
     /* ID */
     if (id() != VCWidget::invalidId())
         doc->writeAttribute(KXMLQLCVCWidgetID, QString::number(id()));
+
+    if (louPriority() != 0)
+        doc->writeAttribute(KXMLQLCVCWidgetPriority, QString::number(louPriority()));
 
     /* Page */
     if (page() != 0)

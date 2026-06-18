@@ -90,6 +90,13 @@ private:
     /** The name of the CueStack */
     QString m_name;
 
+public:
+    void setPriority2(int priority);
+    int priority2() const;
+
+private:
+    int m_priority;
+
     /************************************************************************
      * Speed
      ************************************************************************/

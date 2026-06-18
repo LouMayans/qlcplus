@@ -139,6 +139,23 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QLabel" name="m_priorityLabel">
+           <property name="text">
+            <string>Priority</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="m_priorityEdit">
+           <property name="toolTip">
+            <string>Priority asserted while this slider is overriding. A higher priority wins a DMX channel over lower ones, overriding HTP/LTP</string>
+           </property>
+           <property name="maximum">
+            <number>100000</number>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item row="3" column="1">

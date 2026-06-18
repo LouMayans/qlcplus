@@ -38,6 +38,7 @@
 
 CueStack::CueStack(Doc* doc)
     : QObject(doc)
+    , m_priority(0)
     , m_fadeInSpeed(0)
     , m_fadeOutSpeed(0)
     , m_duration(UINT_MAX)
@@ -85,6 +86,16 @@ QString CueStack::name(int index) const
         return m_name;
     else
         return m_cues[index].name();
+}
+
+void CueStack::setPriority2(int priority)
+{
+    m_priority = priority;
+}
+
+int CueStack::priority2() const
+{
+    return m_priority;
 }
 
 /****************************************************************************
@@ -457,6 +468,7 @@ void CueStack::writeDMX(MasterTimer *timer, QList<Universe*> ua)
                 if (fader.isNull())
                 {
                     fader = ua[universe]->requestFader();
+                    fader->setPriority2(priority2());
                     m_fadersMap[universe] = fader;
                 }
 
@@ -603,6 +615,7 @@ QSharedPointer<GenericFader> CueStack::getFader(QList<Universe *> universes, qui
     {
         fader = universes[universeID]->requestFader();
         fader->adjustIntensity(intensity());
+        fader->setPriority2(priority2());
         m_fadersMap[universeID] = fader;
     }
 

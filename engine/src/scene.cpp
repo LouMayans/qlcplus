@@ -698,6 +698,7 @@ void Scene::writeDMX(MasterTimer *timer, QList<Universe *> ua)
                     fader->setBlendMode(blendMode());
                     fader->setName(name());
                     fader->setParentFunctionID(id());
+                    fader->setPriority2(getPriority());
                     m_fadersMap[universe] = fader;
                 }
 
@@ -741,6 +742,7 @@ void Scene::processValue(MasterTimer *timer, QList<Universe*> ua, uint fadeIn, c
         fader->setBlendMode(blendMode());
         fader->setName(name());
         fader->setParentFunctionID(id());
+        fader->setPriority2(getPriority());
         fader->setParentIntensity(getAttributeValue(ParentIntensity));
         fader->setHandleSecondary(true);
         m_fadersMap[universe->id()] = fader;

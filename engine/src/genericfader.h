@@ -65,6 +65,9 @@ public:
     int priority() const;
     void setPriority(int priority);
 
+    int priority2() const;
+    void setPriority2(int priority);
+
     /** Get/Set if this fader should handle primary/secondary channels
      *  when a caller requests a FadeChannel */
     bool handleSecondary() const;
@@ -178,6 +181,7 @@ private:
     QString m_name;
     quint32 m_fid;
     int m_priority;
+    int m_userPriority;
     bool m_handleSecondary;
     QHash <quint32,FadeChannel> m_channels;
     mutable QReadWriteLock m_channelsLock;

@@ -52,6 +52,7 @@ class QEvent;
 #define KXMLQLCVCButtonActionToggle     QStringLiteral("Toggle")
 #define KXMLQLCVCButtonActionBlackout   QStringLiteral("Blackout")
 #define KXMLQLCVCButtonActionStopAll    QStringLiteral("StopAll")
+#define KXMLQLCVCButtonActionRestart    QStringLiteral("Restart")
 
 #define KXMLQLCVCButtonFlashOverride    QStringLiteral("Override")
 #define KXMLQLCVCButtonFlashForceLTP    QStringLiteral("ForceLTP")
@@ -248,6 +249,7 @@ public:
 
 protected slots:
     void slotInputValueChanged(quint32 universe, quint32 channel, uchar value) override;
+    void slotInputValueFeedback(quint32 universe, quint32 channel, uchar value) override;
 
     /*********************************************************************
      * Button action
@@ -259,7 +261,7 @@ public:
      * Blackout: Toggle blackout on/off.
      * StopAll: Stop all functions (panic button).
      */
-    enum Action { Toggle, Flash, Blackout, StopAll };
+    enum Action { Toggle, Flash, Blackout, StopAll, Restart };
 
     /** Set this button's action */
     void setAction(Action action);

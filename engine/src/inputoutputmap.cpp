@@ -413,6 +413,8 @@ bool InputOutputMap::setInputPatch(quint32 universe, const QString &pluginName,
         currProfile = currInPatch->profile();
         disconnect(currInPatch, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),
                 this, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)));
+        disconnect(currInPatch, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)),
+                this, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)));
         if (currInPatch->plugin()->capabilities() & QLCIOPlugin::Beats)
         {
             disconnect(currInPatch, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),
@@ -451,6 +453,8 @@ bool InputOutputMap::setInputPatch(quint32 universe, const QString &pluginName,
         {
             connect(ip, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),
                     this, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)));
+            connect(ip, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)),
+                    this, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)));
             if (ip->plugin()->capabilities() & QLCIOPlugin::Beats)
             {
                 connect(ip, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),

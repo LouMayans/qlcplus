@@ -21,6 +21,7 @@
 #include <QXmlStreamWriter>
 #include <QElapsedTimer>
 #include <QDebug>
+#include <climits>
 #include <math.h>
 
 #include "channelmodifier.h"
@@ -39,6 +40,8 @@
 
 #define RELATIVE_ZERO_8BIT   0x7F
 #define RELATIVE_ZERO_16BIT  0x7F00
+
+static const int NO_CHANNEL_PRIORITY = INT_MIN;
 
 #define KXMLUniverseNormalBlend      QStringLiteral("Normal")
 #define KXMLUniverseMaskBlend        QStringLiteral("Mask")
@@ -71,6 +74,7 @@ Universe::Universe(quint32 id, GrandMaster *gm, QObject *parent)
     , m_passthroughValues()
 {
     m_modifiers.fill(NULL, UNIVERSE_SIZE);
+    m_channelPriority.fill(NO_CHANNEL_PRIORITY, UNIVERSE_SIZE);
 
     connect(m_grandMaster, SIGNAL(valueChanged(uchar)),
             this, SLOT(slotGMValueChanged()));
@@ -344,6 +348,8 @@ void Universe::processFaders(uint elapsedMs)
         }
     }
 
+    m_channelPriority.fill(NO_CHANNEL_PRIORITY);
+
     foreach (const QSharedPointer<GenericFader> &fader, activeFaders)
         fader->write(this, elapsedMs);
 
@@ -395,6 +401,7 @@ void Universe::reset()
 {
     m_preGMValues->fill(0);
     m_blackoutValues->fill(0);
+    m_channelPriority.fill(NO_CHANNEL_PRIORITY);
 
     if (m_passthrough)
         (*m_postGMValues) = (*m_passthroughValues);
@@ -416,6 +423,9 @@ void Universe::reset(int address, int range)
     memset(m_preGMValues->data() + address, 0, range * sizeof(*m_preGMValues->data()));
     memset(m_blackoutValues->data() + address, 0, range * sizeof(*m_blackoutValues->data()));
     memcpy(m_postGMValues->data() + address, m_modifiedZeroValues->data() + address, range * sizeof(*m_postGMValues->data()));
+
+    for (int i = address; i < address + range; i++)
+        m_channelPriority[i] = NO_CHANNEL_PRIORITY;
 
     applyPassthroughValues(address, range);
 }
@@ -771,6 +781,9 @@ void Universe::connectInputPatch()
     else
         connect(m_inputPatch, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),
                 this, SLOT(slotInputValueChanged(quint32,quint32,uchar,const QString&)));
+
+    connect(m_inputPatch, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)),
+            this, SIGNAL(inputValueFeedback(quint32,quint32,uchar,QString)));
 }
 
 void Universe::disconnectInputPatch()
@@ -784,6 +797,9 @@ void Universe::disconnectInputPatch()
     else
         disconnect(m_inputPatch, SIGNAL(inputValueChanged(quint32,quint32,uchar,const QString&)),
                 this, SLOT(slotInputValueChanged(quint32,quint32,uchar,const QString&)));
+
+    disconnect(m_inputPatch, SIGNAL(inputValueFeedback(quint32,quint32,uchar,const QString&)),
+               this, SIGNAL(inputValueFeedback(quint32,quint32,uchar,QString)));
 }
 
 /************************************************************************
@@ -933,7 +949,7 @@ void Universe::updateIntensityChannelsRanges()
  * Writing
  ****************************************************************************/
 
-bool Universe::write(int address, uchar value, bool forceLTP)
+bool Universe::write(int address, uchar value, bool forceLTP, int priority)
 {
     Q_ASSERT(address < UNIVERSE_SIZE);
 
@@ -942,9 +958,13 @@ bool Universe::write(int address, uchar value, bool forceLTP)
     if (address >= m_usedChannels)
         m_usedChannels = address + 1;
 
+    if (priority < m_channelPriority.at(address))
+        return false;
+
     if (m_channelsMask->at(address) & HTP)
     {
-        if (forceLTP == false && value < (uchar)m_preGMValues->at(address))
+        if (forceLTP == false && value < (uchar)m_preGMValues->at(address)
+            && priority == m_channelPriority.at(address))
         {
             return false;
         }
@@ -956,23 +976,28 @@ bool Universe::write(int address, uchar value, bool forceLTP)
     }
 
     (*m_preGMValues)[address] = char(value);
+    m_channelPriority[address] = priority;
 
     updatePostGMValue(address);
 
     return true;
 }
 
-bool Universe::writeMultiple(int address, quint32 value, int channelCount)
+bool Universe::writeMultiple(int address, quint32 value, int channelCount, int priority)
 {
     for (int i = 0; i < channelCount; i++)
     {
         //qDebug() << "[Universe]" << id() << ": write channel" << (address + i) << ", value:" << QString::number(((uchar *)&value)[channelCount - 1 - i]);
+
+        if (priority < m_channelPriority.at(address + i))
+            continue;
 
         // preserve non HTP channels for blackout
         if ((m_channelsMask->at(address + i) & HTP) == 0)
             (*m_blackoutValues)[address + i] = ((uchar *)&value)[channelCount - 1 - i];
 
         (*m_preGMValues)[address + i] = ((uchar *)&value)[channelCount - 1 - i];
+        m_channelPriority[address + i] = priority;
 
         updatePostGMValue(address + i);
     }
@@ -1016,7 +1041,7 @@ bool Universe::writeRelative(int address, quint32 value, int channelCount)
     return true;
 }
 
-bool Universe::writeBlended(int address, quint32 value, int channelCount, Universe::BlendMode blend)
+bool Universe::writeBlended(int address, quint32 value, int channelCount, Universe::BlendMode blend, int priority)
 {
     if (address + channelCount >= m_usedChannels)
         m_usedChannels = address + channelCount;
@@ -1029,7 +1054,10 @@ bool Universe::writeBlended(int address, quint32 value, int channelCount, Univer
     {
         case NormalBlend:
         {
-            if ((m_channelsMask->at(address) & HTP) && value < currentValue)
+            if (priority < m_channelPriority.at(address))
+                return false;
+            else if ((m_channelsMask->at(address) & HTP) && value < currentValue
+                     && priority == m_channelPriority.at(address))
             {
                 return false;
             }
@@ -1072,7 +1100,7 @@ bool Universe::writeBlended(int address, quint32 value, int channelCount, Univer
         break;
     }
 
-    writeMultiple(address, value, channelCount);
+    writeMultiple(address, value, channelCount, priority);
 
     return true;
 }

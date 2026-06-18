@@ -430,6 +430,48 @@ void Universe_Test::writeRelative()
 
 }
 
+void Universe_Test::writePriority()
+{
+    m_uni->setChannelCapability(0, QLCChannel::Intensity);
+    m_uni->setChannelCapability(1, QLCChannel::Intensity);
+    m_uni->setChannelCapability(2, QLCChannel::Intensity);
+
+    QVERIFY(m_uni->write(0, 200, false, 0) == true);
+    QCOMPARE(quint8(m_uni->preGMValue(0)), quint8(200));
+    QVERIFY(m_uni->write(0, 100, false, 10) == true);
+    QCOMPARE(quint8(m_uni->preGMValue(0)), quint8(100));
+    QVERIFY(m_uni->write(0, 255, false, 0) == false);
+    QCOMPARE(quint8(m_uni->preGMValue(0)), quint8(100));
+
+    QVERIFY(m_uni->write(1, 50, false, 3) == true);
+    QVERIFY(m_uni->write(1, 10, false, 7) == true);
+    QCOMPARE(quint8(m_uni->preGMValue(1)), quint8(10));
+
+    QVERIFY(m_uni->write(2, 80, false, 5) == true);
+    QVERIFY(m_uni->write(2, 40, false, 5) == false);
+    QCOMPARE(quint8(m_uni->preGMValue(2)), quint8(80));
+    QVERIFY(m_uni->write(2, 120, false, 5) == true);
+    QCOMPARE(quint8(m_uni->preGMValue(2)), quint8(120));
+
+    m_uni->reset();
+    QVERIFY(m_uni->writeBlended(0, 200, 1, Universe::NormalBlend, 0) == true);
+    QCOMPARE(quint8(m_uni->preGMValue(0)), quint8(200));
+    QVERIFY(m_uni->writeBlended(0, 100, 1, Universe::NormalBlend, 9) == true);
+    QCOMPARE(quint8(m_uni->preGMValue(0)), quint8(100));
+    QVERIFY(m_uni->writeBlended(0, 50, 1, Universe::NormalBlend, 9) == false);
+    QCOMPARE(quint8(m_uni->preGMValue(0)), quint8(100));
+
+    m_uni->reset();
+    QVERIFY(m_uni->write(1, 222, false, 8) == true);
+    m_uni->writeMultiple(0, 0x4455, 2, 1);
+    QCOMPARE(quint8(m_uni->preGMValue(0)), quint8(0x44));
+    QCOMPARE(quint8(m_uni->preGMValue(1)), quint8(222));
+
+    m_uni->reset();
+    QVERIFY(m_uni->write(0, 5, false, 0) == true);
+    QCOMPARE(quint8(m_uni->preGMValue(0)), quint8(5));
+}
+
 void Universe_Test::reset()
 {
     int i;

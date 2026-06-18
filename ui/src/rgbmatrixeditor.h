@@ -73,6 +73,7 @@ private:
 private slots:
     void slotPreviewTimeout();
     void slotNameEdited(const QString& text);
+    void slotPriorityEdited(int value);
     void slotSpeedDialToggle(bool state);
     void slotPatternActivated(int patternIndex);
     void slotFixtureGroupActivated(int index);

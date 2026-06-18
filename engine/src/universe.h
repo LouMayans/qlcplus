@@ -249,6 +249,8 @@ signals:
     /** Everyone interested in input data should connect to this signal */
     void inputValueChanged(quint32 universe, quint32 channel, uchar value, const QString& key = 0);
 
+    void inputValueFeedback(quint32 universe, quint32 channel, uchar value, const QString& key = 0);
+
     /** Notify the listeners that the input patch has changed */
     void inputPatchChanged();
 
@@ -486,6 +488,7 @@ protected:
     QVector<int> m_nonIntensityChannels;
     /** Array of values BEFORE the Grand Master changes */
     QScopedPointer<QByteArray> m_preGMValues;
+    QVector<int> m_channelPriority;
     /** Array of values AFTER the Grand Master changes (applyGM) */
     QScopedPointer<QByteArray> m_postGMValues;
     /** Array of the last preGM values written before the zeroIntensityChannels call  */
@@ -530,7 +533,7 @@ public:
      *
      * @return true if successful, otherwise false
      */
-    bool write(int address, uchar value, bool forceLTP = false);
+    bool write(int address, uchar value, bool forceLTP = false, int priority = 0);
 
     /**
      * Write a value representing one or multiple channels
@@ -541,7 +544,7 @@ public:
      *
      * @return always true
      */
-    bool writeMultiple(int address, quint32 value, int channelCount);
+    bool writeMultiple(int address, quint32 value, int channelCount, int priority = 0);
 
     /**
      * Write a relative value to a DMX channel, taking Grand Master and HTP into
@@ -567,7 +570,7 @@ public:
      *
      * @return true if successful, otherwise false
      */
-    bool writeBlended(int address, quint32 value, int channelCount, BlendMode blend);
+    bool writeBlended(int address, quint32 value, int channelCount, BlendMode blend, int priority = 0);
 
     /*********************************************************************
      * Load & Save

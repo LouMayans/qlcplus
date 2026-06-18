@@ -42,6 +42,7 @@ class QFile;
 #define KXMLQLCVCFrameStyle QStringLiteral("FrameStyle")
 
 #define KXMLQLCVCWidgetID           QStringLiteral("ID")
+#define KXMLQLCVCWidgetPriority     QStringLiteral("Priority")
 #define KXMLQLCVCWidgetPage         QStringLiteral("Page")
 #define KXMLQLCVCWidgetAppearance   QStringLiteral("Appearance")
 
@@ -115,6 +116,13 @@ public:
 
 private:
     quint32 m_id;
+
+public:
+    int louPriority() const;
+    void setLouPriority(int priority);
+
+private:
+    int m_louPriority;
 
     /*********************************************************************
      * Type
@@ -466,6 +474,8 @@ protected slots:
      * @param value New value for universe & value
      */
     virtual void slotInputValueChanged(quint32 universe, quint32 channel, uchar value);
+
+    virtual void slotInputValueFeedback(quint32 universe, quint32 channel, uchar value);
 
     /**
      * Slot called when an input profile has been changed and

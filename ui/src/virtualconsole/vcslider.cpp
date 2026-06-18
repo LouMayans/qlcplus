@@ -1217,6 +1217,8 @@ void VCSlider::writeDMXLevel(MasterTimer *timer, QList<Universe *> universes)
                 }
             }
 
+            fader->setPriority2(m_isOverriding ? louPriority() : 0);
+
             FadeChannel *fc = fader->getChannelFader(m_doc, universes[universe], lch.fixture, lch.channel);
             if (fc->universe() == Universe::invalid())
             {
@@ -1627,7 +1629,10 @@ void VCSlider::adjustIntensity(qreal val)
         foreach (QSharedPointer<GenericFader> fader, m_fadersMap)
         {
             if (!fader.isNull())
+            {
                 fader->adjustIntensity(val);
+                fader->setPriority2(m_isOverriding ? louPriority() : 0);
+            }
         }
     }
 }

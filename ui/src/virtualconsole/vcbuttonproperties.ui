@@ -53,6 +53,16 @@
        </widget>
       </item>
       <item>
+       <widget class="QRadioButton" name="m_restart">
+        <property name="toolTip">
+         <string>Restart the assigned function from the top on every press (it keeps running until it ends or an external 0 stops it)</string>
+        </property>
+        <property name="text">
+         <string>Restart function (re-trigger from the top)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="QRadioButton" name="m_flash">

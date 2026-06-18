@@ -172,7 +172,10 @@ bool OSCPacketizer::parseMessage(QByteArray const& data, QString& path, QByteArr
                 *((uchar*)(&fVal) + 1) = data.at(currPos + 2);
                 *((uchar*)(&fVal) + 0) = data.at(currPos + 3);
 
-                values.append((char)(255.0 * fVal));
+                if (fVal == -1.0f)
+                    values.append((char)(-1));
+                else
+                    values.append((char)(255.0 * fVal));
 
                 qDebug() << "[OSC] fVal:" << fVal;
 

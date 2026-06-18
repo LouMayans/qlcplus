@@ -44,6 +44,7 @@ private slots:
     void applyGM();
     void write();
     void writeRelative();
+    void writePriority();
     void reset();
 
     void loadEmpty();

@@ -81,6 +81,8 @@ bool InputPatch::set(QLCIOPlugin* plugin, quint32 input, QLCInputProfile* profil
     {
         disconnect(m_plugin, SIGNAL(valueChanged(quint32,quint32,quint32,uchar,QString)),
                    this, SLOT(slotValueChanged(quint32,quint32,quint32,uchar,QString)));
+        disconnect(m_plugin, SIGNAL(valueFeedback(quint32,quint32,quint32,uchar,QString)),
+                   this, SLOT(slotValueFeedback(quint32,quint32,quint32,uchar,QString)));
         m_plugin->closeInput(m_pluginLine, m_universe);
     }
 
@@ -102,6 +104,8 @@ bool InputPatch::set(QLCIOPlugin* plugin, quint32 input, QLCInputProfile* profil
     {
         connect(m_plugin, SIGNAL(valueChanged(quint32,quint32,quint32,uchar,QString)),
                 this, SLOT(slotValueChanged(quint32,quint32,quint32,uchar,QString)));
+        connect(m_plugin, SIGNAL(valueFeedback(quint32,quint32,quint32,uchar,QString)),
+                this, SLOT(slotValueFeedback(quint32,quint32,quint32,uchar,QString)));
         result = m_plugin->openInput(m_pluginLine, m_universe);
 
         if (m_profile != NULL)
@@ -252,6 +256,19 @@ void InputPatch::slotValueChanged(quint32 universe, quint32 input, quint32 chann
     }
 }
 
+void InputPatch::slotValueFeedback(quint32 universe, quint32 input, quint32 channel,
+                                   uchar value, const QString& key)
+{
+    if (input == m_pluginLine)
+    {
+        if (universe == UINT_MAX || universe == m_universe)
+        {
+            QMutexLocker feedbackBufferLocker(&m_inputFeedbackBufferMutex);
+            m_inputFeedbackBuffer.insert(channel, InputValue(value, key));
+        }
+    }
+}
+
 void InputPatch::setProfilePageControls()
 {
     if (m_profile != NULL)
@@ -297,5 +314,12 @@ void InputPatch::flush(quint32 universe)
             emit inputValueChanged(m_universe, it.key(), it.value().value, it.value().key);
         }
         m_inputBuffer.clear();
+
+        QMutexLocker feedbackBufferLocker(&m_inputFeedbackBufferMutex);
+        for (QHash<quint32, InputValue>::const_iterator it = m_inputFeedbackBuffer.begin(); it != m_inputFeedbackBuffer.end(); ++it)
+        {
+            emit inputValueFeedback(m_universe, it.key(), it.value().value, it.value().key);
+        }
+        m_inputFeedbackBuffer.clear();
     }
 }

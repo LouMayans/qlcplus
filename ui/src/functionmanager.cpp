@@ -64,8 +64,9 @@
 #include "doc.h"
 #include "efx.h"
 
-#define COL_NAME 0
-#define COL_PATH 1
+#define COL_NAME     0
+#define COL_PRIORITY 1
+#define COL_PATH     2
 
 #define SETTINGS_SPLITTER "functionmanager/splitter"
 
@@ -712,8 +713,11 @@ void FunctionManager::initTree()
     m_hsplitter->addWidget(m_tree);
 
     QStringList labels;
-    labels << tr("Function"); // << "Path";
+    labels << tr("Function") << tr("Priority");
     m_tree->setHeaderLabels(labels);
+    m_tree->header()->setStretchLastSection(false);
+    m_tree->header()->setSectionResizeMode(COL_NAME, QHeaderView::Stretch);
+    m_tree->header()->setSectionResizeMode(COL_PRIORITY, QHeaderView::ResizeToContents);
     m_tree->setRootIsDecorated(true);
     m_tree->setAllColumnsShowFocus(true);
     m_tree->setSelectionMode(QAbstractItemView::ExtendedSelection);

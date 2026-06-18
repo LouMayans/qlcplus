@@ -1040,6 +1040,9 @@ bool Doc::addFunction(Function* func, quint32 id)
         connect(func, SIGNAL(nameChanged(quint32)),
                 this, SLOT(slotFunctionNameChanged(quint32)));
 
+        connect(func, SIGNAL(priorityChanged(quint32)),
+                this, SLOT(slotFunctionNameChanged(quint32)));
+
         // Make the function listen to fixture removals
         connect(this, SIGNAL(fixtureRemoved(quint32)),
                 func, SLOT(slotFixtureRemoved(quint32)));
