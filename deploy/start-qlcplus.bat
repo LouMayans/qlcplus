@@ -6,14 +6,18 @@ REM
 REM  Looks for (all optional, in this same folder):
 REM    cert.pem / key.pem ... enable HTTPS/WSS (else plain HTTP)
 REM    webpass.txt ......... enable login (recommended when public)
-REM    show.qxw ............ project to auto-load
+REM    Main Project.qxw .... project to auto-load (falls back to show.qxw)
 REM ============================================================
 setlocal
 cd /d "%~dp0"
 
 set "EXTRA="
 if exist "%~dp0webpass.txt" set "EXTRA=%EXTRA% -a "%~dp0webpass.txt""
-if exist "%~dp0show.qxw"    set "EXTRA=%EXTRA% -o "%~dp0show.qxw""
+if exist "%~dp0Main Project.qxw" (
+    set "EXTRA=%EXTRA% -o "%~dp0Main Project.qxw""
+) else if exist "%~dp0show.qxw" (
+    set "EXTRA=%EXTRA% -o "%~dp0show.qxw""
+)
 
 REM Prefer win-acme's PEM output (auto-refreshed on every renewal); QLC+ reloads
 REM it live, so renewals need no restart. Fall back to cert.pem/key.pem.

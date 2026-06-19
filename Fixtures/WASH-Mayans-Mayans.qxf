@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FixtureDefinition>
+<FixtureDefinition xmlns="http://www.qlcplus.org/FixtureDefinition">
+ <Creator>
+  <Name>Q Light Controller Plus</Name>
+  <Version>4.13.1</Version>
+  <Author>louma</Author>
+ </Creator>
+ <Manufacturer>Mayans</Manufacturer>
+ <Model>WASH</Model>
+ <Type>Moving Head</Type>
+ <Channel Name="Master Dimmer" Preset="IntensityMasterDimmer"/>
+ <Channel Name="Red" Preset="IntensityRed"/>
+ <Channel Name="Green" Preset="IntensityGreen"/>
+ <Channel Name="Blue" Preset="IntensityBlue"/>
+ <Channel Name="White" Preset="IntensityWhite"/>
+ <Channel Name="Test Mode Dimming">
+  <Group Byte="0">Intensity</Group>
+ </Channel>
+ <Channel Name="Pan" Preset="PositionPan"/>
+ <Channel Name="Tilt" Preset="PositionTilt"/>
+ <Channel Name="Pan Fine" Preset="PositionPanFine"/>
+ <Channel Name="Tilt Fine" Preset="PositionTiltFine"/>
+ <Channel Name="Motor Speed" Preset="SpeedPanTiltSlowFast"/>
+ <Channel Name="Focus/Zoom" Preset="BeamFocusNearFar"/>
+ <Channel Name="Strobe" Preset="ShutterStrobeSlowFast"/>
+ <Channel Name="Setting Gradient Auto Or Sound Response IDK">
+  <Group Byte="0">Effect</Group>
+ </Channel>
+ <Channel Name="Speed of 14?">
+  <Group Byte="0">Intensity</Group>
+ </Channel>
+ <Channel Name="Reset">
+  <Group Byte="0">Intensity</Group>
+ </Channel>
+ <Mode Name="16 Channel">
+  <Channel Number="0" ActsOn="0">Master Dimmer</Channel>
+  <Channel Number="1" ActsOn="1">Red</Channel>
+  <Channel Number="2" ActsOn="2">Green</Channel>
+  <Channel Number="3" ActsOn="3">Blue</Channel>
+  <Channel Number="4" ActsOn="4">White</Channel>
+  <Channel Number="5" ActsOn="5">Test Mode Dimming</Channel>
+  <Channel Number="6" ActsOn="6">Pan</Channel>
+  <Channel Number="7" ActsOn="7">Tilt</Channel>
+  <Channel Number="8" ActsOn="8">Pan Fine</Channel>
+  <Channel Number="9" ActsOn="9">Tilt Fine</Channel>
+  <Channel Number="10" ActsOn="10">Motor Speed</Channel>
+  <Channel Number="11" ActsOn="11">Focus/Zoom</Channel>
+  <Channel Number="12" ActsOn="12">Strobe</Channel>
+  <Channel Number="13" ActsOn="13">Setting Gradient Auto Or Sound Response IDK</Channel>
+  <Channel Number="14" ActsOn="14">Speed of 14?</Channel>
+  <Channel Number="15" ActsOn="15">Reset</Channel>
+ </Mode>
+ <Physical>
+  <Bulb Type="" Lumens="0" ColourTemperature="0"/>
+  <Dimensions Weight="0" Width="0" Height="0" Depth="0"/>
+  <Lens Name="Other" DegreesMin="0" DegreesMax="0"/>
+  <Focus Type="Head" PanMax="540" TiltMax="270"/>
+  <Technical PowerConsumption="0" DmxConnector="5-pin"/>
+ </Physical>
+</FixtureDefinition>
