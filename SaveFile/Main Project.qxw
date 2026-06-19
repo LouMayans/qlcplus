@@ -449,21 +449,6 @@
    <FixtureVal ID="15">8,8</FixtureVal>
    <FixtureVal ID="34">5,8</FixtureVal>
   </Function>
-  <Function ID="2" Type="Scene" Name="New Scene" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="2">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="3">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="4">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="5">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="6">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="7">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="8">0,0,4,0,6,0,7,0</FixtureVal>
-   <FixtureVal ID="9">0,0,4,0,6,0,7,0</FixtureVal>
-   <FixtureVal ID="10">0,0,4,0,6,0,7,0</FixtureVal>
-   <FixtureVal ID="11">0,0,4,0,6,0,7,0</FixtureVal>
-   <FixtureVal ID="34">1,0,5,0,9,0,12,0</FixtureVal>
-  </Function>
   <Function ID="3" Type="EFX" Name="" Priority="0">
    <Fixture>
     <ID>34</ID>
@@ -645,22 +630,6 @@
    <Step Number="0" FadeIn="0" Hold="3600" FadeOut="0">249</Step>
    <Step Number="1" FadeIn="0" Hold="0" FadeOut="0">182</Step>
   </Function>
-  <Function ID="15" Type="Sequence" Name="All White Slow On" Priority="0" BoundScene="2">
-   <Speed FadeIn="0" FadeOut="0" Duration="10"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="PerStep" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="100" FadeOut="0" Values="55"/>
-   <Step Number="1" FadeIn="5000" Hold="99995000" FadeOut="0" Values="55"/>
-  </Function>
-  <Function ID="16" Type="Sequence" Name="All White Slow On" Priority="0" BoundScene="22">
-   <Speed FadeIn="0" FadeOut="0" Duration="10"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="PerStep" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="100" FadeOut="0" Values="55"/>
-   <Step Number="1" FadeIn="5000" Hold="99995000" FadeOut="0" Values="55"/>
-  </Function>
   <Function ID="17" Type="Scene" Name="Strobe None" Priority="0">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="1">6,255</FixtureVal>
@@ -671,10 +640,6 @@
    <FixtureVal ID="6">6,255</FixtureVal>
    <FixtureVal ID="7">6,255</FixtureVal>
    <FixtureVal ID="34">9,255</FixtureVal>
-  </Function>
-  <Function ID="18" Type="Scene" Name="SPOT VIP 1" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="34">1,0,2,0,4,0,5,0,6,0,7,0,8,0,9,0,12,0,14,0</FixtureVal>
   </Function>
   <Function ID="19" Type="Sequence" Name="ALL SPOT LIGHT STROBE FAST" Priority="0" BoundScene="5">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -699,21 +664,6 @@
    <Track ID="3" Name="All Lights White" SceneID="158" isMute="0">
     <ShowFunction ID="159" StartTime="0" Duration="4000" Color="#556b80"/>
    </Track>
-  </Function>
-  <Function ID="22" Type="Scene" Name="aaa" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="2">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="3">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="4">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="5">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="6">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="7">2,0,5,0,6,0,8,0,11,0</FixtureVal>
-   <FixtureVal ID="8">0,0,4,0,6,0,7,0</FixtureVal>
-   <FixtureVal ID="9">0,0,4,0,6,0,7,0</FixtureVal>
-   <FixtureVal ID="10">0,0,4,0,6,0,7,0</FixtureVal>
-   <FixtureVal ID="11">0,0,4,0,6,0,7,0</FixtureVal>
-   <FixtureVal ID="34">1,0,5,0,9,0,12,0</FixtureVal>
   </Function>
   <Function ID="23" Type="Scene" Name="SPOT VIP 3" Priority="50" Path="SPOT LIGHTS FOR VIP">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -867,39 +817,6 @@
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="1">8,16</FixtureVal>
   </Function>
-  <Function ID="42" Type="Scene" Name="" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0</FixtureVal>
-   <FixtureVal ID="34">9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="43" Type="Scene" Name="" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0</FixtureVal>
-   <FixtureVal ID="34">9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="44" Type="Scene" Name="All Red" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">8,0</FixtureVal>
-   <FixtureVal ID="2">8,0</FixtureVal>
-   <FixtureVal ID="3">8,0</FixtureVal>
-   <FixtureVal ID="4">8,0</FixtureVal>
-   <FixtureVal ID="5">8,0</FixtureVal>
-   <FixtureVal ID="6">8,0</FixtureVal>
-   <FixtureVal ID="7">8,0</FixtureVal>
-   <FixtureVal ID="34">5,0</FixtureVal>
-  </Function>
   <Function ID="45" Type="Chaser" Name="Auto Chaser Show 1" Priority="0">
    <Speed FadeIn="0" FadeOut="0" Duration="5000"/>
    <Direction>Forward</Direction>
@@ -907,17 +824,6 @@
    <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
    <Step Number="0" FadeIn="0" Hold="4000" FadeOut="0">21</Step>
    <Step Number="1" FadeIn="0" Hold="4000" FadeOut="0">163</Step>
-  </Function>
-  <Function ID="46" Type="Scene" Name="All Blue" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">8,0</FixtureVal>
-   <FixtureVal ID="2">8,0</FixtureVal>
-   <FixtureVal ID="3">8,0</FixtureVal>
-   <FixtureVal ID="4">8,0</FixtureVal>
-   <FixtureVal ID="5">8,0</FixtureVal>
-   <FixtureVal ID="6">8,0</FixtureVal>
-   <FixtureVal ID="7">8,0</FixtureVal>
-   <FixtureVal ID="34">5,0</FixtureVal>
   </Function>
   <Function ID="47" Type="Show" Name="Chaser 1 Show" Priority="0">
    <TimeDivision Type="Time" BPM="120"/>
@@ -929,39 +835,6 @@
    <Track ID="3" Name="Color" SceneID="55" isMute="0">
     <ShowFunction ID="59" StartTime="0" Duration="15000" Color="#556b80"/>
    </Track>
-  </Function>
-  <Function ID="48" Type="Scene" Name="New Sequence 38" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0</FixtureVal>
-   <FixtureVal ID="34">9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="49" Type="Scene" Name="New Sequence 38" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0</FixtureVal>
-   <FixtureVal ID="34">9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="50" Type="Scene" Name="New Sequence 38" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0</FixtureVal>
-   <FixtureVal ID="34">9,0,12,0</FixtureVal>
   </Function>
   <Function ID="51" Type="Scene" Name="All On" Priority="0" Hidden="True" Path="Chaser Scenes/Chaser 1 Scenes">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -979,39 +852,6 @@
    <FixtureVal ID="12">5,0,6,0</FixtureVal>
    <FixtureVal ID="0">1,0,2,0</FixtureVal>
   </Function>
-  <Function ID="52" Type="Scene" Name="All Red" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">8,0</FixtureVal>
-   <FixtureVal ID="2">8,0</FixtureVal>
-   <FixtureVal ID="3">8,0</FixtureVal>
-   <FixtureVal ID="4">8,0</FixtureVal>
-   <FixtureVal ID="5">8,0</FixtureVal>
-   <FixtureVal ID="6">8,0</FixtureVal>
-   <FixtureVal ID="7">8,0</FixtureVal>
-   <FixtureVal ID="34">5,0</FixtureVal>
-  </Function>
-  <Function ID="53" Type="Scene" Name="New Sequence 38" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0</FixtureVal>
-   <FixtureVal ID="34">9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="54" Type="Scene" Name="All Red" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">8,0</FixtureVal>
-   <FixtureVal ID="2">8,0</FixtureVal>
-   <FixtureVal ID="3">8,0</FixtureVal>
-   <FixtureVal ID="4">8,0</FixtureVal>
-   <FixtureVal ID="5">8,0</FixtureVal>
-   <FixtureVal ID="6">8,0</FixtureVal>
-   <FixtureVal ID="7">8,0</FixtureVal>
-   <FixtureVal ID="34">5,0</FixtureVal>
-  </Function>
   <Function ID="55" Type="Scene" Name="All Red" Priority="0" Hidden="True" Path="Chaser Scenes/Chaser 1 Scenes">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="1">8,0</FixtureVal>
@@ -1022,17 +862,6 @@
    <FixtureVal ID="6">8,0</FixtureVal>
    <FixtureVal ID="7">8,0</FixtureVal>
    <FixtureVal ID="34"/>
-  </Function>
-  <Function ID="56" Type="Scene" Name="All Red" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">8,0</FixtureVal>
-   <FixtureVal ID="2">8,0</FixtureVal>
-   <FixtureVal ID="3">8,0</FixtureVal>
-   <FixtureVal ID="4">8,0</FixtureVal>
-   <FixtureVal ID="5">8,0</FixtureVal>
-   <FixtureVal ID="6">8,0</FixtureVal>
-   <FixtureVal ID="7">8,0</FixtureVal>
-   <FixtureVal ID="34">5,0</FixtureVal>
   </Function>
   <Function ID="57" Type="Sequence" Name="LIGHT ON FULL DIM" Path="Chaser Sequences/Chaser 1" BoundScene="51">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -1074,21 +903,6 @@
    <FixtureVal ID="14">8,88</FixtureVal>
    <FixtureVal ID="15">8,88</FixtureVal>
    <FixtureVal ID="34">5,88</FixtureVal>
-  </Function>
-  <Function ID="61" Type="Scene" Name="All Lights Blue" Priority="4" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,0,12,0</FixtureVal>
   </Function>
   <Function ID="62" Type="Scene" Name="SPOT VIP 1" Priority="50" Path="SPOT LIGHTS FOR VIP">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -1652,13 +1466,6 @@
     <Phase>0</Phase>
    </Axis>
   </Function>
-  <Function ID="161" Type="Sequence" Name="Fast Flashing Full Dimmer Spot Lights" Priority="0" BoundScene="156">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="6000" FadeOut="0" Values="28">1:5,255,6,240:2:5,255,6,240:3:5,255,6,240:4:5,255,6,240:5:5,255,6,240:6:5,255,6,240:7:5,255,6,240:12:5,255,6,240:13:5,255,6,240:14:5,255,6,240:15:5,255,6,240:34:9,240,12,255</Step>
-  </Function>
   <Function ID="162" Type="Sequence" Name="All Lights White Spot Lights" Priority="0" BoundScene="158">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <Direction>Forward</Direction>
@@ -1801,15 +1608,6 @@
    <FixtureVal ID="15">0,0,2,0,5,0,6,0</FixtureVal>
    <FixtureVal ID="34">7,0,8,0,9,0,12,0</FixtureVal>
   </Function>
-  <Function ID="166" Type="Scene" Name="South Spots Position North 0 Rotation" Priority="0" Hidden="True" Path="South Spot Positions">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">0,0,2,0,5,0,6,0</FixtureVal>
-   <FixtureVal ID="2">0,0,2,0,5,0,6,0</FixtureVal>
-   <FixtureVal ID="3">0,0,2,0,5,0,6,0</FixtureVal>
-   <FixtureVal ID="14">0,0,2,0,5,0,6,0</FixtureVal>
-   <FixtureVal ID="15">0,0,2,0,5,0,6,0</FixtureVal>
-   <FixtureVal ID="34">7,0,8,0,9,0,12,0</FixtureVal>
-  </Function>
   <Function ID="167" Type="Scene" Name="South Spots Position North 1 Rotation" Priority="0" Hidden="True" Path="South Spot Positions">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="1">0,0,2,0,5,0,6,0</FixtureVal>
@@ -1854,25 +1652,6 @@
    <FixtureVal ID="14">0,0,2,0,5,0,6,0</FixtureVal>
    <FixtureVal ID="15">0,0,2,0,5,0,6,0</FixtureVal>
    <FixtureVal ID="34">7,0,8,0,9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="172" Type="Scene" Name="Half Spot Looking West Half East" Priority="0" Path="Chaser Scebe Group 2">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="2">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="3">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="4">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="5">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="6">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="7">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="8">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="9">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="10">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="11">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="12">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="13">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="14">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="15">0,44,2,72,5,255,6,255</FixtureVal>
-   <FixtureVal ID="34">7,72,8,128,9,255,12,255</FixtureVal>
   </Function>
   <Function ID="173" Type="Scene" Name="South Spots Position East 0 Rotation" Priority="0" Hidden="True" Path="South Spot Positions">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -2043,22 +1822,6 @@
    <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
    <Step Number="0" FadeIn="0" Hold="300" FadeOut="0" Values="24">1:0,172,2,170,5,255,6,255:2:0,199,2,156,5,255,6,255:3:0,143,2,152,5,255,6,255:14:0,224,2,72,5,255,6,255:15:0,105,2,72,5,255,6,255:34:7,135,8,170,9,255,12,255</Step>
   </Function>
-  <Function ID="191" Type="Sequence" Name="New Sequence 191" Priority="0" BoundScene="166">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="10000" FadeOut="0" Values="24">1:2,72,5,255,6,255:2:2,72,5,255,6,255:3:2,72,5,255,6,255:14:2,72,5,255,6,255:15:2,72,5,255,6,255:34:7,72,9,255,12,255</Step>
-  </Function>
-  <Function ID="192" Type="Scene" Name="Scene for Chaser 2 Show - Track 10" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="193" Type="Sequence" Name="New Sequence 193" Priority="0" BoundScene="192">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
-  </Function>
   <Function ID="194" Type="Sequence" Name="South Spots Position North 1 Rotation (Copy)" Priority="0" BoundScene="167">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <Direction>Forward</Direction>
@@ -2072,15 +1835,6 @@
    <RunOrder>SingleShot</RunOrder>
    <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
    <Step Number="0" FadeIn="0" Hold="300" FadeOut="0" Values="24">1:0,170,2,132,5,255,6,255:2:0,170,2,132,5,255,6,255:3:0,170,2,132,5,255,6,255:14:0,170,2,132,5,255,6,255:15:0,170,2,132,5,255,6,255:34:7,132,8,170,9,255,12,255</Step>
-  </Function>
-  <Function ID="196" Type="Scene" Name="Scene for Chaser 2 Show - Track 10" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="197" Type="Sequence" Name="ALL SPOTS Chaning Colors" Priority="0" BoundScene="196">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
   </Function>
   <Function ID="198" Type="Scene" Name="All Lights Red" Priority="5" Hidden="True">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -2129,21 +1883,6 @@
    <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
    <FixtureVal ID="34">5,0,6,0,7,0,8,0,9,0,12,0</FixtureVal>
    <FixtureVal ID="0">0,0,1,0,2,0</FixtureVal>
-  </Function>
-  <Function ID="201" Type="Scene" Name="All Lights Cyan" Priority="4" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,0,12,0</FixtureVal>
   </Function>
   <Function ID="202" Type="Show" Name="Chaser 3 Show" Priority="0">
    <TimeDivision Type="Time" BPM="120"/>
@@ -2416,25 +2155,6 @@
    <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
    <Step Number="0" FadeIn="0" Hold="6000" FadeOut="0">220</Step>
   </Function>
-  <Function ID="209" Type="Scene" Name="ALL ON WHITE FOR BUTTON" Priority="40">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="2">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="3">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="4">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="5">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="6">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="7">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="8">0,255,4,255</FixtureVal>
-   <FixtureVal ID="9">0,255,4,255</FixtureVal>
-   <FixtureVal ID="10">0,255,4,255</FixtureVal>
-   <FixtureVal ID="11">0,255,4,255</FixtureVal>
-   <FixtureVal ID="12">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="13">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="14">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="15">5,255,6,36,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,36,12,255</FixtureVal>
-  </Function>
   <Function ID="210" Type="Sequence" Name="All Lights Red" Priority="0" BoundScene="198">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <Direction>Forward</Direction>
@@ -2471,25 +2191,6 @@
    <FixtureVal ID="14">8,72</FixtureVal>
    <FixtureVal ID="15">8,72</FixtureVal>
    <FixtureVal ID="34">5,72</FixtureVal>
-  </Function>
-  <Function ID="213" Type="Scene" Name="ALL ON BLACK FOR BUTTON" Priority="40">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0</FixtureVal>
-   <FixtureVal ID="8">0,0,4,0</FixtureVal>
-   <FixtureVal ID="9">0,0,4,0</FixtureVal>
-   <FixtureVal ID="10">0,0,4,0</FixtureVal>
-   <FixtureVal ID="11">0,0,4,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0</FixtureVal>
-   <FixtureVal ID="34">9,0,12,0</FixtureVal>
   </Function>
   <Function ID="214" Type="Scene" Name="ALL SPOTLIGHT COLOR EMERALD P20" Priority="20" Path="ALL SPOTLIGHT FUNCTIONS OVERRIDE P20">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -3003,51 +2704,6 @@
    <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
    <Step Number="0" FadeIn="0" Hold="10000" FadeOut="0" Values="24">1:0,85,2,72,5,255,6,255:2:0,85,2,72,5,255,6,255:3:0,85,2,72,5,255,6,255:14:0,85,2,72,5,255,6,255:15:0,85,2,72,5,255,6,255:34:7,72,8,85,9,255,12,255</Step>
   </Function>
-  <Function ID="235" Type="Scene" Name="CHASER PART 1" Priority="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">0,141,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="2">0,131,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="3">0,43,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="4">0,114,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="5">0,60,2,87,5,255,6,26</FixtureVal>
-   <FixtureVal ID="6">0,102,2,69,5,255,6,26</FixtureVal>
-   <FixtureVal ID="7">0,57,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="12">0,95,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="13">0,67,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="14">0,0,2,76,5,255,6,26</FixtureVal>
-   <FixtureVal ID="15">0,136,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="34">7,88,8,136,9,26,12,255</FixtureVal>
-  </Function>
-  <Function ID="236" Type="Scene" Name="CHASER PART2" Priority="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">0,124,2,181,5,255,6,26</FixtureVal>
-   <FixtureVal ID="2">0,131,2,184,5,255,6,26</FixtureVal>
-   <FixtureVal ID="3">0,43,2,181,5,255,6,26</FixtureVal>
-   <FixtureVal ID="4">0,91,2,84,5,255,6,26</FixtureVal>
-   <FixtureVal ID="5">0,91,2,81,5,255,6,26</FixtureVal>
-   <FixtureVal ID="6">0,79,2,93,5,255,6,26</FixtureVal>
-   <FixtureVal ID="7">0,105,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="12">0,103,2,71,5,255,6,26</FixtureVal>
-   <FixtureVal ID="13">0,67,2,48,5,255,6,26</FixtureVal>
-   <FixtureVal ID="14">0,0,2,177,5,255,6,26</FixtureVal>
-   <FixtureVal ID="15">0,136,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="34">7,183,8,136,9,26,12,255</FixtureVal>
-  </Function>
-  <Function ID="237" Type="Scene" Name="CHASER PART2 (Copy)" Priority="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">0,64,2,181,5,255,6,26</FixtureVal>
-   <FixtureVal ID="2">0,64,2,184,5,255,6,26</FixtureVal>
-   <FixtureVal ID="3">0,64,2,181,5,255,6,26</FixtureVal>
-   <FixtureVal ID="4">0,64,2,84,5,255,6,26</FixtureVal>
-   <FixtureVal ID="5">0,64,2,81,5,255,6,26</FixtureVal>
-   <FixtureVal ID="6">0,64,2,93,5,255,6,26</FixtureVal>
-   <FixtureVal ID="7">0,64,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="12">0,64,2,71,5,255,6,26</FixtureVal>
-   <FixtureVal ID="13">0,64,2,48,5,255,6,26</FixtureVal>
-   <FixtureVal ID="14">0,64,2,177,5,255,6,26</FixtureVal>
-   <FixtureVal ID="15">0,64,2,88,5,255,6,26</FixtureVal>
-   <FixtureVal ID="34">7,183,8,72,9,26,12,255</FixtureVal>
-  </Function>
   <Function ID="238" Type="Show" Name="Chaser 4 Show" Priority="0">
    <TimeDivision Type="Time" BPM="120"/>
    <Track ID="0" Name="All Lights Red" SceneID="0" isMute="0"/>
@@ -3060,66 +2716,6 @@
    <Track ID="5" Name="Track 2" SceneID="32" isMute="0">
     <ShowFunction ID="207" StartTime="0" Duration="3600" Color="#556b80"/>
    </Track>
-  </Function>
-  <Function ID="239" Type="Scene" Name="All Lights Red (Copy)" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="240" Type="Scene" Name="All Lights Red (Copy)" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="241" Type="Scene" Name="All Lights Red (Copy)" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="242" Type="Scene" Name="All Lights Red (Copy)" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,0,12,0</FixtureVal>
   </Function>
   <Function ID="243" Type="Scene" Name="All Lights Blac Blue" Priority="4" Hidden="True">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -3145,36 +2741,6 @@
    <Step Number="1" FadeIn="0" Hold="0" FadeOut="0">0</Step>
    <Step Number="2" FadeIn="0" Hold="0" FadeOut="0">243</Step>
    <Step Number="3" FadeIn="0" Hold="300" FadeOut="0">0</Step>
-  </Function>
-  <Function ID="245" Type="Scene" Name="All Lights Red (Copy)" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,0,12,0</FixtureVal>
-  </Function>
-  <Function ID="246" Type="Scene" Name="All Lights Red (Copy)" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,0,12,0</FixtureVal>
   </Function>
   <Function ID="247" Type="EFX" Name="Copy of Line Serial Diamond (Copy)" Priority="0">
    <Fixture>
@@ -3289,13 +2855,6 @@
     <Phase>0</Phase>
    </Axis>
   </Function>
-  <Function ID="248" Type="Sequence" Name="" Priority="0" BoundScene="32">
-   <Speed FadeIn="0" FadeOut="0" Duration="4000"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
-   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0" Values="95">1:5,255,6,240,8,48:2:5,255,6,240,8,48:3:5,255,6,240,8,48:4:5,255,6,240,8,48:5:5,255,6,240,8,48:6:5,255,6,240,8,48:7:5,255,6,240,8,48:8:1,255,3,255,5,255,6,240,8,48:9:1,255,3,255,5,255,6,240,8,48:10:1,255,3,255,5,255,6,240,8,48:11:1,255,3,255,5,255,6,240,8,48:12:5,255,6,240,8,48:13:5,255,6,240,8,48:14:5,255,6,240,8,48:15:5,255,6,240,8,48:34:5,48,9,240,12,255</Step>
-  </Function>
   <Function ID="249" Type="Show" Name="Chaser 5 Show" Priority="0">
    <TimeDivision Type="Time" BPM="120"/>
    <Track ID="2" Name="Track 1" isMute="0">
@@ -3308,97 +2867,23 @@
     <ShowFunction ID="320" StartTime="0" Duration="3600" Color="#556b80"/>
    </Track>
   </Function>
-  <Function ID="250" Type="Scene" Name="ALL SPOTLIGHT COLOR WHITE P30" Priority="100" Path="ALL SPOTLIGHT FUNCTIONS OVERRIDE P20">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">8,0</FixtureVal>
-   <FixtureVal ID="2">8,0</FixtureVal>
-   <FixtureVal ID="3">8,0</FixtureVal>
-   <FixtureVal ID="4">8,0</FixtureVal>
-   <FixtureVal ID="5">8,0</FixtureVal>
-   <FixtureVal ID="6">8,0</FixtureVal>
-   <FixtureVal ID="7">8,0</FixtureVal>
-   <FixtureVal ID="12">8,0</FixtureVal>
-   <FixtureVal ID="13">8,0</FixtureVal>
-   <FixtureVal ID="14">8,0</FixtureVal>
-   <FixtureVal ID="15">8,0</FixtureVal>
-   <FixtureVal ID="34">5,0</FixtureVal>
-  </Function>
   <Function ID="251" Type="Scene" Name="Center Truss Blue" Priority="1" Path="Center Truss Colors">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="18">2,255,6,255</FixtureVal>
   </Function>
-  <Function ID="252" Type="Scene" Name="Center Truss Black Blue" Priority="1" Path="Center Truss Colors">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="18">0,3,1,0,2,255,6,255</FixtureVal>
-  </Function>
-  <Function ID="253" Type="Scene" Name="Center Truss Emerald" Priority="1" Path="Center Truss Colors">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="18">1,255,6,255</FixtureVal>
-  </Function>
-  <Function ID="254" Type="Scene" Name="Center Truss Orange" Priority="1" Path="Center Truss Colors">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="18">0,255,1,67,6,255</FixtureVal>
-  </Function>
-  <Function ID="255" Type="Scene" Name="Center Truss Purple" Priority="1" Path="Center Truss Colors">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="18">0,255,2,255,6,255</FixtureVal>
-  </Function>
   <Function ID="256" Type="Scene" Name="Center Truss Red" Priority="1" Path="Center Truss Colors">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="18">0,255,6,255</FixtureVal>
-  </Function>
-  <Function ID="257" Type="Scene" Name="Center Truss Cyan" Priority="1" Path="Center Truss Colors">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="18">1,79,2,255,6,255</FixtureVal>
-  </Function>
-  <Function ID="258" Type="Scene" Name="Center Truss Yellow" Priority="1" Path="Center Truss Colors">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="18">0,255,1,255,6,255</FixtureVal>
   </Function>
   <Function ID="259" Type="Scene" Name="VPAR Columns Red" Priority="0" Path="VPAR Columns">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="16">0,255,4,255</FixtureVal>
    <FixtureVal ID="17">0,255,4,255</FixtureVal>
   </Function>
-  <Function ID="260" Type="Scene" Name="VPAR Columns White" Priority="0" Path="VPAR Columns">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="16">0,255,1,255,2,255,4,255</FixtureVal>
-   <FixtureVal ID="17">0,255,1,255,2,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="261" Type="Scene" Name="VPAR Columns Black Blue" Priority="0" Path="VPAR Columns">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="16">0,14,2,255,4,255</FixtureVal>
-   <FixtureVal ID="17">0,14,2,255,4,255</FixtureVal>
-  </Function>
   <Function ID="262" Type="Scene" Name="VPAR Columns Blue" Priority="0" Path="VPAR Columns">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="16">2,255,4,255</FixtureVal>
    <FixtureVal ID="17">2,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="263" Type="Scene" Name="VPAR Columns Emerald" Priority="0" Path="VPAR Columns">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="16">1,255,4,255</FixtureVal>
-   <FixtureVal ID="17">1,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="264" Type="Scene" Name="VPAR Columns Orange" Priority="0" Path="VPAR Columns">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="16">0,255,1,180,4,255</FixtureVal>
-   <FixtureVal ID="17">0,255,1,180,4,255</FixtureVal>
-  </Function>
-  <Function ID="265" Type="Scene" Name="VPAR Columns Yellow" Priority="0" Path="VPAR Columns">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="16">0,255,1,255,4,255</FixtureVal>
-   <FixtureVal ID="17">0,255,1,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="266" Type="Scene" Name="VPAR Columns Purple" Priority="0" Path="VPAR Columns">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="16">0,255,2,255,4,255</FixtureVal>
-   <FixtureVal ID="17">0,255,2,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="267" Type="Scene" Name="VPAR Columns Cyan" Priority="0" Path="VPAR Columns">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="16">1,255,2,255,4,255</FixtureVal>
-   <FixtureVal ID="17">1,255,2,255,4,255</FixtureVal>
   </Function>
   <Function ID="268" Type="Collection" Name="Literally Everything Red" Priority="0">
    <Step Number="0">256</Step>
@@ -3413,111 +2898,8 @@
   <Function ID="270" Type="Scene" Name="none" Priority="0">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
   </Function>
-  <Function ID="271" Type="Scene" Name="Center Truss White" Priority="1" Path="Center Truss Colors">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="18">0,0,1,0,2,0,6,255</FixtureVal>
-  </Function>
-  <Function ID="272" Type="Scene" Name="Venue Light Black Blue" Priority="1" Path="Venue Light Strip Color Overrides">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="19">0,14,2,255,4,255</FixtureVal>
-   <FixtureVal ID="20">0,14,2,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="273" Type="Scene" Name="Venue Light Blue" Priority="1" Path="Venue Light Strip Color Overrides">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="19">2,255,4,255</FixtureVal>
-   <FixtureVal ID="20">2,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="274" Type="Scene" Name="Venue Light Cyan" Priority="1" Path="Venue Light Strip Color Overrides">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="19">0,0,1,149,2,255,4,255</FixtureVal>
-   <FixtureVal ID="20">0,0,1,149,2,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="275" Type="Scene" Name="Venue Light Emerald" Priority="1" Path="Venue Light Strip Color Overrides">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="19">1,255,4,255</FixtureVal>
-   <FixtureVal ID="20">1,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="276" Type="Scene" Name="Venue Light Orange" Priority="1" Path="Venue Light Strip Color Overrides">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="19">0,255,1,180,4,255</FixtureVal>
-   <FixtureVal ID="20">0,255,1,180,4,255</FixtureVal>
-  </Function>
-  <Function ID="277" Type="Scene" Name="Venue Light Purple" Priority="1" Path="Venue Light Strip Color Overrides">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="19">0,255,2,255,4,255</FixtureVal>
-   <FixtureVal ID="20">0,255,2,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="278" Type="Scene" Name="Venue Light Red" Priority="1" Path="Venue Light Strip Color Overrides">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="19">0,255,4,255</FixtureVal>
-   <FixtureVal ID="20">0,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="279" Type="Scene" Name="Venue Light White" Priority="1" Path="Venue Light Strip Color Overrides">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="19">0,255,1,255,2,255,4,255</FixtureVal>
-   <FixtureVal ID="20">0,255,1,255,2,255,4,255</FixtureVal>
-  </Function>
-  <Function ID="280" Type="Scene" Name="Venue Light Yellow" Priority="1" Path="Venue Light Strip Color Overrides">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="19">0,255,1,255,4,255</FixtureVal>
-   <FixtureVal ID="20">0,255,1,255,4,255</FixtureVal>
-  </Function>
   <Function ID="281" Type="Scene" Name="none4" Priority="0">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="282" Type="Scene" Name="none3" Priority="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="283" Type="Scene" Name="none7" Priority="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="284" Type="Scene" Name="none2" Priority="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="285" Type="Scene" Name="none6" Priority="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="286" Type="Scene" Name="none8" Priority="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="287" Type="Scene" Name="none5" Priority="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="288" Type="Scene" Name="VPAR Columns Off" Priority="0" Path="VPAR Columns">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="16">0,0,1,0,2,0,4,0</FixtureVal>
-   <FixtureVal ID="17">0,0,1,0,2,0,4,0</FixtureVal>
-  </Function>
-  <Function ID="289" Type="Scene" Name="Side strobe?" Priority="20" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="290" Type="Sequence" Name="New Sequence 290" Priority="104" BoundScene="289">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>Loop</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
-  </Function>
-  <Function ID="292" Type="Scene" Name="aaaa Test 12 3" Priority="1" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="22">0,0,1,0,2,0</FixtureVal>
-  </Function>
-  <Function ID="293" Type="Sequence" Name="New Sequence 293" Priority="0" BoundScene="292">
-   <Speed FadeIn="0" FadeOut="0" Duration="300"/>
-   <Direction>Forward</Direction>
-   <RunOrder>Loop</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
-   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0" Values="3">22:0,255</Step>
-   <Step Number="1" FadeIn="0" Hold="0" FadeOut="0" Values="3"/>
-   <Step Number="2" FadeIn="0" Hold="0" FadeOut="0" Values="3"/>
-  </Function>
-  <Function ID="294" Type="Scene" Name="New Scene" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="295" Type="Sequence" Name="New Sequence 295" Priority="0" BoundScene="294">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>Loop</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
   </Function>
   <Function ID="297" Type="Scene" Name="ALL SPOTLIGHT COLOR OFF P100" Priority="100" Path="ALL SPOTLIGHT FUNCTIONS OVERRIDE P20">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -3569,27 +2951,6 @@
    <FixtureVal ID="31">11,187</FixtureVal>
    <FixtureVal ID="32">0,255</FixtureVal>
   </Function>
-  <Function ID="301" Type="Sequence" Name="" Priority="0" BoundScene="61">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="3600" FadeOut="0" Values="36">1:5,255,6,255,8,16:2:5,255,6,255,8,16:3:5,255,6,255,8,16:4:5,255,6,255,8,16:5:5,255,6,255,8,16:6:5,255,6,255,8,16:7:5,255,6,255,8,16:12:5,255,6,255,8,16:13:5,255,6,255,8,16:14:5,255,6,255,8,16:15:5,255,6,255,8,16:34:5,16,9,255,12,255</Step>
-  </Function>
-  <Function ID="302" Type="Sequence" Name="" Priority="0" BoundScene="243">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="3600" FadeOut="0" Values="36">1:5,255,6,255,8,16:2:5,255,6,255,8,16:3:5,255,6,255,8,16:4:5,255,6,255,8,16:5:5,255,6,255,8,16:6:5,255,6,255,8,16:7:5,255,6,255,8,16:12:5,255,6,255,8,16:13:5,255,6,255,8,16:14:5,255,6,255,8,16:15:5,255,6,255,8,16:34:5,16,9,255,12,255</Step>
-  </Function>
-  <Function ID="303" Type="Sequence" Name="New Sequence 303" Priority="0" BoundScene="201">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="10000" FadeOut="0" Values="36">1:5,255,6,255,8,56:2:5,255,6,255,8,56:3:5,255,6,255,8,56:4:5,255,6,255,8,56:5:5,255,6,255,8,56:6:5,255,6,255,8,56:7:5,255,6,255,8,56:12:5,255,6,255,8,56:13:5,255,6,255,8,56:14:5,255,6,255,8,56:15:5,255,6,255,8,56:34:5,56,9,255,12,255</Step>
-  </Function>
   <Function ID="304" Type="Scene" Name="ALL SPOTS BLUE" Priority="0" Hidden="True">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
@@ -3609,27 +2970,6 @@
    <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
    <FixtureVal ID="34">6,0,7,0,8,0</FixtureVal>
    <FixtureVal ID="0">0,0,1,0,2,0</FixtureVal>
-  </Function>
-  <Function ID="305" Type="Sequence" Name="ALL Spots Blue Sequence" Priority="0" BoundScene="304">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="3600" FadeOut="0" Values="58">1:5,255,6,255,8,94:2:5,255,6,255,8,94:3:5,255,6,255,8,94:4:5,255,6,255,8,94:5:5,255,6,255,8,94:6:5,255,6,255,8,94:7:5,255,6,255,8,94:8:0,60,3,103:9:0,60,3,103:10:0,60,3,103:11:0,60,3,103:12:5,255,6,255,8,94:13:5,255,6,255,8,94:14:5,255,6,255,8,94:15:5,255,6,255,8,94:34:5,94,9,255,12,255</Step>
-  </Function>
-  <Function ID="306" Type="Sequence" Name="ALL Spots Blue Sequence (Copy)" Priority="0" BoundScene="304">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="1500" FadeOut="0" Values="55"/>
-  </Function>
-  <Function ID="307" Type="Sequence" Name="ALL Spots Yellow Sequence" Priority="0" BoundScene="308">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="3600" FadeOut="0" Values="39">1:5,255,6,255,8,94:2:5,255,6,255,8,94:3:5,255,6,255,8,94:4:5,255,6,255,8,94:5:5,255,6,255,8,94:6:5,255,6,255,8,94:7:5,255,6,255,8,94:12:5,255,6,255,8,94:13:5,255,6,255,8,94:14:5,255,6,255,8,94:15:5,255,6,255,8,94</Step>
   </Function>
   <Function ID="308" Type="Scene" Name="ALL SPOTS Yellow" Priority="0" Hidden="True">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -3875,13 +3215,6 @@
     <Phase>0</Phase>
    </Axis>
   </Function>
-  <Function ID="317" Type="Sequence" Name="" Priority="0" BoundScene="0">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="10000" FadeOut="0" Values="36">1:5,255,6,255,8,8:2:5,255,6,255,8,8:3:5,255,6,255,8,8:4:5,255,6,255,8,8:5:5,255,6,255,8,8:6:5,255,6,255,8,8:7:5,255,6,255,8,8:12:5,255,6,255,8,8:13:5,255,6,255,8,8:14:5,255,6,255,8,8:15:5,255,6,255,8,8:34:5,8,9,255,12,255</Step>
-  </Function>
   <Function ID="318" Type="Scene" Name="WASHERS 1" Priority="0" Hidden="True">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="8">0,0,3,0,6,0,7,0,12,0</FixtureVal>
@@ -4016,20 +3349,6 @@
     <Phase>0</Phase>
    </Axis>
   </Function>
-  <Function ID="322" Type="Sequence" Name="Copy of New Sequence 319" Priority="0" BoundScene="318">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="3600" FadeOut="0" Values="20">8:6,141,7,176:9:6,141,7,176:10:6,120,7,176:11:6,120,7,176</Step>
-  </Function>
-  <Function ID="323" Type="Sequence" Name="Copy of All White" Priority="0" BoundScene="32">
-   <Speed FadeIn="0" FadeOut="0" Duration="3600"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
-   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0" Values="65">1:5,103,6,238:2:5,103,6,238:3:5,103,6,238:4:5,103,6,238:5:5,103,6,238:6:5,103,6,238:7:5,103,6,238:8:0,132,4,255,5,103,12,239:9:0,132,4,255,5,103,12,239:10:0,132,4,255,5,103,12,239:11:0,132,4,255,5,103,12,239:12:5,103,6,238:13:5,103,6,238:14:5,103,6,238:15:5,103,6,238:34:9,238,12,103</Step>
-  </Function>
   <Function ID="324" Type="Show" Name="Chaser 6 Show" Priority="0">
    <TimeDivision Type="Time" BPM="120"/>
    <Track ID="2" Name="ALL SPOTS BLUE 2" SceneID="344" isMute="0">
@@ -4041,13 +3360,6 @@
    <Track ID="4" Name="Track 1" isMute="0">
     <ShowFunction ID="321" StartTime="0" Color="#803c3c"/>
    </Track>
-  </Function>
-  <Function ID="325" Type="Sequence" Name="ALL Spots Blue Sequence (Copy)" Priority="0" BoundScene="304">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="3600" FadeOut="0" Values="58">1:5,255,6,244,8,94:2:5,255,6,244,8,94:3:5,255,6,244,8,94:4:5,255,6,244,8,94:5:5,255,6,244,8,94:6:5,255,6,244,8,94:7:5,255,6,244,8,94:8:0,255,3,255,5,255,12,246:9:0,255,3,255,5,255,12,246:10:0,255,3,255,5,255,12,246:11:0,255,3,255,5,255,12,246:12:5,255,6,244,8,94:13:5,255,6,244,8,94:14:5,255,6,244,8,94:15:5,255,6,244,8,94:34:5,94,9,244,12,255</Step>
   </Function>
   <Function ID="326" Type="Chaser" Name="Auto Chaser Show 6" Priority="0">
    <Speed FadeIn="0" FadeOut="0" Duration="3600"/>
@@ -4100,10 +3412,6 @@
   <Function ID="336" Type="Scene" Name="ON OFF Stage Small Truss Bottom Pars" Priority="100">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
    <FixtureVal ID="29">0,0,1,0,2,0,3,0,4,0,5,0,6,0</FixtureVal>
-  </Function>
-  <Function ID="337" Type="Scene" Name="ON OFF Stage Large Truss Top Swarms" Priority="100">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="29">0,255,1,0,2,0,3,0,4,255,5,0,6,0</FixtureVal>
   </Function>
   <Function ID="338" Type="Scene" Name="ON OFF Stage Largre Truss Top Swarms" Priority="100">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -4165,21 +3473,6 @@
    <RunOrder>SingleShot</RunOrder>
    <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
    <Step Number="0" FadeIn="0" Hold="3600" FadeOut="0" Values="39">0:0,51,1,255,2,255:1:5,255,6,241,8,94:2:5,255,6,241,8,94:3:5,255,6,241,8,94:4:5,255,6,241,8,94:5:5,255,6,241,8,94:6:5,255,6,241,8,94:7:5,255,6,241,8,94:12:5,255,6,241,8,94:13:5,255,6,241,8,94:14:5,255,6,241,8,94:15:5,255,6,241,8,94:34:6,255,7,255,8,25</Step>
-  </Function>
-  <Function ID="346" Type="Scene" Name="ALL SPOTS BLUE 2 (Copy)" Priority="0" Hidden="True">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="1">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="2">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="3">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="4">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="5">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="6">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="7">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="12">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="13">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="14">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="15">5,0,6,0,8,0</FixtureVal>
-   <FixtureVal ID="34">5,0,9,0,12,0</FixtureVal>
   </Function>
   <Function ID="347" Type="Scene" Name="ALL SPOTS BLUE 4" Priority="0" Hidden="True">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -4342,13 +3635,6 @@
   </Function>
   <Function ID="353" Type="Scene" Name="Test33" Priority="0" Hidden="True">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-  </Function>
-  <Function ID="354" Type="Sequence" Name="New Sequence 354" Priority="0" BoundScene="353">
-   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <Direction>Forward</Direction>
-   <RunOrder>SingleShot</RunOrder>
-   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
-   <Step Number="0" FadeIn="0" Hold="10000" FadeOut="0" Values="0"/>
   </Function>
   <Function ID="355" Type="Scene" Name="Chaser Show 7 - 1" Priority="0" Hidden="True">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
