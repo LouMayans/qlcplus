@@ -50,8 +50,10 @@
 
 
 WebAccess::WebAccess(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdInstance,
-                     int portNumber, bool enableAuth, QString passwdFile, QObject *parent) :
-    WebAccessBase(doc, vcInstance, sdInstance, portNumber, enableAuth, passwdFile, parent)
+                     int portNumber, bool enableAuth, QString passwdFile,
+                     QString sslCertFile, QString sslKeyFile, QObject *parent) :
+    WebAccessBase(doc, vcInstance, sdInstance, portNumber, enableAuth, passwdFile,
+                  sslCertFile, sslKeyFile, parent)
 {
     connect(m_vc, SIGNAL(loaded()),
             this, SLOT(slotVCLoaded()));

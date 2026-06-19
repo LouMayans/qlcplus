@@ -23,7 +23,8 @@ function sendCMD(cmd) {
 }
 
 function connect() {
-  var url = "ws://" + window.location.host + "/qlcplusWS";
+  var wsProto = (window.location.protocol === "https:") ? "wss://" : "ws://";
+  var url = wsProto + window.location.host + "/qlcplusWS";
   websocket = new WebSocket(url);
   websocket.onopen = function () {
     //alert(\"Websocket open!\");

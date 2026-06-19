@@ -57,6 +57,7 @@ protected:
 
     explicit WebAccessBase(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdInstance,
                            int portNumber, bool enableAuth, const QString &passwdFile,
+                           const QString &sslCertFile = QString(), const QString &sslKeyFile = QString(),
                            QObject *parent = nullptr);
 
     bool sendFile(QHttpResponse *response, QString filename, QString contentType) const;

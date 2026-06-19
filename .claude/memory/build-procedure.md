@@ -50,6 +50,41 @@ windeployqt is INSUFFICIENT alone: it aborts (exit 1) on "libGLESv2.dll does not
    ```
    Pulls in ICU trio (libicudt75/libicuin75/libicuuc75), libpcre2-16-0, libharfbuzz, libfreetype, libglib-2.0-0, zlib1, image libs (png/jpeg/tiff/webp/brotli), Qt5PrintSupport.dll, mingw runtime (libgcc_s_seh-1/libstdc++-6/libwinpthread-1). Re-run the ldd line → "remaining /mingw64/bin deps" must be 0. ~60 DLLs total in C:\qlcplus.
 
+## TLS web access (HTTPS/WSS) — extra runtime DLLs
+The TLS feature (`--web-cert`/`--web-key`, see [[salesforce-qlcplus-integration]]) makes
+QtNetwork load **OpenSSL at runtime**. These are NOT pulled by the normal closure (nothing
+linked them before), so a standalone `C:\qlcplus` needs them copied explicitly or `https://`
+silently fails (`QSslSocket::supportsSsl()`==false), while plain HTTP still works:
+```
+cp /mingw64/bin/libssl-3-x64.dll /mingw64/bin/libcrypto-3-x64.dll /c/qlcplus/
+```
+(Qt here is 5.15 → OpenSSL **3.x**: `libssl-3-x64.dll`, `libcrypto-3-x64.dll`.)
+Verified 2026-06-19: clean-env `C:\qlcplus\qlcplus.exe -w --web-cert cert.pem --web-key key.pem`
+serves HTTPS 200 + `wss://` TLSv1.3 (modules load from `C:\qlcplus`).
+
+## Re-populating C:\qlcplus's Qt runtime the easy way
+If `C:\qlcplus` is missing the Qt bundle (e.g. dir was recreated — seen 2026-06-19: only 16
+DLLs, no `Qt5*.dll`/`platforms`), the user keeps a known-good standalone copy at
+`C:\qlcplusTHISONEGOESTOCLUBWITHOUTHTTP` (the HTTP-less club build). Fastest fix — copy its
+runtime in WITHOUT clobbering a freshly-built TLS app:
+```
+cp -rn /c/qlcplusTHISONEGOESTOCLUBWITHOUTHTTP/. /c/qlcplus/   # -n preserves new exe/dlls
+```
+Then add the OpenSSL DLLs (above). `cp -n` keeps your just-installed qlcplus.exe /
+qlcpluswebaccess.dll (newer) and only fills in the missing Qt5*/plugins/mingw-runtime DLLs.
+
+## Full rebuild from source if the deploy/build folders are lost
+Everything needed to reconstruct lives in this branch:
+1. Source (tracked) → build per this file (CMake/Ninja).
+2. `ninja -C build-mingw install` → C:\qlcplus, then bundle the Qt runtime (from the user's
+   known-good copy or windeployqt) **+ the OpenSSL DLLs** (TLS section above).
+3. Deploy scripts are tracked at **`deploy/start-qlcplus.bat`** and **`deploy/setup-new-pc.bat`**
+   (copy them into the install folder). Full venue/move steps: repo-root **`DEPLOYMENT.md`**.
+4. Web/WSS + Salesforce contract: repo-root **`SALESFORCE_QLCPLUS_INTEGRATION.md`** +
+   [[salesforce-qlcplus-integration]].
+Not in git (regenerated, never committed): the TLS `cert.pem`/`key.pem` (issued by win-acme) and
+the bundled Qt/OpenSSL DLLs.
+
 ## Dev iteration shortcut
 After code changes, just `ninja -C build-mingw && ninja -C build-mingw install`. The bundled Qt runtime/plugins in C:\qlcplus persist, so no re-bundling needed (unless a new Qt module is introduced). Or run the exe straight from the MinGW64 shell (all DLLs/Qt plugins resolve from mingw64) — no bundling needed for quick dev runs.
 

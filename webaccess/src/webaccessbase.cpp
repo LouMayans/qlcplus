@@ -134,6 +134,7 @@ bool extractMultipartFilePayload(const QHttpRequest *req, QByteArray &payload, Q
 
 WebAccessBase::WebAccessBase(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdInstance,
                              int portNumber, bool enableAuth, const QString &passwdFile,
+                             const QString &sslCertFile, const QString &sslKeyFile,
                              QObject *parent)
     : QObject(parent)
     , m_doc(doc)
@@ -162,6 +163,14 @@ WebAccessBase::WebAccessBase(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *s
             this, SLOT(slotHandleWebSocketRequest(QHttpConnection*,QString)));
     connect(m_httpServer, SIGNAL(webSocketConnectionClose(QHttpConnection*)),
             this, SLOT(slotHandleWebSocketClose(QHttpConnection*)));
+
+    if (!sslCertFile.isEmpty() && !sslKeyFile.isEmpty())
+    {
+        if (m_httpServer->setSslConfiguration(sslCertFile, sslKeyFile))
+            qDebug() << "[WebAccess] HTTPS/WSS enabled";
+        else
+            qWarning() << "[WebAccess] Failed to enable HTTPS; falling back to plain HTTP";
+    }
 
     m_httpServer->listen(QHostAddress::Any, portNumber ? portNumber : DEFAULT_PORT_NUMBER);
 

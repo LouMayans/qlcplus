@@ -140,7 +140,7 @@ function vcAnimationWidgetControl(animIDObjName, controlIDObjName)
 }
 
 function connectToWebSocket(host) {
-  var url = 'ws://' + host + '/qlcplusWS';
+  var url = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + host + '/qlcplusWS';
   websocket = new WebSocket(url);
   // update the host information
   wshost = "http://" + host;

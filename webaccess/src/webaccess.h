@@ -46,6 +46,7 @@ class WebAccess final : public WebAccessBase
 public:
     explicit WebAccess(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdInstance,
                        int portNumber, bool enableAuth, QString passwdFile = QString(),
+                       QString sslCertFile = QString(), QString sslKeyFile = QString(),
                        QObject *parent = 0);
     /** Destructor */
     ~WebAccess();

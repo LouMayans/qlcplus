@@ -417,7 +417,8 @@ static QString getSimpleDeskQmlHtml(const Doc *doc, const SimpleDesk *sd)
 
 WebAccessQml::WebAccessQml(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdInstance,
                            int portNumber, bool enableAuth, QString passwdFile, QObject *parent)
-    : WebAccessBase(doc, vcInstance, sdInstance, portNumber, enableAuth, passwdFile, parent)
+    : WebAccessBase(doc, vcInstance, sdInstance, portNumber, enableAuth, passwdFile,
+                    QString(), QString(), parent)
 {
     connect(m_doc, SIGNAL(loaded()),
             this, SLOT(slotDocLoaded()));

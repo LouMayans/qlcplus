@@ -25,6 +25,7 @@
 #include <QWebSocketServer>
 #include <QWebSocket>
 #include <QTcpSocket>
+#include <QSslSocket>
 #include <QHostAddress>
 #include <QTimer>
 #include <QDebug>
@@ -379,7 +380,12 @@ QHttpConnection *QHttpConnection::enableWebSocket()
 
     disconnect(m_socket, SIGNAL(readyRead()), this, SLOT(parseRequest()));
 
-    m_websocketServer = new QWebSocketServer("QLC+WSServer", QWebSocketServer::NonSecureMode, this);
+    // If the underlying socket is a (already-encrypted) QSslSocket, the WebSocket
+    // server must run in SecureMode so the upgrade is reported as wss://.
+    QWebSocketServer::SslMode sslMode =
+        (qobject_cast<QSslSocket *>(m_socket) != nullptr) ? QWebSocketServer::SecureMode
+                                                          : QWebSocketServer::NonSecureMode;
+    m_websocketServer = new QWebSocketServer("QLC+WSServer", sslMode, this);
     m_socket->disconnect();
     //m_socket->setParent(m_websocketServer);
     m_socket->rollbackTransaction();

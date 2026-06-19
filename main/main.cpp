@@ -82,6 +82,12 @@ namespace QLCArgs
     /** Path to passwords file for web access basic authentication */
     QString webAccessPasswordFile;
 
+    /** Path to a PEM certificate (chain) file to enable HTTPS/WSS web access */
+    QString webAccessCertFile;
+
+    /** Path to a PEM private key file to enable HTTPS/WSS web access */
+    QString webAccessKeyFile;
+
     /** If true, enable a 5% of overscan when in fullscreen mode (Raspberry Only) */
     bool enableOverscan = false;
 
@@ -175,6 +181,8 @@ void printUsage()
     cout << "  -wp or --web-port <port>\t\tSet the port to use for web access" << endl;
     cout << "  -wa or --web-auth\t\tEnable remote web access with users authentication" << endl;
     cout << "  -a or --web-auth-file <file>\tSpecify a file where to store web access basic authentication credentials" << endl;
+    cout << "  --web-cert <file>\t\tPEM certificate (chain) file to serve web access over HTTPS/WSS" << endl;
+    cout << "  --web-key <file>\t\tPEM private key file matching --web-cert" << endl;
     cout << endl;
 }
 
@@ -283,6 +291,18 @@ bool parseArgs()
             if (it.hasNext())
                 QLCArgs::webAccessPasswordFile = it.next();
         }
+        else if (arg == "--web-cert")
+        {
+            QLCArgs::enableWebAccess = true;
+            if (it.hasNext())
+                QLCArgs::webAccessCertFile = it.next();
+        }
+        else if (arg == "--web-key")
+        {
+            QLCArgs::enableWebAccess = true;
+            if (it.hasNext())
+                QLCArgs::webAccessKeyFile = it.next();
+        }
         else if (arg == "-v" || arg == "--version")
         {
             /* Don't print anything, since version is always
@@ -364,7 +384,8 @@ int main(int argc, char** argv)
     if (QLCArgs::enableWebAccess == true)
     {
         WebAccess *webAccess = new WebAccess(app.doc(), VirtualConsole::instance(), SimpleDesk::instance(),
-                                             QLCArgs::webAccessPort, QLCArgs::enableWebAuth, QLCArgs::webAccessPasswordFile);
+                                             QLCArgs::webAccessPort, QLCArgs::enableWebAuth, QLCArgs::webAccessPasswordFile,
+                                             QLCArgs::webAccessCertFile, QLCArgs::webAccessKeyFile);
 
         QObject::connect(webAccess, SIGNAL(toggleDocMode()),
                 &app, SLOT(slotModeToggle()));

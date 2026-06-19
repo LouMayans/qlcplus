@@ -33,6 +33,11 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QHostAddress>
+#include <QSslConfiguration>
+#include <QString>
+
+class QFileSystemWatcher;
+class QTimer;
 
 /// Maps status codes to string reason phrases
 extern QHash<int, QString> STATUS_CODES;
@@ -44,6 +49,10 @@ class CustomTcpServer final : public QTcpServer
 public:
     CustomTcpServer(QObject *parent);
 
+    /// Enable TLS: accepted connections will be wrapped in a QSslSocket using
+    /// the given configuration and server-side encryption is started immediately.
+    void setSslConfiguration(const QSslConfiguration &configuration);
+
 protected:
     void incomingConnection(qintptr handle) override;
 
@@ -51,6 +60,10 @@ Q_SIGNALS:
     void newRequest(QHttpRequest *request, QHttpResponse *response);
     void webSocketDataReady(QHttpConnection *conn, QString data);
     void webSocketConnectionClose(QHttpConnection *conn);
+
+private:
+    QSslConfiguration m_sslConfiguration;
+    bool m_useSsl = false;
 };
 
 /// The QHttpServer class forms the basis of the %QHttpServer
@@ -98,6 +111,11 @@ public:
 
     /// Stop the server and listening for new connections.
     void close();
+
+    /// Load a PEM certificate (chain) and private key from disk and enable TLS.
+    /** Must be called before listen(). @return true on success. */
+    bool setSslConfiguration(const QString &certPath, const QString &keyPath);
+
 Q_SIGNALS:
     /// Emitted when a client makes a new request to the server.
     /** The slot should use the given @c request and @c response
@@ -110,7 +128,22 @@ Q_SIGNALS:
     void webSocketConnectionClose(QHttpConnection *conn);
 
 private:
+    /// (Re)load cert chain + private key from m_certPath/m_keyPath into @p cfg.
+    bool loadSslConfiguration(QSslConfiguration &cfg) const;
+    /// Start watching the cert/key files so renewals are picked up live.
+    void setupCertWatcher();
+    void watchCertPaths();
+    void reloadCertificate();
+
     QTcpServer *m_tcpServer;
+    QSslConfiguration m_sslConfiguration;
+    bool m_useSsl = false;
+
+    QString m_certPath;
+    QString m_keyPath;
+    QFileSystemWatcher *m_certWatcher = nullptr;
+    QTimer *m_reloadTimer = nullptr;
+    int m_reloadRetries = 0;
 };
 
 #endif

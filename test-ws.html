@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<!--
+  Standalone QLC+ Web Access WebSocket test page.
+
+  Salesforce-free reference for the LWC integration (see SALESFORCE_QLCPLUS_INTEGRATION.md).
+  Open it in a browser to prove the wss:// (or ws:// for plain local testing) control path
+  into QLC+ works: connect, send widgetID|value / QLC+API commands, and watch feedback frames.
+
+  For wss:// against a self-signed cert, first open https://<host>:<port> once and trust the
+  cert, then load this page from there (or from file:// and accept the cert prompt).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>QLC+ WebSocket test</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 1.5rem; max-width: 760px; }
+  fieldset { margin-bottom: 1rem; }
+  label { display: inline-block; min-width: 7rem; }
+  input[type=text], input[type=number] { padding: .25rem; }
+  button { padding: .4rem .8rem; margin: .15rem; cursor: pointer; }
+  #log { background:#111; color:#0f0; font-family: monospace; font-size:.8rem;
+         height: 240px; overflow:auto; padding:.5rem; white-space:pre-wrap; }
+  .out { color:#6cf; } .err { color:#f66; } .in { color:#0f0; }
+  #status { font-weight:bold; }
+  .connected { color: green; } .disconnected { color: #c00; }
+</style>
+</head>
+<body>
+<h1>QLC+ Web Access WebSocket test</h1>
+
+<fieldset>
+  <legend>Connection</legend>
+  <label>URL</label>
+  <input type="text" id="url" size="42" value="wss://localhost:9999/qlcplusWS">
+  <button id="connectBtn">Connect</button>
+  <button id="disconnectBtn" disabled>Disconnect</button>
+  <div>Status: <span id="status" class="disconnected">disconnected</span></div>
+  <small>Tip: use <code>ws://</code> for a plain (no-TLS) local QLC+, <code>wss://</code> once TLS is on.</small>
+</fieldset>
+
+<fieldset>
+  <legend>Button (VC widget)</legend>
+  <label>Widget ID</label>
+  <input type="number" id="btnId" value="0" min="0" style="width:6rem">
+  <button id="pressBtn">Press (|255)</button>
+  <button id="releaseBtn">Release (|0)</button>
+</fieldset>
+
+<fieldset>
+  <legend>Slider / fader (VC widget)</legend>
+  <label>Widget ID</label>
+  <input type="number" id="sliderId" value="0" min="0" style="width:6rem">
+  <input type="range" id="slider" min="0" max="255" value="0" style="width:60%">
+  <span id="sliderVal">0</span>
+  <small>(throttled to ~50 msgs/sec, sends on change only)</small>
+</fieldset>
+
+<fieldset>
+  <legend>Function by ID</legend>
+  <label>Function ID</label>
+  <input type="number" id="funcId" value="0" min="0" style="width:6rem">
+  <button id="funcStart">Start (|1)</button>
+  <button id="funcStop">Stop (|0)</button>
+  <button id="listFuncs">getFunctionsList</button>
+  <button id="listWidgets">getWidgetsList</button>
+</fieldset>
+
+<fieldset>
+  <legend>Raw message</legend>
+  <input type="text" id="raw" size="42" placeholder="e.g. 5|255 or QLC+API|getFunctionsList">
+  <button id="sendRaw">Send</button>
+</fieldset>
+
+<fieldset>
+  <legend>Log</legend>
+  <div id="log"></div>
+  <button id="clearLog">Clear</button>
+</fieldset>
+
+<script>
+  var ws = null;
+  var lastSliderSend = 0;
+
+  function $(id) { return document.getElementById(id); }
+  function now() { return new Date().toISOString().substr(11, 12); }
+
+  function log(msg, cls) {
+    var el = $("log");
+    var line = document.createElement("div");
+    line.className = cls || "";
+    line.textContent = "[" + now() + "] " + msg;
+    el.appendChild(line);
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function setStatus(text, connected) {
+    $("status").textContent = text;
+    $("status").className = connected ? "connected" : "disconnected";
+    $("connectBtn").disabled = connected;
+    $("disconnectBtn").disabled = !connected;
+  }
+
+  function send(msg) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      log("NOT CONNECTED, cannot send: " + msg, "err");
+      return;
+    }
+    ws.send(msg);
+    log("→ " + msg, "out");
+  }
+
+  $("connectBtn").onclick = function () {
+    var url = $("url").value.trim();
+    log("connecting to " + url + " ...");
+    try {
+      ws = new WebSocket(url);
+    } catch (e) {
+      log("WebSocket ctor threw: " + e, "err");
+      return;
+    }
+    ws.onopen = function () { setStatus("connected", true); log("OPEN"); };
+    ws.onclose = function (e) {
+      setStatus("disconnected (code " + e.code + ")", false);
+      log("CLOSE code=" + e.code + " reason=" + (e.reason || "(none)"), "err");
+    };
+    ws.onerror = function () { log("ERROR (see browser console / cert trust?)", "err"); };
+    ws.onmessage = function (e) { log("← " + e.data, "in"); };
+  };
+
+  $("disconnectBtn").onclick = function () { if (ws) ws.close(); };
+
+  $("pressBtn").onclick   = function () { send($("btnId").value + "|255"); };
+  $("releaseBtn").onclick = function () { send($("btnId").value + "|0"); };
+
+  $("slider").oninput = function () {
+    $("sliderVal").textContent = this.value;
+    var t = Date.now();
+    if (t - lastSliderSend >= 20) { // ~50 msgs/sec throttle
+      lastSliderSend = t;
+      send($("sliderId").value + "|" + this.value);
+    }
+  };
+  $("slider").onchange = function () { // ensure final value lands
+    send($("sliderId").value + "|" + this.value);
+  };
+
+  $("funcStart").onclick  = function () { send("QLC+API|setFunctionStatus|" + $("funcId").value + "|1"); };
+  $("funcStop").onclick   = function () { send("QLC+API|setFunctionStatus|" + $("funcId").value + "|0"); };
+  $("listFuncs").onclick  = function () { send("QLC+API|getFunctionsList"); };
+  $("listWidgets").onclick= function () { send("QLC+API|getWidgetsList"); };
+
+  $("sendRaw").onclick = function () { if ($("raw").value) send($("raw").value); };
+  $("raw").addEventListener("keydown", function (e) { if (e.key === "Enter") $("sendRaw").click(); });
+  $("clearLog").onclick = function () { $("log").innerHTML = ""; };
+</script>
+</body>
+</html>

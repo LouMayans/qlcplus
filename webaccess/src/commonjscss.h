@@ -32,7 +32,8 @@
 #define PROJECT_LOADED_JS \
     "var websocket;\n" \
     "window.onload = function() {\n" \
-    " var url = 'ws://' + window.location.host + '/qlcplusWS';\n" \
+    " var wsProto = (window.location.protocol === 'https:') ? 'wss://' : 'ws://';\n" \
+    " var url = wsProto + window.location.host + '/qlcplusWS';\n" \
     " websocket = new WebSocket(url);\n" \
     " setInterval(checkProjectLoaded, 100);\n" \
     " websocket.onmessage = function(ev) {\n" \
