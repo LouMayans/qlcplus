@@ -480,6 +480,9 @@ public:
 public:
     void setSliderValue(uchar value, bool scale = true, bool external = false);
 
+    /** Clear an active override (same as pressing the reset "X" button) */
+    void resetOverride();
+
     void setSliderShadowValue(int value);
 
     int sliderValue() const;

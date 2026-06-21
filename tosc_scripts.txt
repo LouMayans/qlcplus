@@ -1,0 +1,3418 @@
+===== [GROUP] group =====
+local currentAutoChaser = nil
+local nextAutoChaser = nil
+
+local manualChaser = nil
+local nextManualChaser = nil
+local TIMEOUT = 100
+local time
+local soloButtonsClicked = {}
+
+
+function init()
+  --print('init')
+  currentAutoChaser = nil
+  manualChaser = nil
+  nextAutoChaser = nil
+  nextManualChaser = nil
+  soloButtonsClicked = {}
+  time = getMillis()
+end
+
+function onReceiveNotify(from,values)
+  nextAutoChaser = nil
+  nextManualChaser = nil
+  print('root receive')
+  if from == 'AutoChaser' then
+    nextAutoChaser = values;
+    sendOSCsChasers()
+  end
+
+  if from == 'ManualChaser' then
+    nextManualChaser = values
+    manualOSCSends()
+  end
+end
+
+function manualOSCSends()
+  print('sendOSCs Start')
+
+  if nextManualChaser ~= nil then
+    sendOSC('Chaser'..nextManualChaser,1)
+  end
+
+  manualChaser = nextManualChaser
+
+--  print(manualChaser)
+--  print(nextManualChaser)
+--  print(autoChaser)
+--  print(nextAutoChaser)
+--  local justDisabledManual = false
+--  if manualChaser ~= nil and nextManualChaser == nil then
+--    justDisabledManual = true
+--    if autoChaser == nil then
+--      print('aaaa')
+--      sendOSC('Chaser'..manualChaser,-1)
+--    elseif autoChaser ~= manualChaser then
+--      print('hhhhh')
+--      sendOSC('Chaser'..autoChaser,-1)
+--    end
+--  elseif not(manualChaser == nil and nextManualChaser == nil) and manualChaser ~= nextManualChaser then
+--    if autoChaser ~= nil and autoChaser ~= nextManualChaser then
+--      --print('send nextManualChaser:' ..nextManualChaser)
+--      sendOSC('Chaser'..nextManualChaser,1)
+--    elseif autoChaser == nil then
+--      print('sending' .. nextManualChaser)
+--      sendOSC('Chaser'..nextManualChaser,1)
+--    end
+--  end
+--  manualChaser = nextManualChaser
+end
+
+function sendOSCsChasers()
+  print('sendoscchasers')
+  if manualChaser ~= nil then
+    return
+  end
+
+  if autoChaser ~= nil and nextAutoChaser == nil then
+    print('send Auto Chaser To Disable:' ..autoChaser)
+    sendOSC('Chaser'..autoChaser,0)
+    --send Auto Chaser To Disable
+  elseif not(autoChaser == nil and nextAutoChaser == nil) then
+    print('send nextAutoChaser:' ..nextAutoChaser)
+    sendOSC('Chaser'..nextAutoChaser,1)
+    --send nextAutoChaser
+  end
+
+  autoChaser = nextAutoChaser
+end
+
+function onReceiveOSC(message, connections)
+  local feedbackManager = root:findByName('FEEDBACK MANAGER',true)
+  feedbackManager:notify('onReceiveOSC',{message = message,connections = connections})
+end
+
+
+function sendSoloButtons()
+  local allButtonGroups = root:findAllByName('SoloButtonGroup',true)
+  local allButtons = {}
+
+  for i = 1,#allButtonGroups do
+    for j = 1,#allButtonGroups[i].children do
+      allButtons[#allButtons + 1] = allButtonGroups[i].children[j]
+    end
+  end
+
+  for i = 1, #allButtons do
+    local button = allButtons[i]
+    button:notify('callOSC')
+  end
+
+  --print(#allButtons)
+end
+
+===== [GROUP] Automatic Chaser Button Group =====
+local TIMEOUT = 10000
+local maxTimeout = 20000
+local time
+local activeButtonId
+local loopIndex
+local indexOfChaser
+
+function init()
+  time = getMillis()
+  loopIndex = 1
+  time = TIMEOUT + 1
+  indexOfChaser = nil
+  resetAllColors()
+end
+
+function update()
+
+  TIMEOUT = root:findByName('Automatic Chaser Speed',true).values.x * maxTimeout
+  if TIMEOUT < 1000 then
+    TIMEOUT = 1000
+  end
+
+  local chasersStart = self.parent.children.StartStopAutoChasers.values.x == 0
+  if chasersStart == false then
+    resetAllColors()
+  end
+
+  if time and getMillis() - time > TIMEOUT and chasersStart == true then
+    calculateActiveChaser()
+  end
+end
+
+function calculateActiveChaser()
+  resetAllColors()
+  time = getMillis()
+  local foundActiveButton = false
+  local activeButtonValue = nil
+  local noButtonPressed = true;
+  local newIndexOfChaser = nil
+  for i= 1,#self.children do
+
+    if loopIndex > #self.children then
+      loopIndex = 1
+    end
+    --print('loopIndex:'..loopIndex)
+
+
+    local child = self.children[loopIndex]
+
+    if child.type == ControlType.BUTTON and child.values.x == 1 then noButtonPressed = false end
+
+    if indexOfChaser then
+      if loopIndex == indexOfChaser and foundActiveButton == false then
+        foundActiveButton = true
+        activeButtonValue = child.values.x
+        --print('foundactivebutton')
+      elseif foundActiveButton and child.type == ControlType.BUTTON and child.values.x == 1 then
+        --print('setting new button')
+        newIndexOfChaser = loopIndex
+        break
+      end
+    else
+      --print('hre')
+      if  child.type == ControlType.BUTTON and child.values.x == 1 then
+        newIndexOfChaser = loopIndex
+        break
+      end
+    end
+
+    loopIndex = loopIndex + 1
+  end
+
+  if foundActiveButton and activeButtonValue == 1 and newIndexOfChaser == nil then
+    newIndexOfChaser = indexOfChaser
+  end
+
+  if newIndexOfChaser ~= nil then
+    self.children[newIndexOfChaser].color = Color(0.000000,0.899287,1.000000,1.000000)
+  end
+
+  if indexOfChaser ~= newIndexOfChaser then
+    callPlayChaser(newIndexOfChaser)
+  end
+
+  indexOfChaser = newIndexOfChaser
+  if indexOfChaser ~= nil then
+    activeButtonId = self.children[indexOfChaser].ID
+  else
+    activeButtonId = nil
+  end
+  --print('end')
+
+end
+
+function resetAllColors()
+  for i =  1,#self.children do
+    if self.children[i].type == ControlType.BUTTON then
+      self.children[i].color = Color(1.000000,0.098123,0.066667,1.000000)
+    end
+  end
+end
+
+function callPlayChaser(index)
+  root:notify('AutoChaser',index)
+  if index == nil then
+    return
+  end
+
+  --print('chaser being called :'..index)
+end
+
+function onReceiveNotify(id,toggleValue)
+  --print('notifyreceviedauto')
+  --print(id)
+  --print(toggleValue)
+  --print(activeButtonId)
+  if (toggleValue == 0 and activeButtonId == id) or (toggleValue == 1 and activeButtonId == nil) then
+    print('aa')
+    time = 0
+    calculateActiveChaser()
+  end
+end
+
+===== [BUTTON] button1 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button2 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button3 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button4 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button5 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button6 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button7 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button8 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button9 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button10 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button11 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button12 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button13 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button14 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print(#root:findByName('buttons',true).children)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] Chaser 1 =====
+function onValueChanged(value)
+--button only
+  if self.values[value] == true then
+    for i= 1,#self.parent.children do
+      local child = self.parent.children[i]
+      if child.ID ~= self.ID then
+        if child.type == ControlType.BUTTON then
+          child.values.x = 0
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] button10 =====
+function onValueChanged(value)
+--button only
+  if self.values[value] == true then
+    for i= 1,#self.parent.children do
+      local child = self.parent.children[i]
+      if child.ID ~= self.ID then
+        if child.type == ControlType.BUTTON then
+          child.values.x = 0
+        end
+      end
+    end
+  end
+end
+
+===== [GROUP] ChaserButtonTogglesGroup =====
+function init()
+  for i = 1,#self.children do
+    local child = self.children[i]
+    child.values.x = 0;
+  end
+end
+
+function onReceiveNotify(key, value)
+  print('notified!')
+  local chaserToSend = nil;
+  for i = 1,#self.children do
+    local child = self.children[i]
+    if child.ID ~= key then
+      if child.values.x == 1 then
+        chaserToSend = i
+      end
+    else
+      if child.values.x == 0 then
+        chaserToSend = nil
+      else
+        chaserToSend = i
+      end
+      break
+    end
+  end
+
+  for i = 1,#self.children do
+    local child = self.children[i]
+    if i ~= chaserToSend then
+      child.values.x = 0;
+    end
+  end
+
+  sendChaserClicked(chaserToSend)
+end
+
+function sendChaserClicked(index)
+  --print('sending chaser clicked""'..index)
+  root:notify('ManualChaser',index)
+end
+
+===== [BUTTON] button1 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print('button'..self.ID)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button2 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    --print('button'..self.ID)
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button3 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button4 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button5 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button6 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button7 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button8 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button9 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button10 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button11 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button12 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button13 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button14 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [BUTTON] button15 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == false then
+    self.parent:notify(self.ID,self.values.x)
+  end
+end
+
+===== [GROUP] SoloButtonGroup =====
+function onReceiveNotify(key, value)
+  print('onReceiveNotify')
+  print('\t key   =', key)
+  print('\t value =', value)
+end
+
+===== [BUTTON] button93 =====
+local vipNumber = 1
+local OSCValue
+function init()
+  OSCValue = 0
+  self.values.x = 0
+--  self.values.x = 0
+  sendOSC('VIPBooth'..vipNumber,-1)
+end
+
+local justTouched = false
+function onValueChanged(eventType)
+--  print(eventType)
+--  print(self.values.touch)
+  if eventType == 'x' and self.values.touch == true and justTouched == false then
+    print('hh')
+    justTouched = true
+    sendOSC('VIPBooth'..vipNumber,self.values.x)
+  end
+
+  if self.values.touch == false then
+    justTouched = false
+  end
+end
+
+
+function onReceiveOSC(message, connections)
+  OSCValue = message[2][1].value
+  print('onReceiveOSC')
+  print(OSCValue)
+  print(self.values.x)
+  if OSCValue > 0 and self.values.x == 0 then
+      self.values.x = 1
+    --sendOSC('VIPBooth'..vipNumber,1)
+  elseif OSCValue < 1 and self.values.x == 1 then
+    self.values.x = 0
+    --sendOSC('VIPBooth'..vipNumber,1)
+  end
+
+end
+
+function onReceiveNotify(valueType,value)
+  print('receiveNotify')
+  if valueType == 'callOSC' then
+    print(self.values.x)
+    if self.values.x == 1 then
+      sendOSC('VIPBooth'..vipNumber,1)
+    end
+  end
+end
+
+===== [BUTTON] button100 =====
+local vipNumber = 2
+local OSCValue
+function init()
+  OSCValue = 0
+  self.values.x = 0
+--  self.values.x = 0
+  sendOSC('VIPBooth'..vipNumber,-1)
+end
+
+local justTouched = false
+function onValueChanged(eventType)
+--  print(eventType)
+--  print(self.values.touch)
+  if eventType == 'x' and self.values.touch == true and justTouched == false then
+    print('hh')
+    justTouched = true
+    sendOSC('VIPBooth'..vipNumber,self.values.x)
+  end
+
+  if self.values.touch == false then
+    justTouched = false
+  end
+end
+
+
+function onReceiveOSC(message, connections)
+  OSCValue = message[2][1].value
+  print('onReceiveOSC')
+  print(OSCValue)
+  print(self.values.x)
+  if OSCValue > 0 and self.values.x == 0 then
+      self.values.x = 1
+    --sendOSC('VIPBooth'..vipNumber,1)
+  elseif OSCValue < 1 and self.values.x == 1 then
+    self.values.x = 0
+    --sendOSC('VIPBooth'..vipNumber,1)
+  end
+
+end
+
+function onReceiveNotify(valueType,value)
+  print('receiveNotify')
+  if valueType == 'callOSC' then
+    print(self.values.x)
+    if self.values.x == 1 then
+      sendOSC('VIPBooth'..vipNumber,1)
+    end
+  end
+end
+
+===== [BUTTON] button101 =====
+local vipNumber = 3
+local OSCValue
+function init()
+  OSCValue = 0
+  self.values.x = 0
+--  self.values.x = 0
+  sendOSC('VIPBooth'..vipNumber,-1)
+end
+
+local justTouched = false
+function onValueChanged(eventType)
+--  print(eventType)
+--  print(self.values.touch)
+  if eventType == 'x' and self.values.touch == true and justTouched == false then
+    print('hh')
+    justTouched = true
+    sendOSC('VIPBooth'..vipNumber,self.values.x)
+  end
+
+  if self.values.touch == false then
+    justTouched = false
+  end
+end
+
+
+function onReceiveOSC(message, connections)
+  OSCValue = message[2][1].value
+  print('onReceiveOSC')
+  print(OSCValue)
+  print(self.values.x)
+  if OSCValue > 0 and self.values.x == 0 then
+      self.values.x = 1
+    --sendOSC('VIPBooth'..vipNumber,1)
+  elseif OSCValue < 1 and self.values.x == 1 then
+    self.values.x = 0
+    --sendOSC('VIPBooth'..vipNumber,1)
+  end
+
+end
+
+function onReceiveNotify(valueType,value)
+  print('receiveNotify')
+  if valueType == 'callOSC' then
+    print(self.values.x)
+    if self.values.x == 1 then
+      sendOSC('VIPBooth'..vipNumber,1)
+    end
+  end
+end
+
+===== [BUTTON] button102 =====
+local vipNumber = 4
+local OSCValue
+function init()
+  OSCValue = 0
+  self.values.x = 0
+--  self.values.x = 0
+  sendOSC('VIPBooth'..vipNumber,-1)
+end
+
+
+local justTouched = false
+function onValueChanged(eventType)
+--  print(eventType)
+--  print(self.values.touch)
+  if eventType == 'x' and self.values.touch == true and justTouched == false then
+    print('hh')
+    justTouched = true
+    sendOSC('VIPBooth'..vipNumber,self.values.x)
+  end
+
+  if self.values.touch == false then
+    justTouched = false
+  end
+end
+
+
+function onReceiveOSC(message, connections)
+  OSCValue = message[2][1].value
+  print('onReceiveOSC')
+  print(OSCValue)
+  print(self.values.x)
+  if OSCValue > 0 and self.values.x == 0 then
+      self.values.x = 1
+    --sendOSC('VIPBooth'..vipNumber,1)
+  elseif OSCValue < 1 and self.values.x == 1 then
+    self.values.x = 0
+    --sendOSC('VIPBooth'..vipNumber,1)
+  end
+end
+
+function onReceiveNotify(valueType,value)
+  print('receiveNotify')
+  if valueType == 'callOSC' then
+    print(self.values.x)
+    if self.values.x == 1 then
+      sendOSC('VIPBooth'..vipNumber,1)
+    end
+  end
+end
+
+===== [BUTTON] button103 =====
+local vipNumber = 5
+local OSCValue
+function init()
+  OSCValue = 0
+  self.values.x = 0
+--  self.values.x = 0
+  sendOSC('VIPBooth'..vipNumber,-1)
+end
+
+local justTouched = false
+function onValueChanged(eventType)
+--  print(eventType)
+--  print(self.values.touch)
+  if eventType == 'x' and self.values.touch == true and justTouched == false then
+    print('hh')
+    justTouched = true
+    sendOSC('VIPBooth'..vipNumber,self.values.x)
+  end
+
+  if self.values.touch == false then
+    justTouched = false
+  end
+end
+
+
+function onReceiveOSC(message, connections)
+  OSCValue = message[2][1].value
+  print('onReceiveOSC')
+  print(OSCValue)
+  print(self.values.x)
+  if OSCValue > 0 and self.values.x == 0 then
+      self.values.x = 1
+    --sendOSC('VIPBooth'..vipNumber,1)
+  elseif OSCValue < 1 and self.values.x == 1 then
+    self.values.x = 0
+    --sendOSC('VIPBooth'..vipNumber,1)
+  end
+
+end
+
+function onReceiveNotify(valueType,value)
+  print('receiveNotify')
+  if valueType == 'callOSC' then
+    print(self.values.x)
+    if self.values.x == 1 then
+      sendOSC('VIPBooth'..vipNumber,1)
+    end
+  end
+end
+
+===== [BUTTON] button104 =====
+local vipNumber = 6
+local OSCValue
+function init()
+  OSCValue = 0
+  self.values.x = 0
+--  self.values.x = 0
+  sendOSC('VIPBooth'..vipNumber,-1)
+end
+
+local justTouched = false
+function onValueChanged(eventType)
+--  print(eventType)
+--  print(self.values.touch)
+  if eventType == 'x' and self.values.touch == true and justTouched == false then
+    print('hh')
+    justTouched = true
+    sendOSC('VIPBooth'..vipNumber,self.values.x)
+  end
+
+  if self.values.touch == false then
+    justTouched = false
+  end
+end
+
+
+function onReceiveOSC(message, connections)
+  OSCValue = message[2][1].value
+  print('onReceiveOSC')
+  print(OSCValue)
+  print(self.values.x)
+  if OSCValue > 0 and self.values.x == 0 then
+      self.values.x = 1
+    --sendOSC('VIPBooth'..vipNumber,1)
+  elseif OSCValue < 1 and self.values.x == 1 then
+    self.values.x = 0
+    --sendOSC('VIPBooth'..vipNumber,1)
+  end
+
+end
+
+function onReceiveNotify(valueType,value)
+  print('receiveNotify')
+  if valueType == 'callOSC' then
+    print(self.values.x)
+    if self.values.x == 1 then
+      sendOSC('VIPBooth'..vipNumber,1)
+    end
+  end
+end
+
+===== [BUTTON] button105 =====
+local vipNumber = 7
+local OSCValue
+function init()
+  OSCValue = 0
+  self.values.x = 0
+--  self.values.x = 0
+  sendOSC('VIPBooth'..vipNumber,-1)
+end
+
+local justTouched = false
+function onValueChanged(eventType)
+--  print(eventType)
+--  print(self.values.touch)
+  if eventType == 'x' and self.values.touch == true and justTouched == false then
+    print('hh')
+    justTouched = true
+    sendOSC('VIPBooth'..vipNumber,self.values.x)
+  end
+
+  if self.values.touch == false then
+    justTouched = false
+  end
+end
+
+
+function onReceiveOSC(message, connections)
+  OSCValue = message[2][1].value
+  print('onReceiveOSC')
+  print(OSCValue)
+  print(self.values.x)
+  if OSCValue > 0 and self.values.x == 0 then
+      self.values.x = 1
+    --sendOSC('VIPBooth'..vipNumber,1)
+  elseif OSCValue < 1 and self.values.x == 1 then
+    self.values.x = 0
+    --sendOSC('VIPBooth'..vipNumber,1)
+  end
+
+end
+
+function onReceiveNotify(valueType,value)
+  print('receiveNotify')
+  if valueType == 'callOSC' then
+    print(self.values.x)
+    if self.values.x == 1 then
+      sendOSC('VIPBooth'..vipNumber,1)
+    end
+  end
+end
+
+===== [BUTTON] button106 =====
+local vipNumber = 8
+local OSCValue
+function init()
+  OSCValue = 0
+  self.values.x = 0
+--  self.values.x = 0
+  sendOSC('VIPBooth'..vipNumber,-1)
+end
+
+local justTouched = false
+function onValueChanged(eventType)
+--  print(eventType)
+--  print(self.values.touch)
+  if eventType == 'x' and self.values.touch == true and justTouched == false then
+    print('hh')
+    justTouched = true
+    sendOSC('VIPBooth'..vipNumber,self.values.x)
+  end
+
+  if self.values.touch == false then
+    justTouched = false
+  end
+end
+
+
+function onReceiveOSC(message, connections)
+  OSCValue = message[2][1].value
+  print('onReceiveOSC')
+  print(OSCValue)
+  print(self.values.x)
+  if OSCValue > 0 and self.values.x == 0 then
+      self.values.x = 1
+    --sendOSC('VIPBooth'..vipNumber,1)
+  elseif OSCValue < 1 and self.values.x == 1 then
+    self.values.x = 0
+    --sendOSC('VIPBooth'..vipNumber,1)
+  end
+
+end
+
+function onReceiveNotify(valueType,value)
+  print('receiveNotify')
+  if valueType == 'callOSC' then
+    print(self.values.x)
+    if self.values.x == 1 then
+      sendOSC('VIPBooth'..vipNumber,1)
+    end
+  end
+end
+
+===== [GROUP] Master Control =====
+function onReceiveNotify(key, value)
+  print(key)
+  print(value)
+  print(value.name)
+  print(value.value)
+  if value ~= nil then
+    sendOSC(value.name,value.value)
+  end
+end
+
+===== [BUTTON] Color Picker White =====
+local color = 'White'
+local r = 1
+local g = 1
+local b = 1
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Dark Blue =====
+local color = 'Dark Blue'
+local r = .055
+local g = 0
+local b = 1
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Blue =====
+local color = 'Blue'
+local r = 0
+local g = 0
+local b = 1
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Green =====
+local color = 'Green'
+local r = 0
+local g = 1
+local b = 0
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Orange =====
+local color = 'Orange'
+local r = 1
+local g = .71
+local b = 0
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Purple =====
+local color = 'Purple'
+local r = 1
+local g = 0
+local b = 1
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Red =====
+local color = 'Red'
+local r = 1
+local g = 0
+local b = 0
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Cyan =====
+local color = 'Cyan'
+local r = 0
+local g = 1
+local b = 1
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Yellow =====
+local color = 'Yellow'
+local r = 1
+local g = 1
+local b = 0
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Off =====
+local color = 'Off'
+local r = 0
+local g = 0
+local b = 0
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    if self.values.x == 1 then
+      local redFader = root:findByName('Color Picker Red Fader',true)
+      local greenFader = root:findByName('Color Picker Green Fader',true)
+      local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+      redFader.values.x = r;
+      greenFader.values.x = g;
+      blueFader.values.x = b;
+
+      redFader:notify('Send Update',nil)
+      greenFader:notify('Send Update',nil)
+      blueFader:notify('Send Update',nil)
+
+      local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+      for i = 1,#allQLCButtons do
+        local currentButton = allQLCButtons[i]
+        if currentButton.values.x == 1 then
+          currentButton:notify('Color Change Button',color)
+        end
+      end
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Reset =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == true then
+    local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+    for i = 1,#allQLCButtons do
+      local currentButton = allQLCButtons[i]
+      if currentButton.values.x == 1 then
+        currentButton:notify('Color Reset',1)
+      end
+    end
+  end
+end
+
+===== [FADER] Color Picker Red Fader =====
+local sliderName = 'Color Change Slider Red'
+local buttonName = 'Speed Button'
+local touchValue = 1
+
+local touchValue
+function onValueChanged(eventType)
+  if eventType == 'touch' then
+      touchValue = self.values[eventType]
+  end
+  if eventType == 'x' and touchValue == true then
+    local greenFader = root:findByName('Color Picker Green Fader',true)
+    local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+    sendUpdate()
+    greenFader:notify('Send Update',nil)
+    blueFader:notify('Send Update',nil)
+
+  end
+end
+
+function onReceiveNotify(key, value)
+  if key == 'Send Update' then
+    sendUpdate()
+  end
+end
+
+function sendUpdate()
+  local dimmerStopButtons = self.parent:findAllByName(buttonName,true)
+  print(dimmerStopButtons)
+  for i = 1,#dimmerStopButtons do
+    print(dimmerStopButtons[i])
+    local dimmerButton = dimmerStopButtons[i]
+    dimmerButton.values.x = true
+  end
+
+  local masterController = root:findByName('Master Control',true)
+  local allQLCButtons = masterController:findAllByType(ControlType.BUTTON,true)
+  for i = 1,#allQLCButtons do
+    local currentButton = allQLCButtons[i]
+    if currentButton.tag == 'QLCBUTTON' and currentButton.values.x == 1 then
+      currentButton:notify(sliderName,self.values.x * root:findByName('Color Picker Master Dimmer',true).values.x)
+      currentButton.color.r = self.values.x
+    end
+  end
+end
+
+===== [FADER] Color Picker Blue Fader =====
+local sliderName = 'Color Change Slider Blue'
+local buttonName = 'Speed Button'
+local touchValue = 1
+
+local touchValue
+function onValueChanged(eventType)
+  if eventType == 'touch' then
+      touchValue = self.values[eventType]
+  end
+  if eventType == 'x' and touchValue == true then
+    local redFader = root:findByName('Color Picker Red Fader',true)
+    local greenFader = root:findByName('Color Picker Green Fader',true)
+
+    redFader:notify('Send Update',nil)
+    greenFader:notify('Send Update',nil)
+    sendUpdate()
+  end
+end
+
+function onReceiveNotify(key, value)
+  if key == 'Send Update' then
+    sendUpdate()
+  end
+end
+
+function sendUpdate()
+  local dimmerStopButtons = self.parent:findAllByName(buttonName,true)
+  print(dimmerStopButtons)
+  for i = 1,#dimmerStopButtons do
+    print(dimmerStopButtons[i])
+    local dimmerButton = dimmerStopButtons[i]
+    dimmerButton.values.x = true
+  end
+
+  local masterController = root:findByName('Master Control',true)
+  local allQLCButtons = masterController:findAllByType(ControlType.BUTTON,true)
+  for i = 1,#allQLCButtons do
+    local currentButton = allQLCButtons[i]
+    if currentButton.tag == 'QLCBUTTON' and currentButton.values.x == 1 then
+      currentButton:notify(sliderName,self.values.x * root:findByName('Color Picker Master Dimmer',true).values.x)
+      currentButton.color.b = self.values.x
+    end
+  end
+end
+
+===== [FADER] Color Picker Green Fader =====
+local sliderName = 'Color Change Slider Green'
+local buttonName = 'Speed Button'
+local touchValue = 1
+
+local touchValue
+function onValueChanged(eventType)
+  if eventType == 'touch' then
+      touchValue = self.values[eventType]
+  end
+  if eventType == 'x' and touchValue == true then
+    local redFader = root:findByName('Color Picker Red Fader',true)
+    local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+    redFader:notify('Send Update',nil)
+    sendUpdate()
+    blueFader:notify('Send Update',nil)
+
+  end
+end
+
+function onReceiveNotify(key, value)
+  if key == 'Send Update' then
+    sendUpdate()
+  end
+end
+
+function sendUpdate()
+  local dimmerStopButtons = self.parent:findAllByName(buttonName,true)
+  print(dimmerStopButtons)
+  for i = 1,#dimmerStopButtons do
+    print(dimmerStopButtons[i])
+    local dimmerButton = dimmerStopButtons[i]
+    dimmerButton.values.x = true
+  end
+
+  local masterController = root:findByName('Master Control',true)
+  local allQLCButtons = masterController:findAllByType(ControlType.BUTTON,true)
+  for i = 1,#allQLCButtons do
+    local currentButton = allQLCButtons[i]
+    if currentButton.tag == 'QLCBUTTON' and currentButton.values.x == 1 then
+      currentButton:notify(sliderName,self.values.x * root:findByName('Color Picker Master Dimmer',true).values.x)
+      currentButton.color.g = self.values.x
+    end
+  end
+end
+
+===== [FADER] Color Picker Master Dimmer =====
+local sliderName = 'Dimmer Slider'
+local buttonName = 'Color Picker Master Dimmer Reset'
+
+function onValueChanged(eventType)
+  if eventType == 'touch' then
+    touchValue = self.values.x
+  end
+
+  if eventType == 'x' and self.values.touch == true then
+    local redFader = root:findByName('Color Picker Red Fader',true)
+    local greenFader = root:findByName('Color Picker Green Fader',true)
+    local blueFader = root:findByName('Color Picker Blue Fader',true)
+
+    redFader:notify('Send Update',nil)
+    greenFader:notify('Send Update',nil)
+    blueFader:notify('Send Update',nil)
+
+    sendUpdate()
+  end
+end
+
+function sendUpdate()
+  local dimmerStopButtons = self.parent:findAllByName(buttonName,true)
+  print(dimmerStopButtons)
+  for i = 1,#dimmerStopButtons do
+    print(dimmerStopButtons[i])
+    local dimmerButton = dimmerStopButtons[i]
+    dimmerButton.values.x = true
+  end
+
+  local masterController = root:findByName('Master Control',true)
+  local allQLCButtons = masterController:findAllByType(ControlType.BUTTON,true)
+  for i = 1,#allQLCButtons do
+    local currentButton = allQLCButtons[i]
+    if currentButton.tag == 'QLCBUTTON' and currentButton.values.x == 1 then
+      currentButton:notify(sliderName,self.values.x)
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Master Dimmer Reset =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == true then
+    local colorPickerMasterDimmer = root:findByName('Color Picker Master Dimmer',true)
+    colorPickerMasterDimmer.values.x = 1
+    local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+    for i = 1,#allQLCButtons do
+      local currentButton = allQLCButtons[i]
+      if currentButton.values.x == 1 then
+        currentButton:notify('Slider Dimmer Reset',1)
+      end
+    end
+  end
+end
+
+===== [FADER] Color Picker Master Strobe =====
+local sliderName = 'Strobe Update'
+local buttonName = 'Color Picker Master Strobe Reset'
+
+function onValueChanged(eventType)
+  if eventType == 'touch' then
+    touchValue = self.values.x
+  end
+
+  if eventType == 'x' and self.values.touch == true then
+    sendUpdate()
+  end
+end
+
+function sendUpdate()
+  local dimmerStopButtons = self.parent:findAllByName(buttonName,true)
+  for i = 1,#dimmerStopButtons do
+    print(dimmerStopButtons[i])
+    local dimmerButton = dimmerStopButtons[i]
+    dimmerButton.values.x = true
+  end
+
+  local masterController = root:findByName('Master Control',true)
+  local allQLCButtons = masterController:findAllByType(ControlType.BUTTON,true)
+  for i = 1,#allQLCButtons do
+    local currentButton = allQLCButtons[i]
+    if currentButton.tag == 'QLCBUTTON' and currentButton.values.x == 1 then
+      currentButton:notify(sliderName,self.values.x)
+    end
+  end
+end
+
+===== [BUTTON] Color Picker Master Strobe Reset =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values.touch == true then
+    local allQLCButtons = root:findAllByProperty('tag','QLCBUTTON',true);
+    local colorPickerMasterDimmer = root:findByName('Color Picker Master Strobe',true)
+    colorPickerMasterDimmer.values.x = 0
+    for i = 1,#allQLCButtons do
+      local currentButton = allQLCButtons[i]
+      if currentButton.values.x == 1 then
+        currentButton:notify('Slider Strobe Reset',1)
+      end
+    end
+  end
+end
+
+===== [BUTTON] button141 =====
+function init()
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = 'testt',Id = self.ID})
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    self.values.x = value
+  end
+end
+
+===== [GROUP] Macro Picker =====
+function onReceiveNotify(key,input)
+  local allMacroButtons = self:findAllByName('Macro Button')
+  local allMacroButtonLabel = self:findAllByName('Macro Button Label')
+
+  local bottomPages = root:findByProperty('tag','Master Controller Bottom Pages',true)
+  bottomPages.values.page = 1
+  local macroPickerLabel = self:findByProperty('tag','Light Setup Name Label',true)
+  macroPickerLabel.values.text = input.lightName
+
+  for i = 1,#allMacroButtons do
+    local macroButton = allMacroButtons[i]
+    macroButton.frame.h = 100
+    macroButton.frame.w = 100
+    macroButton.frame.x = macroButton.frame.w * ((i-1) % 5) + 70
+    macroButton.frame.y = macroButton.frame.h * (math.floor((i-1)/5)) + 30
+    macroButton.tag = ''
+    if #input.macros > i - 1 then
+      macroButton.visible = true
+      macroButton.tag = input.lightName .. ' Macro ' ..input.macros[i].name
+    else
+      macroButton.visible = false
+    end
+  end
+
+  for i = 1,#allMacroButtonLabel do
+    local macroButtonLabel = allMacroButtonLabel[i]
+    macroButtonLabel.frame.h = 100
+    macroButtonLabel.frame.w = 100
+    macroButtonLabel.frame.x = macroButtonLabel.frame.w * ((i-1) % 5) + 70
+    macroButtonLabel.frame.y = macroButtonLabel.frame.h * (math.floor((i-1)/5)) + 30
+    macroButtonLabel.values.text = ''
+    macroButtonLabel.background = false
+    if #input.macros > i - 1 then
+      macroButtonLabel.visible = true
+      macroButtonLabel.values.text = input.macros[i].name
+    else
+      macroButtonLabel.visible = false
+    end
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Macro Button =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] button135 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] button136 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] button137 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] button138 =====
+function onValueChanged(eventType)
+  if eventType == 'touch' and self.values[eventType] == true then
+    local masterControl = root:findByName('Master Control',true)
+    masterControl:notify(self.tag,{name = self.tag,value = 1})
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button132 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button129 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button130 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button131 =====
+local myMacros = {{ name = 'Speed Dial'},{name = 'RGB Switcher 1'},{ name = 'Off'}}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button128 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+function onOffNotify()
+
+
+end
+
+===== [BUTTON] button133 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button133 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button130 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button132 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button132 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button132 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button132 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button132 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button132 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Button =====
+local lastColorChangeKey = ''
+
+function onReceiveNotify(key, value)
+  local masterControl = root:findByName('Master Control',true)
+  local pair = {}
+  pair.value = value;
+  if key == 'Color Change Button' then
+    pair.name = self.parent.tag .. ' ' .. key .. ' '  ..  value;
+    if lastColorChangeKey ~= value then
+      pair.value = 1
+      masterControl:notify(key,pair)
+      lastColorChangeKey = value
+    end
+
+  else
+    pair.name = self.parent.tag .. ' ' .. key;
+    masterControl:notify(key,pair)
+  end
+end
+
+function onValueChanged(eventType)
+  if eventType == 'x' then
+    local onoffbutton = self.parent:findByType(ControlType.BOX)
+    if self.values.x == 1 then
+      onoffbutton.color = Color(0,1,0,1)
+    else
+      onoffbutton.color = Color(1,0,0)
+    end
+  end
+end
+
+===== [BUTTON] button132 =====
+local myMacros = {
+  {name = 'Off'},
+}
+
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.x == 1 then
+    local macroPicker = root:findByProperty('tag','Macro Picker',true)
+    macroPicker:notify('setMacro',{lightName = self.parent.tag , macros = myMacros})
+  end
+end
+
+===== [BUTTON] button139 =====
+local lastColorChangeKey = ''
+local reverse = true
+
+local isTouched = false
+function onValueChanged(eventType)
+  if eventType == 'x' and self.values.touch == true and isTouched == false then
+    isTouched = true
+    setButtonSettings()
+    sendOnOff()
+  end
+
+  if self.values.touch == false then
+    isTouched = false
+  end
+end
+
+function sendOnOff()
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  if self.values.x == 1 then
+    fixtureMain:notify(self.tag,0)
+  else
+    fixtureMain:notify(self.tag,1)
+  end
+
+end
+
+local initFeedback = false;
+function init()
+  self.values.x = 1
+  setButtonSettings()
+
+  local fixtureMain = self.parent.parent:findByProperty('tag','QLCBUTTON',true);
+  root:findByName('FEEDBACK MANAGER',true):notify('feedback',{caller = fixtureMain.parent.tag .. ' ' .. self.tag,Id = self.ID})
+  initFeedback = true
+end
+
+function onReceiveNotify(from,value)
+  if(from == 'feedback') then
+    if(initFeedback == false) then
+      return
+    end
+
+    initFeedback = false
+
+    self.values.x = value
+    if reverse == true then
+      if value == 1 then
+        self.values.x = 0
+      else
+        self.values.x = 1
+      end
+    end
+    setButtonSettings()
+  end
+end
+
+function setButtonSettings()
+  local onoffbuttonText = self.parent:findByType(ControlType.TEXT)
+  if self.values.x == 1 then
+    onoffbuttonText.values.text = 'ON'
+    self.color = Color(0,1,0,1)
+  else
+    onoffbuttonText.values.text = 'OFF'
+    self.color = Color(1,0,0)
+  end
+end
+
+===== [BUTTON] Default Button Set Function =====
+function init()
+  --sendOSC('Default Button Set Function',1)
+end
+
+===== [BOX] FEEDBACK MANAGER =====
+local feedbackWaitMap = {}
+
+function onReceiveNotify(from,values)
+  if(from == 'onReceiveOSC') then
+    onReceiveOSC(values.message,values.connections)
+  end
+  if(from == 'feedback') then
+    print('asking for feedback')
+    feedbackWaitMap[values.caller] = values.Id;
+    sendOSC(values.caller,-1)
+  end
+
+end
+
+-- example
+function onReceiveOSC(message, connections)
+  print('onReceiveOSC')
+  local path = message[1]
+  local arguments = message[2]
+  print('\t path        =', path)
+  for i=1,#arguments do
+    print('\t argument    =', arguments[i].tag, arguments[i].value)
+  end
+  print('\t connections =', table.unpack(connections))
+
+  if feedbackWaitMap[path] ~= nil then
+    print('feedback returned!!')
+    local caller = root:findByID(feedbackWaitMap[path],true)
+    if caller ~= nil then
+      caller:notify('feedback',arguments[1].value)
+    end
+  end
+end
+

@@ -74,6 +74,16 @@ void WebAccess::slotHandleHTTPRequest(QHttpRequest *req, QHttpResponse *resp)
 
     qDebug() << Q_FUNC_INFO << req->methodString() << req->url();
 
+    // Custom routing: the full auto-generated Virtual Console lives at the
+    // (obscure) "/console" route. Handle it BEFORE the common file handler, which
+    // would otherwise treat "/console" as a missing static file and return 404.
+    if (reqUrl == "/console")
+    {
+        content = getVCHTML();
+        sendHtmlResponse(resp, content);
+        return;
+    }
+
     CommonRequestResult commonResult = handleCommonHTTPRequest(req, resp, user, reqUrl, content);
     if (commonResult == CommonRequestResult::Handled)
         return;
@@ -82,6 +92,11 @@ void WebAccess::slotHandleHTTPRequest(QHttpRequest *req, QHttpResponse *resp)
         sendHtmlResponse(resp, content);
         return;
     }
+
+    // Every other path serves the simplified custom control page
+    // (Web/control.html); falls back to the VC console if that file is absent.
+    if (serveWebFile(resp, "/control.html", "text/html"))
+        return;
 
     content = getVCHTML();
     sendHtmlResponse(resp, content);
@@ -492,8 +507,16 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
             case VCWidget::SliderWidget:
             {
                 VCSlider *slider = qobject_cast<VCSlider*>(widget);
-                slider->setSliderValue(value, false, true);
-                slider->updateFeedback();
+                if (cmdList.count() > 1 && cmdList[1] == "RESET")
+                {
+                    // clear an active override (same as pressing the slider's reset "X")
+                    slider->resetOverride();
+                }
+                else
+                {
+                    slider->setSliderValue(value, false, true);
+                    slider->updateFeedback();
+                }
             }
             break;
             case VCWidget::AudioTriggersWidget:

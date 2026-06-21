@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<!--
+  Mayans Lightning Control - custom QLC+ web control surface (replaces TouchOSC).
+  Served at "/"; the full Virtual Console is at "/console".
+
+  ====================  HOW TO ADD A BUTTON  ====================
+  Just add a <button class="tile"> inside a <section>. No JavaScript to touch.
+
+    <button class="tile" wid="20" fid="45">Chaser 1<i>Auto Show 1</i></button>
+
+  Attributes:
+    fid="<id>"   (required) QLC+ Function ID. Used to start/stop and to light the
+                 button when QLC+ reports FUNCTION|<id>|Running.
+    wid="<id>"   (optional) Virtual Console widget ID. If present, tapping presses
+                 that VC widget (so the button also lights up ON the console).
+                 If omitted, the Function (fid) is started directly.
+    label        = the button text. An <i>...</i> inside becomes the small subtitle.
+                 (You can also use name="..." / sub="..." attributes instead.)
+    class        "tile"        -> normal button
+                 "tile scene"  -> green highlight when active
+                 "tile fog"    -> purple highlight when active
+
+  Put buttons in a container with data-group="chaser" to make them mutually
+  exclusive (tapping one switches off the others). Any other group just toggles.
+  ===============================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Mayans Lightning Control</title>
+<style>
+  :root { --bg:#0b0c10; --panel:#15171f; --edge:#252a36; --txt:#e8eaf0; --muted:#8b93a7;
+          --accent:#00d0ff; --on:#00e676; --warn:#ff3b30; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent;
+      -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none;
+      -webkit-touch-callout:none; }
+  body { margin:0; background:var(--bg); color:var(--txt);
+         font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  header { display:flex; align-items:center; justify-content:space-between;
+           padding:14px 18px; border-bottom:1px solid var(--edge); position:sticky; top:0;
+           background:linear-gradient(#15171f,#101218); z-index:5; }
+  header h1 { font-size:18px; margin:0; letter-spacing:.5px; }
+  #status { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+  #dot { width:11px; height:11px; border-radius:50%; background:var(--warn); transition:background .2s; }
+  #dot.ok { background:var(--on); }
+  main { padding:16px; max-width:900px; margin:0 auto; }
+  section { background:var(--panel); border:1px solid var(--edge); border-radius:14px;
+            padding:14px; margin-bottom:16px; }
+  section h2 { margin:0 0 12px; font-size:14px; text-transform:uppercase; letter-spacing:1px;
+               color:var(--muted); font-weight:600; }
+  .grid { display:grid; gap:10px; }
+  .chasers { grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); }
+  .wide   { grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); }
+  button.tile { appearance:none; border:1px solid var(--edge); background:#1c1f29; color:var(--txt);
+                border-radius:12px; padding:20px 12px; font-size:16px; font-weight:600; cursor:pointer;
+                transition:transform .05s, border-color .15s, background .15s, box-shadow .15s;
+                min-height:74px; user-select:none; text-align:center; }
+  button.tile:active { transform:scale(.96); }
+  button.tile[hold] { touch-action:none; }   /* don't let a hold-button start a page scroll */
+  button.tile i { display:block; font-size:11px; color:var(--muted); font-weight:500;
+                  margin-top:4px; font-style:normal; }
+  button.tile.active { border-color:var(--accent); background:#0f2b33;
+                       box-shadow:0 0 0 1px var(--accent), 0 0 18px rgba(0,208,255,.35); color:#fff; }
+  button.tile.fog.active   { border-color:#b388ff; background:#241a3a; box-shadow:0 0 0 1px #b388ff,0 0 18px rgba(179,136,255,.4); }
+  button.tile.scene.active { border-color:var(--on); background:#0f2a1c; box-shadow:0 0 0 1px var(--on),0 0 18px rgba(0,230,118,.35); }
+  .hint { color:var(--muted); font-size:12px; text-transform:none; letter-spacing:0; font-weight:400; }
+
+  /* spot selection (pick fixtures) */
+  .spots { grid-template-columns:repeat(auto-fit,minmax(84px,1fr)); }
+  button.spot { appearance:none; border:1px solid var(--edge); background:#1c1f29; color:var(--txt);
+                border-radius:10px; padding:14px 6px; font-size:14px; font-weight:600; cursor:pointer;
+                min-height:54px; transition:transform .05s,border-color .12s,background .12s; }
+  button.spot:active { transform:scale(.95); }
+  button.spot.selected { border-color:var(--accent); background:#10303a; color:#fff;
+                         box-shadow:0 0 0 1px var(--accent); }
+  .selrow { display:flex; gap:10px; margin:10px 0; }
+  button.mini { appearance:none; background:#222633; border:1px solid var(--edge); color:var(--muted);
+                border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer; }
+  /* preset color palette (applies to selected spots) */
+  .colors { grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); }
+  button.color { appearance:none; border:1px solid var(--edge); border-radius:10px; cursor:pointer;
+                 padding:12px 6px; font-size:13px; font-weight:600; color:var(--txt); min-height:60px;
+                 background:#1c1f29; }
+  button.color:active { transform:scale(.95); }
+  button.color::before { content:""; display:block; height:20px; border-radius:5px; margin:0 0 8px;
+                         background:var(--sw); border:1px solid rgba(255,255,255,.25); }
+  button.color.active { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent),0 0 14px rgba(0,208,255,.45); }
+  button.color.reset { color:var(--muted); }
+  button.color i { display:block; font-size:10px; color:var(--muted); font-style:normal; margin-top:2px; }
+
+  /* RGB fixtures: select fixtures, then one shared color picker recolors them */
+  .rgbsel { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); }
+  .rgbfix { position:relative; border:1px solid var(--edge); background:#1c1f29; color:var(--txt);
+            border-radius:12px; padding:14px 8px 10px; font-size:14px; font-weight:600; cursor:pointer;
+            min-height:64px; text-align:center; user-select:none;
+            transition:transform .05s,border-color .12s,background .12s; }
+  .rgbfix:active { transform:scale(.96); }
+  .rgbfix.selected { border-color:var(--accent); background:#10303a; box-shadow:0 0 0 1px var(--accent); }
+  .rgbfix::after { content:""; display:block; height:7px; border-radius:4px; margin-top:9px;
+                   background:var(--fc,#000); border:1px solid rgba(255,255,255,.18); }
+  .rgbfix .pwr { position:absolute; top:6px; right:6px; width:15px; height:15px; border-radius:50%;
+                 background:#3a3f4d; border:1px solid #555; }
+  .rgbfix.on .pwr { background:var(--on); border-color:var(--on); box-shadow:0 0 8px rgba(0,230,118,.65); }
+  .pickwrap { display:flex; align-items:center; gap:12px; margin:4px 0 12px; }
+  .pickwrap input[type=color] { width:70px; height:42px; border:1px solid var(--edge); border-radius:8px;
+                                background:#000; cursor:pointer; padding:0; flex:none; }
+  .pickwrap input[type=range] { flex:1; min-width:120px; accent-color:var(--accent); }
+  .pickwrap span { font-size:13px; color:var(--muted); min-width:42px; text-align:right; }
+  /* fixtures tabs + panes */
+  .tabs { display:flex; gap:4px; margin:6px 0 12px; border-bottom:1px solid var(--edge); }
+  button.tab { appearance:none; background:none; border:none; color:var(--muted); padding:8px 14px;
+               font-size:14px; font-weight:600; cursor:pointer; border-bottom:2px solid transparent; }
+  button.tab.active { color:var(--txt); border-bottom-color:var(--accent); }
+  .pane[hidden] { display:none; }
+  button.mini.danger { color:#ff7a7a; border-color:#5a2a2a; }
+  .rgbrow { display:flex; align-items:center; gap:12px; margin:12px 0; }
+  .rgbrow span { width:16px; color:var(--muted); font-weight:700; text-align:center; }
+  .rgbrow input[type=range] { flex:1; accent-color:var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Mayans Lightning Control</h1>
+  <div id="status"><span id="dot"></span><span id="statusText">connecting…</span></div>
+</header>
+
+<main>
+
+  <!-- ================= CHASERS (mutually exclusive) ================= -->
+  <section>
+    <h2>Chasers <span class="hint">(tap to switch — one at a time)</span></h2>
+    <div class="grid chasers" data-group="chaser">
+      <button class="tile" wid="20" fid="45">Chaser 1<i>Auto Show 1</i></button>
+      <button class="tile" wid="21" fid="357">Chaser 2<i>Auto Show 7</i></button>
+      <button class="tile" wid="46" fid="64">Chaser 3<i>Auto Show 3</i></button>
+      <button class="tile" wid="45" fid="224">Chaser 4<i>Auto Show 4</i></button>
+      <button class="tile" wid="43" fid="14">Chaser 5<i>Auto Show 5</i></button>
+      <button class="tile" wid="44" fid="326">Chaser 6<i>Auto Show 6</i></button>
+      <button class="tile" wid="31" fid="58">Chaser 7<i>Auto Show 2</i></button>
+    </div>
+  </section>
+
+  <!-- ================= SCENES ================= -->
+  <section>
+    <h2>Scenes</h2>
+    <div class="grid wide">
+      <button class="tile scene" wid="147" fid="300">Default Scene Club 1<i>base look</i></button>
+    </div>
+  </section>
+
+  <!-- ================= EFFECTS ================= -->
+  <!-- "hold" makes a button momentary: fog runs while pressed, stops on release. -->
+  <section>
+    <h2>Effects</h2>
+    <div class="grid wide">
+      <button class="tile fog" hold fid="343">Fog<i>hold to fog</i></button>
+    </div>
+  </section>
+
+  <!-- ============ FIXTURES (Spots + RGB; select, then colour via tabs) ============ -->
+  <!-- "Spots" is preset-only (data-type=spots). RGB fixtures (data-type=rgb) carry their -->
+  <!-- R/G/B slider widget IDs. Presets work for both; Spectrum/Sliders are RGB-only.      -->
+  <section>
+    <h2>Fixtures <span class="hint">(select, then choose a colour below)</span></h2>
+
+    <!-- Tap a tile to select it; tap the dot (.pwr, top-right) to toggle that fixture
+         on/off via its "ON OFF ..." VC button (data-onoff). No data-onoff = the dot
+         just shows state (inferred from colour), tapping it does nothing. -->
+    <div class="grid rgbsel">
+      <div class="rgbfix" data-type="spots" data-spotoff="220" data-onoff="208"><span class="pwr"></span>Spots</div>
+      <div class="rgbfix" data-type="rgb" data-r="217" data-g="215" data-b="216" data-onoff="203"><span class="pwr"></span>VPAR Columns</div>
+      <div class="rgbfix" data-type="rgb" data-r="160" data-g="162" data-b="163" data-onoff="204"><span class="pwr"></span>Center Truss Wash</div>
+      <div class="rgbfix" data-type="rgb" data-r="212" data-g="213" data-b="214" data-onoff="218"><span class="pwr"></span>Tetra Bars</div>
+      <div class="rgbfix" data-type="rgb" data-r="159" data-g="191" data-b="193" data-onoff="209"><span class="pwr"></span>Middle Truss Panels</div>
+      <div class="rgbfix" data-type="rgb" data-r="195" data-g="196" data-b="197" data-onoff="211"><span class="pwr"></span>South East LED Wall</div>
+      <div class="rgbfix" data-type="rgb" data-r="199" data-g="201" data-b="200" data-onoff="226"><span class="pwr"></span>North East LED Wall</div>
+      <div class="rgbfix" data-type="rgb" data-r="190" data-g="221" data-b="219" data-onoff="210"><span class="pwr"></span>North West LED Wall</div>
+      <div class="rgbfix" data-type="rgb" data-r="150" data-g="148" data-b="149" data-onoff="207"><span class="pwr"></span>Stage VPAR Large Floor</div>
+      <div class="rgbfix" data-type="rgb" data-r="157" data-g="155" data-b="156" data-onoff="206"><span class="pwr"></span>Stage VPAR Small Floor</div>
+      <div class="rgbfix" data-type="rgb" data-r="170" data-g="168" data-b="169" data-onoff="205"><span class="pwr"></span>Female Bathroom RGB</div>
+      <div class="rgbfix" data-type="rgb" data-r="188" data-g="186" data-b="187" data-onoff="223"><span class="pwr"></span>Washes</div>
+    </div>
+
+    <div class="selrow">
+      <button class="mini" data-fixselect="all">Select all</button>
+      <button class="mini" data-fixselect="none">Clear</button>
+      <button class="mini danger" data-fixreset>Reset</button>
+    </div>
+
+    <!-- Brightness: always visible. Dims selected RGB fixtures AND drives the
+         "MASTER DIMMER ALL ROOF LIGHTS" slider (widget 153). -->
+    <div class="pickwrap">
+      <span>Brightness</span>
+      <input type="range" id="rgbDimmer" min="0" max="100" value="100">
+      <span id="rgbDimVal">100%</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="colors">Colours</button>
+      <button class="tab" data-tab="spectrum">Spectrum</button>
+      <button class="tab" data-tab="sliders">Sliders</button>
+    </div>
+
+    <!-- Colours: presets (the Spot colours). Spots -> preset scene; RGB -> the rgb value. -->
+    <div class="pane" data-pane="colors">
+      <div class="grid colors">
+        <button class="color preset" data-spotwid="173" data-rgb="255,255,255" style="--sw:#ffffff">White</button>
+        <button class="color preset" data-spotwid="179" data-rgb="255,0,0"     style="--sw:#ff2a2a">Red</button>
+        <button class="color preset" data-spotwid="176" data-rgb="0,200,90"    style="--sw:#2ec28a">Emerald</button>
+        <button class="color preset" data-spotwid="175" data-rgb="0,60,255"    style="--sw:#2a6bff">Blue</button>
+        <button class="color preset" data-spotwid="180" data-rgb="0,255,255"   style="--sw:#19e0e0">Cyan</button>
+        <button class="color preset" data-spotwid="177" data-rgb="255,90,0"    style="--sw:#ff8a00">Orange</button>
+        <button class="color preset" data-spotwid="178" data-rgb="180,0,255"   style="--sw:#c02aff">Purple</button>
+        <button class="color preset" data-spotwid="181" data-rgb="255,200,0"   style="--sw:#ffd400">Yellow</button>
+        <button class="color preset" data-spotwid="174" data-rgb="10,10,120"   style="--sw:#0a1a66">Black Blue</button>
+      </div>
+    </div>
+
+    <!-- Spectrum: free colour (x the global Brightness) -> selected RGB fixtures only -->
+    <div class="pane" data-pane="spectrum" hidden>
+      <div class="pickwrap">
+        <span>Colour</span>
+        <input type="color" id="rgbPicker" value="#ff0000">
+      </div>
+      <div class="hint">Free colours apply to selected RGB fixtures (Spots are preset-only).</div>
+    </div>
+
+    <!-- Sliders: raw R/G/B -> selected RGB fixtures only -->
+    <div class="pane" data-pane="sliders" hidden>
+      <div class="rgbrow"><span>R</span><input type="range" class="ch" data-ch="r" min="0" max="255" value="0"></div>
+      <div class="rgbrow"><span>G</span><input type="range" class="ch" data-ch="g" min="0" max="255" value="0"></div>
+      <div class="rgbrow"><span>B</span><input type="range" class="ch" data-ch="b" min="0" max="255" value="0"></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  /* ---------- generic engine: everything is driven by the HTML above ---------- */
+  var ws = null;
+
+  function send(msg) { if (ws && ws.readyState === 1) ws.send(msg); }
+  function pressWidget(id)   { send(id + "|255"); setTimeout(function () { send(id + "|0"); }, 80); }
+  function startFunction(id) { send("QLC+API|setFunctionStatus|" + id + "|1"); }
+  function stopFunction(id)  { send("QLC+API|setFunctionStatus|" + id + "|0"); }
+
+  function tilesByFid(fid) { return document.querySelectorAll('.tile[fid="' + fid + '"]'); }
+  function isActive(fid)   { var t = tilesByFid(fid)[0]; return !!t && t.classList.contains("active"); }
+  function setActive(fid, on) { tilesByFid(fid).forEach(function (t) { t.classList.toggle("active", on); }); }
+  function setActiveByWid(wid, on) {
+    document.querySelectorAll('[wid="' + wid + '"]').forEach(function (t) { t.classList.toggle("active", on); });
+  }
+
+  // ON: press the VC widget if one is declared (lights the console button), else
+  //     start the function. OFF: stop the function (also clears the VC button).
+  function turnOn(el)  { var w = el.getAttribute("wid"); if (w) pressWidget(w); else startFunction(el.getAttribute("fid")); }
+  function turnOff(el) { stopFunction(el.getAttribute("fid")); }
+
+  // One delegated click handler for every current and future .tile button.
+  // ("hold" buttons are momentary and handled by the pointer handlers below.)
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest(".tile");
+    if (!el || el.hasAttribute("hold")) return;
+    var groupEl = el.closest("[data-group]");
+    var fid = el.getAttribute("fid");
+
+    if (groupEl && groupEl.getAttribute("data-group") === "chaser") {
+      var wasOn = isActive(fid);
+      groupEl.querySelectorAll(".tile").forEach(function (other) {
+        if (other !== el) turnOff(other);                    // radio: switch the rest off
+      });
+      if (wasOn) turnOff(el); else turnOn(el);
+    } else {
+      if (isActive(fid)) turnOff(el); else turnOn(el);       // plain toggle
+    }
+  });
+
+  // "hold" buttons: momentary — run the function while pressed, stop on release.
+  var heldFid = null;
+  function releaseHold() { if (heldFid !== null) { stopFunction(heldFid); heldFid = null; } }
+  document.addEventListener("pointerdown", function (e) {
+    var el = e.target.closest(".tile[hold]");
+    if (!el) return;
+    e.preventDefault();
+    heldFid = el.getAttribute("fid");
+    startFunction(heldFid);
+  });
+  document.addEventListener("pointerup", releaseHold);
+  document.addEventListener("pointercancel", releaseHold);
+  window.addEventListener("blur", releaseHold);   // safety: never leave fog stuck on
+
+  // =================== FIXTURES (Spots + RGB) ===================
+  var ROOF_DIMMER_WID = 153;          // "MASTER DIMMER ALL ROOF LIGHTS" slider
+  var base = { r: 255, g: 0, b: 0 };  // current (un-dimmed) colour for RGB fixtures
+
+  function sendSlider(wid, val) { if (wid) send(wid + "|" + val); }
+  function selFixtures() { return document.querySelectorAll(".rgbfix.selected"); }
+  function selRGB()      { return document.querySelectorAll('.rgbfix.selected[data-type="rgb"]'); }
+  function tint(f, r, g, b) { f.style.setProperty("--fc", "rgb(" + r + "," + g + "," + b + ")"); }
+  function brightness() { var d = document.getElementById("rgbDimmer"); return d ? +d.value / 100 : 1; }
+
+  // ---- initial fixture state: learn each fixture's current colour on load ----
+  var sliderMap = {};   // RGB slider widget id -> { f: fixtureEl, ch: 'r'|'g'|'b' }
+  var spotMap = {};     // ALL-SPOT colour widget id -> preset element
+  var onoffMap = {};    // ON/OFF widget id -> fixtureEl
+  function buildFixtureMaps() {
+    document.querySelectorAll('.rgbfix[data-type="rgb"]').forEach(function (f) {
+      f._col = { r: 0, g: 0, b: 0 };
+      ["r", "g", "b"].forEach(function (ch) {
+        var wid = f.getAttribute("data-" + ch);
+        if (wid) sliderMap[wid] = { f: f, ch: ch };
+      });
+    });
+    document.querySelectorAll(".preset").forEach(function (p) {
+      var wid = p.getAttribute("data-spotwid");
+      if (wid) spotMap[wid] = p;
+    });
+    document.querySelectorAll(".rgbfix[data-onoff]").forEach(function (f) {
+      onoffMap[f.getAttribute("data-onoff")] = f;
+    });
+  }
+  function queryFixtureState() {
+    Object.keys(sliderMap).forEach(function (w) { send("QLC+API|getWidgetStatus|" + w); });
+    Object.keys(spotMap).forEach(function (w) { send("QLC+API|getWidgetStatus|" + w); });
+    Object.keys(onoffMap).forEach(function (w) { send("QLC+API|getWidgetStatus|" + w); });
+  }
+  // react to a getWidgetStatus reply for an RGB slider / on-off / spot colour / roof dimmer
+  function fixtureStatus(wid, val) {
+    var sm = sliderMap[wid];
+    if (sm) {
+      sm.f._col[sm.ch] = +val;
+      tint(sm.f, sm.f._col.r, sm.f._col.g, sm.f._col.b);
+      // fixtures without an on/off button: infer on/off from whether they have colour
+      if (!sm.f.getAttribute("data-onoff"))
+        sm.f.classList.toggle("on", (sm.f._col.r + sm.f._col.g + sm.f._col.b) > 0);
+      return;
+    }
+    // ON/OFF buttons are reversed: an ACTIVE button (255) = fixture OFF, so green = inactive (0)
+    var om = onoffMap[wid];
+    if (om) { om.classList.toggle("on", val === "0"); return; }
+    var pm = spotMap[wid];
+    if (pm && val !== "0") {
+      var spotsFix = document.querySelector('.rgbfix[data-type="spots"]');
+      var rgb = pm.getAttribute("data-rgb").split(",");
+      if (spotsFix) tint(spotsFix, +rgb[0], +rgb[1], +rgb[2]);
+      document.querySelectorAll(".preset").forEach(function (x) { x.classList.toggle("active", x === pm); });
+      return;
+    }
+  }
+
+  // Apply the current base colour x brightness to every selected RGB fixture.
+  function applyRGB() {
+    var d = brightness();
+    var r = Math.round(base.r * d), g = Math.round(base.g * d), b = Math.round(base.b * d);
+    selRGB().forEach(function (f) {
+      sendSlider(f.getAttribute("data-r"), r);
+      sendSlider(f.getAttribute("data-g"), g);
+      sendSlider(f.getAttribute("data-b"), b);
+      tint(f, r, g, b);
+    });
+  }
+  var slideLast = 0;
+  function throttled(fn) { var n = Date.now(); if (n - slideLast < 40) return; slideLast = n; fn(); }
+
+  function hx(n) { return ("0" + n.toString(16)).slice(-2); }
+  function syncControlsToBase() {                 // keep picker + raw sliders showing base
+    var p = document.getElementById("rgbPicker");
+    if (p) p.value = "#" + hx(base.r) + hx(base.g) + hx(base.b);
+    var r = document.querySelector('.ch[data-ch="r"]'), g = document.querySelector('.ch[data-ch="g"]'), b = document.querySelector('.ch[data-ch="b"]');
+    if (r) r.value = base.r; if (g) g.value = base.g; if (b) b.value = base.b;
+  }
+
+  document.addEventListener("click", function (e) {
+    // power dot: toggle that fixture's on/off button (only if it has one)
+    var pwr = e.target.closest(".pwr");
+    if (pwr) {
+      var pf = pwr.closest(".rgbfix");
+      var owid = pf.getAttribute("data-onoff");
+      if (owid) { pressWidget(owid); pf.classList.toggle("on"); }
+      return;
+    }
+
+    var fix = e.target.closest(".rgbfix");
+    if (fix) { fix.classList.toggle("selected"); return; }                 // (de)select
+
+    var sel = e.target.closest("[data-fixselect]");
+    if (sel) {                                                             // all / clear
+      var on = sel.getAttribute("data-fixselect") === "all";
+      document.querySelectorAll(".rgbfix").forEach(function (f) { f.classList.toggle("selected", on); });
+      return;
+    }
+
+    if (e.target.closest("[data-fixreset]")) {                            // reset
+      var spotsSelected = false;
+      selFixtures().forEach(function (f) {
+        if (f.getAttribute("data-type") === "spots") {
+          pressWidget(f.getAttribute("data-spotoff"));                    // spots -> off
+          spotsSelected = true;
+        } else {
+          ["data-r", "data-g", "data-b"].forEach(function (a) { send(f.getAttribute(a) + "|RESET"); }); // press the X
+          f.style.removeProperty("--fc");
+        }
+      });
+      if (spotsSelected) {                                                // spots are roof lights: reset the dimmer too
+        send(ROOF_DIMMER_WID + "|RESET");                                 // clear the roof master-dimmer override (its X)
+        var d = document.getElementById("rgbDimmer"), dv = document.getElementById("rgbDimVal");
+        if (d) d.value = 100;  if (dv) dv.textContent = "100%";
+      }
+      document.querySelectorAll(".preset.active").forEach(function (p) { p.classList.remove("active"); });
+      return;
+    }
+
+    var tab = e.target.closest(".tab");
+    if (tab) {                                                            // tabs
+      var name = tab.getAttribute("data-tab");
+      document.querySelectorAll(".tab").forEach(function (t) { t.classList.toggle("active", t === tab); });
+      document.querySelectorAll(".pane").forEach(function (p) { p.hidden = p.getAttribute("data-pane") !== name; });
+      return;
+    }
+
+    var preset = e.target.closest(".preset");
+    if (preset) {                                                         // preset colour
+      var rgb = preset.getAttribute("data-rgb").split(",");
+      base = { r: +rgb[0], g: +rgb[1], b: +rgb[2] };
+      selFixtures().forEach(function (f) {
+        if (f.getAttribute("data-type") === "spots") pressWidget(preset.getAttribute("data-spotwid"));
+      });
+      applyRGB();                                                         // RGB fixtures get base x brightness
+      syncControlsToBase();
+      document.querySelectorAll(".preset").forEach(function (p) { p.classList.toggle("active", p === preset); });
+    }
+  });
+
+  // Spectrum tab: free colour -> base, then apply x brightness
+  (function () {
+    var picker = document.getElementById("rgbPicker");
+    if (!picker) return;
+    function fromPicker() {
+      var hex = picker.value;
+      base = { r: parseInt(hex.substr(1, 2), 16), g: parseInt(hex.substr(3, 2), 16), b: parseInt(hex.substr(5, 2), 16) };
+      applyRGB();
+    }
+    picker.addEventListener("input", function () { throttled(fromPicker); });
+    picker.addEventListener("change", fromPicker);
+  })();
+
+  // Brightness: dims selected RGB fixtures (base x brightness) AND drives the roof master dimmer 153
+  (function () {
+    var dim = document.getElementById("rgbDimmer"), dimVal = document.getElementById("rgbDimVal");
+    if (!dim) return;
+    function onDim() {
+      if (dimVal) dimVal.textContent = dim.value + "%";
+      // only drive the roof master-dimmer when Spots (the roof lights) are selected
+      if (document.querySelector('.rgbfix.selected[data-type="spots"]'))
+        sendSlider(ROOF_DIMMER_WID, Math.round(+dim.value * 2.55));       // master dimmer all roof lights (0-255)
+      applyRGB();
+    }
+    dim.addEventListener("input", function () { throttled(onDim); });
+    dim.addEventListener("change", onDim);
+  })();
+
+  // Sliders tab: raw R/G/B -> base channel, then apply x brightness
+  document.addEventListener("input", function (e) {
+    var sl = e.target;
+    if (!sl.classList || !sl.classList.contains("ch")) return;
+    base[sl.getAttribute("data-ch")] = +sl.value;
+    throttled(applyRGB);
+  });
+
+  // Render labels: an <i> child is the subtitle; or use name="" / sub="" attributes.
+  function initLabels() {
+    document.querySelectorAll(".tile").forEach(function (el) {
+      if (el.children.length === 0 && el.getAttribute("name")) {
+        var sub = el.getAttribute("sub");
+        el.innerHTML = el.getAttribute("name") + (sub ? "<i>" + sub + "</i>" : "");
+      }
+    });
+  }
+
+  function setStatus(ok, text) {
+    document.getElementById("dot").classList.toggle("ok", ok);
+    document.getElementById("statusText").textContent = text;
+  }
+
+  function connect() {
+    var proto = (location.protocol === "https:") ? "wss://" : "ws://";
+    ws = new WebSocket(proto + location.host + "/qlcplusWS");
+    ws.onopen = function () {
+      setStatus(true, "connected");
+      // Sync current state on (re)connect: ask QLC+ for each widget button's
+      // status. The reply includes the widget ID so we can match it back.
+      document.querySelectorAll("[wid]").forEach(function (el) {
+        send("QLC+API|getWidgetStatus|" + el.getAttribute("wid"));
+      });
+      queryFixtureState();   // RGB slider colours, active spot colour, roof dimmer
+    };
+    ws.onclose = function () {
+      setStatus(false, "reconnecting…");
+      document.querySelectorAll(".tile.active").forEach(function (t) { t.classList.remove("active"); });
+      setTimeout(connect, 1000);                              // snappy, steady reconnect
+    };
+    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+    ws.onmessage = function (ev) {
+      var p = ev.data.split("|");
+      if (p[0] === "FUNCTION")                                            // live change
+        setActive(p[1], p[2] === "Running");
+      else if (p[0] === "QLC+API" && p[1] === "getWidgetStatus") {        // initial state reply
+        setActiveByWid(p[2], p[3] !== "0");
+        fixtureStatus(p[2], p[3]);
+      }
+    };
+  }
+
+  initLabels();
+  buildFixtureMaps();
+  connect();
+</script>
+</body>
+</html>

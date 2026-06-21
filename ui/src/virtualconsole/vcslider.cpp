@@ -887,6 +887,11 @@ void VCSlider::slotResetButtonClicked()
     emit monitorDMXValueChanged(m_monitorValue);
 }
 
+void VCSlider::resetOverride()
+{
+    slotResetButtonClicked();
+}
+
 void VCSlider::slotKeyPressed(const QKeySequence &keySequence)
 {
     if (isEnabled() == false)
@@ -1372,7 +1377,7 @@ void VCSlider::setSliderValue(uchar value, bool scale, bool external)
     {
         case Level:
         {
-            if (m_monitorEnabled == true && m_isOverriding == false && m_slider->isSliderDown())
+            if (m_monitorEnabled == true && m_isOverriding == false && (m_slider->isSliderDown() || external))
             {
                 if (m_resetButton != nullptr)
                     m_resetButton->setStyleSheet(QString("QToolButton{ background: red; }"));
