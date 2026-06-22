@@ -58,3 +58,8 @@ build*
 !.claude/
 !.claude/memory/
 !.claude/memory/**
+
+# Lightshow camera-feedback scratch (captured frames/video) - structure travels, binaries don't
+.claude/scratch/
+# Per-PC capture overrides (camera device name, local tool paths) - regenerate per machine via list-cameras.ps1
+.claude/scripts/rig-capture.local.json

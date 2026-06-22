@@ -17,7 +17,10 @@ Mayans rig. Half (A) = exactly how QLC+ stores/does things (reverse-engineered f
 - [lighting/qlc-save-file-format.md](lighting/qlc-save-file-format.md) — exact `.qxw` XML for every Function type; the reference for generating/editing projects.
 - [lighting/qlc-fixture-definition-format.md](lighting/qlc-fixture-definition-format.md) — exact `.qxf` format + full channel Preset/Group enum lists; how to author a fixture.
 - [lighting/qlc-functionality-reference.md](lighting/qlc-functionality-reference.md) — what every Function, VC widget, Simple Desk, I/O, the Script language & RGB-matrix JS API do.
-- [lighting/club-rig-mayans.md](lighting/club-rig-mayans.md) — the venue's REAL rig: fixtures, DMX addressing/universes, custom `.qxf`, 270-function inventory, naming conventions, Art-Net output, website (Web Access WS) control, VC layout. Reuse for any edit.
+- [lighting/venues.md](lighting/venues.md) — **per-venue registry** + active-venue pointer (the system is multi-venue; profiles live under `lighting/venues/<slug>/`).
+- [lighting/venues/mayans/rig.md](lighting/venues/mayans/rig.md) — the Mayans venue's REAL rig: fixtures, DMX addressing/universes, custom `.qxf`, 270-function inventory, naming conventions, Art-Net output, website (Web Access WS) control, VC layout. Reuse for any edit on Mayans.
+- [lighting/venues/mayans/observed.md](lighting/venues/mayans/observed.md) — Mayans camera-verified positions/aim + real per-channel behavior.
+- [lighting/visual-feedback-camera.md](lighting/visual-feedback-camera.md) — see/test the rig on camera + the **QLC+ WebSocket control API** (trigger functions, set raw DMX via `CH`, blackout) and the capture/discovery scripts in `.claude/scripts/`.
 - [lighting/fixture-types-and-roles.md](lighting/fixture-types-and-roles.md) — spot/beam/wash/par/pixel-bar/strobe/FX/laser/haze: purpose, DMX channels, show roles, mapped to the rig.
 - [lighting/lightshow-design-principles.md](lighting/lightshow-design-principles.md) — energy arcs, color, beat sync, layered looks, movement, the drop, busking (the why/when).
 - [lighting/effect-recipes-cookbook.md](lighting/effect-recipes-cookbook.md) — concrete effects → exact QLC+ constructs on the real rig + genre playbooks + XML-generation cheat sheet.

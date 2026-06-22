@@ -85,6 +85,15 @@ Everything needed to reconstruct lives in this branch:
 Not in git (regenerated, never committed): the TLS `cert.pem`/`key.pem` (issued by win-acme) and
 the bundled Qt/OpenSSL DLLs.
 
+## Camera / video tooling (lightshow visual feedback)
+The `/lightshow` camera loop (see [[visual-feedback-camera]]) needs **ffmpeg** — the one extra
+external dependency. It's expected on PATH (WinGet: `winget install ffmpeg` → it lands at
+`%LOCALAPPDATA%\Microsoft\WinGet\Links\ffmpeg.exe`, on PATH). The capture/control scripts in
+`.claude/scripts/` resolve it from PATH (config override as fallback), so nothing is hardcoded.
+On a **new PC** after moving the branch: install ffmpeg, then run
+`pwsh .claude/scripts/list-cameras.ps1` once to record this machine's camera into the gitignored
+`rig-capture.local.json`. Everything else (scripts, venue knowledge, config) travels with the repo.
+
 ## Dev iteration shortcut
 After code changes, just `ninja -C build-mingw && ninja -C build-mingw install`. The bundled Qt runtime/plugins in C:\qlcplus persist, so no re-bundling needed (unless a new Qt module is introduced). Or run the exe straight from the MinGW64 shell (all DLLs/Qt plugins resolve from mingw64) — no bundling needed for quick dev runs.
 

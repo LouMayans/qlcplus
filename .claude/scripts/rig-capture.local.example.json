@@ -1,0 +1,6 @@
+{
+  "_comment": "Per-PC overrides. Copy to rig-capture.local.json (gitignored) and fill in. The camera device name is machine-specific; get it from list-cameras.ps1. Leave ffmpeg/qlcplus null to resolve from PATH; set a full path only if they aren't on PATH on this machine.",
+  "camera": "<DirectShow video device name from .\\list-cameras.ps1>",
+  "ffmpeg": null,
+  "qlcplus": null
+}

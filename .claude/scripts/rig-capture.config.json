@@ -1,0 +1,15 @@
+{
+  "activeVenue": "mayans",
+  "wsUrl": "ws://localhost:9999/qlcplusWS",
+  "insecure": false,
+  "auth": { "user": "", "pass": "" },
+  "fps": 3,
+  "seconds": 6,
+  "settleMs": 600,
+  "outDir": ".claude/scratch/captures",
+  "ffmpeg": null,
+  "qlcplus": null,
+  "venues": {
+    "mayans": { "qxw": "SaveFile/Main Project.qxw" }
+  }
+}
