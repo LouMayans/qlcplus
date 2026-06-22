@@ -10,15 +10,35 @@ metadata:
 End-to-end recipe that PRODUCED A WORKING INSTALL (verified 2026-06-17: `C:\qlcplus\qlcplus.exe` launches standalone, opens "Q Light Controller Plus - New Workspace"). Current upstream QLC+ uses **CMake**, not qmake — the old `make install` flow in the repo's `how to` file is obsolete. Related: [[priority-system-rebuild]].
 
 ## Environment
-- MSYS2 MinGW64 at `C:\msys64` → gcc 14.1, Qt **5.15.14**, cmake 3.30, ninja 1.12.
-- Run everything through the login shell so PATH/env are correct:
-  `MSYSTEM=MINGW64 C:/msys64/usr/bin/bash.exe -lc '<cmd>'`
-- Repo MSYS path (quote the space in "GIT Clones"):
-  `/c/Users/Louma/Documents/GIT Clones/QLCProjectCloneOld/qlcplus`
-- `-Werror -Wextra -Wall` is ON (variables.cmake) → ANY compiler warning fails the build. New code must be warning-clean under gcc 14.1.
+- MSYS2 MinGW64 at `C:\msys64`. Toolchain re-verified from scratch **2026-06-22** on a new
+  machine: gcc **16.1.0**, Qt 5.15.x, cmake **4.3.4**, ninja **1.13.2**. (Original 2026-06-17
+  machine had gcc 14.1 / cmake 3.30 / ninja 1.12 — versions drift, the recipe still holds.)
+- **Invoke the MinGW64 shell via the Bash tool (Git Bash), NOT PowerShell:**
+  `MSYSTEM=MINGW64 /c/msys64/usr/bin/bash.exe -lc '<cmd>'`.
+  PowerShell's `&` operator STRIPS the embedded double-quotes when handing the string to
+  bash.exe, so the repo path with a space (`GIT Repos`) breaks (`cd: .../GIT: No such file`).
+  Git Bash preserves the single-quoted arg intact. To dodge nested-shell output mangling,
+  redirect to a log (`> /tmp/x.log 2>&1`) and read the file.
+- Repo MSYS path on this machine (quote the space in "GIT Repos"):
+  `/c/Users/louma/OneDrive/Desktop/GIT Repos/qlcplus`
+- `-Werror -Wextra -Wall` is ON (variables.cmake) → ANY compiler warning fails the build. New
+  code must be warning-clean. Under **gcc 16** upstream code is stricter than gcc 14 — see the
+  gcc-16 test note below.
 
-## One-time setup (already done on this machine)
-1. MSYS2 packages: `pacman -S --needed --noconfirm mingw-w64-x86_64-qt5-websockets unzip` (websockets needed by webaccess; unzip for the D2XX step).
+## From-scratch machine setup (verified 2026-06-22 — full toolchain was absent)
+1. Install MSYS2: `winget install --id MSYS2.MSYS2 -e --accept-package-agreements --accept-source-agreements` → lands at `C:\msys64`.
+2. Sync DBs then install the toolchain (large, ~mins — run backgrounded):
+   `pacman -Sy --noconfirm` then
+   `pacman -S --needed --noconfirm mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja mingw-w64-x86_64-qt5 mingw-w64-x86_64-qt5-websockets unzip`
+3. **Build deps the configure HARD-fails without** (these were silently present on the old box;
+   missing `libusb-1.0.dll` aborts configure at `platforms/windows/CMakeLists.txt:15`):
+   `pacman -S --needed --noconfirm mingw-w64-x86_64-libusb mingw-w64-x86_64-fftw mingw-w64-x86_64-libsndfile`
+4. D2XX SDK + the `<QDebug>` source fix — see One-time setup below. (`libola` stays "not found"
+   → the OLA plugin is just skipped; not needed.)
+
+## One-time setup
+1. MSYS2 packages: see "From-scratch machine setup" above for the full list (toolchain, qt5,
+   cmake, ninja, qt5-websockets, unzip, **libusb, fftw, libsndfile**).
 2. FTDI **D2XX SDK** for the `dmxusb` plugin (USER NEEDS dmxusb — uses a USB-DMX dongle). The plugin hardcodes `C:/projects/D2XXSDK`. Recipe (from .github/workflows/build.yml):
    ```
    mkdir -p /c/projects/D2XXSDK && cd /c/projects/D2XXSDK
@@ -39,9 +59,27 @@ ninja  -C build-mingw install           # install to C:\qlcplus
 ```
 `ninja install` copies app + plugins + fixtures + libusb/audio DLLs + ftd2xx64.dll, but NOT the Qt runtime.
 
+### gcc-16 gotcha: upstream UI tests fail -Werror → build the app despite them (verified 2026-06-22)
+Under gcc 16, upstream test code trips `-Werror=deprecated-enum-enum-conversion`
+(e.g. `ui/test/assignhotkey/assignhotkey_test.cpp`: `Qt::Key_B | Qt::SHIFT`). Tests are part
+of the default `all` target AND of `ninja install` (no `BUILD_TESTING` toggle exists — test
+subdirs are added unconditionally), so a plain `ninja` / `ninja install` STOPS on the test and
+never links the app. The app + all 11 plugins themselves compile clean. Workaround that needs
+NO source edits — build everything buildable, then install the artifacts directly:
+```
+ninja -C build-mingw -k 0              # keep going past the ~1 failing test exe; builds qlcplus.exe + plugins
+cmake --install build-mingw            # runs cmake_install.cmake directly (NO rebuild → skips the broken test); → C:\qlcplus
+```
+(`ninja -C build-mingw install` does NOT work here — it re-enters `all` and dies on the test.
+`cmake --install` just copies already-built files.) If you ever need the tests, fix the
+deprecation in the upstream test sources or drop `-Werror` for the `*_test` targets.
+
 ## Make C:\qlcplus double-clickable (one-time — already done; redo only if a new Qt module is pulled in)
-windeployqt is INSUFFICIENT alone: it aborts (exit 1) on "libGLESv2.dll does not exist" (this Qt uses desktop GL, not ANGLE) BEFORE copying transitive deps + the platform plugin. All three steps needed:
-1. `cd /c/qlcplus && windeployqt --no-translations qlcplus.exe qlcplusui.dll qlcplusengine.dll qlcpluswebaccess.dll Plugins/osc.dll Plugins/artnet.dll Plugins/e131.dll Plugins/midiplugin.dll Plugins/dmxusb.dll`
+The tool is named **`windeployqt-qt5`** in MSYS2 (plain `windeployqt` is not on PATH). It is
+INSUFFICIENT alone: it copies the Qt5*.dll's then aborts (exit 1) on "libGLESv2.dll does not
+exist" (this Qt uses desktop GL, not ANGLE) BEFORE copying transitive deps + the platform
+plugin. All three steps needed:
+1. `cd /c/qlcplus && windeployqt-qt5 --no-translations qlcplus.exe qlcplusui.dll qlcplusengine.dll qlcpluswebaccess.dll Plugins/osc.dll Plugins/artnet.dll Plugins/e131.dll Plugins/midiplugin.dll Plugins/dmxusb.dll`
 2. Copy Qt plugin folders from `C:/msys64/mingw64/share/qt5/plugins`: `platforms` (qwindows.dll — MANDATORY) plus `styles imageformats iconengines printsupport audio mediaservice bearer generic`.
 3. Copy the full non-Qt dependency closure via ldd, from `/c/qlcplus`:
    ```
