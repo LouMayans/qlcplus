@@ -1,0 +1,1739 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Workspace>
+<Workspace xmlns="http://www.qlcplus.org/Workspace" CurrentWindow="VirtualConsole">
+ <Creator>
+  <Name>Q Light Controller Plus</Name>
+  <Version>4.14.4</Version>
+  <Author>louma</Author>
+ </Creator>
+ <Engine>
+  <InputOutputMap>
+   <BeatGenerator BeatType="Disabled" BPM="0"/>
+   <NetworkServer Type="Native" AutoStart="False" Name="" Password=""/>
+   <Universe Name="Universe 1" ID="0">
+    <Input Plugin="OSC" UID="192.168.5.43" Line="4" Profile="mayans mayans">
+     <PluginParameters inputPort="9000"/>
+    </Input>
+    <Output Plugin="ArtNet" UID="169.254.37.211" Line="2">
+     <PluginParameters outputIP="192.168.5.162" transmitMode="Full"/>
+    </Output>
+    <Feedback Plugin="OSC" UID="192.168.5.43" Line="4">
+     <PluginParameters feedbackIP="192.168.5.3" outputIP="192.168.5.1"/>
+    </Feedback>
+   </Universe>
+   <Universe Name="Universe 2" ID="1">
+    <Input Plugin="OSC" UID="192.168.5.43" Line="4" Profile="mayans mayans">
+     <PluginParameters inputPort="9000"/>
+    </Input>
+    <Output Plugin="ArtNet" UID="169.254.37.211" Line="2">
+     <PluginParameters outputIP="192.168.5.162" transmitMode="Full"/>
+    </Output>
+    <Feedback Plugin="OSC" UID="192.168.5.43" Line="4">
+     <PluginParameters feedbackIP="192.168.5.3" feedbackPort="9000" outputIP="192.168.5.1" outputPort="9000"/>
+    </Feedback>
+   </Universe>
+   <Universe Name="Universe 3" ID="2"/>
+   <Universe Name="Universe 4" ID="3"/>
+  </InputOutputMap>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230V2</Model>
+   <Mode>16 Channel</Mode>
+   <ID>0</ID>
+   <Name>BEAM230V2 #13</Name>
+   <Universe>0</Universe>
+   <Address>256</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>1</ID>
+   <Name>BEAM230 #2</Name>
+   <Universe>0</Universe>
+   <Address>16</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>2</ID>
+   <Name>BEAM230 #3</Name>
+   <Universe>0</Universe>
+   <Address>32</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>3</ID>
+   <Name>BEAM230 #4</Name>
+   <Universe>0</Universe>
+   <Address>48</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>4</ID>
+   <Name>BEAM230 #5</Name>
+   <Universe>0</Universe>
+   <Address>64</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>5</ID>
+   <Name>BEAM230 #6</Name>
+   <Universe>0</Universe>
+   <Address>80</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>6</ID>
+   <Name>BEAM230 #7</Name>
+   <Universe>0</Universe>
+   <Address>96</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>7</ID>
+   <Name>BEAM230 #8</Name>
+   <Universe>0</Universe>
+   <Address>112</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>8</ID>
+   <Name>Wash #1</Name>
+   <Universe>0</Universe>
+   <Address>128</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>9</ID>
+   <Name>Wash #2</Name>
+   <Universe>0</Universe>
+   <Address>144</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>10</ID>
+   <Name>Wash #3</Name>
+   <Universe>0</Universe>
+   <Address>160</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>11</ID>
+   <Name>Wash #4</Name>
+   <Universe>0</Universe>
+   <Address>176</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>12</ID>
+   <Name>BEAM230 #9</Name>
+   <Universe>0</Universe>
+   <Address>192</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>13</ID>
+   <Name>BEAM230 #10</Name>
+   <Universe>0</Universe>
+   <Address>208</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>14</ID>
+   <Name>BEAM230 #11</Name>
+   <Universe>0</Universe>
+   <Address>224</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>15</ID>
+   <Name>BEAM230 #12</Name>
+   <Universe>0</Universe>
+   <Address>240</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>16</ID>
+   <Name>VPAR Left Column</Name>
+   <Universe>1</Universe>
+   <Address>32</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>17</ID>
+   <Name>VPAR Right Column</Name>
+   <Universe>1</Universe>
+   <Address>40</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Venue</Manufacturer>
+   <Model>ThinPAR 38</Model>
+   <Mode>7-CH Mode</Mode>
+   <ID>18</ID>
+   <Name>Center Truss Washes</Name>
+   <Universe>1</Universe>
+   <Address>16</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Venue</Manufacturer>
+   <Model>Tetra Bar</Model>
+   <Mode>6-CH</Mode>
+   <ID>19</ID>
+   <Name>Tetra Bar #1</Name>
+   <Universe>1</Universe>
+   <Address>0</Address>
+   <Channels>6</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Venue</Manufacturer>
+   <Model>Tetra Bar</Model>
+   <Mode>6-CH</Mode>
+   <ID>20</ID>
+   <Name>Tetra Bar #2</Name>
+   <Universe>1</Universe>
+   <Address>6</Address>
+   <Channels>6</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>21</ID>
+   <Name>South East LED Wall</Name>
+   <Universe>1</Universe>
+   <Address>99</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>22</ID>
+   <Name>North East LED Wall</Name>
+   <Universe>1</Universe>
+   <Address>102</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>23</ID>
+   <Name>Middle Truss White Panel #1</Name>
+   <Universe>1</Universe>
+   <Address>105</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>24</ID>
+   <Name>Middle Truss White Panel #2</Name>
+   <Universe>1</Universe>
+   <Address>108</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>25</ID>
+   <Name>Middle Truss White Panel #3</Name>
+   <Universe>1</Universe>
+   <Address>111</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Chauvet</Manufacturer>
+   <Model>Swarm 5 FX</Model>
+   <Mode>Standard Mode</Mode>
+   <ID>26</ID>
+   <Name>Ceiling Truss Swarms</Name>
+   <Universe>1</Universe>
+   <Address>80</Address>
+   <Channels>9</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>27</ID>
+   <Name>Female Bathroom 1 RGB</Name>
+   <Universe>1</Universe>
+   <Address>114</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>28</ID>
+   <Name>VPAR Stage Large Truss Floor #1</Name>
+   <Universe>1</Universe>
+   <Address>48</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>29</ID>
+   <Name>VPAR Stage Small Truss Floor #2</Name>
+   <Universe>1</Universe>
+   <Address>55</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Chauvet</Manufacturer>
+   <Model>Swarm 5 FX</Model>
+   <Mode>Standard Mode</Mode>
+   <ID>30</ID>
+   <Name>Stage Large Truss Swarms</Name>
+   <Universe>1</Universe>
+   <Address>117</Address>
+   <Channels>9</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>Revolver Wash</Model>
+   <Mode>12 Ch</Mode>
+   <ID>31</ID>
+   <Name>Revolver Wash</Name>
+   <Universe>1</Universe>
+   <Address>64</Address>
+   <Channels>12</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>32</ID>
+   <Name>North West LED Wall</Name>
+   <Universe>1</Universe>
+   <Address>126</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic</Model>
+   <Mode>1 Channel</Mode>
+   <ID>33</ID>
+   <Name>FOG</Name>
+   <Universe>1</Universe>
+   <Address>499</Address>
+   <Channels>1</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230 V3</Model>
+   <Mode>16 Ch</Mode>
+   <ID>34</ID>
+   <Name>BEAM230 #1</Name>
+   <Universe>0</Universe>
+   <Address>0</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <FixtureGroup ID="0">
+   <Name>SPOT Group</Name>
+   <Size X="2" Y="4"/>
+   <Head X="0" Y="0" Fixture="34">0</Head>
+   <Head X="1" Y="0" Fixture="1">0</Head>
+   <Head X="0" Y="1" Fixture="2">0</Head>
+   <Head X="1" Y="1" Fixture="3">0</Head>
+   <Head X="0" Y="2" Fixture="4">0</Head>
+   <Head X="1" Y="2" Fixture="5">0</Head>
+   <Head X="0" Y="3" Fixture="6">0</Head>
+   <Head X="1" Y="3" Fixture="7">0</Head>
+   <Head X="0" Y="4" Fixture="12">0</Head>
+   <Head X="1" Y="4" Fixture="13">0</Head>
+   <Head X="0" Y="5" Fixture="14">0</Head>
+   <Head X="1" Y="5" Fixture="15">0</Head>
+   <Head X="0" Y="6" Fixture="16">0</Head>
+   <Head X="1" Y="6" Fixture="17">0</Head>
+   <Head X="0" Y="7" Fixture="18">0</Head>
+   <Head X="1" Y="7" Fixture="19">0</Head>
+   <Head X="0" Y="8" Fixture="20">0</Head>
+   <Head X="1" Y="8" Fixture="23">0</Head>
+   <Head X="0" Y="9" Fixture="24">0</Head>
+   <Head X="1" Y="9" Fixture="25">0</Head>
+   <Head X="0" Y="10" Fixture="30">0</Head>
+   <Head X="1" Y="10" Fixture="0">0</Head>
+  </FixtureGroup>
+  <FixtureGroup ID="1">
+   <Name>VIP SPOT 1</Name>
+   <Size X="1" Y="1"/>
+   <Head X="0" Y="0" Fixture="2">0</Head>
+  </FixtureGroup>
+  <FixtureGroup ID="2">
+   <Name>NS RGB Wall Row</Name>
+   <Size X="6" Y="1"/>
+   <Head X="0" Y="0" Fixture="32">0</Head>
+   <Head X="1" Y="0" Fixture="23">0</Head>
+   <Head X="2" Y="0" Fixture="24">0</Head>
+   <Head X="3" Y="0" Fixture="25">0</Head>
+   <Head X="4" Y="0" Fixture="22">0</Head>
+   <Head X="5" Y="0" Fixture="21">0</Head>
+  </FixtureGroup>
+  <ChannelsGroup ID="0" Name="Dimmer Group Spot" Value="0">1,5,2,5,3,5,4,5,5,5,6,5,7,5,12,5,13,5,14,5,15,5,34,12</ChannelsGroup>
+  <ChannelsGroup ID="1" Name="SPOT BEAM COLORS" Value="0">1,8,2,8,3,8,4,8,5,8,6,8,7,8,12,8,13,8,14,8,15,8,34,5</ChannelsGroup>
+  <ChannelsGroup ID="2" Name="SPOT STROBE" Value="0">1,6,2,6,3,6,4,6,5,6,6,6,7,6,11,12,12,6,13,6,14,6,15,6,34,9</ChannelsGroup>
+  <Function ID="100" Type="Scene" Name="NS Spots On" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="2">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="3">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="4">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="5">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="6">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="7">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="12">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="13">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="14">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="15">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="0">0,128,2,128,5,255</FixtureVal>
+   <FixtureVal ID="34">0,128,1,128,7,255,12,255</FixtureVal>
+  </Function>
+  <Function ID="129" Type="Scene" Name="NS Beams Dim On" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255</FixtureVal>
+   <FixtureVal ID="2">5,255</FixtureVal>
+   <FixtureVal ID="3">5,255</FixtureVal>
+   <FixtureVal ID="4">5,255</FixtureVal>
+   <FixtureVal ID="5">5,255</FixtureVal>
+   <FixtureVal ID="6">5,255</FixtureVal>
+   <FixtureVal ID="7">5,255</FixtureVal>
+   <FixtureVal ID="12">5,255</FixtureVal>
+   <FixtureVal ID="13">5,255</FixtureVal>
+   <FixtureVal ID="14">5,255</FixtureVal>
+   <FixtureVal ID="15">5,255</FixtureVal>
+   <FixtureVal ID="0">5,255</FixtureVal>
+   <FixtureVal ID="34">7,255,12,255</FixtureVal>
+  </Function>
+  <Function ID="101" Type="Scene" Name="NS Spots Red" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">8,8</FixtureVal>
+   <FixtureVal ID="2">8,8</FixtureVal>
+   <FixtureVal ID="3">8,8</FixtureVal>
+   <FixtureVal ID="4">8,8</FixtureVal>
+   <FixtureVal ID="5">8,8</FixtureVal>
+   <FixtureVal ID="6">8,8</FixtureVal>
+   <FixtureVal ID="7">8,8</FixtureVal>
+   <FixtureVal ID="12">8,8</FixtureVal>
+   <FixtureVal ID="13">8,8</FixtureVal>
+   <FixtureVal ID="14">8,8</FixtureVal>
+   <FixtureVal ID="15">8,8</FixtureVal>
+   <FixtureVal ID="0">8,8</FixtureVal>
+   <FixtureVal ID="34">5,8</FixtureVal>
+  </Function>
+  <Function ID="102" Type="Scene" Name="NS Spots Blue" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">8,88</FixtureVal>
+   <FixtureVal ID="2">8,88</FixtureVal>
+   <FixtureVal ID="3">8,88</FixtureVal>
+   <FixtureVal ID="4">8,88</FixtureVal>
+   <FixtureVal ID="5">8,88</FixtureVal>
+   <FixtureVal ID="6">8,88</FixtureVal>
+   <FixtureVal ID="7">8,88</FixtureVal>
+   <FixtureVal ID="12">8,88</FixtureVal>
+   <FixtureVal ID="13">8,88</FixtureVal>
+   <FixtureVal ID="14">8,88</FixtureVal>
+   <FixtureVal ID="15">8,88</FixtureVal>
+   <FixtureVal ID="0">8,88</FixtureVal>
+   <FixtureVal ID="34">5,88</FixtureVal>
+  </Function>
+  <Function ID="103" Type="Scene" Name="NS Spots White" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">8,0</FixtureVal>
+   <FixtureVal ID="2">8,0</FixtureVal>
+   <FixtureVal ID="3">8,0</FixtureVal>
+   <FixtureVal ID="4">8,0</FixtureVal>
+   <FixtureVal ID="5">8,0</FixtureVal>
+   <FixtureVal ID="6">8,0</FixtureVal>
+   <FixtureVal ID="7">8,0</FixtureVal>
+   <FixtureVal ID="12">8,0</FixtureVal>
+   <FixtureVal ID="13">8,0</FixtureVal>
+   <FixtureVal ID="14">8,0</FixtureVal>
+   <FixtureVal ID="15">8,0</FixtureVal>
+   <FixtureVal ID="0">8,0</FixtureVal>
+   <FixtureVal ID="34">5,0</FixtureVal>
+  </Function>
+  <Function ID="104" Type="Scene" Name="NS Spots Purple" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">8,48</FixtureVal>
+   <FixtureVal ID="2">8,48</FixtureVal>
+   <FixtureVal ID="3">8,48</FixtureVal>
+   <FixtureVal ID="4">8,48</FixtureVal>
+   <FixtureVal ID="5">8,48</FixtureVal>
+   <FixtureVal ID="6">8,48</FixtureVal>
+   <FixtureVal ID="7">8,48</FixtureVal>
+   <FixtureVal ID="12">8,48</FixtureVal>
+   <FixtureVal ID="13">8,48</FixtureVal>
+   <FixtureVal ID="14">8,48</FixtureVal>
+   <FixtureVal ID="15">8,48</FixtureVal>
+   <FixtureVal ID="0">8,48</FixtureVal>
+   <FixtureVal ID="34">5,48</FixtureVal>
+  </Function>
+  <Function ID="105" Type="Scene" Name="NS Spots Green" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">8,104</FixtureVal>
+   <FixtureVal ID="2">8,104</FixtureVal>
+   <FixtureVal ID="3">8,104</FixtureVal>
+   <FixtureVal ID="4">8,104</FixtureVal>
+   <FixtureVal ID="5">8,104</FixtureVal>
+   <FixtureVal ID="6">8,104</FixtureVal>
+   <FixtureVal ID="7">8,104</FixtureVal>
+   <FixtureVal ID="12">8,104</FixtureVal>
+   <FixtureVal ID="13">8,104</FixtureVal>
+   <FixtureVal ID="14">8,104</FixtureVal>
+   <FixtureVal ID="15">8,104</FixtureVal>
+   <FixtureVal ID="0">8,104</FixtureVal>
+   <FixtureVal ID="34">5,104</FixtureVal>
+  </Function>
+  <Function ID="110" Type="Scene" Name="NS All Red" Priority="0">
+   <Speed FadeIn="600" FadeOut="600" Duration="0"/>
+   <FixtureVal ID="1">5,255,8,8</FixtureVal>
+   <FixtureVal ID="2">5,255,8,8</FixtureVal>
+   <FixtureVal ID="3">5,255,8,8</FixtureVal>
+   <FixtureVal ID="4">5,255,8,8</FixtureVal>
+   <FixtureVal ID="5">5,255,8,8</FixtureVal>
+   <FixtureVal ID="6">5,255,8,8</FixtureVal>
+   <FixtureVal ID="7">5,255,8,8</FixtureVal>
+   <FixtureVal ID="12">5,255,8,8</FixtureVal>
+   <FixtureVal ID="13">5,255,8,8</FixtureVal>
+   <FixtureVal ID="14">5,255,8,8</FixtureVal>
+   <FixtureVal ID="15">5,255,8,8</FixtureVal>
+   <FixtureVal ID="0">5,255,8,8</FixtureVal>
+   <FixtureVal ID="34">7,255,12,255,5,8</FixtureVal>
+   <FixtureVal ID="8">0,255,1,255,2,0,3,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,255,2,0,3,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,255,2,0,3,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,255,2,0,3,0</FixtureVal>
+   <FixtureVal ID="16">0,255,1,0,2,0,4,255</FixtureVal>
+   <FixtureVal ID="17">0,255,1,0,2,0,4,255</FixtureVal>
+   <FixtureVal ID="28">0,255,1,0,2,0,4,255</FixtureVal>
+   <FixtureVal ID="29">0,255,1,0,2,0,4,255</FixtureVal>
+   <FixtureVal ID="18">0,255,1,0,2,0,6,255</FixtureVal>
+   <FixtureVal ID="19">0,255,1,0,2,0,4,255</FixtureVal>
+   <FixtureVal ID="20">0,255,1,0,2,0,4,255</FixtureVal>
+   <FixtureVal ID="21">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="22">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="23">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="24">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="25">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="27">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="32">0,255,1,0,2,0</FixtureVal>
+   <FixtureVal ID="31">4,255,5,0,6,0,9,255,10,255</FixtureVal>
+  </Function>
+  <Function ID="111" Type="Scene" Name="NS All Blue" Priority="0">
+   <Speed FadeIn="600" FadeOut="600" Duration="0"/>
+   <FixtureVal ID="1">5,255,8,88</FixtureVal>
+   <FixtureVal ID="2">5,255,8,88</FixtureVal>
+   <FixtureVal ID="3">5,255,8,88</FixtureVal>
+   <FixtureVal ID="4">5,255,8,88</FixtureVal>
+   <FixtureVal ID="5">5,255,8,88</FixtureVal>
+   <FixtureVal ID="6">5,255,8,88</FixtureVal>
+   <FixtureVal ID="7">5,255,8,88</FixtureVal>
+   <FixtureVal ID="12">5,255,8,88</FixtureVal>
+   <FixtureVal ID="13">5,255,8,88</FixtureVal>
+   <FixtureVal ID="14">5,255,8,88</FixtureVal>
+   <FixtureVal ID="15">5,255,8,88</FixtureVal>
+   <FixtureVal ID="0">5,255,8,88</FixtureVal>
+   <FixtureVal ID="34">7,255,12,255,5,88</FixtureVal>
+   <FixtureVal ID="8">0,255,1,0,2,0,3,255</FixtureVal>
+   <FixtureVal ID="9">0,255,1,0,2,0,3,255</FixtureVal>
+   <FixtureVal ID="10">0,255,1,0,2,0,3,255</FixtureVal>
+   <FixtureVal ID="11">0,255,1,0,2,0,3,255</FixtureVal>
+   <FixtureVal ID="16">0,0,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="17">0,0,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="28">0,0,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="29">0,0,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="18">0,0,1,0,2,255,6,255</FixtureVal>
+   <FixtureVal ID="19">0,0,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="20">0,0,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="21">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="22">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="23">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="24">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="25">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="27">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="32">0,0,1,0,2,255</FixtureVal>
+   <FixtureVal ID="31">4,0,5,0,6,255,9,255,10,255</FixtureVal>
+  </Function>
+  <Function ID="112" Type="Scene" Name="NS All Purple" Priority="0">
+   <Speed FadeIn="600" FadeOut="600" Duration="0"/>
+   <FixtureVal ID="1">5,255,8,48</FixtureVal>
+   <FixtureVal ID="2">5,255,8,48</FixtureVal>
+   <FixtureVal ID="3">5,255,8,48</FixtureVal>
+   <FixtureVal ID="4">5,255,8,48</FixtureVal>
+   <FixtureVal ID="5">5,255,8,48</FixtureVal>
+   <FixtureVal ID="6">5,255,8,48</FixtureVal>
+   <FixtureVal ID="7">5,255,8,48</FixtureVal>
+   <FixtureVal ID="12">5,255,8,48</FixtureVal>
+   <FixtureVal ID="13">5,255,8,48</FixtureVal>
+   <FixtureVal ID="14">5,255,8,48</FixtureVal>
+   <FixtureVal ID="15">5,255,8,48</FixtureVal>
+   <FixtureVal ID="0">5,255,8,48</FixtureVal>
+   <FixtureVal ID="34">7,255,12,255,5,48</FixtureVal>
+   <FixtureVal ID="8">0,255,1,160,2,0,3,255</FixtureVal>
+   <FixtureVal ID="9">0,255,1,160,2,0,3,255</FixtureVal>
+   <FixtureVal ID="10">0,255,1,160,2,0,3,255</FixtureVal>
+   <FixtureVal ID="11">0,255,1,160,2,0,3,255</FixtureVal>
+   <FixtureVal ID="16">0,160,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="17">0,160,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="28">0,160,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="29">0,160,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="18">0,160,1,0,2,255,6,255</FixtureVal>
+   <FixtureVal ID="19">0,160,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="20">0,160,1,0,2,255,4,255</FixtureVal>
+   <FixtureVal ID="21">0,160,1,0,2,255</FixtureVal>
+   <FixtureVal ID="22">0,160,1,0,2,255</FixtureVal>
+   <FixtureVal ID="23">0,160,1,0,2,255</FixtureVal>
+   <FixtureVal ID="24">0,160,1,0,2,255</FixtureVal>
+   <FixtureVal ID="25">0,160,1,0,2,255</FixtureVal>
+   <FixtureVal ID="27">0,160,1,0,2,255</FixtureVal>
+   <FixtureVal ID="32">0,160,1,0,2,255</FixtureVal>
+   <FixtureVal ID="31">4,160,5,0,6,255,9,255,10,255</FixtureVal>
+  </Function>
+  <Function ID="113" Type="Scene" Name="NS All Green" Priority="0">
+   <Speed FadeIn="600" FadeOut="600" Duration="0"/>
+   <FixtureVal ID="1">5,255,8,104</FixtureVal>
+   <FixtureVal ID="2">5,255,8,104</FixtureVal>
+   <FixtureVal ID="3">5,255,8,104</FixtureVal>
+   <FixtureVal ID="4">5,255,8,104</FixtureVal>
+   <FixtureVal ID="5">5,255,8,104</FixtureVal>
+   <FixtureVal ID="6">5,255,8,104</FixtureVal>
+   <FixtureVal ID="7">5,255,8,104</FixtureVal>
+   <FixtureVal ID="12">5,255,8,104</FixtureVal>
+   <FixtureVal ID="13">5,255,8,104</FixtureVal>
+   <FixtureVal ID="14">5,255,8,104</FixtureVal>
+   <FixtureVal ID="15">5,255,8,104</FixtureVal>
+   <FixtureVal ID="0">5,255,8,104</FixtureVal>
+   <FixtureVal ID="34">7,255,12,255,5,104</FixtureVal>
+   <FixtureVal ID="8">0,255,1,0,2,255,3,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,0,2,255,3,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,0,2,255,3,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,0,2,255,3,0</FixtureVal>
+   <FixtureVal ID="16">0,0,1,255,2,0,4,255</FixtureVal>
+   <FixtureVal ID="17">0,0,1,255,2,0,4,255</FixtureVal>
+   <FixtureVal ID="28">0,0,1,255,2,0,4,255</FixtureVal>
+   <FixtureVal ID="29">0,0,1,255,2,0,4,255</FixtureVal>
+   <FixtureVal ID="18">0,0,1,255,2,0,6,255</FixtureVal>
+   <FixtureVal ID="19">0,0,1,255,2,0,4,255</FixtureVal>
+   <FixtureVal ID="20">0,0,1,255,2,0,4,255</FixtureVal>
+   <FixtureVal ID="21">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="22">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="23">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="24">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="25">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="27">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="32">0,0,1,255,2,0</FixtureVal>
+   <FixtureVal ID="31">4,0,5,255,6,0,9,255,10,255</FixtureVal>
+  </Function>
+  <Function ID="114" Type="Scene" Name="NS All White" Priority="0">
+   <Speed FadeIn="600" FadeOut="600" Duration="0"/>
+   <FixtureVal ID="1">5,255,8,0</FixtureVal>
+   <FixtureVal ID="2">5,255,8,0</FixtureVal>
+   <FixtureVal ID="3">5,255,8,0</FixtureVal>
+   <FixtureVal ID="4">5,255,8,0</FixtureVal>
+   <FixtureVal ID="5">5,255,8,0</FixtureVal>
+   <FixtureVal ID="6">5,255,8,0</FixtureVal>
+   <FixtureVal ID="7">5,255,8,0</FixtureVal>
+   <FixtureVal ID="12">5,255,8,0</FixtureVal>
+   <FixtureVal ID="13">5,255,8,0</FixtureVal>
+   <FixtureVal ID="14">5,255,8,0</FixtureVal>
+   <FixtureVal ID="15">5,255,8,0</FixtureVal>
+   <FixtureVal ID="0">5,255,8,0</FixtureVal>
+   <FixtureVal ID="34">7,255,12,255,5,0</FixtureVal>
+   <FixtureVal ID="8">0,255,1,255,2,255,3,255</FixtureVal>
+   <FixtureVal ID="9">0,255,1,255,2,255,3,255</FixtureVal>
+   <FixtureVal ID="10">0,255,1,255,2,255,3,255</FixtureVal>
+   <FixtureVal ID="11">0,255,1,255,2,255,3,255</FixtureVal>
+   <FixtureVal ID="16">0,255,1,255,2,255,4,255</FixtureVal>
+   <FixtureVal ID="17">0,255,1,255,2,255,4,255</FixtureVal>
+   <FixtureVal ID="28">0,255,1,255,2,255,4,255</FixtureVal>
+   <FixtureVal ID="29">0,255,1,255,2,255,4,255</FixtureVal>
+   <FixtureVal ID="18">0,255,1,255,2,255,6,255</FixtureVal>
+   <FixtureVal ID="19">0,255,1,255,2,255,4,255</FixtureVal>
+   <FixtureVal ID="20">0,255,1,255,2,255,4,255</FixtureVal>
+   <FixtureVal ID="21">0,255,1,255,2,255</FixtureVal>
+   <FixtureVal ID="22">0,255,1,255,2,255</FixtureVal>
+   <FixtureVal ID="23">0,255,1,255,2,255</FixtureVal>
+   <FixtureVal ID="24">0,255,1,255,2,255</FixtureVal>
+   <FixtureVal ID="25">0,255,1,255,2,255</FixtureVal>
+   <FixtureVal ID="27">0,255,1,255,2,255</FixtureVal>
+   <FixtureVal ID="32">0,255,1,255,2,255</FixtureVal>
+   <FixtureVal ID="31">4,255,5,255,6,255,9,255,10,255</FixtureVal>
+  </Function>
+  <Function ID="126" Type="Scene" Name="NS Beam Strobe Slow" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255,6,60</FixtureVal>
+   <FixtureVal ID="2">5,255,6,60</FixtureVal>
+   <FixtureVal ID="3">5,255,6,60</FixtureVal>
+   <FixtureVal ID="4">5,255,6,60</FixtureVal>
+   <FixtureVal ID="5">5,255,6,60</FixtureVal>
+   <FixtureVal ID="6">5,255,6,60</FixtureVal>
+   <FixtureVal ID="7">5,255,6,60</FixtureVal>
+   <FixtureVal ID="12">5,255,6,60</FixtureVal>
+   <FixtureVal ID="13">5,255,6,60</FixtureVal>
+   <FixtureVal ID="14">5,255,6,60</FixtureVal>
+   <FixtureVal ID="15">5,255,6,60</FixtureVal>
+   <FixtureVal ID="0">5,255,6,60</FixtureVal>
+   <FixtureVal ID="34">7,255,12,255,6,60</FixtureVal>
+  </Function>
+  <Function ID="127" Type="Scene" Name="NS Beam Strobe Med" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255,6,120</FixtureVal>
+   <FixtureVal ID="2">5,255,6,120</FixtureVal>
+   <FixtureVal ID="3">5,255,6,120</FixtureVal>
+   <FixtureVal ID="4">5,255,6,120</FixtureVal>
+   <FixtureVal ID="5">5,255,6,120</FixtureVal>
+   <FixtureVal ID="6">5,255,6,120</FixtureVal>
+   <FixtureVal ID="7">5,255,6,120</FixtureVal>
+   <FixtureVal ID="12">5,255,6,120</FixtureVal>
+   <FixtureVal ID="13">5,255,6,120</FixtureVal>
+   <FixtureVal ID="14">5,255,6,120</FixtureVal>
+   <FixtureVal ID="15">5,255,6,120</FixtureVal>
+   <FixtureVal ID="0">5,255,6,120</FixtureVal>
+   <FixtureVal ID="34">7,255,12,255,6,120</FixtureVal>
+  </Function>
+  <Function ID="121" Type="Scene" Name="NS Beam Strobe Fast" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255,6,200</FixtureVal>
+   <FixtureVal ID="2">5,255,6,200</FixtureVal>
+   <FixtureVal ID="3">5,255,6,200</FixtureVal>
+   <FixtureVal ID="4">5,255,6,200</FixtureVal>
+   <FixtureVal ID="5">5,255,6,200</FixtureVal>
+   <FixtureVal ID="6">5,255,6,200</FixtureVal>
+   <FixtureVal ID="7">5,255,6,200</FixtureVal>
+   <FixtureVal ID="12">5,255,6,200</FixtureVal>
+   <FixtureVal ID="13">5,255,6,200</FixtureVal>
+   <FixtureVal ID="14">5,255,6,200</FixtureVal>
+   <FixtureVal ID="15">5,255,6,200</FixtureVal>
+   <FixtureVal ID="0">5,255,6,200</FixtureVal>
+   <FixtureVal ID="34">7,255,12,255,6,200</FixtureVal>
+  </Function>
+  <Function ID="120" Type="Scene" Name="NS Blinder Hit" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="16">0,255,1,255,2,200,4,255</FixtureVal>
+   <FixtureVal ID="17">0,255,1,255,2,200,4,255</FixtureVal>
+   <FixtureVal ID="28">0,255,1,255,2,200,4,255</FixtureVal>
+   <FixtureVal ID="29">0,255,1,255,2,200,4,255</FixtureVal>
+   <FixtureVal ID="18">0,255,1,255,2,200,6,255</FixtureVal>
+  </Function>
+  <Function ID="122" Type="Scene" Name="NS Beam Fan Out" Priority="0">
+   <Speed FadeIn="800" FadeOut="800" Duration="0"/>
+   <FixtureVal ID="34">0,40,1,170,7,255,12,255</FixtureVal>
+   <FixtureVal ID="1">0,60,2,170,5,255</FixtureVal>
+   <FixtureVal ID="2">0,80,2,170,5,255</FixtureVal>
+   <FixtureVal ID="3">0,100,2,170,5,255</FixtureVal>
+   <FixtureVal ID="4">0,120,2,170,5,255</FixtureVal>
+   <FixtureVal ID="5">0,140,2,170,5,255</FixtureVal>
+   <FixtureVal ID="6">0,160,2,170,5,255</FixtureVal>
+   <FixtureVal ID="7">0,180,2,170,5,255</FixtureVal>
+   <FixtureVal ID="12">0,200,2,170,5,255</FixtureVal>
+   <FixtureVal ID="13">0,210,2,170,5,255</FixtureVal>
+   <FixtureVal ID="14">0,220,2,170,5,255</FixtureVal>
+   <FixtureVal ID="15">0,235,2,170,5,255</FixtureVal>
+   <FixtureVal ID="0">0,250,2,170,5,255</FixtureVal>
+  </Function>
+  <Function ID="123" Type="Scene" Name="NS Blackout" Priority="50">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">5,0,6,0</FixtureVal>
+   <FixtureVal ID="12">5,0,6,0</FixtureVal>
+   <FixtureVal ID="13">5,0,6,0</FixtureVal>
+   <FixtureVal ID="14">5,0,6,0</FixtureVal>
+   <FixtureVal ID="15">5,0,6,0</FixtureVal>
+   <FixtureVal ID="0">5,0,6,0</FixtureVal>
+   <FixtureVal ID="34">7,0,12,0,6,0</FixtureVal>
+   <FixtureVal ID="8">0,0</FixtureVal>
+   <FixtureVal ID="9">0,0</FixtureVal>
+   <FixtureVal ID="10">0,0</FixtureVal>
+   <FixtureVal ID="11">0,0</FixtureVal>
+   <FixtureVal ID="16">4,0</FixtureVal>
+   <FixtureVal ID="17">4,0</FixtureVal>
+   <FixtureVal ID="28">4,0</FixtureVal>
+   <FixtureVal ID="29">4,0</FixtureVal>
+   <FixtureVal ID="18">6,0</FixtureVal>
+   <FixtureVal ID="19">4,0</FixtureVal>
+   <FixtureVal ID="20">4,0</FixtureVal>
+   <FixtureVal ID="21">0,0,1,0,2,0</FixtureVal>
+   <FixtureVal ID="22">0,0,1,0,2,0</FixtureVal>
+   <FixtureVal ID="23">0,0,1,0,2,0</FixtureVal>
+   <FixtureVal ID="24">0,0,1,0,2,0</FixtureVal>
+   <FixtureVal ID="25">0,0,1,0,2,0</FixtureVal>
+   <FixtureVal ID="27">0,0,1,0,2,0</FixtureVal>
+   <FixtureVal ID="32">0,0,1,0,2,0</FixtureVal>
+   <FixtureVal ID="31">9,0,10,0</FixtureVal>
+  </Function>
+  <Function ID="124" Type="Scene" Name="NS Washes Deep Blue" Priority="0">
+   <Speed FadeIn="2000" FadeOut="2000" Duration="0"/>
+   <FixtureVal ID="8">0,200,1,0,2,0,3,255</FixtureVal>
+   <FixtureVal ID="9">0,200,1,0,2,0,3,255</FixtureVal>
+   <FixtureVal ID="10">0,200,1,0,2,0,3,255</FixtureVal>
+   <FixtureVal ID="11">0,200,1,0,2,0,3,255</FixtureVal>
+   <FixtureVal ID="18">0,0,1,0,2,255,6,180</FixtureVal>
+  </Function>
+  <Function ID="125" Type="Scene" Name="NS Fog Burst" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="33">0,200</FixtureVal>
+  </Function>
+  <Function ID="130" Type="EFX" Name="NS Circle Fast" Priority="0">
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="1500"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Circle</Algorithm>
+   <Width>40</Width>
+   <Height>40</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>2</Frequency>
+    <Phase>90</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>3</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="131" Type="EFX" Name="NS Ballyhoo" Priority="0">
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>28</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>55</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>83</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>111</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>138</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>166</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>194</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>222</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>249</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>277</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>305</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>332</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="8000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Lissajous</Algorithm>
+   <Width>110</Width>
+   <Height>90</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>2</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>3</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="132" Type="EFX" Name="NS Line Sweep" Priority="0">
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="2000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>PingPong</RunOrder>
+   <Algorithm>Line2</Algorithm>
+   <Width>110</Width>
+   <Height>20</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="133" Type="EFX" Name="NS Wave Circle" Priority="0">
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>28</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>55</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>83</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>111</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>138</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>166</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>194</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>222</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>249</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>277</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>305</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>332</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="3000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Circle</Algorithm>
+   <Width>60</Width>
+   <Height>60</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>90</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="140" Type="RGBMatrix" Name="NS Rainbow Sweep" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="4000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Gradient</Algorithm>
+   <Color Index="0">4294901760</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>2</FixtureGroup>
+   <Property Name="presetIndex" Value="Rainbow"/>
+   <Property Name="orientation" Value="Horizontal"/>
+  </Function>
+  <Function ID="141" Type="RGBMatrix" Name="NS Pixel Strobe" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="120"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Strobe</Algorithm>
+   <Color Index="0">4294967295</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>2</FixtureGroup>
+  </Function>
+  <Function ID="150" Type="Chaser" Name="NS Color Snap" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="468"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="468" FadeOut="0">110</Step>
+   <Step Number="1" FadeIn="0" Hold="468" FadeOut="0">111</Step>
+   <Step Number="2" FadeIn="0" Hold="468" FadeOut="0">112</Step>
+   <Step Number="3" FadeIn="0" Hold="468" FadeOut="0">113</Step>
+  </Function>
+  <Function ID="151" Type="Chaser" Name="NS Build Strobe" Priority="0">
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="PerStep"/>
+   <Step Number="0" FadeIn="0" Hold="1500" FadeOut="0">126</Step>
+   <Step Number="1" FadeIn="0" Hold="1000" FadeOut="0">127</Step>
+   <Step Number="2" FadeIn="0" Hold="600" FadeOut="0">121</Step>
+   <Step Number="3" FadeIn="0" Hold="400" FadeOut="0">121</Step>
+  </Function>
+  <Function ID="160" Type="Collection" Name="NS DROP" Priority="0">
+   <Step Number="0">130</Step>
+   <Step Number="1">141</Step>
+   <Step Number="2">121</Step>
+   <Step Number="3">110</Step>
+   <Step Number="4">120</Step>
+  </Function>
+  <Function ID="161" Type="Collection" Name="NS Full On" Priority="0">
+   <Step Number="0">129</Step>
+   <Step Number="1">114</Step>
+  </Function>
+  <Function ID="170" Type="Show" Name="NewShow" Priority="0">
+   <TimeDivision Type="Time" BPM="128"/>
+   <Track ID="0" Name="Beams Move" isMute="0">
+    <ShowFunction ID="131" StartTime="0" Duration="24000" Color="#803c3c"/>
+    <ShowFunction ID="130" StartTime="40000" Duration="32000" Color="#803c3c"/>
+    <ShowFunction ID="133" StartTime="72000" Duration="32000" Color="#803c3c"/>
+    <ShowFunction ID="132" StartTime="104000" Duration="16000" Color="#803c3c"/>
+    <ShowFunction ID="130" StartTime="120000" Duration="32000" Color="#803c3c"/>
+    <ShowFunction ID="131" StartTime="152000" Duration="24000" Color="#803c3c"/>
+   </Track>
+   <Track ID="1" Name="Color" isMute="0">
+    <ShowFunction ID="111" StartTime="0" Duration="24000" Color="#646464"/>
+    <ShowFunction ID="150" StartTime="24000" Duration="16000" Color="#556b80"/>
+    <ShowFunction ID="110" StartTime="40000" Duration="32000" Color="#646464"/>
+    <ShowFunction ID="150" StartTime="72000" Duration="32000" Color="#556b80"/>
+    <ShowFunction ID="113" StartTime="104000" Duration="16000" Color="#646464"/>
+    <ShowFunction ID="112" StartTime="120000" Duration="32000" Color="#646464"/>
+    <ShowFunction ID="111" StartTime="152000" Duration="24000" Color="#646464"/>
+   </Track>
+   <Track ID="2" Name="FX Strobe" isMute="0">
+    <ShowFunction ID="151" StartTime="32000" Duration="8000" Color="#556b80"/>
+    <ShowFunction ID="120" StartTime="40000" Duration="1000" Color="#646464"/>
+    <ShowFunction ID="120" StartTime="48000" Duration="1000" Color="#646464"/>
+    <ShowFunction ID="151" StartTime="112000" Duration="8000" Color="#556b80"/>
+    <ShowFunction ID="120" StartTime="120000" Duration="1000" Color="#646464"/>
+    <ShowFunction ID="120" StartTime="128000" Duration="1000" Color="#646464"/>
+   </Track>
+   <Track ID="3" Name="Pixels" isMute="0">
+    <ShowFunction ID="140" StartTime="24000" Duration="16000" Color="#659b9b"/>
+    <ShowFunction ID="141" StartTime="40000" Duration="32000" Color="#659b9b"/>
+    <ShowFunction ID="140" StartTime="72000" Duration="32000" Color="#659b9b"/>
+    <ShowFunction ID="141" StartTime="120000" Duration="32000" Color="#659b9b"/>
+   </Track>
+   <Track ID="4" Name="Base" isMute="0">
+    <ShowFunction ID="129" StartTime="0" Duration="176000" Color="#646464"/>
+    <ShowFunction ID="125" StartTime="0" Duration="2000" Color="#646464"/>
+    <ShowFunction ID="125" StartTime="118000" Duration="2000" Color="#646464"/>
+   </Track>
+  </Function>
+ </Engine>
+ <Monitor Display="1" ShowLabels="1">
+  <Font>Arial,11,-1,5,50,0,0,0,0,0</Font>
+  <ChannelStyle>0</ChannelStyle>
+  <ValueStyle>0</ValueStyle>
+  <Grid Width="12" Height="8" Depth="5" Units="0"/>
+  <FxItem ID="33" XPos="5850" YPos="100" GelColor="#aaaaaa"/>
+  <FxItem ID="30" XPos="6000" YPos="350" GelColor="#00ffff"/>
+  <FxItem ID="19" XPos="4200" YPos="220" GelColor="#ff8800"/>
+  <FxItem ID="20" XPos="7600" YPos="220" GelColor="#ff8800"/>
+  <FxItem ID="28" XPos="4500" YPos="650" GelColor="#ffffff"/>
+  <FxItem ID="29" XPos="7300" YPos="650" GelColor="#ffffff"/>
+  <FxItem ID="34" XPos="1000" YPos="2200" GelColor="#ff0000"/>
+  <FxItem ID="1" XPos="2700" YPos="2200" GelColor="#ff0000"/>
+  <FxItem ID="2" XPos="4400" YPos="2200" GelColor="#ff0000"/>
+  <FxItem ID="3" XPos="6000" YPos="2200" GelColor="#ff0000"/>
+  <FxItem ID="4" XPos="7600" YPos="2200" GelColor="#ff0000"/>
+  <FxItem ID="5" XPos="9300" YPos="2200" GelColor="#ff0000"/>
+  <FxItem ID="6" XPos="11000" YPos="2200" GelColor="#ff0000"/>
+  <FxItem ID="16" XPos="300" YPos="3900" GelColor="#ffaa00"/>
+  <FxItem ID="17" XPos="11400" YPos="3900" GelColor="#ffaa00"/>
+  <FxItem ID="8" XPos="2000" YPos="4000" GelColor="#0066ff"/>
+  <FxItem ID="9" XPos="4600" YPos="4000" GelColor="#0066ff"/>
+  <FxItem ID="10" XPos="7000" YPos="4000" GelColor="#0066ff"/>
+  <FxItem ID="11" XPos="9600" YPos="4000" GelColor="#0066ff"/>
+  <FxItem ID="18" XPos="5850" YPos="3650" GelColor="#ffffff"/>
+  <FxItem ID="26" XPos="5850" YPos="4050" GelColor="#00ff88"/>
+  <FxItem ID="31" XPos="5850" YPos="4450" GelColor="#aa00ff"/>
+  <FxItem ID="23" XPos="5000" YPos="4900" GelColor="#ffffff"/>
+  <FxItem ID="24" XPos="5850" YPos="4900" GelColor="#ffffff"/>
+  <FxItem ID="25" XPos="6700" YPos="4900" GelColor="#ffffff"/>
+  <FxItem ID="7" XPos="1000" YPos="6000" GelColor="#ff0000"/>
+  <FxItem ID="12" XPos="3000" YPos="6000" GelColor="#ff0000"/>
+  <FxItem ID="13" XPos="5000" YPos="6000" GelColor="#ff0000"/>
+  <FxItem ID="14" XPos="7000" YPos="6000" GelColor="#ff0000"/>
+  <FxItem ID="15" XPos="9000" YPos="6000" GelColor="#ff0000"/>
+  <FxItem ID="0" XPos="11000" YPos="6000" GelColor="#ff0000"/>
+  <FxItem ID="32" XPos="500" YPos="400" GelColor="#00ff00"/>
+  <FxItem ID="22" XPos="11400" YPos="400" GelColor="#00ff00"/>
+  <FxItem ID="21" XPos="11400" YPos="7400" GelColor="#00ff00"/>
+  <FxItem ID="27" XPos="300" YPos="7400" GelColor="#ff00ff"/>
+ </Monitor>
+ <VirtualConsole>
+  <Frame Caption="">
+   <Appearance>
+    <FrameStyle>None</FrameStyle>
+    <ForegroundColor>Default</ForegroundColor>
+    <BackgroundColor>Default</BackgroundColor>
+    <BackgroundImage>None</BackgroundImage>
+    <Font>Default</Font>
+   </Appearance>
+   <Button Caption="NewShow" ID="1" Icon="">
+    <WindowState Visible="True" X="10" Y="10" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="170"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="DROP" ID="2" Icon="">
+    <WindowState Visible="True" X="110" Y="10" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="160"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Full On" ID="3" Icon="">
+    <WindowState Visible="True" X="210" Y="10" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="161"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Blackout" ID="4" Icon="">
+    <WindowState Visible="True" X="310" Y="10" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="123"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="All Red" ID="5" Icon="">
+    <WindowState Visible="True" X="10" Y="70" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="110"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="All Blue" ID="6" Icon="">
+    <WindowState Visible="True" X="110" Y="70" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="111"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="All Purple" ID="7" Icon="">
+    <WindowState Visible="True" X="210" Y="70" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="112"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="All Green" ID="8" Icon="">
+    <WindowState Visible="True" X="310" Y="70" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="113"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="All White" ID="9" Icon="">
+    <WindowState Visible="True" X="410" Y="70" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="114"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Circle" ID="10" Icon="">
+    <WindowState Visible="True" X="10" Y="130" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="130"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Ballyhoo" ID="11" Icon="">
+    <WindowState Visible="True" X="110" Y="130" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="131"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Line Sweep" ID="12" Icon="">
+    <WindowState Visible="True" X="210" Y="130" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="132"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Wave Circle" ID="13" Icon="">
+    <WindowState Visible="True" X="310" Y="130" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="133"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Fan Out" ID="14" Icon="">
+    <WindowState Visible="True" X="410" Y="130" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="122"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Color Snap" ID="15" Icon="">
+    <WindowState Visible="True" X="10" Y="190" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="150"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Build" ID="16" Icon="">
+    <WindowState Visible="True" X="110" Y="190" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="151"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Strobe" ID="17" Icon="">
+    <WindowState Visible="True" X="210" Y="190" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="121"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Blinder" ID="18" Icon="">
+    <WindowState Visible="True" X="310" Y="190" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="120"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Rainbow" ID="19" Icon="">
+    <WindowState Visible="True" X="410" Y="190" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="140"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Pixel Strb" ID="20" Icon="">
+    <WindowState Visible="True" X="510" Y="190" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="141"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Beams On" ID="21" Icon="">
+    <WindowState Visible="True" X="10" Y="250" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="100"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Deep Blue" ID="22" Icon="">
+    <WindowState Visible="True" X="110" Y="250" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="124"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Fog" ID="23" Icon="">
+    <WindowState Visible="True" X="210" Y="250" Width="90" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="125"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+  </Frame>
+  <Properties>
+   <Size Width="1920" Height="1080"/>
+   <GrandMaster Visible="1" ChannelMode="Intensity" ValueMode="Reduce" SliderMode="Normal"/>
+  </Properties>
+ </VirtualConsole>
+ <SimpleDesk>
+  <Engine/>
+ </SimpleDesk>
+</Workspace>
