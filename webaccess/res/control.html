@@ -117,6 +117,25 @@
   .rgbrow { display:flex; align-items:center; gap:12px; margin:12px 0; }
   .rgbrow span { width:16px; color:var(--muted); font-weight:700; text-align:center; }
   .rgbrow input[type=range] { flex:1; accent-color:var(--accent); }
+
+  /* Chaser auto-loop: multi-select toggles + timer */
+  .loopgrid { grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); }
+  button.loopopt { appearance:none; border:1px solid var(--edge); background:#1c1f29; color:var(--txt);
+                   border-radius:10px; padding:14px 8px; font-size:14px; font-weight:600; cursor:pointer;
+                   min-height:54px; text-align:center; position:relative;
+                   transition:transform .05s,border-color .12s,background .12s; }
+  button.loopopt:active { transform:scale(.96); }
+  button.loopopt.on { border-color:var(--accent); background:#10303a; color:#fff; box-shadow:0 0 0 1px var(--accent); }
+  button.loopopt.playing { border-color:var(--on); box-shadow:0 0 0 1px var(--on),0 0 16px rgba(0,230,118,.5); }
+  .looprow { display:flex; align-items:center; gap:12px; margin:12px 0 6px; }
+  .looprow input[type=range] { flex:1; accent-color:var(--accent); min-width:120px; }
+  .looprow span { font-size:13px; color:var(--muted); min-width:54px; text-align:right; }
+  .loopbtns { display:flex; gap:10px; margin-top:8px; }
+  button.loopctl { appearance:none; flex:1; border:1px solid var(--edge); background:#222633; color:var(--txt);
+                   border-radius:10px; padding:14px; font-size:15px; font-weight:700; cursor:pointer; }
+  button.loopctl:active { transform:scale(.97); }
+  button.loopctl.start.running { border-color:var(--on); background:#0f2a1c; color:#fff; box-shadow:0 0 0 1px var(--on); }
+  #loopStatus { color:var(--muted); font-size:12px; margin-top:8px; min-height:16px; }
 </style>
 </head>
 <body>
@@ -139,6 +158,25 @@
       <button class="tile" wid="44" fid="326">Chaser 6<i>Auto Show 6</i></button>
       <button class="tile" wid="31" fid="58">Chaser 7<i>Auto Show 2</i></button>
     </div>
+  </section>
+
+  <!-- ============ CHASER AUTO-LOOP (server-side; keeps running with page closed) ============ -->
+  <!-- Toggles are generated from the Chasers above. Select any number; QLC+ rotates through
+       them every "switch every" seconds. State lives in QLC+ so closing this page does NOT stop
+       the loop, and reopening re-syncs what's selected / playing. -->
+  <section>
+    <h2>Chaser Auto-Loop <span class="hint">(select multiple — rotates on a timer)</span></h2>
+    <div class="grid loopgrid" id="loopGrid"></div>
+    <div class="looprow">
+      <span>Switch every</span>
+      <input type="range" id="loopTimer" min="2" max="120" value="10">
+      <span id="loopTimerVal">10s</span>
+    </div>
+    <div class="loopbtns">
+      <button class="loopctl start" id="loopStart">Start Loop</button>
+      <button class="loopctl" id="loopStop">Stop</button>
+    </div>
+    <div id="loopStatus">Loop stopped.</div>
   </section>
 
   <!-- ================= SCENES ================= -->
@@ -494,6 +532,7 @@
         send("QLC+API|getWidgetStatus|" + el.getAttribute("wid"));
       });
       queryFixtureState();   // RGB slider colours, active spot colour, roof dimmer
+      send("LOOP|GET");      // re-sync the server-side chaser loop (selection, timer, running)
     };
     ws.onclose = function () {
       setStatus(false, "reconnecting…");
@@ -509,8 +548,85 @@
         setActiveByWid(p[2], p[3] !== "0");
         fixtureStatus(p[2], p[3]);
       }
+      else if (p[0] === "LOOP" && p[1] === "STATE")                       // server-side loop state
+        applyLoopState(p[2] === "1", p[3], p[4], p[5] || "");
     };
   }
+
+  // =================== CHASER AUTO-LOOP (server-side rotation) ===================
+  // The loop itself runs inside QLC+, so it keeps going with this page closed.
+  // This UI just sends commands and mirrors the LOOP|STATE the server broadcasts.
+  var loopSet = {};   // fid -> true: chasers selected for the rotation
+
+  function loopSelectedCSV() { return Object.keys(loopSet).join(","); }
+  function loopSendSet()     { send("LOOP|SET|" + loopSelectedCSV()); }
+
+  // Build one toggle per chaser tile (reuse their fid + label — no duplicated list).
+  function buildLoopToggles() {
+    var grid = document.getElementById("loopGrid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    document.querySelectorAll('.chasers .tile[fid]').forEach(function (tile) {
+      var node = tile.childNodes[0];
+      var label = ((node && node.textContent) || tile.textContent).trim();
+      var b = document.createElement("button");
+      b.className = "loopopt";
+      b.setAttribute("data-fid", tile.getAttribute("fid"));
+      b.textContent = label;
+      grid.appendChild(b);
+    });
+  }
+
+  // Reflect a LOOP|STATE message: running, interval (sec), current fid, csv of selected fids.
+  function applyLoopState(running, intervalSec, currentFid, csv) {
+    var selected = {};
+    (csv ? csv.split(",") : []).forEach(function (f) { if (f) selected[f] = true; });
+    loopSet = selected;
+    document.querySelectorAll(".loopopt").forEach(function (b) {
+      var fid = b.getAttribute("data-fid");
+      b.classList.toggle("on", !!selected[fid]);
+      b.classList.toggle("playing", running && fid === currentFid && currentFid !== "0");
+    });
+    var t = document.getElementById("loopTimer"), tv = document.getElementById("loopTimerVal");
+    if (t && intervalSec) t.value = intervalSec;
+    if (tv && intervalSec) tv.textContent = intervalSec + "s";
+    document.getElementById("loopStart").classList.toggle("running", running);
+    var status = document.getElementById("loopStatus");
+    if (status) {
+      if (!running) {
+        status.textContent = "Loop stopped.";
+      } else {
+        var playing = document.querySelector('.loopopt[data-fid="' + currentFid + '"]');
+        status.textContent = "Looping" + (playing ? " — now playing: " + playing.textContent : "") +
+                             " (every " + intervalSec + "s)";
+      }
+    }
+  }
+
+  (function () {
+    buildLoopToggles();
+    var grid = document.getElementById("loopGrid");
+    if (grid) grid.addEventListener("click", function (e) {
+      var b = e.target.closest(".loopopt");
+      if (!b) return;
+      var fid = b.getAttribute("data-fid");
+      if (loopSet[fid]) delete loopSet[fid]; else loopSet[fid] = true;
+      b.classList.toggle("on", !!loopSet[fid]);
+      loopSendSet();
+    });
+
+    var t = document.getElementById("loopTimer"), tv = document.getElementById("loopTimerVal");
+    if (t) {
+      t.addEventListener("input", function () {
+        if (tv) tv.textContent = t.value + "s";
+        throttled(function () { send("LOOP|INTERVAL|" + t.value); });
+      });
+      t.addEventListener("change", function () { send("LOOP|INTERVAL|" + t.value); });
+    }
+    var sBtn = document.getElementById("loopStart"), xBtn = document.getElementById("loopStop");
+    if (sBtn) sBtn.addEventListener("click", function () { send("LOOP|START"); });
+    if (xBtn) xBtn.addEventListener("click", function () { send("LOOP|STOP"); });
+  })();
 
   initLabels();
   buildFixtureMaps();

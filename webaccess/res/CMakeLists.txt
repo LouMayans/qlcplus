@@ -24,6 +24,7 @@ set(WEBFILES_CLASSIC
     simpledesk.js
     virtualconsole.css
     virtualconsole.js
+    control.html
 )
 
 if(qmlui)

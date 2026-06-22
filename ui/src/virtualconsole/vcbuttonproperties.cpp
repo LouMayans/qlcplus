@@ -47,6 +47,13 @@ VCButtonProperties::VCButtonProperties(VCButton* button, Doc* doc)
 
     setupUi(this);
 
+    /* Show the Virtual Console widget ID and attached Function ID in the
+     * dialog title, so they can be copied into the web control surface. */
+    setWindowTitle(windowTitle() + tr(" \342\200\224 Widget ID: %1, Function ID: %2")
+                   .arg(m_button->id())
+                   .arg(m_button->function() == Function::invalidId()
+                            ? QString("\342\200\224") : QString::number(m_button->function())));
+
     m_inputSelWidget = new InputSelectionWidget(m_doc, this);
     m_inputSelWidget->setCustomFeedbackVisibility(true);
     m_inputSelWidget->setMonitoringSupport(true);

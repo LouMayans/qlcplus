@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-Goal: drive QLC+ lighting from a **Salesforce LWC** over the internet, replacing a TouchOSC
+Goal: drive QLC+ lighting from a **Salesforce LWC / web app** over the internet as the venue's
 control surface, with lowest latency. A browser cannot send raw UDP, so **OSC is not usable
 from an LWC**.
 

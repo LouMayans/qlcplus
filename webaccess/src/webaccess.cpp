@@ -19,6 +19,7 @@
 
 #include <QDebug>
 #include <QMap>
+#include <QTimer>
 #include <qmath.h>
 
 #include "webaccesssimpledesk.h"
@@ -54,7 +55,14 @@ WebAccess::WebAccess(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdInstanc
                      QString sslCertFile, QString sslKeyFile, QObject *parent) :
     WebAccessBase(doc, vcInstance, sdInstance, portNumber, enableAuth, passwdFile,
                   sslCertFile, sslKeyFile, parent)
+    , m_loopTimer(new QTimer(this))
+    , m_loopIntervalMs(10000)
+    , m_loopIndex(-1)
+    , m_loopRunning(false)
 {
+    m_loopTimer->setSingleShot(false);
+    connect(m_loopTimer, SIGNAL(timeout()), this, SLOT(slotLoopAdvance()));
+
     connect(m_vc, SIGNAL(loaded()),
             this, SLOT(slotVCLoaded()));
 }
@@ -472,6 +480,14 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
         m_doc->inputOutputMap()->setGrandMasterValue(value);
         return;
     }
+    else if (cmdList[0] == "LOOP")
+    {
+        if (m_auth && user && user->level < VC_ONLY_LEVEL)
+            return;
+
+        handleLoopCommand(conn, cmdList);
+        return;
+    }
     else if (cmdList[0] == "POLL")
         return;
 
@@ -625,6 +641,135 @@ void WebAccess::slotFunctionStopped(quint32 fid)
     QString wsMessage = QString("FUNCTION|%1|Stopped").arg(fid);
 
     sendWebSocketMessage(wsMessage.toUtf8());
+}
+
+/*********************************************************************
+ * Chaser auto-loop (server-side)
+ *********************************************************************/
+
+QString WebAccess::loopStateMessage() const
+{
+    quint32 currentFid = 0;
+    if (m_loopRunning && m_loopIndex >= 0 && m_loopIndex < m_loopChasers.count())
+        currentFid = m_loopChasers.at(m_loopIndex);
+
+    QStringList ids;
+    foreach (quint32 fid, m_loopChasers)
+        ids << QString::number(fid);
+
+    // LOOP|STATE|<running 0/1>|<intervalSec>|<currentFid|0>|<csv of selected fids>
+    return QString("LOOP|STATE|%1|%2|%3|%4")
+            .arg(m_loopRunning ? 1 : 0)
+            .arg(m_loopIntervalMs / 1000)
+            .arg(currentFid)
+            .arg(ids.join(","));
+}
+
+void WebAccess::loopBroadcastState()
+{
+    sendWebSocketMessage(loopStateMessage());
+}
+
+void WebAccess::loopStopCurrent()
+{
+    if (m_loopIndex < 0 || m_loopIndex >= m_loopChasers.count())
+        return;
+
+    Function *f = m_doc->function(m_loopChasers.at(m_loopIndex));
+    if (f != NULL && f->isRunning())
+        f->stop(FunctionParent::master());
+}
+
+void WebAccess::loopStartChaser(int index)
+{
+    if (index < 0 || index >= m_loopChasers.count())
+        return;
+
+    m_loopIndex = index;
+    Function *f = m_doc->function(m_loopChasers.at(index));
+    if (f != NULL && !f->isRunning())
+        f->start(m_doc->masterTimer(), FunctionParent::master());
+}
+
+void WebAccess::slotLoopAdvance()
+{
+    if (!m_loopRunning || m_loopChasers.isEmpty())
+        return;
+
+    loopStopCurrent();
+    int next = (m_loopIndex + 1) % m_loopChasers.count();
+    loopStartChaser(next);
+    loopBroadcastState();
+}
+
+void WebAccess::handleLoopCommand(QHttpConnection *conn, const QStringList &cmdList)
+{
+    if (cmdList.count() < 2)
+        return;
+
+    QString sub = cmdList[1];
+
+    if (sub == "GET")
+    {
+        // direct reply to the requesting client only
+        if (conn != NULL)
+            conn->webSocketWrite(loopStateMessage());
+        return;
+    }
+    else if (sub == "SET")
+    {
+        // replace the selection with the comma-separated list of valid Function IDs
+        m_loopChasers.clear();
+        if (cmdList.count() >= 3)
+        {
+            const QStringList ids = cmdList[2].split(",", Qt::SkipEmptyParts);
+            foreach (const QString &id, ids)
+            {
+                quint32 fid = id.toUInt();
+                if (m_doc->function(fid) != NULL && !m_loopChasers.contains(fid))
+                    m_loopChasers.append(fid);
+            }
+        }
+        if (m_loopIndex >= m_loopChasers.count())
+            m_loopIndex = m_loopChasers.isEmpty() ? -1 : 0;
+    }
+    else if (sub == "INTERVAL")
+    {
+        if (cmdList.count() < 3)
+            return;
+
+        int sec = cmdList[2].toInt();
+        if (sec < 1)
+            sec = 1;
+        m_loopIntervalMs = sec * 1000;
+        if (m_loopRunning)
+            m_loopTimer->start(m_loopIntervalMs);
+    }
+    else if (sub == "START")
+    {
+        if (m_loopChasers.isEmpty())
+        {
+            loopBroadcastState();
+            return;
+        }
+        loopStopCurrent();
+        m_loopRunning = true;
+        loopStartChaser(0);
+        m_loopTimer->start(m_loopIntervalMs);
+    }
+    else if (sub == "STOP")
+    {
+        m_loopRunning = false;
+        m_loopTimer->stop();
+        loopStopCurrent();
+        m_loopIndex = -1;
+    }
+    else
+    {
+        return;
+    }
+
+    loopBroadcastState();
 }
 
 void WebAccess::handleAutostartProject(const QString &path)

@@ -35,6 +35,13 @@ VCCueListProperties::VCCueListProperties(VCCueList* cueList, Doc* doc)
 
     setupUi(this);
 
+    /* Show the Virtual Console widget ID and attached Chaser ID in the dialog
+     * title, so they can be copied into the web control surface. */
+    setWindowTitle(windowTitle() + tr(" \342\200\224 Widget ID: %1, Chaser ID: %2")
+                   .arg(m_cueList->id())
+                   .arg(m_cueList->chaserID() == Function::invalidId()
+                            ? QString("\342\200\224") : QString::number(m_cueList->chaserID())));
+
     QAction* action = new QAction(this);
     action->setShortcut(QKeySequence(QKeySequence::Close));
     connect(action, SIGNAL(triggered(bool)), this, SLOT(reject()));

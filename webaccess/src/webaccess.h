@@ -20,8 +20,12 @@
 #ifndef WEBACCESS_H
 #define WEBACCESS_H
 
+#include <QStringList>
+#include <QList>
+
 #include "webaccessbase.h"
 
+class QTimer;
 class VCAudioTriggers;
 class VirtualConsole;
 class VCSoloFrame;
@@ -102,12 +106,31 @@ protected slots:
 
     void slotGrandMasterValueChanged(uchar value);
 
+    /** Server-side chaser auto-loop: advance to the next selected chaser */
+    void slotLoopAdvance();
+
 protected:
     QString m_JScode;
     QString m_CSScode;
 
     void handleProjectLoad(const QByteArray &projectXml) override;
     void handleAutostartProject(const QString &path) override;
+
+    /************************************************************************
+     * Chaser auto-loop (server-side; state is kept in memory so the loop
+     * keeps running and is shared even when no web client is connected)
+     ************************************************************************/
+    void handleLoopCommand(QHttpConnection *conn, const QStringList &cmdList);
+    QString loopStateMessage() const;
+    void loopBroadcastState();
+    void loopStartChaser(int index);
+    void loopStopCurrent();
+
+    QTimer *m_loopTimer;
+    QList<quint32> m_loopChasers;   // selected chaser Function IDs, in order
+    int m_loopIntervalMs;           // switch interval
+    int m_loopIndex;                // index of the currently-playing chaser, or -1
+    bool m_loopRunning;
 
 signals:
     void toggleDocMode();

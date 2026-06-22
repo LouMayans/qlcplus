@@ -57,6 +57,14 @@ VCSliderProperties::VCSliderProperties(VCSlider* slider, Doc* doc)
     setupUi(this);
     m_levelList->sortByColumn(KColumnName, Qt::AscendingOrder);
 
+    /* Show the Virtual Console widget ID and attached playback Function ID in
+     * the dialog title, so they can be copied into the web control surface. */
+    setWindowTitle(windowTitle() + tr(" \342\200\224 Widget ID: %1, Function ID: %2")
+                   .arg(m_slider->id())
+                   .arg(m_slider->sliderMode() == VCSlider::Playback &&
+                        m_slider->playbackFunction() != Function::invalidId()
+                            ? QString::number(m_slider->playbackFunction()) : QString("\342\200\224")));
+
     QAction* action = new QAction(this);
     action->setShortcut(QKeySequence(QKeySequence::Close));
     connect(action, SIGNAL(triggered(bool)), this, SLOT(reject()));
