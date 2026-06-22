@@ -4,16 +4,19 @@ REM  Launch QLC+ with web access. Portable: uses files in THIS
 REM  folder, so it works no matter where the folder is copied.
 REM
 REM  Looks for (all optional, in this same folder):
-REM    cert.pem / key.pem ... enable HTTPS/WSS (else plain HTTP)
-REM    webpass.txt ......... enable login (recommended when public)
-REM    Main Project.qxw .... project to auto-load (falls back to show.qxw)
+REM    cert.pem / key.pem ............. enable HTTPS/WSS (else plain HTTP)
+REM    webpass.txt ................... enable login (recommended when public)
+REM    SaveFile\Main Project.qxw .... the project's canonical show, auto-loaded
+REM       (falls back to a "Main Project.qxw" beside this script, then show.qxw)
 REM ============================================================
 setlocal
 cd /d "%~dp0"
 
 set "EXTRA="
 if exist "%~dp0webpass.txt" set "EXTRA=%EXTRA% -a "%~dp0webpass.txt""
-if exist "%~dp0Main Project.qxw" (
+if exist "%~dp0SaveFile\Main Project.qxw" (
+    set "EXTRA=%EXTRA% -o "%~dp0SaveFile\Main Project.qxw""
+) else if exist "%~dp0Main Project.qxw" (
     set "EXTRA=%EXTRA% -o "%~dp0Main Project.qxw""
 ) else if exist "%~dp0show.qxw" (
     set "EXTRA=%EXTRA% -o "%~dp0show.qxw""

@@ -19,12 +19,26 @@
   <Capability Min="0" Max="112">Dimmer (0 - 100%)</Capability>
   <Capability Min="113" Max="255">Dimmer (100%)</Capability>
  </Channel>
- <Channel Name="Strobe" Preset="ShutterStrobeSlowFast"/>
+ <Channel Name="Strobe">
+  <Group Byte="0">Shutter</Group>
+  <Capability Min="0" Max="0" Preset="ShutterClose">Blackout (light off)</Capability>
+  <Capability Min="4" Max="103" Preset="StrobeSlowToFast">Strobe (slow to fast)</Capability>
+  <Capability Min="252" Max="255" Preset="ShutterOpen">Open (light on, no strobe)</Capability>
+ </Channel>
  <Channel Name="Frost">
   <Group Byte="0">Effect</Group>
   <Capability Min="0" Max="255"></Capability>
  </Channel>
- <Channel Name="Color" Preset="ColorWheel"/>
+ <Channel Name="Color">
+  <Group Byte="0">Colour</Group>
+  <Capability Min="6" Max="6">Red</Capability>
+  <Capability Min="16" Max="16">Green</Capability>
+  <Capability Min="24" Max="24">Blue</Capability>
+  <Capability Min="32" Max="32">Yellow</Capability>
+  <Capability Min="40" Max="40">Pink</Capability>
+  <Capability Min="64" Max="64">Orange</Capability>
+  <Capability Min="99" Max="99">White</Capability>
+ </Channel>
  <Channel Name="Color Effect">
   <Group Byte="0">Effect</Group>
   <Capability Min="0" Max="255"></Capability>
@@ -53,9 +67,9 @@
  <Mode Name="16 Ch">
   <Channel Number="0" ActsOn="0">Pan</Channel>
   <Channel Number="1" ActsOn="1">Tilt</Channel>
-  <Channel Number="2" ActsOn="2">Pan/Tilt speed</Channel>
-  <Channel Number="3" ActsOn="3">Pan Fine</Channel>
-  <Channel Number="4" ActsOn="4">Tilt Fine</Channel>
+  <Channel Number="2" ActsOn="2">Pan Fine</Channel>
+  <Channel Number="3" ActsOn="3">Tilt Fine</Channel>
+  <Channel Number="4" ActsOn="4">Pan/Tilt speed</Channel>
   <Channel Number="5" ActsOn="5">FOCUS</Channel>
   <Channel Number="6" ActsOn="6">Strobe</Channel>
   <Channel Number="7" ActsOn="7">Dimmer</Channel>

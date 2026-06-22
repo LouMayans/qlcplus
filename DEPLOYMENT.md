@@ -19,8 +19,11 @@ The control endpoint is `wss://<domain>/qlcplusWS` (QLC+ Web Access with TLS —
 ## Move checklist (minimal work)
 
 ### On the OLD PC (once)
-1. Make sure these are in `C:\qlcplus`: `cert.pem`, `key.pem`, `webpass.txt`, `show.qxw`
-   (your real project), `start-qlcplus.bat`, `setup-new-pc.bat`.
+1. Make sure these are in `C:\qlcplus`: `cert.pem`, `key.pem`, `webpass.txt`. The
+   `start-qlcplus.bat`, `setup-new-pc.bat`, `win-acme\` (the cert tool), and the project itself
+   (`SaveFile\Main Project.qxw`, auto-loaded) are **placed there automatically by the build/install**
+   (`ninja -C build-mingw install` / `cmake --install build-mingw`, from `deploy/` and `SaveFile/`
+   in the repo) — no manual copy needed.
 2. Copy the **entire `C:\qlcplus` folder** to the new PC (USB, network share, etc.). Put it
    anywhere — the `.bat` files use relative paths, so the drive/path doesn't matter.
 
@@ -49,8 +52,8 @@ The control endpoint is `wss://<domain>/qlcplusWS` (QLC+ Web Access with TLS —
   a **CNAME** `lights` → a DDNS host (e.g. `mayansvip.duckdns.org`), and enable that DDNS provider
   in each venue **router's** built-in DDNS client. The router keeps the IP current, so step 6
   becomes automatic. (Runs on the router — nothing extra on the PC.)
-- **Certificate (fully automated):** put the **win-acme folder inside this folder** as
-  `win-acme\` (so it travels with everything). Then `setup-new-pc.bat` runs win-acme unattended
+- **Certificate (fully automated):** the **win-acme folder already ships inside this folder** as
+  `win-acme\` (bundled by the build, so it travels with everything). `setup-new-pc.bat` runs win-acme unattended
   with `--pemfilespath` set to **this folder's current location**, which both issues/refreshes the
   cert here (`lights.mayansvip.com-chain.pem` + `-key.pem`) and registers the auto-renewal to keep
   writing here. Move the folder → re-run `setup-new-pc.bat` → the renewal auto-re-points. No manual

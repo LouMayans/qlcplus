@@ -7,6 +7,7 @@ the repo. One file per topic; this file is the index.
 - [build-procedure.md](build-procedure.md) — the verified recipe to build + install QLC+ here (MSYS2 MinGW64 + CMake/Ninja → double-clickable `C:\qlcplus`); D2XX SDK setup, the `QDebug` build fix, `-Werror` gotcha, and the full DLL-bundling closure.
 - [priority-system-rebuild.md](priority-system-rebuild.md) — the per-function priority feature: **now IMPLEMENTED** on `priority-rebuild` (builds 426/426 warning-clean, installs, runs); records the key decisions/deviations and the pre-existing-vs-real test status. See also `../../PRIORITY_SYSTEM_REBUILD_SPEC.md` at the repo root.
 - [salesforce-qlcplus-integration.md](salesforce-qlcplus-integration.md) — controlling QLC+ from a **Salesforce LWC** over the internet: the bridge is built INTO QLC+ by adding TLS/WSS to its Web Access WebSocket API (no cloud relay). LWC contract + reference page at repo root: `../../SALESFORCE_QLCPLUS_INTEGRATION.md`, `../../test-ws.html`.
+- [mayans-beam-color-rgb.md](mayans-beam-color-rgb.md) — user-confirmed RGB(0-255) for each BEAM230 color-wheel color name (White/Red/Yellow/Green/Orange good; Blue=15,15,255; Pink=255,5,140). Reuse for the planned RGB PAR fixtures.
 
 **Entry point:** the project slash command **`/lightshow`** (`.claude/commands/lightshow.md`) is the operator's way to drive all lighting work — it loads the knowledge base below + the live `SaveFile/Main Project.qxw` and runs in modes `create` / `update` / `research` / `tune`. Keep it in sync if the rig, conventions, or memory layout change.
 

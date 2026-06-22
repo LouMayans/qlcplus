@@ -174,6 +174,24 @@ install(CODE "
   endforeach()
 " COMPONENT translations)
 
+## Install the Windows web-control deployment tooling (fork-local).
+## Copies the start/setup scripts + the bundled win-acme into the install root
+## (C:/qlcplus) so the deployment folder is self-contained and portable. See
+## deploy/ and DEPLOYMENT.md. No-op on non-Windows / upstream builds.
+if(WIN32)
+  install(FILES
+      "${CMAKE_CURRENT_SOURCE_DIR}/deploy/start-qlcplus.bat"
+      "${CMAKE_CURRENT_SOURCE_DIR}/deploy/setup-new-pc.bat"
+      DESTINATION "${INSTALLROOT}")
+  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/deploy/win-acme"
+      DESTINATION "${INSTALLROOT}"
+      USE_SOURCE_PERMISSIONS)
+  ## The project's canonical show, auto-loaded by start-qlcplus.bat. Bundling it
+  ## keeps the whole deployment self-contained in this repo.
+  install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/SaveFile/Main Project.qxw"
+      DESTINATION "${INSTALLROOT}/SaveFile")
+endif()
+
 ## Clean the generated files
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/*.qm")
 

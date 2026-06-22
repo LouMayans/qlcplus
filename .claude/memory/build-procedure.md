@@ -58,6 +58,13 @@ ninja  -C build-mingw                   # build (app at build-mingw/main/qlcplus
 ninja  -C build-mingw install           # install to C:\qlcplus
 ```
 `ninja install` copies app + plugins + fixtures + libusb/audio DLLs + ftd2xx64.dll, but NOT the Qt runtime.
+Since 2026-06-22 the install **also copies the fork's deploy tooling** into `C:\qlcplus`:
+`start-qlcplus.bat`, `setup-new-pc.bat`, the bundled `win-acme\` (cert tool), and the canonical
+show **`SaveFile\Main Project.qxw`** (which `start-qlcplus.bat` auto-loads from the `SaveFile\`
+subfolder). This is a Windows-only `install()` block in the root `CMakeLists.txt` (just after the
+translations install) that sources from `deploy/` (scripts + win-acme) and `SaveFile/` (the show).
+So the deployment folder is self-contained straight out of install — no manual copy of the
+scripts/win-acme/project anymore. (Bundle the Qt + OpenSSL runtime separately, below.)
 
 ### gcc-16 gotcha: upstream UI tests fail -Werror → build the app despite them (verified 2026-06-22)
 Under gcc 16, upstream test code trips `-Werror=deprecated-enum-enum-conversion`
@@ -100,6 +107,18 @@ cp /mingw64/bin/libssl-3-x64.dll /mingw64/bin/libcrypto-3-x64.dll /c/qlcplus/
 Verified 2026-06-19: clean-env `C:\qlcplus\qlcplus.exe -w --web-cert cert.pem --web-key key.pem`
 serves HTTPS 200 + `wss://` TLSv1.3 (modules load from `C:\qlcplus`).
 
+## The three qlcplus folders (don't confuse them)
+- **`.../GIT Repos/qlcplus`** — the git repo / source. `deploy/` here (scripts + bundled
+  `win-acme/`) is the SOURCE the install copies from.
+- **`C:\qlcplus`** — the raw `ninja install` / `cmake --install` OUTPUT target. Gets the app,
+  plugins, and (since 2026-06-22) the deploy tooling. NOT where the user runs the show from.
+- **`C:\Users\louma\OneDrive\Desktop\qlcplus`** — the user's REAL, portable club deployment:
+  full Qt+OpenSSL runtime, real `cert.pem`/`key.pem` (issued by win-acme for lights.mayansvip.com),
+  `Main Project.qxw`, a configured `win-acme/` (Release/full self-contained, 42 MB), and the
+  working `setup-new-pc.bat`/`start-qlcplus.bat`. This is the copy that travels to the venue.
+  (`start-qlcplus.bat` is identical to the repo's; `setup-new-pc.bat` differs only by the
+  bundled-vs-Downloads win-acme lookup — repo version is the cleaner one.)
+
 ## Re-populating C:\qlcplus's Qt runtime the easy way
 If `C:\qlcplus` is missing the Qt bundle (e.g. dir was recreated — seen 2026-06-19: only 16
 DLLs, no `Qt5*.dll`/`platforms`), the user keeps a known-good standalone copy at
@@ -116,12 +135,16 @@ Everything needed to reconstruct lives in this branch:
 1. Source (tracked) → build per this file (CMake/Ninja).
 2. `ninja -C build-mingw install` → C:\qlcplus, then bundle the Qt runtime (from the user's
    known-good copy or windeployqt) **+ the OpenSSL DLLs** (TLS section above).
-3. Deploy scripts are tracked at **`deploy/start-qlcplus.bat`** and **`deploy/setup-new-pc.bat`**
-   (copy them into the install folder). Full venue/move steps: repo-root **`DEPLOYMENT.md`**.
+3. Deploy tooling is tracked under **`deploy/`** (`start-qlcplus.bat`, `setup-new-pc.bat`, and the
+   bundled **`win-acme/`** self-contained cert tool — the v2.2.9 x64 *trimmed* build, ~20 MB
+   `wacs.exe`, needs no .NET on the target). The install step now copies all of it into
+   `C:\qlcplus` automatically (root `CMakeLists.txt` Windows `install()` block). Full venue/move
+   steps: repo-root **`DEPLOYMENT.md`**.
 4. Web/WSS + Salesforce contract: repo-root **`SALESFORCE_QLCPLUS_INTEGRATION.md`** +
    [[salesforce-qlcplus-integration]].
-Not in git (regenerated, never committed): the TLS `cert.pem`/`key.pem` (issued by win-acme) and
-the bundled Qt/OpenSSL DLLs.
+Not in git by default (regenerated, never committed): the TLS `cert.pem`/`key.pem` (issued by
+win-acme) and the bundled Qt/OpenSSL DLLs. `deploy/win-acme/` IS committed so it travels with the
+build (it's a ~20 MB binary — large for git, but intentional so a fresh PC needs nothing extra).
 
 ## Dev iteration shortcut
 After code changes, just `ninja -C build-mingw && ninja -C build-mingw install`. The bundled Qt runtime/plugins in C:\qlcplus persist, so no re-bundling needed (unless a new Qt module is introduced). Or run the exe straight from the MinGW64 shell (all DLLs/Qt plugins resolve from mingw64) — no bundling needed for quick dev runs.

@@ -23,7 +23,11 @@
  <Channel Name="Tilt Fine" Preset="PositionTiltFine"/>
  <Channel Name="Motor Speed" Preset="SpeedPanTiltSlowFast"/>
  <Channel Name="Focus/Zoom" Preset="BeamFocusNearFar"/>
- <Channel Name="Strobe" Preset="ShutterStrobeSlowFast"/>
+ <Channel Name="Strobe">
+  <Group Byte="0">Shutter</Group>
+  <Capability Min="0" Max="0" Preset="ShutterOpen">Open (light on, no strobe)</Capability>
+  <Capability Min="1" Max="255" Preset="StrobeSlowToFast">Strobe (slow to fast)</Capability>
+ </Channel>
  <Channel Name="Setting Gradient Auto Or Sound Response IDK">
   <Group Byte="0">Effect</Group>
  </Channel>

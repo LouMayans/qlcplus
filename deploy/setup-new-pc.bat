@@ -12,23 +12,17 @@ echo === TLS certificate (Let's Encrypt via win-acme) ===
 REM  Issues/refreshes the cert for lights.mayansvip.com straight into THIS folder
 REM  and registers the auto-renewal to keep writing here -- so moving the folder
 REM  and re-running this script automatically re-points the renewal.
-REM  Needs: win-acme placed inside this folder as "win-acme\", and DNS + port 80
+REM  win-acme ships bundled in this folder as "win-acme\" (copied here by the
+REM  build/install), so it always travels with the deployment. Needs DNS + port 80
 REM  reachable at the time you run it.
 set "FOLDER=%~dp0"
 set "FOLDER=%FOLDER:~0,-1%"
 set "WACS=%~dp0win-acme\wacs.exe"
 if not exist "%WACS%" (
-    echo   win-acme not bundled yet - searching Downloads...
-    for /d %%D in ("%USERPROFILE%\Downloads\win-acme*") do (
-        if exist "%%D\wacs.exe" (
-            echo     found "%%D" - copying into win-acme\ ...
-            xcopy /E /I /Y "%%D" "%~dp0win-acme\" >nul
-        )
-    )
-)
-if not exist "%WACS%" (
-    echo   win-acme not found in this folder or in Downloads.
-    echo   Put the win-acme folder in here as "win-acme\" and re-run this script.
+    echo   win-acme is missing from this folder ^("win-acme\wacs.exe"^).
+    echo   It should have been bundled by the build/install. Re-run
+    echo   "ninja -C build-mingw install" or copy the win-acme\ folder in here,
+    echo   then re-run this script.
 ) else (
     echo   Running win-acme ^(PEM output -^> "%FOLDER%"^)...
     "%WACS%" --source manual --host lights.mayansvip.com --validation selfhosting --store pemfiles --pemfilespath "%FOLDER%" --installation none --friendlyname lights.mayansvip.com --accepttos --emailaddress loumayans@mayansvip.com
