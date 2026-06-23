@@ -114,7 +114,7 @@ Note the gap at 128-191 (washes sit mid-block between beam runs). **Next free bl
 
 `<FixtureVal>` payloads are `channel,value` pairs where `channel` is the **0-based index into the fixture's mode channel list**. These indices are load-bearing for every scene/EFX.
 
-**BEAM230 (base, ids 1-7, 12-15) and BEAM230V2 (id0)** — same order:
+**BEAM230 base (ids 1-7, 12-15)** — `Mayans-BEAM230 V1.qxf`, Model `BEAM230`, Mode "16 Channels":
 
 | Ch | Function | | Ch | Function |
 |----|----------|--|----|----------|
@@ -127,7 +127,20 @@ Note the gap at 128-191 (washes sit mid-block between beam runs). **Next free bl
 | 6 | **Strobe** | | 14 | LAMP |
 | 7 | Frost | | 15 | RESET |
 
-**BEAM230 V3 (id34 ONLY — DIFFERENT order; handle as a special case everywhere):**
+**BEAM230V2 (id0 ONLY — DIFFERENT order; do NOT assume it matches the base. `Mayans-BEAM230 V2.qxf`, Model `BEAM230V2`, Mode "16 Channel". Verified from the .qxf AND Main Project's id0 scenes, e.g. `1,255,2,255,11,129` = strobe+dimmer+tilt):**
+
+| Ch | Function | | Ch | Function |
+|----|----------|--|----|----------|
+| 0 | **Color** | | 8 | FOCUS |
+| 1 | **Strobe** | | 9 | **Pan** |
+| 2 | **Dimmer** | | 10 | PanFine |
+| 3 | GOBO | | 11 | **Tilt** |
+| 4 | PRISM | | 12 | TiltFine |
+| 5 | PRISM Rotation | | 13 | Pan/Tilt speed |
+| 6 | Color Effect | | 14 | RESET |
+| 7 | Frost | | 15 | LAMP |
+
+**BEAM230 V3 (ids 34 and 35 — DIFFERENT order again; handle as a special case everywhere. id35 "BEAM230 #14" is a clone of id34 added at Address 272, same V3 channel order):**
 
 | Ch | Function | | Ch | Function |
 |----|----------|--|----|----------|
@@ -140,7 +153,9 @@ Note the gap at 128-191 (washes sit mid-block between beam runs). **Next free bl
 | 6 | **Strobe** | | 14 | GOBO |
 | 7 | **Dimmer** | | 15 | RESET |
 
-Caveat — the user's color convention for id34: color scenes write the color value to **channel 5** on id34 (not channel 8). On the V3, channel 5 is FOCUS by the fixture definition, but the SPOT BEAM COLORS channel group and the override scenes use ch5 for id34, and the resulting DMX value (e.g. 8 = red) lands red in practice. Replicate the existing pattern rather than "correcting" to ch8 — match what the channel groups do.
+**V3 color is ch9 — operator-confirmed on BEAM230 #1 (id34), and applies to its clone id35 too.** The `.qxf` labels ch8 "Color" and ch9 "Color Effect", but on the real fixture the **color wheel responds on ch9**; ch8 does nothing useful and **ch5 is FOCUS** (driving ch5 just refocuses the beam). So for V3 (id34, id35): write color to **ch9**.
+
+⚠️ **Latent issue in Main Project:** its SPOT BEAM COLORS channel group and every "SPOT/ALL SPOTLIGHT COLOR" scene write the color value to **ch5** for id34 (e.g. `<FixtureVal ID="34">5,8</FixtureVal>`). That drives FOCUS, not color — so id34 does not actually change color in those production looks. Left as-is for now; fixing means rewriting id34's color channel from ch5→ch9 across those scenes/groups (and id35, cloned from it, inherits the same ch5). The Blank Rig Template's "Spot Colors" group already uses the correct ch9.
 
 **WASH (ids 8-11):**
 
@@ -166,15 +181,17 @@ Caveat — the user's color convention for id34: color scenes write the color va
 | 4 | Red | | 10 | Open Light |
 | 5 | Green | | 11 | Gobo wheel |
 
-Quick reference — spot control channels:
+Quick reference — spot control channels (**all three models differ — never assume one matches another**):
 
-| Role | BEAM230 base/V2 | BEAM230 V3 (id34) |
-|------|------|------|
-| Dimmer | ch5 | ch7 (and LAMP ch12) |
-| Strobe | ch6 | ch6 |
-| Color | ch8 | ch5 (per user convention) |
+| Role | BEAM230 base (id1-7,12-15) | BEAM230V2 (id0) | BEAM230 V3 (id34,35) |
+|------|------|------|------|
+| Pan | ch0 | ch9 | ch0 |
+| Tilt | ch2 | ch11 | ch1 |
+| Dimmer | ch5 | ch2 | ch7 (LAMP ch12 = no-op) |
+| Strobe | ch6 | ch1 | ch6 |
+| Color | ch8 | ch0 | **ch9** (operator-confirmed; ch5 = FOCUS, ch8 inert) |
 
-**BEAM230 color-wheel DMX values** (the Color channel — ch8 base / ch5 on id34; verified from the existing override scenes): White/Open `0`, Red `8`, Black/Deep Blue `16`, Yellow `40`, Purple `48`, Cyan `72`, Blue `88`, Orange `96`, Emerald/Green `104`. V3 LAMP (ch12) is a no-op "Nothing" group — safe to drive; ch7 is the real V3 dimmer. BEAM Strobe (ch6) preset `ShutterStrobeSlowFast`: rises slow→fast with value (≈60 slow, 120 medium, 200 fast); dimmer must be up for strobe to show.
+**BEAM230 color-wheel DMX values** (the Color channel — ch8 on base/V2-via-ch0, **ch9 on V3 id34/id35**; the wheel positions match across models): White/Open `0`, Red `8`, Black/Deep Blue `16`, Yellow `40`, Purple `48`, Cyan `72`, Blue `88`, Orange `96`, Emerald/Green `104`. V3 LAMP (ch12) is a no-op "Nothing" group — safe to drive; ch7 is the real V3 dimmer. BEAM Strobe (ch6) preset `ShutterStrobeSlowFast`: rises slow→fast with value (≈60 slow, 120 medium, 200 fast); dimmer must be up for strobe to show.
 
 **RGB/PAR channel orders (0-based, library fixtures):**
 
@@ -338,10 +355,10 @@ Buttons (160): mostly Toggle actions bound to scenes/collections/shows with `<In
 
 ## 8) Conventions to follow when adding new functions
 
-- **Addresses are 0-based.** Write `Address = desk − 1`. New beams → Universe 1, next free block = DMX 272+ (16-ch blocks). LED/wash/effects → Universe 2. FOG is parked at DMX 500 (Address 499); don't reuse.
-- **Preserve fixture IDs (0-34).** Reference fixtures by ID in scenes/EFX/groups. Never renumber existing fixtures; new fixtures take the next free ID (35+).
-- **Color scenes touch ONLY the Color channel.** Base BEAM230/V2 → ch8; V3 id34 → ch5 (match the user's convention and the SPOT BEAM COLORS channel group, do not "fix" to ch8). Leave dimmer/position to lower-priority scenes.
-- **Spot control channels:** Dimmer = ch5 base / ch7 (+LAMP ch12) on V3; Strobe = ch6; always special-case id34 because its channel order differs.
+- **Addresses are 0-based.** Write `Address = desk − 1`. New beams → Universe 1. BEAM230 #14 (id35) now occupies Address 272-287 (DMX 273-288), so the next free block = Address 288 (DMX 289). LED/wash/effects → Universe 2. FOG is parked at DMX 500 (Address 499); don't reuse.
+- **Preserve fixture IDs (0-35).** Reference fixtures by ID in scenes/EFX/groups. Never renumber existing fixtures; new fixtures take the next free ID (36+). id35 "BEAM230 #14" is a V3 clone of id34.
+- **Color scenes touch ONLY the Color channel.** Base BEAM230 → ch8; **V2 id0 → ch0**; **V3 id34/id35 → ch9** (operator-confirmed; ch5 = FOCUS, ch8 inert). NOTE Main Project's existing scenes/group still write V3 color to ch5 — a latent bug (drives focus). Leave dimmer/position to lower-priority scenes.
+- **Spot control channels — every model differs, special-case all three:** Dimmer = ch5 base / **ch2 on V2 (id0)** / ch7 (+no-op LAMP ch12) on V3 (id34,35). Strobe = ch6 base / **ch1 V2** / ch6 V3. Pan/Tilt = ch0/ch2 base / **ch9/ch11 V2** / ch0/ch1 V3. See the §2 quick-reference table.
 - **Name templates, verbatim:** `SPOT <n> <Color>`, `ALL SPOTLIGHT COLOR <COLOR> P<priority>`, `ALL SPOTLIGHT COLOR OFF P100`, `ON OFF <zone>`, `All Lights <Color>`, `Literally Everything <Color>`, `SPOT VIP <n>`. Color set = {Black Blue, Blue, Green, Orange, Purple, Red, White, Yellow}.
 - **Priority suffix convention:** encode priority in the name. Default/base = P0 (no suffix), overrides = P20, kill scene = P100. Set `Priority="N"` to match the suffix.
 - **Snap vs fade:** override/color scenes are snap (`FadeIn=0 FadeOut=0 Duration=0`). Chasers default to common 300 ms snap steps.

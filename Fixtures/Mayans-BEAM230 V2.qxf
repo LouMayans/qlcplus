@@ -23,6 +23,7 @@
   <Group Byte="0">Shutter</Group>
   <Capability Min="0" Max="0" Preset="ShutterClose">Blackout (light off)</Capability>
   <Capability Min="1" Max="103" Preset="StrobeSlowToFast">Strobe (slow to fast)</Capability>
+  <Capability Min="104" Max="251" Preset="StrobeRandom">Strobe (random)</Capability>
   <Capability Min="252" Max="255" Preset="ShutterOpen">Open (light on, no strobe)</Capability>
  </Channel>
  <Channel Name="Frost">

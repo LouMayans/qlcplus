@@ -4053,23 +4053,24 @@
    <ChannelStyle>0</ChannelStyle>
    <ValueStyle>0</ValueStyle>
    <Grid Width="5" Height="3" Depth="5" Units="0"/>
+   <FxItem ID="0" XPos="1544.12" YPos="2985.29"/>
    <FxItem ID="1" XPos="2274.51" YPos="3039.22" Rotation="90"/>
    <FxItem ID="2" XPos="1607.84" YPos="3725.49" Rotation="90"/>
    <FxItem ID="3" XPos="3000" YPos="3705.88" Rotation="90"/>
-   <FxItem ID="4" XPos="1627.45" YPos="1000" Rotation="90"/>
-   <FxItem ID="5" XPos="2862.75" YPos="972.58" Rotation="90"/>
-   <FxItem ID="6" XPos="3647.06" YPos="1411.76" Rotation="90"/>
-   <FxItem ID="7" XPos="960.784" YPos="1470.59" Rotation="90"/>
+   <FxItem ID="4" XPos="1818.63" YPos="1000" Rotation="90"/>
+   <FxItem ID="5" XPos="3406.87" YPos="340.227" Rotation="90"/>
+   <FxItem ID="6" XPos="3367.65" YPos="1382.35" Rotation="90"/>
+   <FxItem ID="7" XPos="1357.84" YPos="1411.77" Rotation="90"/>
    <FxItem ID="8" XPos="380.821" YPos="1762.71"/>
    <FxItem ID="9" XPos="325.98" YPos="454.963"/>
    <FxItem ID="10" XPos="4309.28" YPos="1715.99"/>
    <FxItem ID="11" XPos="4294.12" YPos="431.373"/>
-   <FxItem ID="12" XPos="3568.63" YPos="352.941" Rotation="90"/>
-   <FxItem ID="13" XPos="1156.86" YPos="352.941" Rotation="90"/>
-   <FxItem ID="14" XPos="590.414" YPos="3088.05" Rotation="90"/>
+   <FxItem ID="12" XPos="2700.98" YPos="955.882" Rotation="90"/>
+   <FxItem ID="13" XPos="1480.39" YPos="352.941" Rotation="90"/>
+   <FxItem ID="14" XPos="575.708" YPos="2985.11" Rotation="90"/>
    <FxItem ID="15" XPos="4176.47" YPos="2922.48" Rotation="90"/>
    <FxItem ID="34" XPos="2330.92" YPos="4457.78" Rotation="90"/>
-   <FxItem ID="35" XPos="2330.92" YPos="4457.78" Rotation="90"/>
+   <FxItem ID="35" XPos="3007.39" YPos="3016.6" Rotation="90"/>
   </Monitor>
  </Engine>
  <VirtualConsole>
