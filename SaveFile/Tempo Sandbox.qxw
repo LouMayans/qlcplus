@@ -1,0 +1,970 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Workspace>
+<Workspace xmlns="http://www.qlcplus.org/Workspace" CurrentWindow="VirtualConsole">
+ <Creator>
+  <Name>Q Light Controller Plus</Name>
+  <Version>4.14.4</Version>
+  <Author>louma</Author>
+ </Creator>
+ <Engine>
+  <InputOutputMap>
+   <BeatGenerator BeatType="Internal" BPM="120"/>
+   <Universe Name="Universe 1" ID="0">
+    <Output Plugin="ArtNet" Name="169.254.37.211" UID="" Line="2">
+     <PluginParameters UniverseChannels="272" outputIP="192.168.5.162" transmitMode="Full"/>
+    </Output>
+   </Universe>
+   <Universe Name="Universe 2" ID="1">
+    <Output Plugin="ArtNet" Name="169.254.37.211" UID="" Line="2">
+     <PluginParameters UniverseChannels="500" outputIP="192.168.5.162" transmitMode="Full"/>
+    </Output>
+   </Universe>
+   <Universe Name="Universe 3" ID="2"/>
+   <Universe Name="Universe 4" ID="3"/>
+  </InputOutputMap>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230V2</Model>
+   <Mode>16 Channel</Mode>
+   <ID>0</ID>
+   <Name>BEAM230V2 #13</Name>
+   <Universe>0</Universe>
+   <Address>256</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>1</ID>
+   <Name>BEAM230 #2</Name>
+   <Universe>0</Universe>
+   <Address>16</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>2</ID>
+   <Name>BEAM230 #3</Name>
+   <Universe>0</Universe>
+   <Address>32</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>3</ID>
+   <Name>BEAM230 #4</Name>
+   <Universe>0</Universe>
+   <Address>48</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>4</ID>
+   <Name>BEAM230 #5</Name>
+   <Universe>0</Universe>
+   <Address>64</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>5</ID>
+   <Name>BEAM230 #6</Name>
+   <Universe>0</Universe>
+   <Address>80</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>6</ID>
+   <Name>BEAM230 #7</Name>
+   <Universe>0</Universe>
+   <Address>96</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>7</ID>
+   <Name>BEAM230 #8</Name>
+   <Universe>0</Universe>
+   <Address>112</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>8</ID>
+   <Name>Wash #1</Name>
+   <Universe>0</Universe>
+   <Address>128</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>9</ID>
+   <Name>Wash #2</Name>
+   <Universe>0</Universe>
+   <Address>144</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>10</ID>
+   <Name>Wash #3</Name>
+   <Universe>0</Universe>
+   <Address>160</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>11</ID>
+   <Name>Wash #4</Name>
+   <Universe>0</Universe>
+   <Address>176</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>12</ID>
+   <Name>BEAM230 #9</Name>
+   <Universe>0</Universe>
+   <Address>192</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>13</ID>
+   <Name>BEAM230 #10</Name>
+   <Universe>0</Universe>
+   <Address>208</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>14</ID>
+   <Name>BEAM230 #11</Name>
+   <Universe>0</Universe>
+   <Address>224</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>15</ID>
+   <Name>BEAM230 #12</Name>
+   <Universe>0</Universe>
+   <Address>240</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>16</ID>
+   <Name>VPAR Left Column</Name>
+   <Universe>1</Universe>
+   <Address>32</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>17</ID>
+   <Name>VPAR Right Column</Name>
+   <Universe>1</Universe>
+   <Address>40</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Venue</Manufacturer>
+   <Model>ThinPAR 38</Model>
+   <Mode>7-CH Mode</Mode>
+   <ID>18</ID>
+   <Name>Center Truss Washes</Name>
+   <Universe>1</Universe>
+   <Address>16</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Venue</Manufacturer>
+   <Model>Tetra Bar</Model>
+   <Mode>6-CH</Mode>
+   <ID>19</ID>
+   <Name>Tetra Bar #1</Name>
+   <Universe>1</Universe>
+   <Address>0</Address>
+   <Channels>6</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Venue</Manufacturer>
+   <Model>Tetra Bar</Model>
+   <Mode>6-CH</Mode>
+   <ID>20</ID>
+   <Name>Tetra Bar #2</Name>
+   <Universe>1</Universe>
+   <Address>6</Address>
+   <Channels>6</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>21</ID>
+   <Name>South East LED Wall</Name>
+   <Universe>1</Universe>
+   <Address>99</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>22</ID>
+   <Name>North East LED Wall</Name>
+   <Universe>1</Universe>
+   <Address>102</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>23</ID>
+   <Name>Middle Truss White Panel #1</Name>
+   <Universe>1</Universe>
+   <Address>105</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>24</ID>
+   <Name>Middle Truss White Panel #2</Name>
+   <Universe>1</Universe>
+   <Address>108</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>25</ID>
+   <Name>Middle Truss White Panel #3</Name>
+   <Universe>1</Universe>
+   <Address>111</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Chauvet</Manufacturer>
+   <Model>Swarm 5 FX</Model>
+   <Mode>Standard Mode</Mode>
+   <ID>26</ID>
+   <Name>Ceiling Truss Swarms</Name>
+   <Universe>1</Universe>
+   <Address>80</Address>
+   <Channels>9</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>27</ID>
+   <Name>Female Bathroom 1 RGB</Name>
+   <Universe>1</Universe>
+   <Address>114</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>28</ID>
+   <Name>VPAR Stage Large Truss Floor #1</Name>
+   <Universe>1</Universe>
+   <Address>48</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>29</ID>
+   <Name>VPAR Stage Small Truss Floor #2</Name>
+   <Universe>1</Universe>
+   <Address>55</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Chauvet</Manufacturer>
+   <Model>Swarm 5 FX</Model>
+   <Mode>Standard Mode</Mode>
+   <ID>30</ID>
+   <Name>Stage Large Truss Swarms</Name>
+   <Universe>1</Universe>
+   <Address>117</Address>
+   <Channels>9</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>Revolver Wash</Model>
+   <Mode>12 Ch</Mode>
+   <ID>31</ID>
+   <Name>Revolver Wash</Name>
+   <Universe>1</Universe>
+   <Address>64</Address>
+   <Channels>12</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>32</ID>
+   <Name>North West LED Wall</Name>
+   <Universe>1</Universe>
+   <Address>126</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic</Model>
+   <Mode>1 Channel</Mode>
+   <ID>33</ID>
+   <Name>FOG</Name>
+   <Universe>1</Universe>
+   <Address>499</Address>
+   <Channels>1</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230 V3</Model>
+   <Mode>16 Ch</Mode>
+   <ID>34</ID>
+   <Name>BEAM230 #1</Name>
+   <Universe>0</Universe>
+   <Address>0</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230 V3</Model>
+   <Mode>16 Ch</Mode>
+   <ID>35</ID>
+   <Name>BEAM230 #14</Name>
+   <Universe>0</Universe>
+   <Address>272</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <FixtureGroup ID="0">
+   <Name>TT Matrix Row</Name>
+   <Size X="6" Y="1"/>
+   <Head X="0" Y="0" Fixture="23">0</Head>
+   <Head X="1" Y="0" Fixture="24">0</Head>
+   <Head X="2" Y="0" Fixture="25">0</Head>
+   <Head X="3" Y="0" Fixture="21">0</Head>
+   <Head X="4" Y="0" Fixture="22">0</Head>
+   <Head X="5" Y="0" Fixture="32">0</Head>
+  </FixtureGroup>
+  <Function Type="Scene" Name="Spots White On" ID="1001" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="0">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,99</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,99</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Spots Blackout" ID="1002" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,0</FixtureVal>
+   <FixtureVal ID="2">5,0</FixtureVal>
+   <FixtureVal ID="3">5,0</FixtureVal>
+   <FixtureVal ID="4">5,0</FixtureVal>
+   <FixtureVal ID="5">5,0</FixtureVal>
+   <FixtureVal ID="6">5,0</FixtureVal>
+   <FixtureVal ID="7">5,0</FixtureVal>
+   <FixtureVal ID="12">5,0</FixtureVal>
+   <FixtureVal ID="13">5,0</FixtureVal>
+   <FixtureVal ID="14">5,0</FixtureVal>
+   <FixtureVal ID="15">5,0</FixtureVal>
+   <FixtureVal ID="0">2,0</FixtureVal>
+   <FixtureVal ID="34">7,0</FixtureVal>
+   <FixtureVal ID="35">7,0</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Spots Red On" ID="1003" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="0">0,8,1,255,2,255</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,6</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,6</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Spots Green On" ID="1004" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="0">0,31,1,255,2,255</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,16</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,16</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Spots Blue On" ID="1005" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="0">0,48,1,255,2,255</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,24</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,24</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Spots Purple On" ID="1006" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="0">0,74,1,255,2,255</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,40</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,40</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Spots Strobe White" ID="1007" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="1">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="2">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="3">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="4">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="5">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="6">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="7">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="12">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="13">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="14">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="15">5,255,6,80,8,0</FixtureVal>
+   <FixtureVal ID="0">0,0,1,80,2,255</FixtureVal>
+   <FixtureVal ID="34">6,80,7,255,8,99</FixtureVal>
+   <FixtureVal ID="35">6,80,7,255,8,99</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Wash Red" ID="1011" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="8">0,255,1,255,2,0,3,0,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,255,2,0,3,0,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,255,2,0,3,0,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,255,2,0,3,0,12,0</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Wash Green" ID="1012" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="8">0,255,1,0,2,255,3,0,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,0,2,255,3,0,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,0,2,255,3,0,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,0,2,255,3,0,12,0</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Wash Blue" ID="1013" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="8">0,255,1,0,2,0,3,255,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,0,2,0,3,255,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,0,2,0,3,255,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,0,2,0,3,255,12,0</FixtureVal>
+  </Function>
+  <Function Type="Scene" Name="Wash Off" ID="1014" Path="TEMPO TEST/01 Building Blocks">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="8">0,0</FixtureVal>
+   <FixtureVal ID="9">0,0</FixtureVal>
+   <FixtureVal ID="10">0,0</FixtureVal>
+   <FixtureVal ID="11">0,0</FixtureVal>
+  </Function>
+  <Function Type="Chaser" Name="Flash - Dial-Driven" ID="1101" Path="TEMPO TEST/02 Dial-Driven (hand sync)">
+   <Speed FadeIn="0" FadeOut="0" Duration="500"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="500" FadeOut="0">1001</Step>
+   <Step Number="1" FadeIn="0" Hold="500" FadeOut="0">1002</Step>
+  </Function>
+  <Function Type="Chaser" Name="Color Chase - Dial-Driven" ID="1102" Path="TEMPO TEST/02 Dial-Driven (hand sync)">
+   <Speed FadeIn="0" FadeOut="0" Duration="500"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="500" FadeOut="0">1003</Step>
+   <Step Number="1" FadeIn="0" Hold="500" FadeOut="0">1004</Step>
+   <Step Number="2" FadeIn="0" Hold="500" FadeOut="0">1005</Step>
+   <Step Number="3" FadeIn="0" Hold="500" FadeOut="0">1006</Step>
+  </Function>
+  <Function Type="EFX" Name="Circle - Dial-Driven" ID="1103" Path="TEMPO TEST/02 Dial-Driven (hand sync)">
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>35</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="3000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Circle</Algorithm>
+   <Width>40</Width>
+   <Height>40</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>2</Frequency>
+    <Phase>90</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>3</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function Type="Chaser" Name="Strobe Pulse - Dial-Driven" ID="1104" Path="TEMPO TEST/02 Dial-Driven (hand sync)">
+   <Speed FadeIn="0" FadeOut="0" Duration="150"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="150" FadeOut="0">1007</Step>
+   <Step Number="1" FadeIn="0" Hold="150" FadeOut="0">1002</Step>
+  </Function>
+  <Function Type="Chaser" Name="Wash Color Fade - Dial-Driven" ID="1105" Path="TEMPO TEST/02 Dial-Driven (hand sync)">
+   <Speed FadeIn="1000" FadeOut="0" Duration="2000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="1000" Hold="1000" FadeOut="0">1011</Step>
+   <Step Number="1" FadeIn="1000" Hold="1000" FadeOut="0">1012</Step>
+   <Step Number="2" FadeIn="1000" Hold="1000" FadeOut="0">1013</Step>
+  </Function>
+  <Function Type="Chaser" Name="Toggle Each Beat" ID="1201" Path="TEMPO TEST/03 Beats Mode (fixed 120 BPM)">
+   <Tempo>Beats</Tempo>
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="1000" FadeOut="0">1001</Step>
+   <Step Number="1" FadeIn="0" Hold="1000" FadeOut="0">1002</Step>
+  </Function>
+  <Function Type="Chaser" Name="Toggle Every 2 Beats" ID="1202" Path="TEMPO TEST/03 Beats Mode (fixed 120 BPM)">
+   <Tempo>Beats</Tempo>
+   <Speed FadeIn="0" FadeOut="0" Duration="2000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="2000" FadeOut="0">1001</Step>
+   <Step Number="1" FadeIn="0" Hold="2000" FadeOut="0">1002</Step>
+  </Function>
+  <Function Type="Chaser" Name="Color Each Beat" ID="1203" Path="TEMPO TEST/03 Beats Mode (fixed 120 BPM)">
+   <Tempo>Beats</Tempo>
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="1000" FadeOut="0">1003</Step>
+   <Step Number="1" FadeIn="0" Hold="1000" FadeOut="0">1004</Step>
+   <Step Number="2" FadeIn="0" Hold="1000" FadeOut="0">1005</Step>
+   <Step Number="3" FadeIn="0" Hold="1000" FadeOut="0">1006</Step>
+  </Function>
+  <Function Type="RGBMatrix" Name="One-By-One Each Beat" ID="1205" Path="TEMPO TEST/03 Beats Mode (fixed 120 BPM)">
+   <Tempo>Beats</Tempo>
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">One By One</Algorithm>
+   <Color Index="0">4294901760</Color>
+   <ControlMode>RGB</ControlMode>
+   <FixtureGroup>0</FixtureGroup>
+  </Function>
+ </Engine>
+ <VirtualConsole>
+  <Frame Caption="">
+   <Appearance>
+    <FrameStyle>None</FrameStyle>
+    <ForegroundColor>Default</ForegroundColor>
+    <BackgroundColor>Default</BackgroundColor>
+    <BackgroundImage>None</BackgroundImage>
+    <Font>Default</Font>
+   </Appearance>
+   <Label Caption="TEMPO TEST  -  Speed Dial / Tap tempo (hand sync, audio-free)" ID="1">
+    <WindowState Visible="True" X="10" Y="8" Width="760" Height="28"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+   </Label>
+   <Button Caption="Spots White On" ID="2" Icon="">
+    <WindowState Visible="True" X="10" Y="44" Width="120" Height="40"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="1001"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Blackout" ID="3" Icon="">
+    <WindowState Visible="True" X="140" Y="44" Width="120" Height="40"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="1002"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <SpeedDial Caption="MASTER TEMPO  (tap = T)" ID="4">
+    <WindowState Visible="True" X="10" Y="96" Width="230" Height="200"/>
+    <Appearance>
+     <FrameStyle>Sunken</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Visibility>127</Visibility>
+    <AbsoluteValue Minimum="0" Maximum="2000"/>
+    <Time>500</Time>
+    <Key>T</Key>
+    <MultKey>]</MultKey>
+    <DivKey>[</DivKey>
+    <Function FadeIn="0" FadeOut="0" Duration="6">1101</Function>
+    <Function FadeIn="0" FadeOut="0" Duration="6">1102</Function>
+    <Function FadeIn="0" FadeOut="0" Duration="6">1103</Function>
+    <Function FadeIn="0" FadeOut="0" Duration="6">1104</Function>
+    <Function FadeIn="0" FadeOut="0" Duration="6">1105</Function>
+   </SpeedDial>
+   <SpeedDial Caption="FADE SHAPER  (wash crossfade)" ID="5">
+    <WindowState Visible="True" X="250" Y="96" Width="230" Height="200"/>
+    <Appearance>
+     <FrameStyle>Sunken</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Visibility>127</Visibility>
+    <AbsoluteValue Minimum="0" Maximum="5000"/>
+    <Time>1000</Time>
+    <Function FadeIn="6" FadeOut="6" Duration="0">1105</Function>
+   </SpeedDial>
+   <Button Caption="Flash" ID="6" Icon="">
+    <WindowState Visible="True" X="10" Y="306" Width="150" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="1101"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Color Chase" ID="7" Icon="">
+    <WindowState Visible="True" X="170" Y="306" Width="150" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="1102"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Circle (spots)" ID="8" Icon="">
+    <WindowState Visible="True" X="330" Y="306" Width="150" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="1103"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Strobe Pulse" ID="9" Icon="">
+    <WindowState Visible="True" X="10" Y="362" Width="150" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="1104"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Button Caption="Wash Fade" ID="10" Icon="">
+    <WindowState Visible="True" X="170" Y="362" Width="150" Height="50"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <Function ID="1105"/>
+    <Action>Toggle</Action>
+    <Intensity Adjust="False">100</Intensity>
+   </Button>
+   <Label Caption="BEATS MODE  -  locked to the fixed 120 BPM grid (one at a time)" ID="11">
+    <WindowState Visible="True" X="10" Y="424" Width="760" Height="28"/>
+    <Appearance>
+     <FrameStyle>None</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+   </Label>
+   <SoloFrame Caption="" ID="12">
+    <Appearance>
+     <FrameStyle>Sunken</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <WindowState Visible="True" X="10" Y="458" Width="670" Height="110"/>
+    <AllowChildren>True</AllowChildren>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>True</ShowEnableButton>
+    <Mixing>False</Mixing>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Toggle Each Beat" ID="13" Icon="">
+     <WindowState Visible="True" X="10" Y="40" Width="150" Height="50"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="1201"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+    <Button Caption="Toggle 2 Beats" ID="14" Icon="">
+     <WindowState Visible="True" X="170" Y="40" Width="150" Height="50"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="1202"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+    <Button Caption="Color Each Beat" ID="15" Icon="">
+     <WindowState Visible="True" X="330" Y="40" Width="150" Height="50"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="1203"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+    <Button Caption="Matrix Each Beat" ID="16" Icon="">
+     <WindowState Visible="True" X="490" Y="40" Width="150" Height="50"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="1205"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+   </SoloFrame>
+  </Frame>
+  <Properties>
+   <Size Width="1280" Height="720"/>
+   <GrandMaster Visible="1" ChannelMode="Intensity" ValueMode="Reduce" SliderMode="Normal"/>
+  </Properties>
+ </VirtualConsole>
+ <SimpleDesk>
+  <Engine/>
+ </SimpleDesk>
+</Workspace>
