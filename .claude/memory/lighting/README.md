@@ -16,7 +16,8 @@ in the source in `engine/src`; external lighting facts are flagged where approxi
 - [qlc-save-file-format.md](qlc-save-file-format.md) — exact `.qxw` workspace XML: Workspace/Engine, Fixtures, every Function type (Scene, Chaser, Sequence, EFX, RGBMatrix, Collection, Show, Script, Audio, Video), with example snippets. The reference for generating/editing projects.
 - [qlc-fixture-definition-format.md](qlc-fixture-definition-format.md) — exact `.qxf` fixture format: the full channel **Preset** and **Group** enum lists, capabilities, modes, heads, physical; recipe to author a new fixture.
 - [qlc-functionality-reference.md](qlc-functionality-reference.md) — capabilities map: what every Function type, Virtual Console widget, Simple Desk, I/O, the Script command language and RGB-matrix JS API actually do.
-- [club-rig-mayans.md](club-rig-mayans.md) — **the venue's real rig & project**: every fixture, DMX address/universe, custom `.qxf`, fixture/channel groups, the 270-function inventory, naming conventions, output (Art-Net) + website (Web Access WS) control, VC layout. Reuse this addressing/naming for any new work.
+- [club-rig-mayans.md](club-rig-mayans.md) — **the venue's real rig & project**: every fixture, DMX address/universe, custom `.qxf`, fixture/channel groups, the 270-function inventory, naming conventions, output (Art-Net) + website (Web Access WS) control, VC layout, and the **§1b physical stage layout** (Monitor 2D positions). Reuse this addressing/naming for any new work.
+  - [mayans-stage-map.svg](mayans-stage-map.svg) — top-down visual map of the spot & wash positions (companion to §1b).
 
 **B — Lighting craft (the "make it look amazing" layer):**
 - [fixture-types-and-roles.md](fixture-types-and-roles.md) — spots/beams/washes/pars/pixel-bars/strobes/blinders/FX/lasers/haze: purpose, typical DMX channels, placement, show roles — mapped to the venue's fixtures.

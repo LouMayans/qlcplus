@@ -406,6 +406,19 @@ Optional `<Monitor>` element directly under `<Workspace>` (sibling of `<Engine>`
 - `<Grid Width Height Depth Units>` — dimensions in `Units` (`0`=Meters default 5×3×5, `1`=Feet). Optional `POV` attr (`1`=Top,`2`=Front,`3`=Right,`4`=Left); omit ⇒ Undefined (keeps grid as written — safest).
 - `<FxItem>` self-closing per fixture/head: `ID` (fixture ID, required), `XPos`/`YPos` (**always written, in mm** — a 12×8 m grid = 12000×8000 mm canvas), optional `Head`, `Linked`+`Name`, `Hidden`/`InvertedPan`/`InvertedTilt`=`True`, `Rotation` (Qt-Widgets build writes only Y rotation here), `GelColor` (`#rrggbb`, monitor swatch only — not DMX), `FixedZoom`. QMLUI/3D builds additionally write `ZPos`/`XRot`/`YRot`/`ZRot`/scale and `MeshItem`/`StageItem`; the loader skips unknowns so a 2D map loads fine in either.
 
+## 13c. How QLC+ rewrites a file on save (canonical form)
+
+When the operator opens a hand-edited `.qxw` in QLC+ and saves, **QLC+ rewrites the whole file** in its canonical form. Hand edits survive *semantically* (the loader is order-independent) but are reformatted — so anchors used for programmatic editing can change after a save. Observed on this repo's 4.14.x Qt-Widgets build:
+
+- **`<Function>` attribute order becomes `ID, Type, Name`** (then `Hidden`/`Path`/`BlendMode`/`Priority`). A hand-written `Type`-first tag comes back `ID`-first. → grep `Type="EFX"`, not `<Function Type="EFX"`.
+- **`<FixtureVal>` channel,value pairs are re-sorted ascending by channel index.** Values are unchanged; only order. E.g. a V2 line written `2,255,1,95,0,8` returns as `0,8,1,95,2,255`.
+- **EFX `<Fixture>` blocks are expanded to multi-line** (`<ID>/<Head>/<Mode>/<Direction>/<StartOffset>` each on its own line). Inline one-line `<Fixture>…</Fixture>` is accepted on load but rewritten multi-line — so match EFX fixtures by `<ID>`, not by an inline string.
+- **Indentation/whitespace normalized** to one space per nesting level.
+- **Defaults dropped:** `Priority="0"` and other default attributes are omitted on rewrite.
+- **`<Fixture>`s are ID-sorted; `<Function>`s are hash-ordered** (not ID-sorted); empty sections collapse (`<SimpleDesk><Engine/></SimpleDesk>`).
+
+**Practical rule:** after the operator saves in QLC+, **re-READ before editing** and match on stable tokens (function/fixture IDs, names) rather than exact attribute order or channel-pair strings. Never assume your last-written formatting is still present.
+
 ## 14. Gotchas for hand-editing / programmatic generation
 
 - **Unique IDs.** Function IDs must be unique across all `<Function>`s and ≠ `4294967295` (`Function::invalidId()`/`UINT_MAX`). Fixture IDs are a separate namespace, also unique, also referenced everywhere (`FixtureVal ID`, EFX `<ID>`, `Head Fixture=`, ChannelsGroup pairs). A duplicate or dangling ID silently breaks references.

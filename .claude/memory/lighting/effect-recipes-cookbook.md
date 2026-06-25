@@ -28,6 +28,15 @@ Conventions: DMX values are 8-bit (0-255). All times are milliseconds in the XML
 
 Before building anything, confirm the prep in [[qlc-functionality-reference]] §0: Fixture Groups exist for BEAMS, WASHES, TETRA, PARS; the TETRA group grid is laid out left-to-right matching physical pixel order. RGB Matrix and traveling EFX waves both depend on that grid/order.
 
+### ⚠️ Mayans SPOT hardware gotchas (read before any spot scene — full tables in [[club-rig-mayans]] §2)
+
+- **Shutter `0` = LIGHT OFF on the BEAM230 spots** (it closes the shutter), NOT "no strobe". In every non-strobe look you MUST set the spot strobe/shutter channel to **255 (open)**, or the beams stay dark even with dimmer 255. The **WASH is inverted: shutter `0` = open**, `1–255` = strobe.
+- **A strobe value must land in each model's strobe band:** base ch6 51–240, V2 ch1 1–251, **V3 ch6 only 4–103** (≥104 does NOT strobe), wash ch12 1–255. To strobe ALL spot models at once use **51–103**.
+- **Spot color is a WHEEL → SNAP it** (`FadeIn=0`). Fading the color value scrolls the wheel through every slot = a deliberate **rainbow** (use on purpose, e.g. a 2 s color fade), never as an accidental crossfade. Washes are RGBW and fade smoothly.
+- **Color values DIFFER per model — read the per-model table; never reuse one model's value on another.** The three BEAM230 variants (base / V2 id0 / V3 id34,35) have different wheels; e.g. Blue = base 88 / V2 48 / V3 24, and **V3 White = 99 not 0**. Color channel: base **ch8**, V2 **ch0**, V3 **ch8** (V3 ch9 is inert; ch5 = focus).
+- **Pan/Tilt SPEED is inverted: 0 = MAX speed** on the Mayans heads (the `.qxf` `SpeedPanTiltSlowFast` "Slow to fast" label is backwards vs the real hardware — operator-confirmed). Channel base **ch4**, V2 id0 **ch13**, V3 **ch4**, wash motor **ch10**; **0 is the default = fastest**, so keep it 0 — a high value makes the heads crawl. (Venue "Spot Light Speed" slider raises = slower; it also mis-maps V3 to ch11/PRISM.) Because 0 is default, speed is NOT why a correct EFX looks static — that's the even-spread gotcha below.
+- **An even 360° StartOffset spread on a Circle/closed loop looks STATIC.** Spreading offsets evenly across all fixtures (`360/N*i`) makes a rotationally-symmetric ring that just rotates into itself — the aggregate barely changes even though each head moves. For a visible traveling "chase-the-tail" ripple use a **partial spread (≤180° total)**; unison (all offset 0) reads as a big synchronized swing.
+
 ---
 
 ## 1. Color washes & rainbow chases

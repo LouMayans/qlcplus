@@ -1,0 +1,1441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Workspace>
+<Workspace xmlns="http://www.qlcplus.org/Workspace" CurrentWindow="FunctionManager">
+ <Creator>
+  <Name>Q Light Controller Plus</Name>
+  <Version>4.14.5</Version>
+  <Author>louma</Author>
+ </Creator>
+ <Engine>
+  <InputOutputMap>
+   <BeatGenerator BeatType="Disabled" BPM="0"/>
+   <NetworkServer Type="Native" AutoStart="False" Name="" Password=""/>
+   <Universe Name="Universe 1" ID="0">
+    <Input Plugin="OSC" Name="192.168.4.32" UID="" Line="4" Profile="mayans mayans">
+     <PluginParameters inputPort="9000"/>
+    </Input>
+    <Output Plugin="ArtNet" Name="169.254.37.211" UID="" Line="2">
+     <PluginParameters UniverseChannels="288" outputIP="192.168.5.162" transmitMode="Full"/>
+    </Output>
+    <Feedback Plugin="OSC" Name="192.168.4.32" UID="" Line="4">
+     <PluginParameters feedbackIP="192.168.5.3" outputIP="192.168.5.1"/>
+    </Feedback>
+   </Universe>
+   <Universe Name="Universe 2" ID="1">
+    <Input Plugin="OSC" Name="192.168.4.32" UID="" Line="4" Profile="mayans mayans">
+     <PluginParameters inputPort="9000"/>
+    </Input>
+    <Output Plugin="ArtNet" Name="169.254.37.211" UID="" Line="2">
+     <PluginParameters UniverseChannels="500" outputIP="192.168.5.162" transmitMode="Full"/>
+    </Output>
+    <Feedback Plugin="OSC" Name="192.168.4.32" UID="" Line="4">
+     <PluginParameters feedbackIP="192.168.5.3" feedbackPort="9000" outputIP="192.168.5.1" outputPort="9000"/>
+    </Feedback>
+   </Universe>
+   <Universe Name="Universe 3" ID="2"/>
+   <Universe Name="Universe 4" ID="3"/>
+  </InputOutputMap>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230V2</Model>
+   <Mode>16 Channel</Mode>
+   <ID>0</ID>
+   <Name>BEAM230V2 #13</Name>
+   <Universe>0</Universe>
+   <Address>256</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>1</ID>
+   <Name>BEAM230 #2</Name>
+   <Universe>0</Universe>
+   <Address>16</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>2</ID>
+   <Name>BEAM230 #3</Name>
+   <Universe>0</Universe>
+   <Address>32</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>3</ID>
+   <Name>BEAM230 #4</Name>
+   <Universe>0</Universe>
+   <Address>48</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>4</ID>
+   <Name>BEAM230 #5</Name>
+   <Universe>0</Universe>
+   <Address>64</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>5</ID>
+   <Name>BEAM230 #6</Name>
+   <Universe>0</Universe>
+   <Address>80</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>6</ID>
+   <Name>BEAM230 #7</Name>
+   <Universe>0</Universe>
+   <Address>96</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>7</ID>
+   <Name>BEAM230 #8</Name>
+   <Universe>0</Universe>
+   <Address>112</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>8</ID>
+   <Name>Wash #1</Name>
+   <Universe>0</Universe>
+   <Address>128</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>9</ID>
+   <Name>Wash #2</Name>
+   <Universe>0</Universe>
+   <Address>144</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>10</ID>
+   <Name>Wash #3</Name>
+   <Universe>0</Universe>
+   <Address>160</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>WASH</Model>
+   <Mode>16 Channel</Mode>
+   <ID>11</ID>
+   <Name>Wash #4</Name>
+   <Universe>0</Universe>
+   <Address>176</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>12</ID>
+   <Name>BEAM230 #9</Name>
+   <Universe>0</Universe>
+   <Address>192</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>13</ID>
+   <Name>BEAM230 #10</Name>
+   <Universe>0</Universe>
+   <Address>208</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>14</ID>
+   <Name>BEAM230 #11</Name>
+   <Universe>0</Universe>
+   <Address>224</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230</Model>
+   <Mode>16 Channels</Mode>
+   <ID>15</ID>
+   <Name>BEAM230 #12</Name>
+   <Universe>0</Universe>
+   <Address>240</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>16</ID>
+   <Name>VPAR Left Column</Name>
+   <Universe>1</Universe>
+   <Address>32</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>17</ID>
+   <Name>VPAR Right Column</Name>
+   <Universe>1</Universe>
+   <Address>40</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Venue</Manufacturer>
+   <Model>ThinPAR 38</Model>
+   <Mode>7-CH Mode</Mode>
+   <ID>18</ID>
+   <Name>Center Truss Washes</Name>
+   <Universe>1</Universe>
+   <Address>16</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Venue</Manufacturer>
+   <Model>Tetra Bar</Model>
+   <Mode>6-CH</Mode>
+   <ID>19</ID>
+   <Name>Tetra Bar #1</Name>
+   <Universe>1</Universe>
+   <Address>0</Address>
+   <Channels>6</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Venue</Manufacturer>
+   <Model>Tetra Bar</Model>
+   <Mode>6-CH</Mode>
+   <ID>20</ID>
+   <Name>Tetra Bar #2</Name>
+   <Universe>1</Universe>
+   <Address>6</Address>
+   <Channels>6</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>21</ID>
+   <Name>South East LED Wall</Name>
+   <Universe>1</Universe>
+   <Address>99</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>22</ID>
+   <Name>North East LED Wall</Name>
+   <Universe>1</Universe>
+   <Address>102</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>23</ID>
+   <Name>Middle Truss White Panel #1</Name>
+   <Universe>1</Universe>
+   <Address>105</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>24</ID>
+   <Name>Middle Truss White Panel #2</Name>
+   <Universe>1</Universe>
+   <Address>108</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>25</ID>
+   <Name>Middle Truss White Panel #3</Name>
+   <Universe>1</Universe>
+   <Address>111</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Chauvet</Manufacturer>
+   <Model>Swarm 5 FX</Model>
+   <Mode>Standard Mode</Mode>
+   <ID>26</ID>
+   <Name>Ceiling Truss Swarms</Name>
+   <Universe>1</Universe>
+   <Address>80</Address>
+   <Channels>9</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>27</ID>
+   <Name>Female Bathroom 1 RGB</Name>
+   <Universe>1</Universe>
+   <Address>114</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>28</ID>
+   <Name>VPAR Stage Large Truss Floor #1</Name>
+   <Universe>1</Universe>
+   <Address>48</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>American DJ</Manufacturer>
+   <Model>VPar</Model>
+   <Mode>7 Channel</Mode>
+   <ID>29</ID>
+   <Name>VPAR Stage Small Truss Floor #2</Name>
+   <Universe>1</Universe>
+   <Address>55</Address>
+   <Channels>7</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Chauvet</Manufacturer>
+   <Model>Swarm 5 FX</Model>
+   <Mode>Standard Mode</Mode>
+   <ID>30</ID>
+   <Name>Stage Large Truss Swarms</Name>
+   <Universe>1</Universe>
+   <Address>117</Address>
+   <Channels>9</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>Revolver Wash</Model>
+   <Mode>12 Ch</Mode>
+   <ID>31</ID>
+   <Name>Revolver Wash</Name>
+   <Universe>1</Universe>
+   <Address>64</Address>
+   <Channels>12</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic RGB</Model>
+   <Mode>RGB</Mode>
+   <ID>32</ID>
+   <Name>North West LED Wall</Name>
+   <Universe>1</Universe>
+   <Address>126</Address>
+   <Channels>3</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Generic</Manufacturer>
+   <Model>Generic</Model>
+   <Mode>1 Channel</Mode>
+   <ID>33</ID>
+   <Name>FOG</Name>
+   <Universe>1</Universe>
+   <Address>499</Address>
+   <Channels>1</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230 V3</Model>
+   <Mode>16 Ch</Mode>
+   <ID>34</ID>
+   <Name>BEAM230 #1</Name>
+   <Universe>0</Universe>
+   <Address>0</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <Fixture>
+   <Manufacturer>Mayans</Manufacturer>
+   <Model>BEAM230 V3</Model>
+   <Mode>16 Ch</Mode>
+   <ID>35</ID>
+   <Name>BEAM230 #14</Name>
+   <Universe>0</Universe>
+   <Address>272</Address>
+   <Channels>16</Channels>
+  </Fixture>
+  <ChannelsGroup ID="0" Name="Spot Dimmer" Value="0">0,2,1,5,2,5,3,5,4,5,5,5,6,5,7,5,12,5,13,5,14,5,15,5,34,7,35,7</ChannelsGroup>
+  <ChannelsGroup ID="1" Name="Spot Colors" Value="0">0,0,1,8,2,8,3,8,4,8,5,8,6,8,7,8,12,8,13,8,14,8,15,8,34,8,35,8</ChannelsGroup>
+  <ChannelsGroup ID="2" Name="Spot Strobe" Value="0">0,1,1,6,2,6,3,6,4,6,5,6,6,6,7,6,12,6,13,6,14,6,15,6,34,6,35,6</ChannelsGroup>
+  <ChannelsGroup ID="3" Name="Wash Dimmer" Value="0">8,0,9,0,10,0,11,0</ChannelsGroup>
+  <ChannelsGroup ID="4" Name="Wash Strobe" Value="0">8,12,9,12,10,12,11,12</ChannelsGroup>
+  <ChannelsGroup ID="5" Name="Wash Red" Value="0">8,1,9,1,10,1,11,1</ChannelsGroup>
+  <ChannelsGroup ID="6" Name="Wash Green" Value="0">8,2,9,2,10,2,11,2</ChannelsGroup>
+  <ChannelsGroup ID="7" Name="Wash Blue" Value="0">8,3,9,3,10,3,11,3</ChannelsGroup>
+  <ChannelsGroup ID="8" Name="Wash White" Value="0">8,4,9,4,10,4,11,4</ChannelsGroup>
+  <ChannelsGroup ID="9" Name="Spot Pan" Value="0">0,9,1,0,2,0,3,0,4,0,5,0,6,0,7,0,12,0,13,0,14,0,15,0,34,0,35,0</ChannelsGroup>
+  <ChannelsGroup ID="10" Name="Spot Tilt" Value="0">0,11,1,2,2,2,3,2,4,2,5,2,6,2,7,2,12,2,13,2,14,2,15,2,34,1,35,1</ChannelsGroup>
+  <ChannelsGroup ID="11" Name="Wash Pan" Value="0">8,6,9,6,10,6,11,6</ChannelsGroup>
+  <ChannelsGroup ID="12" Name="Wash Tilt" Value="0">8,7,9,7,10,7,11,7</ChannelsGroup>
+  <Function ID="100" Type="Scene" Name="Show 1 Look (Blue)" Path="Preview Shows/Parts">
+   <Speed FadeIn="1000" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,48,1,255,2,255</FixtureVal>
+   <FixtureVal ID="1">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,24</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,24</FixtureVal>
+   <FixtureVal ID="8">0,255,1,0,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,0,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,0,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,0,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+  </Function>
+  <Function ID="101" Type="EFX" Name="Show 1 Spot Circles" Path="Preview Shows/Parts">
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>35</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="6000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Circle</Algorithm>
+   <Width>60</Width>
+   <Height>60</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>90</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="102" Type="Collection" Name="Show 1: Blue Unison Circles" Path="Preview Shows">
+   <Step Number="0">100</Step>
+   <Step Number="1">101</Step>
+  </Function>
+  <Function ID="110" Type="Scene" Name="Show 2 Red" Path="Preview Shows/Parts">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,8,1,255,2,255</FixtureVal>
+   <FixtureVal ID="1">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,8</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,8</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,8</FixtureVal>
+   <FixtureVal ID="8">0,255,1,255,2,0,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,255,2,0,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,255,2,0,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,255,2,0,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+  </Function>
+  <Function ID="111" Type="Scene" Name="Show 2 Green" Path="Preview Shows/Parts">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,31,1,255,2,255</FixtureVal>
+   <FixtureVal ID="1">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,24</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,16</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,16</FixtureVal>
+   <FixtureVal ID="8">0,255,1,0,2,255,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,0,2,255,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,0,2,255,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,0,2,255,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+  </Function>
+  <Function ID="112" Type="Scene" Name="Show 2 Blue" Path="Preview Shows/Parts">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,48,1,255,2,255</FixtureVal>
+   <FixtureVal ID="1">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,88</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,24</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,24</FixtureVal>
+   <FixtureVal ID="8">0,255,1,0,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,0,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,0,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,0,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+  </Function>
+  <Function ID="113" Type="Scene" Name="Show 2 Pink" Path="Preview Shows/Parts">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,74,1,255,2,255</FixtureVal>
+   <FixtureVal ID="1">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,40</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,40</FixtureVal>
+   <FixtureVal ID="8">0,255,1,180,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,180,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,180,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,180,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+  </Function>
+  <Function ID="114" Type="Scene" Name="Show 2 Orange" Path="Preview Shows/Parts">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,40,1,255,2,255</FixtureVal>
+   <FixtureVal ID="1">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,32</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,64</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,64</FixtureVal>
+   <FixtureVal ID="8">0,255,1,255,2,90,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,255,2,90,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,255,2,90,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,255,2,90,3,0,4,0,6,127,7,127,12,0</FixtureVal>
+  </Function>
+  <Function ID="115" Type="Chaser" Name="Show 2 Rainbow Wheel Scroll" Path="Preview Shows/Parts">
+   <Speed FadeIn="2000" FadeOut="0" Duration="2000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="2000" Hold="0" FadeOut="0">110</Step>
+   <Step Number="1" FadeIn="2000" Hold="0" FadeOut="0">111</Step>
+   <Step Number="2" FadeIn="2000" Hold="0" FadeOut="0">112</Step>
+   <Step Number="3" FadeIn="2000" Hold="0" FadeOut="0">113</Step>
+   <Step Number="4" FadeIn="2000" Hold="0" FadeOut="0">114</Step>
+  </Function>
+  <Function ID="116" Type="EFX" Name="Show 2 Spot Ripple Circles" Path="Preview Shows/Parts">
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>26</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>51</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>77</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>103</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>129</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>154</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>180</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>206</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>231</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>35</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>257</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>283</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>309</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>334</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="5000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Circle</Algorithm>
+   <Width>70</Width>
+   <Height>70</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>90</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="117" Type="Collection" Name="Show 2: Rainbow Phased Wave" Path="Preview Shows">
+   <Step Number="0">115</Step>
+   <Step Number="1">116</Step>
+  </Function>
+  <Function ID="120" Type="Scene" Name="Show 3 Look (Red + Strobe)" Path="Preview Shows/Parts">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,8,1,95,2,255</FixtureVal>
+   <FixtureVal ID="1">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="2">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="3">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="4">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="5">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="6">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="7">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="12">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="13">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="14">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="15">5,255,6,200,8,8</FixtureVal>
+   <FixtureVal ID="34">6,95,7,255,8,8</FixtureVal>
+   <FixtureVal ID="35">6,95,7,255,8,8</FixtureVal>
+   <FixtureVal ID="8">0,255,1,255,2,0,3,0,4,0,6,127,7,127,12,180</FixtureVal>
+   <FixtureVal ID="9">0,255,1,255,2,0,3,0,4,0,6,127,7,127,12,180</FixtureVal>
+   <FixtureVal ID="10">0,255,1,255,2,0,3,0,4,0,6,127,7,127,12,180</FixtureVal>
+   <FixtureVal ID="11">0,255,1,255,2,0,3,0,4,0,6,127,7,127,12,180</FixtureVal>
+  </Function>
+  <Function ID="121" Type="EFX" Name="Show 3 Spot Fast Circles" Path="Preview Shows/Parts">
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>35</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="2000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Circle</Algorithm>
+   <Width>40</Width>
+   <Height>40</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>90</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="122" Type="Collection" Name="Show 3: Red Strobe Drop" Path="Preview Shows">
+   <Step Number="0">120</Step>
+   <Step Number="1">121</Step>
+  </Function>
+  <Function ID="130" Type="Scene" Name="Show 4 Look (White)" Path="Preview Shows/Parts">
+   <Speed FadeIn="800" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,255,2,255</FixtureVal>
+   <FixtureVal ID="1">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,0</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,99</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,99</FixtureVal>
+   <FixtureVal ID="8">0,255,1,0,2,0,3,0,4,255,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,0,2,0,3,0,4,255,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,0,2,0,3,0,4,255,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,0,2,0,3,0,4,255,12,0</FixtureVal>
+  </Function>
+  <Function ID="131" Type="EFX" Name="Show 4 Spot Ballyhoo" Path="Preview Shows/Parts">
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>26</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>51</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>77</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>103</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>129</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>154</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>180</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>206</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>231</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>35</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>257</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>283</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>309</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>334</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="9000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Lissajous</Algorithm>
+   <Width>110</Width>
+   <Height>90</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>2</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>3</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="132" Type="EFX" Name="Show 4 Wash Sweep" Path="Preview Shows/Parts">
+   <Fixture>
+    <ID>8</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>9</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>90</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>10</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>180</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>11</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>270</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="12000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Circle</Algorithm>
+   <Width>80</Width>
+   <Height>30</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>90</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="133" Type="Collection" Name="Show 4: White Ballyhoo Search" Path="Preview Shows">
+   <Step Number="0">130</Step>
+   <Step Number="1">131</Step>
+   <Step Number="2">132</Step>
+  </Function>
+  <Function ID="140" Type="Scene" Name="Show 5 Look (Pink)" Path="Preview Shows/Parts">
+   <Speed FadeIn="800" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,74,1,255,2,255</FixtureVal>
+   <FixtureVal ID="1">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="2">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="3">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="4">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="5">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="6">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="7">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="12">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="13">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="14">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="15">5,255,6,255,8,48</FixtureVal>
+   <FixtureVal ID="34">6,255,7,255,8,40</FixtureVal>
+   <FixtureVal ID="35">6,255,7,255,8,40</FixtureVal>
+   <FixtureVal ID="8">0,255,1,180,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="9">0,255,1,180,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="10">0,255,1,180,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+   <FixtureVal ID="11">0,255,1,180,2,0,3,255,4,0,6,127,7,127,12,0</FixtureVal>
+  </Function>
+  <Function ID="141" Type="EFX" Name="Show 5 Spot Mirror Circles" Path="Preview Shows/Parts">
+   <Fixture>
+    <ID>14</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>7</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>13</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>0</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>2</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>4</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>1</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Forward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>34</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Backward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>12</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Backward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>3</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Backward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>35</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Backward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>6</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Backward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>5</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Backward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <Fixture>
+    <ID>15</ID>
+    <Head>0</Head>
+    <Mode>0</Mode>
+    <Direction>Backward</Direction>
+    <StartOffset>0</StartOffset>
+   </Fixture>
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="5000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Circle</Algorithm>
+   <Width>70</Width>
+   <Height>70</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>90</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>1</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="142" Type="Collection" Name="Show 5: Purple Mirror Circles" Path="Preview Shows">
+   <Step Number="0">140</Step>
+   <Step Number="1">141</Step>
+  </Function>
+  <Function ID="150" Type="Scene" Name="Preview: ALL OFF (Blackout)" Path="Preview Shows">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">1,0,2,0</FixtureVal>
+   <FixtureVal ID="1">5,0,6,0</FixtureVal>
+   <FixtureVal ID="2">5,0,6,0</FixtureVal>
+   <FixtureVal ID="3">5,0,6,0</FixtureVal>
+   <FixtureVal ID="4">5,0,6,0</FixtureVal>
+   <FixtureVal ID="5">5,0,6,0</FixtureVal>
+   <FixtureVal ID="6">5,0,6,0</FixtureVal>
+   <FixtureVal ID="7">5,0,6,0</FixtureVal>
+   <FixtureVal ID="12">5,0,6,0</FixtureVal>
+   <FixtureVal ID="13">5,0,6,0</FixtureVal>
+   <FixtureVal ID="14">5,0,6,0</FixtureVal>
+   <FixtureVal ID="15">5,0,6,0</FixtureVal>
+   <FixtureVal ID="34">6,0,7,0</FixtureVal>
+   <FixtureVal ID="35">6,0,7,0</FixtureVal>
+   <FixtureVal ID="8">0,0,12,0</FixtureVal>
+   <FixtureVal ID="9">0,0,12,0</FixtureVal>
+   <FixtureVal ID="10">0,0,12,0</FixtureVal>
+   <FixtureVal ID="11">0,0,12,0</FixtureVal>
+  </Function>
+  <Monitor DisplayMode="1" ShowLabels="1">
+   <Font>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</Font>
+   <ChannelStyle>0</ChannelStyle>
+   <ValueStyle>0</ValueStyle>
+   <Grid Width="5" Height="3" Depth="5" Units="0"/>
+   <FxItem ID="0" XPos="1544.12" YPos="2985.29"/>
+   <FxItem ID="1" XPos="2274.51" YPos="3039.22" Rotation="90"/>
+   <FxItem ID="2" XPos="1607.84" YPos="3725.49" Rotation="90"/>
+   <FxItem ID="3" XPos="3000" YPos="3705.88" Rotation="90"/>
+   <FxItem ID="4" XPos="1818.63" YPos="1000" Rotation="90"/>
+   <FxItem ID="5" XPos="3406.87" YPos="340.227" Rotation="90"/>
+   <FxItem ID="6" XPos="3367.65" YPos="1382.35" Rotation="90"/>
+   <FxItem ID="7" XPos="1357.84" YPos="1411.77" Rotation="90"/>
+   <FxItem ID="8" XPos="380.821" YPos="1762.71"/>
+   <FxItem ID="9" XPos="325.98" YPos="454.963"/>
+   <FxItem ID="10" XPos="4309.28" YPos="1715.99"/>
+   <FxItem ID="11" XPos="4294.12" YPos="431.373"/>
+   <FxItem ID="12" XPos="2700.98" YPos="955.882" Rotation="90"/>
+   <FxItem ID="13" XPos="1480.39" YPos="352.941" Rotation="90"/>
+   <FxItem ID="14" XPos="575.708" YPos="2985.11" Rotation="90"/>
+   <FxItem ID="15" XPos="4176.47" YPos="2922.48" Rotation="90"/>
+   <FxItem ID="34" XPos="2330.92" YPos="4457.78" Rotation="90"/>
+   <FxItem ID="35" XPos="3007.39" YPos="3016.6" Rotation="90"/>
+  </Monitor>
+ </Engine>
+ <VirtualConsole>
+  <Frame Caption="">
+   <Appearance>
+    <FrameStyle>None</FrameStyle>
+    <ForegroundColor>Default</ForegroundColor>
+    <BackgroundColor>Default</BackgroundColor>
+    <BackgroundImage>None</BackgroundImage>
+    <Font>Default</Font>
+   </Appearance>
+   <SoloFrame Caption="Preview Shows — Spots &amp; Washes" ID="1">
+    <Appearance>
+     <FrameStyle>Sunken</FrameStyle>
+     <ForegroundColor>Default</ForegroundColor>
+     <BackgroundColor>Default</BackgroundColor>
+     <BackgroundImage>None</BackgroundImage>
+     <Font>Default</Font>
+    </Appearance>
+    <WindowState Visible="False" X="20" Y="20" Width="470" Height="210"/>
+    <AllowChildren>True</AllowChildren>
+    <AllowResize>True</AllowResize>
+    <ShowHeader>True</ShowHeader>
+    <ShowEnableButton>False</ShowEnableButton>
+    <Mixing>False</Mixing>
+    <Collapsed>False</Collapsed>
+    <Disabled>False</Disabled>
+    <Button Caption="Show 1: Blue Circles" ID="2" Icon="">
+     <WindowState Visible="False" X="10" Y="45" Width="140" Height="60"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="102"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+    <Button Caption="Show 2: Rainbow Wave" ID="3" Icon="">
+     <WindowState Visible="False" X="160" Y="45" Width="140" Height="60"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="117"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+    <Button Caption="Show 3: Red Strobe" ID="4" Icon="">
+     <WindowState Visible="False" X="310" Y="45" Width="140" Height="60"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="122"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+    <Button Caption="Show 4: White Ballyhoo" ID="5" Icon="">
+     <WindowState Visible="False" X="10" Y="115" Width="140" Height="60"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="133"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+    <Button Caption="Show 5: Purple Mirror" ID="6" Icon="">
+     <WindowState Visible="False" X="160" Y="115" Width="140" Height="60"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="142"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+    <Button Caption="ALL OFF" ID="7" Icon="">
+     <WindowState Visible="False" X="310" Y="115" Width="140" Height="60"/>
+     <Appearance>
+      <FrameStyle>None</FrameStyle>
+      <ForegroundColor>Default</ForegroundColor>
+      <BackgroundColor>Default</BackgroundColor>
+      <BackgroundImage>None</BackgroundImage>
+      <Font>Default</Font>
+     </Appearance>
+     <Function ID="150"/>
+     <Action>Toggle</Action>
+     <Intensity Adjust="False">100</Intensity>
+    </Button>
+   </SoloFrame>
+  </Frame>
+  <Properties>
+   <Size Width="1920" Height="2000"/>
+   <GrandMaster Visible="1" ChannelMode="Intensity" ValueMode="Reduce" SliderMode="Normal"/>
+  </Properties>
+ </VirtualConsole>
+ <SimpleDesk>
+  <Engine/>
+ </SimpleDesk>
+</Workspace>

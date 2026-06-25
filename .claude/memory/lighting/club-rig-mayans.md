@@ -110,6 +110,43 @@ Note the gap at 128-191 (washes sit mid-block between beam runs). **Next free bl
 
 ---
 
+## 1b) Physical layout — Monitor 2D stage map
+
+The QLC+ Fixture Monitor stores a top-down (plan) position for every **spot and wash** (the only positioned fixtures; LED walls/PARs/FX are unplaced). Grid = **5 m × 3 m × 5 m** (W×H×D, `Units=0` = meters); the 2D view is a **5000 × 5000 mm** canvas, origin **top-left, X→right, Y→down** — same orientation the operator sees in the QLC+ Monitor. Visual map (open in a browser/VS Code): **[mayans-stage-map.svg](mayans-stage-map.svg)**. Coordinates are identical in the Blank Rig Template and the Preview Shows file; see [[qlc-save-file-format]] §13b for the `<Monitor>`/`<FxItem>` XML.
+
+Positions (mm), spots labelled by their BEAM230 number:
+
+| Fixture | id | Variant | X (mm) | Y (mm) |
+|---|---|---|---|---|
+| Spot #1 | 34 | V3 | 2331 | 4458 |
+| Spot #2 | 1 | base | 2275 | 3039 |
+| Spot #3 | 2 | base | 1608 | 3725 |
+| Spot #4 | 3 | base | 3000 | 3706 |
+| Spot #5 | 4 | base | 1819 | 1000 |
+| Spot #6 | 5 | base | 3407 | 340 |
+| Spot #7 | 6 | base | 3368 | 1382 |
+| Spot #8 | 7 | base | 1358 | 1412 |
+| Spot #9 | 12 | base | 2701 | 956 |
+| Spot #10 | 13 | base | 1480 | 353 |
+| Spot #11 | 14 | base | 576 | 2985 |
+| Spot #12 | 15 | base | 4176 | 2922 |
+| Spot #13 | 0 | V2 | 1544 | 2985 |
+| Spot #14 | 35 | V3 | 3007 | 3017 |
+| Wash #1 | 8 | — | 381 | 1763 |
+| Wash #2 | 9 | — | 326 | 455 |
+| Wash #3 | 10 | — | 4309 | 1716 |
+| Wash #4 | 11 | — | 4294 | 431 |
+
+**Spatial read (drives EFX offsets, fan direction, chase order):**
+- **Washes frame the room left & right.** LEFT edge (X≈330–380): Wash #1 (id8, mid-depth) and #2 (id9, far/low-Y corner). RIGHT edge (X≈4290–4310): Wash #3 (id10, mid-depth) and #4 (id11, far corner). Two left, two right — natural for L/R wash splits and cross-stage sweeps.
+- **Spots left→right (by X)** — use this order for sweeps/ripples/running lights: **#11(14) → #8(7) → #10(13) → #13(0,V2) → #3(2) → #5(4) → #2(1) → #1(34,V3) → #9(12) → #4(3) → #14(35,V3) → #7(6) → #6(5) → #12(15)**.
+- **Mirror split (left/right halves)** for counter-rotating circles: LEFT `{14,7,13,0,2,4,1}`, RIGHT `{34,12,3,35,6,5,15}`.
+- **Depth (Y):** Beam **#1 (id34)** sits alone at the high-Y/front-center edge; the low-Y/back edge holds **#6,#10** (corners) and the upper band **#5,#7,#8,#9**; the center band (Y≈2900–3000) holds **#11,#13,#2,#14,#3,#4**. ("Front" = high-Y here; flip if your stage is the opposite end.)
+
+The Preview Shows file's ripple (Show 2) and mirror (Show 5) were built from this ordering.
+
+---
+
 ## 2) Custom-fixture channel layouts (0-based FixtureVal indices)
 
 `<FixtureVal>` payloads are `channel,value` pairs where `channel` is the **0-based index into the fixture's mode channel list**. These indices are load-bearing for every scene/EFX.
@@ -146,16 +183,18 @@ Note the gap at 128-191 (washes sit mid-block between beam runs). **Next free bl
 |----|----------|--|----|----------|
 | 0 | Pan | | 8 | **Color** |
 | 1 | Tilt | | 9 | Color Effect |
-| 2 | Pan/Tilt speed | | 10 | Frost |
-| 3 | PanFine | | 11 | PRISM |
-| 4 | TiltFine | | 12 | **LAMP** |
+| 2 | PanFine | | 10 | Frost |
+| 3 | TiltFine | | 11 | PRISM |
+| 4 | **Pan/Tilt speed** | | 12 | **LAMP** |
 | 5 | **FOCUS** | | 13 | PRISM Rotation |
 | 6 | **Strobe** | | 14 | GOBO |
 | 7 | **Dimmer** | | 15 | RESET |
 
-**V3 color is ch9 — operator-confirmed on BEAM230 #1 (id34), and applies to its clone id35 too.** The `.qxf` labels ch8 "Color" and ch9 "Color Effect", but on the real fixture the **color wheel responds on ch9**; ch8 does nothing useful and **ch5 is FOCUS** (driving ch5 just refocuses the beam). So for V3 (id34, id35): write color to **ch9**.
+(Corrected from `.qxf`: ch2 PanFine, ch3 TiltFine, **ch4 Pan/Tilt speed** — an earlier version of this table had ch2/3/4 swapped.)
 
-⚠️ **Latent issue in Main Project:** its SPOT BEAM COLORS channel group and every "SPOT/ALL SPOTLIGHT COLOR" scene write the color value to **ch5** for id34 (e.g. `<FixtureVal ID="34">5,8</FixtureVal>`). That drives FOCUS, not color — so id34 does not actually change color in those production looks. Left as-is for now; fixing means rewriting id34's color channel from ch5→ch9 across those scenes/groups (and id35, cloned from it, inherits the same ch5). The Blank Rig Template's "Spot Colors" group already uses the correct ch9.
+**V3 color is ch8** (the real color wheel). The `.qxf` labels ch8 "Color" and ch9 "Color Effect"; **ch9 is inert**. **Live test (2026-06, operator):** writing color to ch9 left ch8 at its default 0, so BEAM230 #1 (id34) showed **white** in the red look — proving ch8 is the wheel and ch9 does nothing. (An earlier "operator-confirmed ch9" note was WRONG and is corrected here — never write V3 color to ch9.) **ch5 is FOCUS** on V3 (writing color there just refocuses). So for V3 (id34, id35): write color to **ch8**, using V3's *own* wheel values (table below — they differ from base/V2).
+
+⚠️ **Latent issue in Main Project:** its SPOT BEAM COLORS channel group and every "SPOT/ALL SPOTLIGHT COLOR" scene write the color value to **ch5** for id34 (e.g. `<FixtureVal ID="34">5,8</FixtureVal>`). ch5 = FOCUS, so id34 does not change color in those production looks. Fixing means rewriting id34 (and its clone id35) color from ch5→**ch8**. The Blank Rig Template's "Spot Colors" channel-group writes V3 color to **ch8** (`34,8,35,8`) — which is CORRECT. The "Preview Shows" file writes V3 color to ch8 throughout.
 
 **WASH (ids 8-11):**
 
@@ -189,9 +228,36 @@ Quick reference — spot control channels (**all three models differ — never a
 | Tilt | ch2 | ch11 | ch1 |
 | Dimmer | ch5 | ch2 | ch7 (LAMP ch12 = no-op) |
 | Strobe | ch6 | ch1 | ch6 |
-| Color | ch8 | ch0 | **ch9** (operator-confirmed; ch5 = FOCUS, ch8 inert) |
+| Color | ch8 | ch0 | **ch8** (live-verified; ch5 = FOCUS, ch9 = inert "Color Effect") |
 
-**BEAM230 color-wheel DMX values** (the Color channel — ch8 on base/V2-via-ch0, **ch9 on V3 id34/id35**; the wheel positions match across models): White/Open `0`, Red `8`, Black/Deep Blue `16`, Yellow `40`, Purple `48`, Cyan `72`, Blue `88`, Orange `96`, Emerald/Green `104`. V3 LAMP (ch12) is a no-op "Nothing" group — safe to drive; ch7 is the real V3 dimmer. BEAM Strobe (ch6) preset `ShutterStrobeSlowFast`: rises slow→fast with value (≈60 slow, 120 medium, 200 fast); dimmer must be up for strobe to show.
+**BEAM230 color-wheel DMX values — DIFFERENT per model. Read each `.qxf`; NEVER reuse one model's values on another.** Each value is a discrete wheel slot (snap onto it; see the snap/rainbow note):
+
+| Color | base V1 (ch8) | V2 id0 (ch0) | V3 id34/35 (ch8) |
+|---|---|---|---|
+| White | 0 | 0 | **99** |
+| Red | 8 | 8 | 8 |
+| Green | 24 | 31 | 16 |
+| Yellow | 40 | 14 | 32 |
+| Orange | 32 | 40 | 64 |
+| Pink/Purple | 48 | 74 | 40 |
+| Blue | 88 | 48 | 24 |
+
+The same DMX value means different colors per model (e.g. `40` = base **Yellow**, V2 **Orange**, V3 **Pink**), and **V3 White = 99, not 0** (0 is below V3's first slot → undefined/white-ish). V3 LAMP (ch12) is a no-op; ch7 is the real V3 dimmer.
+
+**Spot color is a WHEEL, not RGB → SNAP it.** A color change must be a snap (`FadeIn=0`) so it lands cleanly on a slot. If you instead FADE the color value slowly the wheel scrolls through every intermediate slot = a **rainbow cycle** — great on purpose (Preview Shows "Show 2" does this with a ~2 s fade), never as an accidental crossfade artifact. Default: snap all spot color scenes; only fade when you specifically want the wheel-scroll rainbow. (Washes are real RGBW — they fade smoothly and may crossfade freely.)
+
+**Shutter/Strobe channel — `0` = LIGHT OFF on the spots (NOT "no strobe"); the wash is inverted.** This bit a build: writing strobe `0` for "no strobe" closed the spot shutters so beams went dark despite dimmer 255. Correct values per model:
+
+| Model | Strobe ch | Closed (off) | OPEN (light on, no strobe) | Strobe band (slow→fast) |
+|---|---|---|---|---|
+| base V1 | ch6 | 0 | **255** (or 1–50) | 51–240 |
+| V2 id0 | ch1 | 0 | **255** (only 252–255) | 1–103 · random 104–251 |
+| V3 id34/35 | ch6 | 0 | **255** (252–255) | **4–103** (104–251 = Reserved/no strobe!) |
+| WASH 8–11 | ch12 | — | **0** (0 = open!) | 1–255 |
+
+In every non-strobe look set spot shutters to **255** and wash shutters to **0**. For a strobe that fires on ALL spot models pick **51–103** (e.g. base 200 is fine but V3 caps strobe at 103 — 200 on V3 does NOT strobe); the venue's "Preview Shows" Show 3 uses base 200 / V2 95 / V3 95 / wash 180. Dimmer must be up for strobe to show.
+
+**Pan/Tilt speed (movement) channel — the `.qxf` preset direction is INVERTED vs the real hardware.** The preset `SpeedPanTiltSlowFast` (engine `qlcchannel.cpp` label "Pan and tilt (Slow to fast)") implies 0=slow, but on the REAL Mayans fixtures **0 = MAX speed (fastest); higher values = slower** — operator-confirmed. Channels: base **ch4**, V2 id0 **ch13**, V3 id34/35 **ch4**, WASH motor **ch10**. **0 is also the default**, so the heads are already at max speed unless something raised the value. For crisp EFX movement keep this channel at **0** (or unset); writing a high value makes the heads crawl. The VC "Spot Light Speed" slider (id3) drives base ch4 + wash ch10 — raising it SLOWS the heads — and **mis-targets V3 on ch11 (PRISM)** (never speeds V3; V3 speed = ch4). Because 0 is the default, the speed channel is NOT what makes a correct EFX look static — for that see the EFX even-spread gotcha in [[effect-recipes-cookbook]].
 
 **RGB/PAR channel orders (0-based, library fixtures):**
 
@@ -357,7 +423,8 @@ Buttons (160): mostly Toggle actions bound to scenes/collections/shows with `<In
 
 - **Addresses are 0-based.** Write `Address = desk − 1`. New beams → Universe 1. BEAM230 #14 (id35) now occupies Address 272-287 (DMX 273-288), so the next free block = Address 288 (DMX 289). LED/wash/effects → Universe 2. FOG is parked at DMX 500 (Address 499); don't reuse.
 - **Preserve fixture IDs (0-35).** Reference fixtures by ID in scenes/EFX/groups. Never renumber existing fixtures; new fixtures take the next free ID (36+). id35 "BEAM230 #14" is a V3 clone of id34.
-- **Color scenes touch ONLY the Color channel.** Base BEAM230 → ch8; **V2 id0 → ch0**; **V3 id34/id35 → ch9** (operator-confirmed; ch5 = FOCUS, ch8 inert). NOTE Main Project's existing scenes/group still write V3 color to ch5 — a latent bug (drives focus). Leave dimmer/position to lower-priority scenes.
+- **Color scenes touch ONLY the Color channel, and SNAP (color is a wheel, not RGB).** Base BEAM230 → ch8; **V2 id0 → ch0**; **V3 id34/id35 → ch8** (live-verified; ch5 = FOCUS, ch9 = inert). Use each model's *own* wheel values (§2 table) — they differ; the same DMX value is a different color per model, and V3 White = 99. NOTE Main Project's existing scenes/group still write V3 color to ch5 — a latent bug (drives focus). Leave dimmer/position to lower-priority scenes. Fade the color value only to deliberately wheel-scroll a rainbow.
+- **Shutter/strobe: `0` closes the spot shutter (light OFF) — set spots OPEN = 255 in every non-strobe look; the WASH is inverted (open = 0).** Strobe band per model: base 51–240, V2 1–251, **V3 only 4–103** (V3 ≥104 does NOT strobe), wash 1–255 — a value in 51–103 strobes on all spot models. Dimmer must be up for strobe to show.
 - **Spot control channels — every model differs, special-case all three:** Dimmer = ch5 base / **ch2 on V2 (id0)** / ch7 (+no-op LAMP ch12) on V3 (id34,35). Strobe = ch6 base / **ch1 V2** / ch6 V3. Pan/Tilt = ch0/ch2 base / **ch9/ch11 V2** / ch0/ch1 V3. See the §2 quick-reference table.
 - **Name templates, verbatim:** `SPOT <n> <Color>`, `ALL SPOTLIGHT COLOR <COLOR> P<priority>`, `ALL SPOTLIGHT COLOR OFF P100`, `ON OFF <zone>`, `All Lights <Color>`, `Literally Everything <Color>`, `SPOT VIP <n>`. Color set = {Black Blue, Blue, Green, Orange, Purple, Red, White, Yellow}.
 - **Priority suffix convention:** encode priority in the name. Default/base = P0 (no suffix), overrides = P20, kill scene = P100. Set `Priority="N"` to match the suffix.
