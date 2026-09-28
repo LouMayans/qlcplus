@@ -1621,6 +1621,16 @@ void App::slotWebProjectFileInfo(QString *result)
 
 void App::slotWebLoadProjectFile(QString path, bool force, QString *result)
 {
+    webLoadProjectFile(path, force, false, result);
+}
+
+void App::slotWebOpenProjectFile(QString path, bool force, QString *result)
+{
+    webLoadProjectFile(path, force, true, result);
+}
+
+void App::webLoadProjectFile(const QString &path, bool force, bool otherFile, QString *result)
+{
     if (result == NULL)
         return;
 
@@ -1632,7 +1642,7 @@ void App::slotWebLoadProjectFile(QString path, bool force, QString *result)
         return;
     }
 
-    if (fileName().isEmpty() == false &&
+    if (otherFile == false && fileName().isEmpty() == false &&
         QFileInfo(fileName()).canonicalFilePath().compare(target.canonicalFilePath(), Qt::CaseInsensitive) != 0)
     {
         *result = QStringLiteral("ERR|only the open project file can be reloaded");

@@ -395,6 +395,8 @@ int main(int argc, char** argv)
                 &app, SLOT(slotSaveAutostart(QString)));
         QObject::connect(webAccess, SIGNAL(loadProjectFile(QString,bool,QString*)),
                 &app, SLOT(slotWebLoadProjectFile(QString,bool,QString*)));
+        QObject::connect(webAccess, SIGNAL(openProjectFile(QString,bool,QString*)),
+                &app, SLOT(slotWebOpenProjectFile(QString,bool,QString*)));
         QObject::connect(webAccess, SIGNAL(saveProjectFile(QString*)),
                 &app, SLOT(slotWebSaveProjectFile(QString*)));
         QObject::connect(webAccess, SIGNAL(projectFileInfo(QString*)),

@@ -137,6 +137,7 @@ signals:
     void loadProject(QString xmlData);
     void storeAutostartProject(QString filename);
     void loadProjectFile(QString path, bool force, QString *result);
+    void openProjectFile(QString path, bool force, QString *result);
     void saveProjectFile(QString *result);
     void projectFileInfo(QString *result);
 

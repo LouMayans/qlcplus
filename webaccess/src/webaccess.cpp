@@ -457,7 +457,7 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
         }
         else if (apiCmd == "lightaiVersion")
         {
-            wsAPIMessage.append("1");
+            wsAPIMessage.append("2");  // 2: openProjectFile
         }
         else if (apiCmd == "getProjectFile")
         {
@@ -477,6 +477,20 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
             bool force = (cmdList.count() > 3 && cmdList[3] == "force");
             m_pendingProjectLoaded = false;
             emit loadProjectFile(cmdList[2], force, &result);
+            wsAPIMessage.append(result);
+        }
+        else if (apiCmd == "openProjectFile")
+        {
+            if (m_auth && user && user->level < SUPER_ADMIN_LEVEL)
+                return;
+
+            if (cmdList.count() < 3)
+                return;
+
+            QString result = QStringLiteral("ERR|not connected");
+            bool force = (cmdList.count() > 3 && cmdList[3] == "force");
+            m_pendingProjectLoaded = false;
+            emit openProjectFile(cmdList[2], force, &result);
             wsAPIMessage.append(result);
         }
         else if (apiCmd == "saveProject")
