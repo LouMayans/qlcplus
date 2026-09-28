@@ -12,8 +12,8 @@ metadata:
 Authoritative inventory of THIS venue's QLC+ setup. Future automated edits MUST reuse the exact addressing, fixture IDs, names, and conventions below. Related: [[qlc-fixture-definition-format]] (the `.qxf` custom fixtures), [[qlc-save-file-format]] (the `.qxw` workspace structure these IDs live in), [[fixture-types-and-roles]] (what each fixture class is for).
 
 Source files:
-- Workspace: `C:\Users\Louma\Documents\GIT Clones\QLCProjectCloneOld\qlcplus\SaveFile\Main Project.qxw` (QLC+ 4.14.4, author "louma", 7478 lines).
-- Custom fixtures: `C:\Users\Louma\Documents\GIT Clones\QLCProjectCloneOld\qlcplus\Fixtures\`.
+- Workspace: repo `SaveFile\Main Project.qxw` (repo = `C:\Users\louma\OneDrive\Desktop\GIT Repos\qlcplus`; QLC+ 4.14.x, author "louma"). Also `SaveFile\Blank Rig Template.qxw` (clean rig, no functions) and `SaveFile\Preview Shows - Spots and Washes.qxw`.
+- Custom fixtures: repo `Fixtures\` (git-tracked source of truth), installed by copying into the QLC+ user folder `C:\Users\louma\QLC+\Fixtures\` — see [[qlc-fixture-definition-format]] §9b.
 - Live control surface: the user's **web app via the QLC+ Web Access WebSocket API** (HTTPS/WSS, built into this fork). See [[salesforce-qlcplus-integration]].
 
 **Two hard rules before any edit:**
@@ -31,17 +31,17 @@ This fork adds a per-function `Priority="N"` attribute. Values in use: 0 (defaul
 | ID | Model | Fixture Name | Univ | Addr (0-based) | DMX start | Ch | .qxf file |
 |----|-------|--------------|------|------|-----|----|-----------|
 | 34 | BEAM230 V3 | BEAM230 #1 | 0 | 0 | 1 | 16 | Mayans-BEAM230 V3.qxf |
-| 1 | BEAM230 | BEAM230 #2 | 0 | 16 | 17 | 16 | Mayans-BEAM230.qxf |
-| 2 | BEAM230 | BEAM230 #3 | 0 | 32 | 33 | 16 | Mayans-BEAM230.qxf |
-| 3 | BEAM230 | BEAM230 #4 | 0 | 48 | 49 | 16 | Mayans-BEAM230.qxf |
-| 4 | BEAM230 | BEAM230 #5 | 0 | 64 | 65 | 16 | Mayans-BEAM230.qxf |
-| 5 | BEAM230 | BEAM230 #6 | 0 | 80 | 81 | 16 | Mayans-BEAM230.qxf |
-| 6 | BEAM230 | BEAM230 #7 | 0 | 96 | 97 | 16 | Mayans-BEAM230.qxf |
-| 7 | BEAM230 | BEAM230 #8 | 0 | 112 | 113 | 16 | Mayans-BEAM230.qxf |
-| 12 | BEAM230 | BEAM230 #9 | 0 | 192 | 193 | 16 | Mayans-BEAM230.qxf |
-| 13 | BEAM230 | BEAM230 #10 | 0 | 208 | 209 | 16 | Mayans-BEAM230.qxf |
-| 14 | BEAM230 | BEAM230 #11 | 0 | 224 | 225 | 16 | Mayans-BEAM230.qxf |
-| 15 | BEAM230 | BEAM230 #12 | 0 | 240 | 241 | 16 | Mayans-BEAM230.qxf |
+| 1 | BEAM230 | BEAM230 #2 | 0 | 16 | 17 | 16 | Mayans-BEAM230 V1.qxf |
+| 2 | BEAM230 | BEAM230 #3 | 0 | 32 | 33 | 16 | Mayans-BEAM230 V1.qxf |
+| 3 | BEAM230 | BEAM230 #4 | 0 | 48 | 49 | 16 | Mayans-BEAM230 V1.qxf |
+| 4 | BEAM230 | BEAM230 #5 | 0 | 64 | 65 | 16 | Mayans-BEAM230 V1.qxf |
+| 5 | BEAM230 | BEAM230 #6 | 0 | 80 | 81 | 16 | Mayans-BEAM230 V1.qxf |
+| 6 | BEAM230 | BEAM230 #7 | 0 | 96 | 97 | 16 | Mayans-BEAM230 V1.qxf |
+| 7 | BEAM230 | BEAM230 #8 | 0 | 112 | 113 | 16 | Mayans-BEAM230 V1.qxf |
+| 12 | BEAM230 | BEAM230 #9 | 0 | 192 | 193 | 16 | Mayans-BEAM230 V1.qxf |
+| 13 | BEAM230 | BEAM230 #10 | 0 | 208 | 209 | 16 | Mayans-BEAM230 V1.qxf |
+| 14 | BEAM230 | BEAM230 #11 | 0 | 224 | 225 | 16 | Mayans-BEAM230 V1.qxf |
+| 15 | BEAM230 | BEAM230 #12 | 0 | 240 | 241 | 16 | Mayans-BEAM230 V1.qxf |
 | 0 | BEAM230V2 | BEAM230V2 #13 | 0 | 256 | 257 | 16 | Mayans-BEAM230 V2.qxf |
 | 8 | WASH | Wash #1 | 0 | 128 | 129 | 16 | WASH-Mayans-Mayans.qxf |
 | 9 | WASH | Wash #2 | 0 | 144 | 145 | 16 | WASH-Mayans-Mayans.qxf |
@@ -144,6 +144,41 @@ Positions (mm), spots labelled by their BEAM230 number:
 - **Depth (Y):** Beam **#1 (id34)** sits alone at the high-Y/front-center edge; the low-Y/back edge holds **#6,#10** (corners) and the upper band **#5,#7,#8,#9**; the center band (Y≈2900–3000) holds **#11,#13,#2,#14,#3,#4**. ("Front" = high-Y here; flip if your stage is the opposite end.)
 
 The Preview Shows file's ripple (Show 2) and mirror (Show 5) were built from this ordering.
+
+---
+
+## 1c) Available fixtures — installed globally, NOT yet patched
+
+Both are in repo `Fixtures\` and `C:\Users\louma\QLC+\Fixtures\` (added 2026-09-26) but are **not in any `.qxw`** — no fixture ID, universe or address yet. When patching: next free fixture ID = 36; U1 next free Address = 288 (the Art-Net output's `UniverseChannels="288"` in U1 must be raised to cover more); U2 is free from Address 129 to 498.
+
+**Betopper LF2405 — 250 W matrix strobe** (`Type Strobe`, file `Betopper-LF2405.qxf`, authored from Betopper manual Rev 1.01 = identical Big Dipper OEM manual). LEDs: 384×5050 RGB in 24 zones, 24×3535 white (3 rows × 8 lenses), 256×5730 white strips in 16 zones. Fixture menu `C005`/`C011`/`C112` (default C011).
+
+| Mode | Channel order (0-based) |
+|---|---|
+| 5 Channel | 0 Red, 1 Green, 2 Blue, 3 White 3535, 4 White 5730 (no dimmer, no strobe) |
+| 11 Channel | 0 Master Dimmer, 1 Strobe, 2 Red, 3 Green, 4 Blue, 5 White 3535, 6 White 5730, 7 Color Selection, 8 Auto Program, 9 Auto Speed, 10 White Mode |
+| 112 Channel | 0-71 Red/Green/Blue zones 1-24 (zone *i* = ch 3(*i*-1)…+2), 72-95 White 3535 1-24, 96-111 White 5730 1-16. 24 heads = RGB *i* + White 3535 *i*; Layout 8×3 (RGB-Matrix ready) |
+
+- **Strobe: 0 = no strobe, light ON** (1-255 = strobe slow→fast, ~1-30 Hz, and it cancels the auto program) — the OPPOSITE of the BEAM230 shutter, where 0 = closed.
+- Master Dimmer 0 = off. Auto Program: 0-9 off, 10-230 = 44 auto effects (5 values each), 231-255 = 5 sound effects. Auto Speed slow→fast. Color Selection: 0-31 auto colour change, 32-255 fixed colour for the auto program. White Mode picks which LED banks the auto program uses (manual says it applies while Auto Program is 10-194).
+- Unverified: zone order across the face (assumed row-major L→R, T→B), dims 381×203×127 mm, DMX connector pins.
+
+**Betopper L1015 — 10×15 W RGBW tilt-only beam bar** (`LED Bar (Pixels)`, file `Betopper-L1015.qxf` = upstream QLC+ definition verbatim, author Fede79, upstream commit `0b5a773`). Channel order confirmed by Betopper's own MA2/Sunlite/Avolites profiles (which call it "LM1015").
+
+| Mode | Channel order (0-based) |
+|---|---|
+| 7 Channel | 0 Y Axis (tilt), 1 Tilt speed, 2 Red, 3 Green, 4 Blue, 5 White, 6 Reset |
+| 13 Channel | 0 Y Axis, 1 Tilt speed, 2 Dimmer, 3 Strobe, 4 Red, 5 Green, 6 Blue, 7 White, 8 Modes, 9 Modes speed, 10 Background color, 11 Background dimmer, 12 Reset |
+| 43 Channel | 0 Y Axis, 1 Tilt speed, 2-41 R/G/B/W pixels 1-10 (pixel *i* = ch 2+4(*i*-1)…+3), 42 Reset. 10 heads, Layout 10×1 |
+
+- **Tilt speed 0 = fastest** (`SpeedTiltFastSlow`), matching the venue rule. **Reset 150-255 resets the fixture — keep the Reset channel below 150.**
+- Modes: 0-1 no effect, effects 1-126 in 2-value steps, 254-255 cycle.
+- **EFX:** Y Axis uses the `PositionYAxis` preset, which is in the Tilt group, so an EFX can tilt the bar in **7/13 Channel** (one implicit head holds every channel). In **43 Channel** the Y Axis channel sits outside the 10 pixel heads and `Fixture::channelNumber()` searches only inside the head (`engine/src/fixture.cpp:291-297`), so an EFX will not move it. Tilt it with a Scene/Chaser on ch0 instead.
+- **Unconfirmed:** the manual is image-only, the `.ssl2` profiles are SoundSwitch-encrypted and manuals.plus is behind a human check. So these are not confirmed:
+  - The Strobe open value. Upstream maps 0-255 as strobe slow→fast; the LF2405 uses 0 = no strobe. Test Strobe 0 on the rig before relying on it.
+  - The Background color table.
+  - Tilt range: 180° upstream vs 540°/270° in the console profiles (template defaults).
+  - Weight: 6.35 vs 12.7 kg.
 
 ---
 

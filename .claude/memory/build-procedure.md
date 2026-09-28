@@ -151,3 +151,12 @@ After code changes, just `ninja -C build-mingw && ninja -C build-mingw install`.
 
 ## Verify a build is runnable (clean env, no mingw64 on PATH)
 PowerShell: `Start-Process C:\qlcplus\qlcplus.exe -PassThru`; after ~8s check it's still running and `$p.MainWindowTitle` is "Q Light Controller Plus ...". (Don't trust "process alive" alone — a missing-DLL error dialog keeps the process alive too; check loaded modules / window title.)
+
+## Engine unit tests (QtTest)
+Build one: `ninja -C build-mingw engine/test/efx/efx_test.exe` (same for efxfixture, genericfader, universe, scene, chaser...).
+Run it from the **source** test folder (fixtures are found via the relative `../../../resources/fixtures/`), with the
+engine DLL on PATH, and write results to a file (stdout shows nothing from these exes here):
+```
+MSYSTEM=MINGW64 C:/msys64/usr/bin/bash.exe -lc 'R="<repo>"; B="$R/build-mingw"; export PATH="$B/engine/src:$B/engine/audio/src:$PATH"; export QT_QPA_PLATFORM=offscreen; cd "$R/engine/test/efx" && "$B/engine/test/efx/efx_test.exe" -o "$B/engine/test/efx/result.txt",txt'
+```
+2026-09-26: with the lightai engine fixes, 210 pass (efx, efxfixture, genericfader, universe, scene, chaser, chaserrunner, fadechannel, mastertimer, collection).

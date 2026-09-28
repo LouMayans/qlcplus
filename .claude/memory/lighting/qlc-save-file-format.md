@@ -389,10 +389,10 @@ For both, paths follow the same workspace-relative normalization as RGB Image fi
 
 ## 13b. Monitor (2D/3D layout map)
 
-Optional `<Monitor>` element directly under `<Workspace>` (sibling of `<Engine>`/`<VirtualConsole>`), holding the Fixture Monitor's physical layout. Lets you ship a "stage map". Schema (from `engine/src/monitorproperties.cpp`):
+Optional `<Monitor>` element **inside `<Engine>`, as its last child** (`engine/src/doc.cpp` loads it there; a `<Monitor>` directly under `<Workspace>` is silently ignored, which is why `NewShow.qxw`'s stage map never showed up). It holds the Fixture Monitor's physical layout, so you can ship a "stage map". The **`DisplayMode` attribute is mandatory**: without it `MonitorProperties::loadXML` returns early and QLC+ stops loading the rest of the file (Virtual Console included). Schema (from `engine/src/monitorproperties.cpp`):
 
 ```xml
- <Monitor Display="1" ShowLabels="1">
+ <Monitor DisplayMode="1" ShowLabels="1">
   <Font>Arial,11,-1,5,50,0,0,0,0,0</Font>
   <ChannelStyle>0</ChannelStyle>
   <ValueStyle>0</ValueStyle>
@@ -402,7 +402,7 @@ Optional `<Monitor>` element directly under `<Workspace>` (sibling of `<Engine>`
  </Monitor>
 ```
 
-- `Display` attr: `0`=DMX text grid, `1`=Graphics (2D layout). `ShowLabels` `0`/`1`.
+- `DisplayMode` attr (required): `0`=DMX text grid, `1`=Graphics (2D layout). `ShowLabels` `0`/`1`. The Qt-Widgets 2D view draws the grid as Width x **Depth**.
 - `<Grid Width Height Depth Units>` — dimensions in `Units` (`0`=Meters default 5×3×5, `1`=Feet). Optional `POV` attr (`1`=Top,`2`=Front,`3`=Right,`4`=Left); omit ⇒ Undefined (keeps grid as written — safest).
 - `<FxItem>` self-closing per fixture/head: `ID` (fixture ID, required), `XPos`/`YPos` (**always written, in mm** — a 12×8 m grid = 12000×8000 mm canvas), optional `Head`, `Linked`+`Name`, `Hidden`/`InvertedPan`/`InvertedTilt`=`True`, `Rotation` (Qt-Widgets build writes only Y rotation here), `GelColor` (`#rrggbb`, monitor swatch only — not DMX), `FixedZoom`. QMLUI/3D builds additionally write `ZPos`/`XRot`/`YRot`/`ZRot`/scale and `MeshItem`/`StageItem`; the loader skips unknowns so a 2D map loads fine in either.
 

@@ -48,7 +48,7 @@ Load/save rules (`qlcfixturedef.cpp`):
 | **Zero modes** | **Hard failure** — `loadXML` returns false if no modes. |
 | Duplicates | `clear()` runs before parse; nothing is appended to stale state. |
 | Save order | Fixed: Manufacturer, Model, Type, all Channels, all Modes, Physical. |
-| Filename | Convention `Manufacturer-Model.qxf`; user defs live in the user fixtures dir. |
+| Filename | Convention `Manufacturer-Model.qxf` (spaces → `-`); user defs live in the user fixtures dir `%UserProfile%\QLC+\Fixtures` — see §9b. The loader identifies a fixture by `<Manufacturer>`+`<Model>`, not the filename. |
 
 ### `<Type>` strings
 Must match exactly (`stringToType`/`typeToString`); any unrecognised value becomes `Other`. Unset default is `Dimmer`.
@@ -388,9 +388,24 @@ Once globally and/or once per mode. All-zero numeric fields count as empty.
 ```
 This exercises: preset channels (16-bit P/T, P/T speed, master dimmer, RGBW intensities, color/gobo wheels), a custom Shutter channel with a per-capability `StrobeSlowToFast` preset, a Maintenance channel with a `ResetAll` capability, a single `<Head>` grouping the P/T indices, and mover Physical.
 
+## 9b. Installing a custom fixture ("make it global")
+
+QLC+ loads fixture definitions from two folders (`engine/src/qlcfixturedefcache.cpp`, `ui/src/app.cpp:506-508`):
+
+| Folder | What loads | How to add a fixture |
+|---|---|---|
+| **User folder** `%UserProfile%\QLC+\Fixtures` = `C:\Users\louma\QLC+\Fixtures` | **every** `*.qxf`/`*.d4` in it (`load()`, lines 215-237), loaded FIRST | copy the file in, restart QLC+ — no map, no rebuild. Visible to every project and to every QLC+ exe on this Windows user (`C:\qlcplus` and the Desktop club copy). **This is the venue's route.** |
+| **System library** `<exe dir>\Fixtures` = `C:\qlcplus\Fixtures` | only files listed in `FixturesMap.xml` (`loadMap()`, lines 291-396; unlisted-file scan is `#if 0`) | add under `resources/fixtures/<Manufacturer_with_underscores>/`, add `<F n="File-Name" m="<Model>"/>` to `resources/fixtures/FixturesMap.xml`, `ninja -C build-mingw install` |
+
+- **Same Manufacturer+Model twice → the second is rejected** (`qlcfixturedefcache.cpp:117-133`), so a user-folder file overrides a library file of the same identity.
+- **Fallback:** if a project's fixture isn't in the cache, QLC+ tries `<folder of the .qxw>\<Manufacturer>-<Model>.qxf` (spaces → `-`) (`engine/src/fixture.cpp:1255-1279`).
+- **Venue workflow:** author/track the file in repo `Fixtures/` (source of truth), copy it to the user folder. The repo's `Fixtures/` mirrors the user folder byte-for-byte. `deploy/*.bat` and `setup-new-pc.bat` do **not** carry custom fixtures — a new/venue PC needs the user-folder copy by hand.
+- **Validation without installs:** .NET `XmlSchemaSet` against `resources/schemas/fixture.xsd` (set `DtdProcessing=Ignore` for the `<!DOCTYPE>`). Upstream's `resources/fixtures/scripts/fixtures-tool.py --validate` needs `lxml` (not installed in MSYS2 python). Upstream-library rules worth following anyway: no spaces in filenames, no word "mode" in mode names, never exactly one `<Head>`, custom-channel capabilities contiguous 0-255 with `Group Byte`, non-zero Physical dims + PowerConsumption.
+- **Before authoring, check upstream** (`gh api repos/mcallegari/qlcplus/contents/resources/fixtures/<Mfr>/...`): the fork lags upstream; e.g. `Betopper-L1015.qxf` existed upstream (commit `0b5a773`) but not in the fork. Mode-level `<Physical>` (with `<Layout>`) and presets like `PositionYAxis` all load fine in this 4.14 engine.
+
 ## 10. The venue's real fixtures (study these)
 
-Files in `…\qlcplus\Fixtures\`: `Mayans-BEAM230.qxf` (+ `… V2`, `… V3`), `WASH-Mayans-Mayans.qxf`, `Mayans-Revolver-Wash.qxf`. Full rig context in [[club-rig-mayans]].
+Files in repo `Fixtures\` (mirrored in `C:\Users\louma\QLC+\Fixtures\`): `Mayans-BEAM230 V1.qxf` (Model `BEAM230`; + `… V2`, `… V3`), `WASH-Mayans-Mayans.qxf`, `Mayans-Revolver-Wash.qxf`, and the Betopper `Betopper-LF2405.qxf` / `Betopper-L1015.qxf` (see [[club-rig-mayans]] §1c). `American-DJ-VPar.qxf` is only a reference copy of the library file. Full rig context in [[club-rig-mayans]].
 
 | Fixture | Footprint / Type | What it demonstrates |
 |---|---|---|
