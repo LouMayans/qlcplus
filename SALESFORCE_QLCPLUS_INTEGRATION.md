@@ -31,7 +31,7 @@ QLC+  (launched with TLS Web Access; see prerequisites)
   - **Must be `wss://`** (TLS). A Salesforce page is served over HTTPS, and browsers block a
     plaintext `ws://` connection from an HTTPS page (mixed content). Plain `ws://` only works
     for same-origin local testing pages, not from Salesforce.
-- **Auth:** QLC+ runs with web auth enabled (`-a <passwordfile>`), so it uses **HTTP Basic auth**.
+- **Auth:** QLC+ runs with web auth enabled (`-wa -a <passwordfile>`; `-a` alone only names the file and leaves auth OFF), so it uses **HTTP Basic auth**.
   The browser performs the Basic handshake on the initial HTTP(S) request that upgrades to the
   WebSocket; supply credentials via the standard browser auth flow / a pre-authenticated session.
   A connection without valid credentials is rejected (401) and the socket never opens.
