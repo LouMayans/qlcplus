@@ -1096,7 +1096,23 @@ QSharedPointer<GenericFader> EFX::getFader(QList<Universe *> universes, quint32 
         fader->setName(name());
         fader->setParentFunctionID(id());
         fader->setPriority2(getPriority());
-        fader->setHandleSecondary(true);
+
+        /* All fixtures of this EFX on this universe share the fader, so 16-bit
+           handling must be decided once, before any of them creates fade channels.
+           One fixture with non-contiguous fine channels means 8-bit + separate LSB
+           writes for all of them (they still get their fine value). */
+        bool contiguous = true;
+        QListIterator <EFXFixture*> fit(m_fixtures);
+        while (fit.hasNext() == true)
+        {
+            EFXFixture *ef = fit.next();
+            if (ef->universe() == universeID && ef->hasNonContiguousFineChannels())
+            {
+                contiguous = false;
+                break;
+            }
+        }
+        fader->setHandleSecondary(contiguous);
         m_fadersMap[universeID] = fader;
     }
 

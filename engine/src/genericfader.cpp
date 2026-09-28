@@ -317,8 +317,11 @@ void GenericFader::write(Universe *universe, uint elapsedMs)
             m_blendMode == Universe::NormalBlend) || m_fadeOut)
         {
             // Remove all channels that reach their target _zero_ value.
-            // They have no effect either way so removing them saves a bit of CPU.
-            if (fc.current() == 0 && fc.target() == 0 && fc.isReady())
+            // Under plain HTP they have no effect, so removing them saves a bit of CPU.
+            // A zero written with a user priority (kill scenes, P20 overrides) must keep
+            // suppressing lower-priority writers, so it stays until the fader fades out.
+            if (fc.current() == 0 && fc.target() == 0 && fc.isReady() &&
+                (priority2() <= 0 || m_fadeOut))
                 it.remove();
         }
 

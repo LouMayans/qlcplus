@@ -391,8 +391,40 @@ uint EFXFixture::timeOffset() const
  * Running
  *****************************************************************************/
 
+bool EFXFixture::hasNonContiguousFineChannels() const
+{
+    Fixture *fxi = doc()->fixture(head().fxi);
+    if (fxi == NULL)
+        return false;
+
+    quint32 firstMsb = QLCChannel::invalid(), firstLsb = QLCChannel::invalid();
+    quint32 secondMsb = QLCChannel::invalid(), secondLsb = QLCChannel::invalid();
+
+    switch (m_mode)
+    {
+        case PanTilt:
+            firstMsb = fxi->channelNumber(QLCChannel::Pan, QLCChannel::MSB, head().head);
+            firstLsb = fxi->channelNumber(QLCChannel::Pan, QLCChannel::LSB, head().head);
+            secondMsb = fxi->channelNumber(QLCChannel::Tilt, QLCChannel::MSB, head().head);
+            secondLsb = fxi->channelNumber(QLCChannel::Tilt, QLCChannel::LSB, head().head);
+        break;
+        case Dimmer:
+            firstMsb = fxi->channelNumber(QLCChannel::Intensity, QLCChannel::MSB, head().head);
+            if (firstMsb != QLCChannel::invalid())
+                firstLsb = fxi->channelNumber(QLCChannel::Intensity, QLCChannel::LSB, head().head);
+        break;
+        default:
+        break;
+    }
+
+    return (firstLsb != QLCChannel::invalid() && firstLsb - firstMsb != 1) ||
+           (secondLsb != QLCChannel::invalid() && secondLsb - secondMsb != 1);
+}
+
 void EFXFixture::start(QSharedPointer<GenericFader> fader)
 {
+    Q_UNUSED(fader)
+
     Fixture *fxi = doc()->fixture(head().fxi);
 
     /* Cache channels to reduce processing while running */
@@ -405,12 +437,9 @@ void EFXFixture::start(QSharedPointer<GenericFader> fader)
             m_secondMsbChannel = fxi->channelNumber(QLCChannel::Tilt, QLCChannel::MSB, head().head);
             m_secondLsbChannel = fxi->channelNumber(QLCChannel::Tilt, QLCChannel::LSB, head().head);
 
-            /* Check for non-contiguous channels */
-            if ((m_firstLsbChannel != QLCChannel::invalid() && m_firstLsbChannel - m_firstMsbChannel != 1) ||
-                (m_secondLsbChannel != QLCChannel::invalid() && m_secondLsbChannel - m_secondMsbChannel != 1))
-            {
-                fader->setHandleSecondary(false);
-            }
+            /* 16-bit handling for non-contiguous fine channels is decided once per
+               universe in EFX::getFader() (see hasNonContiguousFineChannels()). Changing
+               the shared fader here broke every fixture already started on it. */
         }
         break;
 
@@ -423,12 +452,6 @@ void EFXFixture::start(QSharedPointer<GenericFader> fader)
             if (m_firstMsbChannel != QLCChannel::invalid())
             {
                 m_firstLsbChannel = fxi->channelNumber(QLCChannel::Intensity, QLCChannel::LSB, head().head);
-
-                /* Check for non-contiguous channels */
-                if (m_firstLsbChannel != QLCChannel::invalid() && m_firstLsbChannel - m_firstMsbChannel != 1)
-                {
-                    fader->setHandleSecondary(false);
-                }
             }
             else
             {

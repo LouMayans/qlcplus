@@ -115,6 +115,13 @@ public:
      */
     bool isValid() const;
 
+    /**
+     * True when the fine (LSB) channel of pan, tilt or dimmer is not right after
+     * its coarse (MSB) channel. EFX::getFader() uses it to decide 16-bit handling
+     * once for every fixture that shares a universe fader.
+     */
+    bool hasNonContiguousFineChannels() const;
+
     void durationChanged();
 
 public:
