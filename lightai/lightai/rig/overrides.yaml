@@ -1,0 +1,122 @@
+# Operator facts about the Mayans rig. These beat the .qxf files and channel groups.
+# You can edit this file by hand; the console's feedback buttons also append facts under
+# "facts" and update "models"/"fixtures" with provenance (source + date).
+version: 1
+
+# "fixture 3" means QLC+ fixture ID 3. Set to name_number to make it mean the fixture
+# whose name ends in "#3" (e.g. "BEAM230 #3").
+fixture_number_means: id
+
+# "channel 9" means the 9th channel of the fixture (one_based) or channel index 9 (zero_based).
+channel_numbering: one_based
+
+# Stage map order, left to right, used for chases, fans and phase offsets.
+stage_order: [14, 7, 13, 0, 2, 4, 1, 34, 12, 3, 35, 6, 5, 15]
+
+# The P100 kill scene fired by "blackout".
+kill_function_id: 297
+
+# Never started, stopped or proposed automatically (kill scene, fog machine).
+protected_functions: [297, 343]
+
+# Excluded from "all lights" / "everything" unless named explicitly.
+exclude_from_all: [27, 33]
+
+zones:
+  spots:
+    ids: [14, 7, 13, 0, 2, 4, 1, 34, 12, 3, 35, 6, 5, 15]
+    aliases: [spot, spots, spotlight, spotlights, spot lights, beam, beams, beam230, beam230s, moving heads, heads, the beams]
+  washes:
+    ids: [8, 9, 10, 11]
+    aliases: [wash, washes, wash lights, washers, moving washes, the washes]
+  movers:
+    ids: [14, 7, 13, 0, 2, 4, 1, 34, 12, 3, 35, 6, 5, 15, 8, 9, 10, 11, 31]
+    aliases: [movers, moving lights, all movers, everything that moves]
+  column_pars:
+    ids: [16, 17]
+    aliases: [columns, column pars, column lights, vpar columns, column vpars]
+  stage_pars:
+    ids: [28, 29]
+    aliases: [stage pars, stage floor pars, truss floor pars, floor pars]
+  pars:
+    ids: [16, 17, 18, 28, 29]
+    aliases: [pars, par, par cans, vpars, vpar]
+  center_truss:
+    ids: [18]
+    aliases: [center truss, thinpar, center washes, center truss washes]
+  tetras:
+    ids: [19, 20]
+    aliases: [tetra, tetras, tetra bars, led bars, bars, dance floor, led strip, strips, dance floor strip]
+  led_walls:
+    ids: [21, 22, 32]
+    aliases: [led walls, walls, wall lights, corner leds, corners, corner lights]
+  white_panels:
+    ids: [23, 24, 25]
+    aliases: [white panels, panels, triangle truss, middle truss, truss panels]
+  swarms:
+    ids: [26, 30]
+    aliases: [swarms, swarm, lasers, laser fx, fx lights]
+  revolver:
+    ids: [31]
+    aliases: [revolver, revolver wash, roof wash]
+  bathroom:
+    ids: [27]
+    aliases: [bathroom, female bathroom, bathroom light]
+  fog:
+    ids: [33]
+    aliases: [fog, smoke, haze, fog machine, smoke machine, hazer]
+  stage_left:
+    ids: [14, 7, 13, 0, 2, 4, 1, 8, 9]
+    aliases: [stage left, left side, the left, left half]
+  stage_right:
+    ids: [34, 12, 3, 35, 6, 5, 15, 10, 11]
+    aliases: [stage right, right side, the right, right half]
+  all:
+    ids: []
+    aliases: [all, all lights, everything, everywhere, whole rig, the rig, the room, every light, whole room]
+
+# Per-model facts. Keys are "Manufacturer/Model" exactly as in the show file.
+models:
+  Mayans/BEAM230:
+    kind: spot
+    pt_speed_fast: {value: 0, source: operator, note: "pan/tilt speed channel is inverted, 0 = fastest"}
+    shutter_open: {value: 255, source: operator}
+  Mayans/BEAM230V2:
+    kind: spot
+    pt_speed_fast: {value: 0, source: operator, note: "pan/tilt speed channel is inverted, 0 = fastest"}
+    shutter_open: {value: 255, source: operator}
+  Mayans/BEAM230 V3:
+    kind: spot
+    pt_speed_fast: {value: 0, source: operator, note: "pan/tilt speed channel is inverted, 0 = fastest"}
+    shutter_open: {value: 255, source: operator}
+    roles:
+      color_wheel: {channel: 8, source: operator, note: "live-verified; ch5 is FOCUS"}
+  Mayans/WASH:
+    kind: wash
+    shutter_open: {value: 0, source: operator, note: "wash strobe channel is inverted, 0 = open"}
+  Mayans/Revolver Wash:
+    kind: wash
+  American DJ/VPar:
+    kind: par
+  Venue/ThinPAR 38:
+    kind: par
+  Venue/Tetra Bar:
+    kind: bar
+  Generic/Generic RGB:
+    kind: rgb
+  Chauvet/Swarm 5 FX:
+    kind: fx
+
+# Per-fixture facts, keyed by fixture ID.
+fixtures:
+  33:
+    kind: fog
+
+# Rules the compiler enforces.
+rules:
+  efx_max_phase_spread_deg: 180
+  dim_floor_pct: 15
+  shared_strobe_range: [51, 103]
+
+# Append-only log of learned facts (written by the feedback router).
+facts: []

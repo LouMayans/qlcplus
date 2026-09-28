@@ -58,3 +58,15 @@ build*
 !.claude/
 !.claude/memory/
 !.claude/memory/**
+
+# lightai (Python) local artifacts
+lightai/.venv/
+*.onnx
+*.pkl
+__pycache__/
+*.egg-info/
+.pytest_cache/
+
+# lightai: automatic show backups (git keeps the history) and test coverage data
+SaveFile/backups/
+.coverage

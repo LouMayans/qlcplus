@@ -1,0 +1,7 @@
+# Extra packages for `lightai train` and `lightai bench` (model export and fine-tuning).
+# On Windows the PyPI torch wheel is the CPU build, so no extra index is needed.
+-r requirements-runtime.txt
+torch>=2.4
+transformers>=4.44
+onnx>=1.16
+pytest>=8

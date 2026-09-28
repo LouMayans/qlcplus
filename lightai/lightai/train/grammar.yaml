@@ -1,0 +1,186 @@
+# Template grammar for training data. {slot} or {slot2} = a filler wrapped in [slot:...] markup;
+# <a|b|> = pick one literal alternative (an empty alternative makes it optional).
+# "n" = how many examples to draw from this template.
+create_look:
+  - {n: 120, t: "<|make |give me |i want |set up |build |create |>{rate} {color} {washes} {movement_nw}<| at {rate2}>"}
+  - {n: 60, t: "{color} {washes} {movement_nw}<| {rate}><| at {rate2}>"}
+  - {n: 50, t: "<make|have|get> the {washes} {movement_nw} <in |>{color}<| {rate}>"}
+  - {n: 60, t: "{direction_m} {color} {movement_nw} on the {target}<| {rate}>"}
+  - {n: 40, t: "{color} {movement_nw} on the {target} {direction_m}"}
+  - {n: 60, t: "a {fade1} {color} {movement} on the {target}"}
+  - {n: 40, t: "{fade1} {color} {movement} <across|on> the {target}<| at {intensity}>"}
+  - {n: 120, t: "<|make |give me |build |create |i want |set up |program |do >{rate} {color} {target} {movement}<| at {rate2}>"}
+  - {n: 120, t: "<make|have|get> the {target} {movement} {color}<| {rate}><| at {rate2}>"}
+  - {n: 100, t: "<give me|build|create|make|program|do|set up> a {color} {movement} on the {target}<| {rate}>"}
+  - {n: 100, t: "{color} {movement} on <the |>{target} at {rate}"}
+  - {n: 80, t: "<create|build|make|program> a {rate} {color} {movement} <look |>for the {target}"}
+  - {n: 80, t: "<i want|i need|let's have|can we get|could you make> {color} {target} {movement}<| {rate}>"}
+  - {n: 80, t: "<program|create|make> a {movement} in {color} on the {target} at {intensity}"}
+  - {n: 80, t: "{target} {movement} {color} {rate}"}
+  - {n: 60, t: "<make|put|set> <the |>{target} <to |in |>{color}<| at {intensity}>"}
+  - {n: 60, t: "{color} and {color2} {movement} on the {target}<| {rate}>"}
+  - {n: 60, t: "a {size} {color} {movement} on the {target}<| {rate}>"}
+  - {n: 50, t: "{color} {movement} on the {target} with a {fade}"}
+  - {n: 40, t: "<make|create|build> a {movement} on the {target} in {color} as an {priority}"}
+  - {n: 40, t: "{direction} {movement} on the {target} in {color}"}
+  - {n: 40, t: "<new look|new cue|new scene>: {color} {target} {movement} {rate}"}
+  - {n: 40, t: "{color} {movement} <across|through|over> <the |>{target}<| {rate}><| at {intensity}>"}
+  - {n: 30, t: "<make|create> a {movement} <scene |look |>for the {target}"}
+  - {n: 30, t: "{target} {color} {fade}"}
+  # --- iteration 4: round-2 language agent
+  # F1: "turn the <zone> <color>" is a new look (v5 reads 'turn the spots green' as update_look)
+  - {n: 80, t: "<turn|make|get|paint> <the |all the |>{target} {color}<| please| now| for me>"}
+  - {n: 40, t: "<turn|make> <the |>{target} {color} and {color2}"}
+  # F2: a movement verb opening the sentence is the effect ('strobe the spots')
+  - {n: 80, t: "{movement_verb} <the |all the |>{target}<| in {color}| {color}><| {rate}>"}
+  # two zones, two colors, joined by 'and' / commas
+  - {n: 60, t: "{target} {color}<,| and| and the> {target2} {color2}<| {movement_nw}><| {rate}>"}
+  - {n: 40, t: "{color} on <the |>{target} and {color2} on <the |>{target2}"}
+propose_look:
+  - {n: 60, t: "<hey |>make an assumption on {target} and <make it move|make it do something|show me|light it up>"}
+  - {n: 50, t: "<surprise me with|do something cool with|try something on|play around with|freestyle on|wing it on|improvise on|improvise something on> <the |>{target}"}
+  - {n: 50, t: "<show me what|let's see what> <the |>{target} can do"}
+  - {n: 40, t: "<guess|suggest|pick|choose> a look for <the |>{target}"}
+  - {n: 30, t: "<just |>try a look on <the |>{target} and i'll tell you if it's right"}
+  - {n: 30, t: "make <the |>{target} <move somehow|do something|dance>"}
+  - {n: 20, t: "test <out |>a {color} idea on <the |>{target}"}
+  - {n: 20, t: "<assume something for|take a guess with> <the |>{target} and show me"}
+probe_fixture:
+  - {n: 50, t: "what does {channel} on <the |>{target} do"}
+  - {n: 40, t: "<calibrate|probe|learn|identify|map the channels of|run a channel test on> <the |>{target}"}
+  - {n: 40, t: "<find|where is|help me find> {color} on <the |>{target}"}
+  - {n: 30, t: "which channel is the <dimmer|strobe|pan|tilt|color wheel> on <the |>{target}"}
+  - {n: 30, t: "<test|check|figure out what> {channel} <does |>on <the |>{target}"}
+  - {n: 20, t: "step through the color wheel on <the |>{target}"}
+feedback:
+  - {n: 60, t: "<that was|it was|it came out|looks|it looks|that's> {observed} not {color}"}
+  - {n: 50, t: "<i wanted|i asked for|should be> {color} but <got|it was|it came out> {observed}"}
+  - {n: 30, t: "<wrong color|the color is wrong|color's off><,|> <it's|it looks|it came out> {observed}"}
+  - {n: 30, t: "{observed} moved instead"}
+  - {n: 30, t: "{target} is <a|actually a|really a> {fixture_model}"}
+  - {n: 30, t: "<way |a little |a bit |>{rate_fb}"}
+  - {n: 30, t: "<way |a little |a bit |>{intensity_fb}"}
+  - {n: 20, t: "<make it|the movement is|it's|the circles are> {size_fb}"}
+  - {n: 20, t: "{color} looked {observed} on {target}"}
+  - {n: 20, t: "the {target} <stayed|went|were> {observed}"}
+  - {n: 60, t: "<perfect|that's right|yes exactly|looks good|nailed it|love it|great|correct|yes|good|awesome|spot on|that works|keep it|nope|no|wrong|not quite|that's not it|wrong fixture|wrong fixture moved|it didn't move|nothing happened|nothing moved|the wrong light moved|you misunderstood me|that's not what i meant|that's wrong|no that's off|not what i asked for>"}
+  # --- iteration 4: round-2 language agent
+  # both color roles in one sentence: [color] = what was asked, [observed] = what was seen
+  - {n: 50, t: "<i asked for|i wanted|should have been|i said|supposed to be> {color}<,| but> <it's|they're|it came out|we got|i got|it looks> {observed}"}
+  - {n: 40, t: "{observed} <instead of|not|rather than> {color}<| on {target}>"}
+  - {n: 30, t: "<more|way more> {observed} than {color}"}
+  - {n: 30, t: "the {color} <came out|is coming out|looks|looked|is showing|went> {observed}<| on {target}>"}
+  - {n: 20, t: "<i'm seeing|i see|it's showing|it came out|that looks> {observed}"}
+run_function:
+  - {n: 200, t: "<start|run|fire|play|go|turn on|trigger|kick off|launch|hit|bring up|put on|engage|can you start|please start|start up> <the |>{function_ref}"}
+stop_function:
+  - {n: 150, t: "<stop|turn off|end|cut|kill|switch off|drop|take down|please stop|stop the|shut off|fade out> {function_ref}"}
+stop_all:
+  - {n: 60, t: "<stop|clear|kill|reset|end|turn off|shut down> <everything|all functions|all the looks|all looks|whatever is running|it all|all running looks|all the chasers and scenes|every function|the whole show>"}
+  - {n: 20, t: "<clear the stage|stop it all|stop all|stop everything now|everything stop>"}
+blackout:
+  - {n: 80, t: "<blackout|black out|lights out|go dark|kill the lights|everything off|all off|blackout the room|cut to black|hit the kill|dark stage|total blackout|blackout now|kill all lights|go to black|lights off|full blackout|blackout please|kill it>"}
+blackout_release:
+  - {n: 60, t: "<release blackout|undo blackout|lights back on|end the blackout|bring the lights back|unblackout|cancel the kill|come back from black|stop the blackout|back to normal lights|release the kill|lights up again|out of blackout|restore the lights|blackout off>"}
+set_level:
+  - {n: 60, t: "<|set |put |bring |turn |dim |raise |pull >the {target} <to |at |up to |down to |>{intensity}"}
+  - {n: 40, t: "{target} <at|to|on> {intensity}"}
+  - {n: 30, t: "<grand master|master|gm|master dimmer> <at |to |>{intensity}"}
+  - {n: 30, t: "{fog} {onoff}"}
+  - {n: 20, t: "<give me|i want> {intensity} on <the |>{target}"}
+set_channel:
+  - {n: 60, t: "<set |put |make |>{channel} <on|of> <the |>{target} <to |at |>{value}"}
+  - {n: 40, t: "{target} {channel} <to |at |>{value}"}
+  - {n: 30, t: "<send|write> {value} to {channel} <on|of> <the |>{target}"}
+release:
+  - {n: 50, t: "<release|reset|give back|let go of|clear|drop the overrides on|free up> <the |>{target}"}
+  - {n: 40, t: "<release overrides|clear overrides|reset the simple desk|clear the manual levels|release everything|hand control back to the looks|drop all overrides|reset all overrides|release all channels|clear the desk>"}
+fixture_edit.rotate:
+  - {n: 60, t: "<rotate|turn|spin> <the |>{target} <by |>{angle}<| on the map| in the monitor| on the stage map|>"}
+  - {n: 50, t: "<hey |>{target} <needs to be|should be|has to be> rotated <by |>{angle}"}
+  - {n: 30, t: "<set|change> the rotation of <the |>{target} to {angle}"}
+  - {n: 30, t: "rotate <the |>{target} {angle} {direction_rot}"}
+  - {n: 20, t: "<the |>{target} is facing the wrong way<,|> rotate it {angle}"}
+  # --- iteration 4: round-2 language agent
+  # the rotation sense as the tagger sees it in real typing (two words, hyphenated, left/right)
+  - {n: 60, t: "<rotate|turn|spin> <the |>{target} {angle} {direction_rot2}"}
+  - {n: 40, t: "<rotate|turn|spin> <the |>{target} {direction_rot2} <by |>{angle}"}
+fixture_edit.move:
+  - {n: 60, t: "<move|shift|nudge|slide|drag|bump> <the |>{target} {distance} {direction}"}
+  - {n: 40, t: "<move|shift|nudge|slide|drag|bump> <the |>{target} {direction} <by |>{distance}"}
+  - {n: 30, t: "<the |>{target} should be {distance} further {direction}"}
+  - {n: 20, t: "<move|put> <the |>{target} {distance} <more |>to the {direction}"}
+  - {n: 60, t: "<move|shift|nudge|slide|bump> {target} {direction} {distance}"}
+  - {n: 30, t: "<move|shift|nudge> {target} {direction}"}
+fixture_edit.rename:
+  - {n: 60, t: "<rename|call|name|label> <the |>{target} <to |as |>{name}"}
+  - {n: 40, t: "<change the name of|rename> <the |>{target} to {name}"}
+  - {n: 20, t: "<the |>{target} should be <named|called> {name}"}
+query.functions:
+  - {n: 40, t: "<what looks do we have|list the chasers|what shows are there|how many scenes are there|list the efx|list all functions|what functions exist|show me the function list|what did you create today|list the ai looks|what scenes do we have|list every look>"}
+  - {n: 40, t: "<show me|find|list|do we have> <all |any |>{color} looks"}
+  - {n: 30, t: "<which functions use|what looks use|list the looks for> the {target}"}
+  - {n: 30, t: "<list every|do we have anything with|find|show me the> {movement} <functions|looks|>"}
+  - {n: 20, t: "search for {function_ref}"}
+query.fixtures:
+  - {n: 40, t: "<what fixtures do we have|show the rig|list the fixtures|what's patched on universe 1|what's patched on universe 2|how many fixtures are there|what lights do we have|describe the rig|list the patch>"}
+  - {n: 40, t: "<what is|where is|describe|what model is|what address is|tell me about> <the |>{target}<| on|>"}
+  - {n: 30, t: "<list|how many|which fixtures are|which lights are> <the |>{target}<| are there|>"}
+query.status:
+  - {n: 40, t: "<what's running|what is playing right now|status|what's on right now|anything running|which looks are active|show me what's live|current state|what's playing|what is live>"}
+  - {n: 40, t: "is <the |>{function_ref} <running|on|playing|active>"}
+set_bpm:
+  - {n: 80, t: "<bpm|set bpm to|tempo|tempo is|set the tempo to|change the bpm to|new tempo|we're at|the track is|the dj is playing|this song is> {bpm}"}
+update_look:
+  - {n: 60, t: "<make|set|turn> <the |>{function_ref_ai} {rate_upd}"}
+  - {n: 60, t: "<change|switch|set|make|turn> <the |>{function_ref_ai} <to |>{color}"}
+  - {n: 40, t: "<make|set> <the |>{function_ref_ai} {size_upd}"}
+  - {n: 40, t: "<make|set|turn> <the |>{function_ref_ai} {intensity_upd}"}
+  - {n: 40, t: "<update|change|edit> <the |>{function_ref_ai}<:|> {color} <and |>{rate_upd}"}
+  - {n: 30, t: "<the |>{function_ref_ai} <should be|needs to be> {rate_upd}"}
+  - {n: 30, t: "change the color of <the |>{function_ref_ai} to {color}"}
+  - {n: 20, t: "<give|put> <the |>{function_ref_ai} a {fade}"}
+  # --- iteration 4: round-2 language agent
+  # comparatives and speed verbs on a lightai look
+  - {n: 40, t: "{rate_verb} <the |>{function_ref_ai}"}
+  - {n: 40, t: "<make |>{function_ref_ai} <a bit |a lot |way |>{size_upd}"}
+  - {n: 40, t: "<make |>{function_ref_ai} <a bit |a little |>{intensity_upd}"}
+  - {n: 30, t: "<turn|switch|change|make> <the |>{function_ref_ai} {color}"}
+delete_look:
+  - {n: 80, t: "<delete|remove|get rid of|trash|drop|erase> <the |>{function_ref_ai}<| look| function| from the show>"}
+  - {n: 30, t: "<delete|remove> the look {function_ref_ai}"}
+  - {n: 20, t: "<we don't need|i don't need|no more> {function_ref_ai}<| anymore><, delete it|, remove it|>"}
+  - {n: 70, t: "<delete|remove|get rid of|trash|erase> <the |>{function_ref_any}<| look| function| from the show>"}
+  - {n: 30, t: "<delete|remove|erase> the <function|scene|chaser|efx|collection|look> <called |named |>{function_ref_any}"}
+add_widget:
+  - {n: 60, t: "<add|make|create|put|give me> a <|vc |console |virtual console >button <for|to fire|to start> <the |>{function_ref_any}"}
+  - {n: 40, t: "<put|add> <the |>{function_ref_any} <on|to> the <virtual console|console|vc|board>"}
+  - {n: 30, t: "<i want|i need> a <button|vc button|console button> for <the |>{function_ref_any}"}
+  # --- iteration 4: round-2 language agent
+  - {n: 30, t: "<make|add|create|i want|i need> a toggle <for|to fire|button for|on the console for> <the |>{function_ref_any}"}
+add_fixture:
+  - {n: 80, t: "<add|patch|plug in|install|set up> a<| new|nother> {lib_model}<| at {address}><| in {mode}><| called {name}| named {name}>"}
+  - {n: 40, t: "we <got|bought|have> a new {lib_model}<, add it|, patch it|> <at {address}|>"}
+  - {n: 30, t: "patch {lib_model} <at|on> {address}"}
+  - {n: 30, t: "<add|new> fixture<:|> {lib_model} <named|called|as> {name}<| at {address}>"}
+none:
+  - {n: 80, t: "<is|are> the {place} <open|closed|still open|working|busy|full|ready|clean|locked|on fire|packed|empty>"}
+  - {n: 40, t: "is it <raining|snowing|cold|hot|late|busy|crowded|windy|raining outside|cold outside> <tonight|today|>"}
+  - {n: 60, t: "what's the {info} <of the room|of the club|tonight|for friday|for the vip room|>"}
+  - {n: 50, t: "how many <people|guests|drinks|tables|bottles|tickets|staff> <are inside|did we sell|are left|are booked|are working|>"}
+  - {n: 50, t: "<play|queue|skip|turn up|turn down|mute|lower|pause> <the next song|some house music|drake|the track|the bass|the music|the mic|the volume|the speakers>"}
+  - {n: 40, t: "<who is|who's> <the dj|working|on the door|the manager|in the booth|on the guest list|bartending> <tonight|>"}
+  - {n: 40, t: "<order|restock|buy|get> <more ice|vodka|limes|napkins|cups|a pizza|water|champagne|straws>"}
+  - {n: 40, t: "<call|text|email|message> <the manager|security|the promoter|an uber|the owner|the dj|the landlord>"}
+  - {n: 50, t: "<add|put> <me|my friend|two people|a table|this guy|her> <to|on> the <guest list|vip list|reservation|waitlist|bar tab>"}
+  - {n: 40, t: "<delete|remove|erase|get rid of> <that email|the old posters|the voicemail|the playlist|this photo|the reservation|the song>"}
+  - {n: 30, t: "<make|create|update|change> <a reservation|the playlist|the schedule|the menu|a new drink special|the door list|my password>"}
+  - {n: 30, t: "<patch|install|plug in|set up> the <speaker|mixer|turntable|microphone|printer|wifi router|pos terminal|fridge>"}
+  - {n: 120, t: "<what's the weather|play some music|order more vodka|hello|tell me a joke|how are you|open the door|call the manager|what time is it|turn up the volume|who is the dj tonight|send an email to the promoter|how much is the cover charge|book a table for four|thanks|ok|never mind|cancel|what can you do|asdfgh|hi there|good morning|is the bar open|where are the bathrooms|lower the music|skip this song|how many people are inside|who's on the guest list|restock the ice|what's the wifi password|charge my phone|call an uber|order pizza|set an alarm|close the doors at 4|play the next track|mute the mic|what's the date|remind me tomorrow|yo|test|hmm|uh|whatever>"}
+  # --- iteration 4: round-2 language agent
+  # chatter with numbers / percentages / venue words must not become a level, a blackout or feedback
+  - {n: 80, t: "<the|my> <radio|walkie|ice machine|vodka stock|tip jar|keg|coat check|guest wifi> is <at|on|down to> {pct}"}
+  - {n: 60, t: "<the opener|the headliner|the line outside|the new bartender|the promoter|the crowd tonight> <was late|is huge|is packed|looks tired|is on at one|wants a drink|is going nuts>"}
+  - {n: 40, t: "<turn|put|set> the <tv|aircon|heater|fridge|mic|hand dryer> <up|down|off|on|at {pct}>"}
+  - {n: 40, t: "<stop|kill|cut|release|clear> the <ticket sales|coat check line|guest list queue|playlist|tab for table 4>"}
+  - {n: 30, t: "<go dark|black out|kill the lights> <on the group chat|at home|in the office|in the staff room>"}

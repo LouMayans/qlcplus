@@ -1,0 +1,576 @@
+# Hand-written seed utterances: <intent> | <text with [slot:span] markup>
+# Spans exclude leading "the". Keep one sentence per line. Lines starting with # are ignored.
+create_look | [rate:slow] [color:blue] [target:wash] [movement:breathing] at [rate:60 bpm]
+create_look | make the [target:washes] [movement:breathe] [color:blue] at [rate:60 bpm]
+create_look | give me a [color:red] [movement:wash] on the [target:spots]
+create_look | build a [rate:slow] [color:pink] [movement:pulse] on the [target:pars]
+create_look | [color:green] [movement:circles] on the [target:spots] at [rate:128 bpm]
+create_look | create a [movement:ballyhoo] in [color:white] with all the [target:movers]
+create_look | i want the [target:beams] doing [size:big] [color:white] [movement:sweeps]
+create_look | new look: [color:purple] [target:washes] [movement:breathing] [rate:slowly]
+create_look | program a [color:red] and [color:blue] [movement:chase] on the [target:pars] at [rate:126]
+create_look | make a [movement:color chase] with [color:pink] [color:blue] and [color:white] on [target:everything]
+create_look | [target:spots] [movement:strobe] [rate:fast] in [color:white]
+create_look | set up a [rate:fast] [color:white] [movement:strobe] on [target:all lights] as an [priority:override]
+create_look | [movement:running light] on the [target:spots] in [color:blue] [rate:fast]
+create_look | make the [target:beams] [movement:bounce] left to right in [color:red]
+create_look | [color:yellow] [movement:figure 8] on the [target:spots] [size:small]
+create_look | a [movement:wave] of [color:green] [movement:circles] across the [target:beams]
+create_look | [color:warm white] [movement:wash] on the [target:pars] at [intensity:50%]
+create_look | make [target:everything] [color:blue] with a [fade:3 second fade]
+create_look | turn the [target:tetras] [color:orange] and have them [movement:breathe] [rate:slow]
+create_look | a [rate:super slow] [color:cyan] [movement:breath] on the [target:led walls]
+create_look | [movement:circles] [color:pink] [target:spots] [size:tight] [rate:fast]
+create_look | put a [color:red] [movement:ballyhoo] on the [target:beams] for the drop
+create_look | [target:stage left] [color:blue] [target:stage right] [color:red]
+create_look | the [target:washes] should [movement:pulse] [color:magenta] at [rate:124 bpm]
+create_look | make me a [color:white] [movement:sweep] with the [target:spots] [rate:half time]
+create_look | a [fade:snappy] [color:red] look on [target:everything]
+create_look | [color:blue] [target:spots] [color:pink] [target:washes] [movement:static]
+create_look | create [color:amber] [movement:breathing] on the [target:columns] at [rate:90 bpm]
+create_look | build a [priority:vip] [color:white] look on [target:spot #2]
+create_look | [color:purple] [movement:ripple] through the [target:spots] [rate:slow] [size:wide]
+create_look | [direction:mirrored] [movement:circles] on the [target:spots] in [color:green]
+create_look | [color:red] [movement:circles] on the [target:spots] [direction:mirrored]
+create_look | [rate:slow] [color:blue] [movement:breathing] on [target:fixture 8]
+create_look | give the [target:tetra bars] a [color:pink] [movement:chase] [rate:every beat]
+create_look | [color:white] [movement:strobe] on the [target:washes] [rate:medium] at [priority:p20]
+create_look | no wait, a [color:red] [movement:wash] on the [target:washes]
+create_look | could you make the [target:panels] [color:cool white] at [intensity:full]
+create_look | [color:blue] [movement:wash] across [target:all] at [intensity:40 percent]
+create_look | i need a [rate:chill] [color:lavender] [movement:breathe] on the [target:walls] for the lounge
+create_look | [color:red] [movement:circles] [rate:every 2 seconds] on the [target:spots]
+create_look | [target:beams] [movement:search] [color:white] [size:huge] [rate:fast]
+create_look | [target:movers] doing [color:blue] [movement:figure eights]
+create_look | make a [movement:blackout] scene for the [target:washes]
+create_look | create a [movement:kill] for the [target:spots] at [priority:p100]
+create_look | [color:orange] and [color:pink] [movement:alternating] on the [target:pars] [rate:double time]
+create_look | [color:teal] [target:led walls] with a [fade:smooth fade]
+create_look | [rate:fast] [color:red] [movement:chase] on the [target:tetras] at [rate:130 bpm]
+create_look | set the [target:spots] to [color:green] [movement:solid] at [intensity:half]
+create_look | new [movement:strobe] look [color:white] [target:everything] [rate:insane]
+create_look | [color:blue] and [color:white] [movement:color chase] [target:spots and washes] [rate:128 bpm]
+create_look | [color:pink] [target:washes] [movement:breathing] [rate:slow] with a [fade:long fade]
+create_look | do a [color:uv] [movement:wash] on the [target:pars] for the black light set
+create_look | [target:beam 5] [color:red] [movement:circle] [size:small] [rate:slow]
+create_look | [color:gold] [movement:sweep] on the [target:spots] back and forth [rate:slow]
+create_look | [color:deep red] [movement:pulse] [target:everything] at [rate:one twenty eight]
+propose_look | make an assumption on [target:fixture 5] and make it move
+propose_look | hey make an assumption on [target:fixture 5] and make it do something
+propose_look | surprise me with the [target:washes]
+propose_look | do something cool with [target:spot #3]
+propose_look | try something on the [target:beams]
+propose_look | show me what [target:fixture 31] can do
+propose_look | guess a look for the [target:pars]
+propose_look | improvise something on the [target:tetras]
+propose_look | make [target:fixture 12] move somehow
+propose_look | just try a look on [target:wash 2] and i'll tell you if it's right
+propose_look | you pick something for the [target:led walls]
+propose_look | suggest a look for [target:stage left]
+propose_look | play around with [target:fixture 0]
+propose_look | do whatever you think fits on the [target:spots]
+propose_look | test out a [color:red] idea on [target:fixture 7]
+propose_look | assume something for [target:beam 9] and show me
+propose_look | take a guess and light up the [target:revolver]
+propose_look | freestyle on the [target:movers]
+propose_look | what would you do with the [target:columns]? show me
+propose_look | wing it on [target:fixture 34]
+probe_fixture | what does [channel:channel 9] on [target:fixture 34] do
+probe_fixture | calibrate [target:fixture 34]
+probe_fixture | find [color:blue] on [target:fixture 35]
+probe_fixture | which channel is the dimmer on [target:wash 1]
+probe_fixture | test [channel:channel 3] on [target:fixture 19]
+probe_fixture | probe the [target:revolver]
+probe_fixture | check the color wheel on [target:fixture 0]
+probe_fixture | figure out what [channel:ch 6] does on [target:spot #1]
+probe_fixture | help me find the [color:white] slot on the [target:v3 beams]
+probe_fixture | map the channels of [target:fixture 26]
+probe_fixture | learn [target:fixture 30]
+probe_fixture | step through the color wheel on [target:fixture 12]
+probe_fixture | where is [color:pink] on [target:beam 14]
+probe_fixture | run a channel test on [target:fixture 31]
+probe_fixture | identify [target:fixture 21]
+feedback | that was [observed:pink] not [color:blue]
+feedback | wrong color it came out [observed:green]
+feedback | i wanted [color:red] but got [observed:orange]
+feedback | the color is wrong
+feedback | no that's [observed:purple]
+feedback | wrong fixture
+feedback | wrong fixture moved
+feedback | [observed:fixture 6] moved instead
+feedback | it was [observed:the one next to it]
+feedback | [rate:too fast]
+feedback | way [rate:too slow]
+feedback | slow it down a bit
+feedback | speed it up
+feedback | [intensity:too dim]
+feedback | [intensity:too bright]
+feedback | make it [size:bigger]
+feedback | the circles are [size:too small]
+feedback | [target:fixture 34] is a [fixture_model:v3]
+feedback | [target:fixture 0] is actually a [fixture_model:beam230 v2]
+feedback | it didn't move
+feedback | [observed:nothing] happened
+feedback | perfect
+feedback | that's right
+feedback | yes exactly
+feedback | looks good
+feedback | nailed it
+feedback | nope
+feedback | that's not what i meant
+feedback | you misunderstood me
+feedback | close but the color is off it looks [observed:white]
+feedback | the [target:washes] stayed [observed:dark]
+feedback | only half the [target:spots] lit up
+feedback | good but [rate:a little faster]
+feedback | love it keep it
+feedback | [color:blue] looked [observed:pink] on [target:fixture 5]
+run_function | start [function_ref:auto chaser show 3]
+run_function | run [function_ref:all spotlight color red p20]
+run_function | fire [function_ref:default scene club 1]
+run_function | play [function_ref:medium spinning flashing fast white]
+run_function | go [function_ref:small circular spin on the floor]
+run_function | turn on [function_ref:fog machine]
+run_function | trigger [function_ref:blue washes breathe 60bpm]
+run_function | kick off [function_ref:auto chaser show 7]
+run_function | launch [function_ref:color chasers]
+run_function | can you start [function_ref:spot vip 2]
+run_function | hit [function_ref:all lights red]
+run_function | bring up [function_ref:default scene club 1]
+run_function | start the [function_ref:red ballyhoo]
+run_function | put on [function_ref:auto chaser show 5]
+run_function | engage [function_ref:all spotlight color white p20]
+stop_function | stop [function_ref:auto chaser show 3]
+stop_function | turn off [function_ref:fog machine]
+stop_function | end [function_ref:color chasers]
+stop_function | cut [function_ref:all lights red]
+stop_function | stop the [function_ref:blue washes breathe 60bpm]
+stop_function | kill [function_ref:auto chaser show 5]
+stop_function | switch off [function_ref:spot vip 2]
+stop_function | drop [function_ref:small circular spin on the floor]
+stop_function | please stop [function_ref:medium spinning flashing fast white]
+stop_function | take down [function_ref:default scene club 1]
+stop_all | stop everything
+stop_all | stop all functions
+stop_all | clear the stage
+stop_all | stop all looks
+stop_all | clear everything
+stop_all | stop whatever is running
+stop_all | reset all running looks
+stop_all | turn off all the functions
+stop_all | kill all the chasers and scenes
+stop_all | stop it all
+blackout | blackout
+blackout | black out
+blackout | lights out
+blackout | go dark
+blackout | kill the lights
+blackout | everything off now
+blackout | all off
+blackout | blackout the room
+blackout | cut to black
+blackout | hit the kill
+blackout | dark stage
+blackout | total blackout now
+blackout_release | release blackout
+blackout_release | undo blackout
+blackout_release | lights back on
+blackout_release | end the blackout
+blackout_release | bring the lights back
+blackout_release | unblackout
+blackout_release | cancel the kill
+blackout_release | come back from black
+blackout_release | stop the blackout
+blackout_release | back to normal lights
+set_level | [target:washes] at [intensity:50%]
+set_level | set the [target:spots] to [intensity:full]
+set_level | dim the [target:pars] to [intensity:20 percent]
+set_level | grand master [intensity:80%]
+set_level | master at [intensity:half]
+set_level | bring the [target:washes] up to [intensity:full]
+set_level | [target:fog] at [intensity:40%]
+set_level | [target:fog] [intensity:on]
+set_level | [target:fog] [intensity:off]
+set_level | turn the [target:led walls] down to [intensity:10%]
+set_level | [target:fixture 16] [intensity:full]
+set_level | [target:everything] at [intensity:30 percent]
+set_level | put the [target:tetras] at [intensity:three quarters]
+set_level | [target:spots] [intensity:dim]
+set_level | level of the [target:columns] to [intensity:60%]
+set_level | pull the [target:panels] down to [intensity:zero]
+set_level | give me [intensity:full] on [target:stage left]
+set_level | [target:smoke] [intensity:on] please
+set_level | [target:haze] at [intensity:25%]
+set_level | raise [target:wash 3] to [intensity:70%]
+set_channel | set [channel:channel 9] on [target:fixture 34] to [value:128]
+set_channel | [target:fixture 19] [channel:channel 5] to [value:255]
+set_channel | put [channel:channel 2] of [target:wash 1] at [value:64]
+set_channel | [channel:ch 8] on [target:fixture 12] [value:88]
+set_channel | send [value:200] to [channel:channel 1] on [target:fixture 33]
+set_channel | set [target:fixture 31] [channel:channel 10] to [value:full]
+set_channel | [channel:channel 7] [target:fixture 35] [value:50%]
+set_channel | make [channel:channel 4] on [target:fixture 16] [value:0]
+set_channel | raw value [value:99] on [channel:channel 9] of [target:fixture 35]
+set_channel | set [channel:ch 1] to [value:120] on [target:beam 1]
+release | release [target:washes]
+release | release overrides
+release | reset the [target:spots]
+release | give back the [target:pars]
+release | clear overrides
+release | reset the simple desk
+release | release [target:fixture 34]
+release | let go of the [target:fog]
+release | clear the manual levels
+release | release everything
+release | drop the overrides on [target:stage left]
+release | hand control back to the looks
+fixture_edit.rotate | rotate [target:fixture 3] [angle:90 degrees]
+fixture_edit.rotate | hey [target:fixture x] needs to be rotated [angle:90 degrees]
+fixture_edit.rotate | [target:fixture 3] needs to be rotated [angle:90 degrees]
+fixture_edit.rotate | turn [target:spot #4] by [angle:45 degrees] on the map
+fixture_edit.rotate | rotate [target:wash 2] [angle:180]
+fixture_edit.rotate | set the rotation of [target:fixture 8] to [angle:270 degrees]
+fixture_edit.rotate | rotate [target:fixture 12] [angle:a quarter turn] [direction:clockwise]
+fixture_edit.rotate | flip [target:fixture 34] [angle:upside down] in the monitor
+fixture_edit.rotate | [target:beam 7] is facing the wrong way rotate it [angle:180 degrees]
+fixture_edit.rotate | rotate the [target:revolver] to [angle:0 degrees]
+fixture_edit.rotate | spin [target:fixture 9] [angle:90°] [direction:counterclockwise] on the stage map
+fixture_edit.rotate | [target:all spots] should be rotated [angle:90 degrees]
+fixture_edit.move | move [target:fixture 3] [distance:50 cm] [direction:left]
+fixture_edit.move | shift [target:wash 1] [direction:right] by [distance:1 meter]
+fixture_edit.move | nudge [target:fixture 12] [direction:up] [distance:a bit]
+fixture_edit.move | [target:spot #6] should be [distance:2 feet] further [direction:down]
+fixture_edit.move | move [target:fixture 34] [direction:left] [distance:300 mm] on the map
+fixture_edit.move | drag the [target:fog] [direction:right] [distance:1.5 m]
+fixture_edit.move | slide [target:fixture 19] [direction:down] [distance:40 cm]
+fixture_edit.move | move [target:beam 3] [distance:20 centimeters] to the [direction:right]
+fixture_edit.move | put [target:fixture 21] [distance:1 meter] more to the [direction:left]
+fixture_edit.move | bump [target:wash 4] [direction:up] [distance:half a meter]
+fixture_edit.rename | rename [target:fixture 3] to [name:Stage Left Spot]
+fixture_edit.rename | call [target:fixture 21] [name:DJ Booth Wall]
+fixture_edit.rename | [target:wash 2] should be named [name:Roof Wash West]
+fixture_edit.rename | change the name of [target:fixture 33] to [name:Hazer]
+fixture_edit.rename | rename [target:spot #1] as [name:Center Beam]
+fixture_edit.rename | name [target:fixture 27] [name:Ladies Room RGB]
+fixture_edit.rename | label [target:fixture 16] as [name:Left Column]
+fixture_edit.rename | rename the [target:revolver] to [name:Roof Revolver]
+query.functions | what looks do we have
+query.functions | list the chasers
+query.functions | show me all [color:blue] looks
+query.functions | which functions use the [target:washes]
+query.functions | find looks with [color:pink]
+query.functions | what shows are there
+query.functions | list every [movement:strobe] function
+query.functions | do we have anything with [movement:circles]
+query.functions | what did you create today
+query.functions | search for [function_ref:auto chaser]
+query.functions | how many scenes are there
+query.functions | list the efx
+query.fixtures | what fixtures do we have
+query.fixtures | list the [target:spots]
+query.fixtures | which fixtures are [target:washes]
+query.fixtures | what is [target:fixture 31]
+query.fixtures | where is [target:wash 3]
+query.fixtures | what's patched on universe 2
+query.fixtures | what model is [target:fixture 34]
+query.fixtures | how many [target:beams] are there
+query.fixtures | show the rig
+query.fixtures | what address is [target:fixture 19] on
+query.fixtures | describe the [target:revolver]
+query.fixtures | which lights are on [target:stage left]
+query.status | what's running
+query.status | what is playing right now
+query.status | is [function_ref:auto chaser show 3] running
+query.status | status
+query.status | what's on right now
+query.status | anything running
+query.status | which looks are active
+query.status | show me what's live
+query.status | is the [function_ref:fog machine] on
+query.status | current state
+set_bpm | bpm [rate:128]
+set_bpm | set bpm to [rate:124]
+set_bpm | tempo [rate:126]
+set_bpm | the track is [rate:130 bpm]
+set_bpm | we're at [rate:122]
+set_bpm | the dj is playing [rate:140]
+set_bpm | tempo is [rate:one twenty eight]
+set_bpm | change the bpm to [rate:100]
+set_bpm | new tempo [rate:174]
+set_bpm | this song is [rate:95 bpm]
+none | what's the weather
+none | play some music
+none | order more vodka
+none | hello
+none | tell me a joke
+none | how are you
+none | open the door
+none | call the manager
+none | what time is it
+none | turn up the volume
+none | who is the dj tonight
+none | send an email to the promoter
+none | how much is the cover charge
+none | book a table for four
+none | thanks
+none | ok
+none | never mind
+none | cancel
+none | what can you do
+none | asdfgh
+update_look | make the [function_ref:blue wash breathe 60bpm] [rate:faster]
+update_look | change [function_ref:green spots circles 128bpm] to [color:red]
+update_look | [function_ref:pink pars color chase] should be [rate:slower]
+update_look | make [function_ref:white spots sweep] [size:smaller]
+update_look | turn [function_ref:red washes wash] down to [intensity:50%]
+update_look | update [function_ref:blue washes breathe] to [color:purple] at [rate:124 bpm]
+update_look | set [function_ref:orange tetras strobe fast p20] to [rate:slow]
+update_look | make [function_ref:white movers ballyhoo] [size:bigger]
+update_look | give [function_ref:cyan spots circle wave] a [fade:2 second fade]
+update_look | change the color of [function_ref:white movers ballyhoo] to [color:blue]
+update_look | the [function_ref:green pars wash] should be [color:amber]
+update_look | speed up [function_ref:red spots circles 124bpm] to [rate:130 bpm]
+update_look | make [function_ref:purple washes breathe slow] [intensity:brighter]
+update_look | switch [function_ref:blue/pink pars color chase 128bpm] to [color:red] and [color:white]
+update_look | [function_ref:yellow spots figure 8] needs to be [rate:faster] and [size:wider]
+delete_look | delete [function_ref:blue wash breathe 60bpm]
+delete_look | remove the [function_ref:green spots circles] look
+delete_look | get rid of [function_ref:pink pars color chase]
+delete_look | trash [function_ref:white spots run fast]
+delete_look | delete the look [function_ref:red washes wash]
+delete_look | we don't need [function_ref:orange tetras strobe fast p20] anymore delete it
+delete_look | remove [function_ref:cyan spots circle wave] from the show
+delete_look | erase [function_ref:white movers ballyhoo]
+add_widget | add a button for [function_ref:blue wash breathe 60bpm]
+add_widget | make a button for [function_ref:auto chaser show 3]
+add_widget | put [function_ref:green spots circles] on the virtual console
+add_widget | give me a button for [function_ref:default scene club 1]
+add_widget | add [function_ref:pink pars color chase] to the console
+add_widget | i need a console button for [function_ref:fog machine]
+add_widget | create a vc button for [function_ref:white spots sweep]
+add_widget | add a button to fire [function_ref:red spots circles 128bpm]
+add_fixture | add a [fixture_model:chauvet intimidator spot 260] at [address:universe 2 address 150]
+add_fixture | patch a [fixture_model:betopper lf2405] called [name:Bar Wash] at [address:dmx 289]
+add_fixture | add a new [fixture_model:martin mac aura] in [mode:14 channel mode]
+add_fixture | patch [fixture_model:adj vizi beam 5rx] at [address:2.200]
+add_fixture | we got a new [fixture_model:chauvet slimpar pro h usb] add it at [address:universe 2 dmx 300]
+add_fixture | add fixture [fixture_model:generic rgb] named [name:Bar Back Light]
+add_fixture | plug in a [fixture_model:betopper l1015] at [address:u1 address 300] in [mode:16 channel]
+add_fixture | install a [fixture_model:chauvet obey 70] at [address:universe 1 address 400]
+add_fixture | add another [fixture_model:venue thinpar 38] as [name:Stage Front Par]
+add_fixture | new fixture: [fixture_model:american dj vpar] at [address:dmx 70]
+
+# --- iteration 3: paraphrases proposed by the NLU validation agent (validated: markup, intents, slots, no duplicates)
+create_look | [movement:pulse] the [target:pars] [color:purple]
+create_look | [movement:strobe] the [target:washes] [color:white] [rate:fast]
+create_look | [movement:sweep] the [target:spots] in [color:amber] [rate:slowly]
+create_look | [movement:circle] the [target:beams] in [color:green] at [rate:126 bpm]
+create_look | [movement:breathe] the [target:led walls] [color:teal] [rate:every 4 seconds]
+create_look | [movement:chase] the [target:tetras] [color:pink] and [color:white]
+create_look | [movement:spin] the [target:movers] in [color:cyan]
+create_look | [movement:swap] the [target:columns] between [color:red] and [color:blue] [rate:every 2 seconds]
+create_look | the [target:spots] should [movement:sweep] in [color:yellow]
+create_look | the [target:pars] should [movement:pulse] [color:orange] at [rate:120]
+create_look | [movement:flash] the [target:panels] [color:white] [rate:quick]
+create_look | get the [target:washes] [movement:breathing] [color:red] and [rate:slow]
+create_look | turn the [target:washes] [color:magenta]
+create_look | turn [target:fixture 6] [color:yellow]
+create_look | make [target:spot 2] and [target:spot 3] [color:blue]
+create_look | [target:fixture 9] [color:pink]
+create_look | [color:green] on [target:fixture 12]
+create_look | [target:beam 11] [color:red] please
+create_look | [target:fourth spot from the right] [color:red]
+create_look | [target:leftmost spot] in [color:white]
+create_look | [target:rightmost wash] [color:lavender]
+create_look | [target:3rd spot from left] in [color:orange]
+create_look | [priority:priority 30] [color:blue] [movement:wash] on [target:stage left]
+create_look | [color:red] [movement:strobe] on the [target:tetras] [priority:on top of everything]
+create_look | [target:stage right] [color:green] and [target:stage left] [color:purple]
+create_look | [color:white] on the [target:spots] and [color:blue] on the [target:washes]
+create_look | make the [target:rig] [color:blue]
+create_look | paint the [target:room] [color:red]
+create_look | make the [target:left] [color:pink]
+create_look | [target:fixture five] [color:blue]
+create_look | [target:wash two] [color:red] at [intensity:half]
+create_look | [target:spots 5 to 8] [color:purple] [movement:breathing]
+create_look | [color:red] [movement:circles] [rate:every 2s] on the [target:spots]
+set_level | bring the [target:pars] [intensity:down a little]
+set_level | take the [target:pars] [intensity:down a touch]
+set_level | [target:spots] [intensity:up a little]
+set_level | make the [target:tetras] [intensity:brighter]
+set_level | make the [target:led walls] [intensity:dimmer]
+set_level | [target:tetras] to [intensity:60]
+set_level | [target:fixture 12] at [intensity:100]
+set_level | gm [intensity:70]
+set_level | [target:pars] at [intensity:sixty five percent]
+set_level | [target:wash three] at [intensity:full]
+set_level | [intensity:kill] the [target:haze]
+set_level | [target:fog] [intensity:off] right now
+set_level | turn the [target:smoke] [intensity:off]
+set_level | turn [intensity:off] the [target:fog machine]
+set_level | [target:haze] [intensity:on] for the drop
+set_channel | [target:fixture 20] [channel:channel three] to [value:two hundred]
+set_channel | set [channel:channel 2] of [target:fixture 5] to [value:one hundred and twenty]
+set_channel | make [channel:channel 6] on [target:fixture 13] equal [value:90]
+set_channel | [channel:channel 1] of [target:wash 4] at [value:half]
+set_channel | raw dmx [value:150] on [channel:channel 4] of [target:fixture 16]
+blackout | take everything to black
+blackout | dark now
+blackout | shut all the lights off
+blackout | give me a blackout
+blackout | cut the lights
+blackout | full kill
+blackout | darkness please
+blackout | blackout on the drop
+blackout | kill it all
+blackout | blackout everything in the club
+blackout_release | bring them back
+blackout_release | unblackout the room
+blackout_release | lights back up
+blackout_release | blackout off, bring it back
+blackout_release | lift the kill
+blackout_release | release the kill scene
+stop_all | clear everything out
+stop_all | stop all now
+stop_all | kill every chaser and every efx
+release | wipe the overrides
+release | undo all my manual levels
+release | stop overriding the [target:washes]
+release | hand the [target:spots] back to the show
+release | let the programmed looks take over
+query.functions | what chasers are in the show
+query.functions | how many functions do we have
+query.functions | which efx do we have
+query.functions | list every sequence
+query.functions | show me all the scenes
+query.functions | what have we got with [movement:circles]
+query.fixtures | how many [target:washes] have we got
+query.fixtures | what is patched on universe two
+query.fixtures | give me the fixture list
+query.status | anything running right now?
+query.status | status check
+query.status | is [function_ref:spot vip 4] active?
+query.status | is the [function_ref:fog machine] running rn
+feedback | love it
+feedback | faster please
+feedback | not bad at all
+feedback | wrong fixture came on
+feedback | that isn't what i asked for
+feedback | that was the wrong colour, it was [observed:orange]
+fixture_edit.rotate | flip [target:wash 2] [angle:upside down]
+fixture_edit.rotate | rotate [target:fixture 12] by [angle:minus 45]
+fixture_edit.rotate | turn [target:spot 6] [direction:left] [angle:30 degrees]
+fixture_edit.rotate | rotate [target:fixture 4] [angle:three quarters of a turn]
+fixture_edit.rotate | rotate [target:fixture 2] [angle:90 degrees] [direction:counterclockwise]
+fixture_edit.move | nudge the [target:fog] [direction:up] [distance:a little]
+fixture_edit.move | move [target:fixture 7] [distance:half a meter] [direction:right]
+fixture_edit.rename | name [target:fixture 23] [name:Truss Panel West]
+fixture_edit.rename | call [target:fixture 17] [name:right column vpar]
+propose_look | go wild on the [target:washes]
+propose_look | whatever you like on the [target:pars]
+propose_look | surprise me on the [target:led walls]
+propose_look | make [target:fixture 12] move around, your call
+propose_look | make an assumption on [target:fixture 7] and make it move and do something on it
+probe_fixture | test [target:fixture 30]
+probe_fixture | what's [channel:channel 7] on [target:fixture 5] for
+set_bpm | it's a [rate:172] dnb set
+set_bpm | the kick is [rate:every half second]
+set_bpm | slow it down to [rate:95 bpm]
+none | queue up some house
+none | open youtube
+none | the bar is out of ice
+none | lol ok
+
+# --- iteration 4: round-2 language agent (turn+color, movement verbs, rotation sense, two-role color feedback,
+#     chatter with % / venue words, update comparatives, color-named functions, toggles, queries, blackout wording)
+create_look | turn the [target:columns] [color:purple]
+create_look | turn the [target:stage pars] [color:red]
+create_look | turn [target:wash 2] [color:teal]
+create_look | turn [target:everything] [color:amber]
+create_look | turn the [target:panels] [color:cool white]
+create_look | turn the [target:center truss] [color:magenta]
+create_look | turn [target:fixture 12] [color:green] please
+create_look | turn the [target:movers] [color:lavender] and [color:white]
+create_look | can you turn the [target:revolver] [color:blue]
+create_look | turn the [target:bathroom light] [color:pink]
+update_look | turn the [function_ref:amber columns breathe slow] [color:teal]
+update_look | turn [function_ref:red spots circles 128bpm] [color:blue]
+update_look | switch [function_ref:green tetras wash] to [color:purple]
+create_look | [movement:strobe] the [target:columns] [color:red]
+create_look | [movement:flash] the [target:panels]
+create_look | [movement:sweep] the [target:movers] [rate:slow]
+create_look | [movement:pulse] [target:wash 3] in [color:green]
+create_look | [movement:chase] the [target:led walls] in [color:blue] and [color:white]
+create_look | [movement:strobe] [target:beam 6] [rate:fast]
+create_look | [movement:circle] the [target:washes] in [color:orange]
+fixture_edit.rotate | give [target:wash 3] a [angle:45 degree] turn [direction:counter clockwise]
+fixture_edit.rotate | turn [target:wash 4] [direction:anti-clockwise] by [angle:90]
+fixture_edit.rotate | rotate [target:spot 9] [angle:30 degrees] to the [direction:left]
+fixture_edit.rotate | rotate [target:beam 2] [direction:left] [angle:15 degrees]
+fixture_edit.rotate | spin [target:fixture 35] [direction:counter-clockwise] [angle:180 degrees]
+fixture_edit.rotate | rotate the [target:washes] [angle:a quarter turn] [direction:anti clockwise]
+fixture_edit.rotate | rotate [target:fixture 6] [angle:20 degrees] to the [direction:right]
+fixture_edit.rotate | [target:spot 13] needs [angle:ten degrees] [direction:counter clockwise]
+feedback | i asked for [color:amber] but it's [observed:orange]
+feedback | [observed:lavender] instead of [color:purple]
+feedback | the [color:cyan] is showing [observed:white] on [target:beam 6]
+feedback | should have been [color:red], came out [observed:magenta]
+feedback | more [observed:green] than [color:teal] on the [target:panels]
+feedback | the [color:uv] came out [observed:blue]
+feedback | im getting [observed:yellow] not [color:amber]
+feedback | wanted [color:pink] but [target:wash 3] went [observed:red]
+feedback | that looks [observed:white] to me, i said [color:cool white]
+feedback | i see [observed:orange]
+none | the ice machine is at 10 percent
+none | my radio battery is at 20%
+none | the club is at full capacity
+none | the new single drops at midnight
+none | dj wants another red bull
+none | the crowd is going crazy right now
+none | turn the music down a notch
+none | the bass drop was huge
+none | that set was fire
+none | stock is at half on the vodka
+none | the door guy says it's pitch black outside
+none | put the game on the tv at 50% volume
+none | the lighting guy is off tomorrow
+none | who's doing lights on friday
+update_look | make the [function_ref:amber columns breathe slow] [size:wider]
+update_look | [function_ref:cyan spots sweep fast] a bit [intensity:dimmer]
+update_look | [rate:speed up] the [function_ref:purple movers ballyhoo medium]
+update_look | [rate:slow down] [function_ref:red spots circles 128bpm]
+update_look | make [function_ref:green tetras wash] [intensity:brighter]
+update_look | [function_ref:blue wash breathe 60bpm] should be [size:smaller]
+update_look | [function_ref:white everything strobe fast] needs to be [rate:quicker]
+run_function | start [function_ref:all lights blac blue]
+run_function | fire [function_ref:spot 5 blue]
+run_function | run [function_ref:all spots blue 2]
+run_function | start [function_ref:spot 7 green]
+run_function | play [function_ref:all spotlight color cyan p20]
+stop_function | stop [function_ref:spot 11 red]
+stop_function | kill [function_ref:all spotlight color emerald p20]
+add_widget | make a toggle for [function_ref:auto chaser show 1]
+add_widget | add a toggle button for [function_ref:chaser 3 show]
+add_widget | i want a toggle on the console for [function_ref:rgb switcher 1]
+propose_look | your choice on the [target:columns]
+propose_look | show me what you can do with [target:wash 4]
+propose_look | dealer's choice on the [target:tetras]
+propose_look | do your own thing with [target:beam 11]
+query.fixtures | how many [target:wash] fixtures are there
+query.fixtures | what is [target:fixture twenty two]
+query.fixtures | list what's on universe one
+query.status | is anything playing on the [target:washes]
+blackout | everything to black right now
+blackout | lights off, all of them
+blackout | blackout the club
+blackout | fire the kill scene now
+blackout_release | take us out of black
+blackout_release | kill scene off
+set_level | take the master down to [intensity:30%]
+set_level | master dimmer [intensity:full]
+set_level | bring the [target:hazer] up to [intensity:70%]
+set_level | switch the [target:hazer] [intensity:off]
+fixture_edit.rename | rename [target:fixture 17] to [name:Right Column]
+fixture_edit.rename | call [target:wash 1] [name:SL Wash Low]
+add_fixture | add another [fixture_model:chauvet slimpar 64]
+add_fixture | patch one more [fixture_model:showtec phantom 65] at [address:dmx 400]

@@ -1,0 +1,175 @@
+# Golden commands: every model that gets promoted must produce exactly these projections.
+# expect keys: target (fixture IDs) or target_zone (zone name), color, movement, rate, intensity,
+# fade, size, priority, angle, distance, direction, name, channel, value, observed, fixture_model,
+# function_ref, clarify. Slots not listed must be absent (no spurious slots).
+- text: "slow blue wash breathing at 60 BPM"
+  intent: create_look
+  expect: {target_zone: washes, color: [blue], movement: breathe, rate: {bpm: 60.0, word: slow}}
+- text: "Hey fixture 3 needs to be rotated 90 degrees"
+  intent: fixture_edit.rotate
+  expect: {target: [3], angle: {deg: 90, relative: true}}
+- text: "blackout"
+  intent: blackout
+  expect: {}
+- text: "make the spots do red circles at 128"
+  intent: create_look
+  expect: {target_zone: spots, color: [red], movement: circle, rate: {bpm: 128.0}}
+- text: "fast white strobe on everything"
+  intent: create_look
+  expect: {target_zone: all, color: [white], movement: strobe, rate: {word: fast}}
+- text: "pink and blue chase on the pars"
+  intent: create_look
+  expect: {target_zone: pars, color: [pink, blue], movement: color_chase}
+- text: "give me a purple ballyhoo on the movers"
+  intent: create_look
+  expect: {target_zone: movers, color: [purple], movement: ballyhoo}
+- text: "washes at 40%"
+  intent: set_level
+  expect: {target_zone: washes, intensity: 0.4}
+- text: "fog on"
+  intent: set_level
+  expect: {target: [33], intensity: 1.0}
+- text: "grand master 75%"
+  intent: set_level
+  expect: {intensity: 0.75}
+- text: "start auto chaser show 3"
+  intent: run_function
+  expect: {function_ref: "Auto Chaser Show 3"}
+- text: "stop auto chaser show 5"
+  intent: stop_function
+  expect: {function_ref: "Auto Chaser Show 5"}
+- text: "stop everything"
+  intent: stop_all
+  expect: {}
+- text: "lights back on"
+  intent: blackout_release
+  expect: {}
+- text: "rename fixture 21 to DJ Wall"
+  intent: fixture_edit.rename
+  expect: {target: [21], name: "DJ Wall"}
+- text: "move wash 1 left 50 cm"
+  intent: fixture_edit.move
+  expect: {target: [8], direction: left, distance: 500}
+- text: "set channel 9 on fixture 34 to 128"
+  intent: set_channel
+  expect: {target: [34], channel: 9, value: 128}
+- text: "what's running"
+  intent: query.status
+  expect: {}
+- text: "list the washes"
+  intent: query.fixtures
+  expect: {target_zone: washes}
+- text: "show me all blue looks"
+  intent: query.functions
+  expect: {color: [blue]}
+- text: "bpm 126"
+  intent: set_bpm
+  expect: {rate: {bpm: 126.0}}
+- text: "that was pink not blue"
+  intent: feedback
+  expect: {observed: {color: pink}, color: [blue]}
+- text: "too fast"
+  intent: feedback
+  expect: {rate: {word: fast}}
+- text: "fixture 34 is a v3"
+  intent: feedback
+  expect: {target: [34], fixture_model: "Mayans/BEAM230 V3"}
+- text: "make an assumption on fixture 5 and make it move"
+  intent: propose_look
+  expect: {target: [5]}
+- text: "calibrate fixture 35"
+  intent: probe_fixture
+  expect: {target: [35]}
+- text: "release the washes"
+  intent: release
+  expect: {target_zone: washes}
+- text: "what's the weather like"
+  intent: none
+  expect: {clarify: true}
+- text: "rotate spot #2 by 45 degrees"
+  intent: fixture_edit.rotate
+  expect: {target: [1], angle: {deg: 45, relative: true}}
+- text: "red wash on stage left at half"
+  intent: create_look
+  expect: {target_zone: stage_left, color: [red], movement: color_wash, intensity: 0.5}
+- text: "slow green breathing on the led walls"
+  intent: create_look
+  expect: {target_zone: led_walls, color: [green], movement: breathe, rate: {word: slow}}
+- text: "big fast white sweep on the beams"
+  intent: create_look
+  expect: {target_zone: spots, color: [white], movement: sweep, size: big, rate: {word: fast}}
+- text: "yellow figure 8 on the spots at 124 bpm"
+  intent: create_look
+  expect: {target_zone: spots, color: [yellow], movement: figure8, rate: {bpm: 124.0}}
+- text: "mirrored blue circles on the spots"
+  intent: create_look
+  expect: {target_zone: spots, color: [blue], movement: circle, direction: mirror}
+- text: "kill the lights"
+  intent: blackout
+  expect: {}
+- text: "fire default scene club 1"
+  intent: run_function
+  expect: {function_ref: "Default Scene Club 1"}
+- text: "is auto chaser show 7 running"
+  intent: query.status
+  expect: {function_ref: "Auto Chaser Show 7"}
+- text: "tempo is one twenty eight"
+  intent: set_bpm
+  expect: {rate: {bpm: 128.0}}
+- text: "turn fixture 10 by 180 degrees"
+  intent: fixture_edit.rotate
+  expect: {target: [10], angle: {deg: 180, relative: true}}
+- text: "nudge fixture 19 up a bit"
+  intent: fixture_edit.move
+  expect: {target: [19], direction: up, distance: 250}
+- text: "orange strobe on the tetras as an override"
+  intent: create_look
+  expect: {target_zone: tetras, color: [orange], movement: strobe, priority: 20}
+- text: "surprise me with the pars"
+  intent: propose_look
+  expect: {target_zone: pars}
+- text: "find blue on fixture 34"
+  intent: probe_fixture
+  expect: {target: [34], color: [blue]}
+- text: "i wanted red but got orange"
+  intent: feedback
+  expect: {color: [red], observed: {color: orange}}
+- text: "looks good"
+  intent: feedback
+  expect: {}
+- text: "a smooth warm white wash on the panels"
+  intent: create_look
+  expect: {target_zone: white_panels, color: [warm white], movement: color_wash, fade: 1000}
+- text: "tell me a joke"
+  intent: none
+  expect: {clarify: true}
+- text: "put the tetras at full"
+  intent: set_level
+  expect: {target_zone: tetras, intensity: 1.0}
+- text: "what does channel 6 on fixture 1 do"
+  intent: probe_fixture
+  expect: {target: [1], channel: 6}
+- text: "cyan wave of circles through the spots"
+  intent: create_look
+  expect: {target_zone: spots, color: [cyan], movement: circle_wave}
+- text: "hey fixture x needs to be rotated 90 degrees"
+  intent: fixture_edit.rotate
+  expect: {angle: {deg: 90, relative: true}, clarify: true, target_unresolved: true}
+- text: "running light on the spots in blue, fast"
+  intent: create_look
+  expect: {target_zone: spots, color: [blue], movement: running_light, rate: {word: fast}}
+- text: "add a chauvet intimidator spot 260 at universe 2 address 150"
+  intent: add_fixture
+  expect: {fixture_model: "intimidator spot led 260", address: {universe: 1, address: 149}}
+- text: "add a button for auto chaser show 3"
+  intent: add_widget
+  expect: {function_ref: "Auto Chaser Show 3"}
+- text: "delete all lights red"
+  intent: delete_look
+  expect: {function_ref: "All Lights Red"}
+  plan: refuse  # a hand-made function: lightai only deletes looks it created
+- text: "make default scene club 1 faster"
+  intent: update_look
+  expect: {function_ref: "Default Scene Club 1", rate: {word: fast}}
+  plan: refuse  # a hand-made function: lightai only rewrites looks it created
+

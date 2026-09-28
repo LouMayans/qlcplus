@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lightai booth console</title>
+<style>
+:root{--bg:#0d0f14;--panel:#161a22;--line:#262c38;--text:#e6e9ef;--dim:#8b93a5;--accent:#6aa8ff;--ok:#3ecf8e;--warn:#ffb547;--bad:#ff6b6b;--chip:#20263a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,Segoe UI,Roboto,sans-serif}
+header{display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-size:17px;margin:0 12px 0 0;letter-spacing:.3px}
+.badge{padding:3px 9px;border-radius:999px;background:var(--chip);color:var(--dim);font-size:12px}
+.badge.ok{color:var(--ok)}.badge.bad{color:var(--bad)}
+main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;padding:14px 16px;max-width:1500px;margin:0 auto}
+@media (max-width:900px){main{grid-template-columns:1fr}}
+section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+section h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:0 0 10px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=text],input[type=number],select{background:#0f1219;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit}
+#cmd{flex:1;min-width:240px;font-size:17px}
+button{background:#23304a;color:var(--text);border:1px solid #2f3d5c;border-radius:8px;padding:9px 13px;font:inherit;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#08101f;border-color:var(--accent);font-weight:600}
+button.good{background:#173b2c;border-color:#23704f}button.warn{background:#3d2f14;border-color:#7a5a1c}button.danger{background:#3d1717;border-color:#7a2a2a}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{padding:4px 8px;border-radius:6px;background:var(--chip);cursor:pointer;border:1px solid transparent;font-size:14px}
+.chip small{display:block;font-size:10px;color:var(--dim)}
+.chip.sel{border-color:var(--accent)}
+.s-target{background:#1d3350}.s-color{background:#3b2150}.s-movement{background:#173d33}.s-rate{background:#3d3217}.s-intensity{background:#403019}
+.s-function_ref{background:#2e2446}.s-angle,.s-distance,.s-direction{background:#233b3b}.s-observed{background:#472020}.s-name{background:#26324a}
+ul{margin:6px 0;padding-left:18px}li{margin:2px 0}
+.muted{color:var(--dim)}.small{font-size:12px}
+pre{background:#0b0d12;border:1px solid var(--line);border-radius:8px;padding:10px;max-height:320px;overflow:auto;font-size:12px;white-space:pre-wrap}
+.warnbox{color:var(--warn)}.errbox{color:var(--bad)}.okbox{color:var(--ok)}
+#bpmv{width:86px}
+.hist div{padding:4px 0;border-bottom:1px dashed var(--line);font-size:13px;cursor:pointer}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
+.hidden{display:none}
+kbd{background:#222838;border:1px solid #333b50;border-radius:4px;padding:1px 5px;font-size:11px}
+</style>
+</head>
+<body>
+<header>
+  <h1>lightai</h1>
+  <span id="qlc" class="badge">QLC+ ?</span>
+  <span id="model" class="badge">model ?</span>
+  <span id="lat" class="badge">parse - ms</span>
+  <span class="row" style="margin-left:auto">
+    <button id="tap" title="tap 4+ times on the beat">TAP</button>
+    <input id="bpmv" type="number" min="40" max="220" step="0.1" placeholder="BPM">
+    <button id="bpmset">Set BPM</button>
+    <span id="bpm" class="badge">BPM -</span>
+    <button class="danger" id="stopbtn" title="stop preview/calibration">Stop preview</button>
+  </span>
+</header>
+<main>
+  <div>
+    <section>
+      <h2>Tell it what you want</h2>
+      <div class="row">
+        <input id="cmd" type="text" autocomplete="off" placeholder="e.g. slow blue wash breathing at 60 BPM  |  make an assumption on fixture 5 and make it move">
+        <button class="primary" id="go">Parse</button>
+      </div>
+      <div class="small muted" style="margin-top:6px"><kbd>Enter</kbd> parse &nbsp; <kbd>Ctrl+Enter</kbd> apply &nbsp; <kbd>Esc</kbd> discard</div>
+    </section>
+    <section id="parsed" class="hidden" style="margin-top:14px">
+      <h2>What I understood <span id="conf" class="badge"></span></h2>
+      <div class="row">
+        <select id="intentSel"></select>
+        <select id="slotSel" title="pick a word chip, then a slot"><option value="O">O (no slot)</option></select>
+        <button id="teach" class="warn" title="save your corrected labels as training data">Save correction</button>
+        <span id="teachmsg" class="small muted"></span>
+      </div>
+      <div id="chips" class="chips"></div>
+      <div id="clarify" class="warnbox"></div>
+    </section>
+    <section id="plan" class="hidden" style="margin-top:14px">
+      <h2>Plan <span id="planid" class="badge"></span></h2>
+      <div id="summary" style="font-size:16px;margin-bottom:6px"></div>
+      <div id="warnings" class="warnbox small"></div>
+      <div class="row" style="margin:10px 0">
+        <button class="primary" id="apply">Apply</button>
+        <button id="preview" class="hidden">Preview on rig</button>
+        <button id="keep" class="good hidden">Keep it (save to show)</button>
+        <button id="discard">Discard</button>
+      </div>
+      <details open><summary class="muted">Assumptions</summary><ul id="assumptions"></ul></details>
+      <details><summary class="muted">Actions</summary><ul id="actions"></ul></details>
+      <div id="result" style="margin-top:8px"></div>
+      <div id="results"></div>
+    </section>
+    <section id="outcome" class="hidden" style="margin-top:14px">
+      <h2>Did it look right?</h2>
+      <div class="row">
+        <button class="good" data-v="ok">Looks right</button>
+        <button data-issue="speed" data-dir="too_fast">Too fast</button>
+        <button data-issue="speed" data-dir="too_slow">Too slow</button>
+        <button data-issue="intensity" data-dir="too_dim">Too dim</button>
+        <button data-issue="intensity" data-dir="too_bright">Too bright</button>
+        <button data-issue="size" data-dir="too_small">Bigger</button>
+        <button data-issue="size" data-dir="too_big">Smaller</button>
+        <button data-issue="movement">Didn't move</button>
+        <button data-issue="dark">Stayed dark</button>
+        <button data-issue="meaning">You misunderstood</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <span>Color wrong: I saw</span><select id="seen"></select><span>on fixture</span><input id="seenfx" type="number" min="0" style="width:80px" placeholder="any">
+        <button data-issue="color" class="warn">Send</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <span>Wrong fixture: this one lit instead</span><input id="wrongfx" type="number" min="0" style="width:80px">
+        <button data-issue="fixture" class="warn">Send</button>
+        <span>Fixture</span><input id="modelfx" type="number" min="0" style="width:70px"><span>is really a</span><select id="modelsel"></select>
+        <button data-issue="model" class="warn">Send</button>
+      </div>
+      <div id="learned" class="okbox small" style="margin-top:8px"></div>
+      <div class="row" style="margin-top:8px"><button id="applyfix" class="primary hidden">Apply to the look</button><span id="fixnote" class="small muted"></span></div>
+    </section>
+    <section id="calib" class="hidden" style="margin-top:14px">
+      <h2>Calibration</h2>
+      <div id="calq"></div>
+      <div class="row" style="margin-top:8px" id="calbtns">
+        <button class="good" data-a="yes">This one</button><button data-a="next">Next</button>
+        <button data-a="dimmer">Dimmer</button><button data-a="strobe">Strobe</button><button data-a="color">Color</button>
+        <button data-a="pan">Pan</button><button data-a="tilt">Tilt</button><button data-a="gobo">Gobo</button>
+        <button data-a="prism">Prism</button><button data-a="focus">Focus</button><button data-a="speed">Speed</button>
+        <button data-a="nothing">Nothing</button><button class="danger" data-a="stop">Stop</button>
+      </div>
+    </section>
+  </div>
+  <div>
+    <section>
+      <h2>JSON</h2>
+      <pre id="json">(parse something)</pre>
+    </section>
+    <section style="margin-top:14px">
+      <h2>History</h2>
+      <div id="hist" class="hist"></div>
+    </section>
+  </div>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+let cur = {cmd: null, plan: null, tags: [], sel: null, lastActionPlan: null};
+const TOKEN = (() => {
+  const t = new URLSearchParams(location.search).get('token');
+  if (t) { try { history.replaceState(null, '', location.pathname); } catch (e) { /* ignore */ } }
+  try { if (t) sessionStorage.setItem('lightai_token', t); return t || sessionStorage.getItem('lightai_token') || ''; } catch (e) { return t || ''; }
+})();
+const api = async (path, body) => {
+  const headers = TOKEN ? {'X-LightAI-Token': TOKEN} : {};
+  const r = await fetch(path, body === undefined ? {headers} : {method: 'POST', headers: {...headers, 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const d = Array.isArray(j.detail) ? j.detail.map(x => `${(x.loc || []).join('.')}: ${x.msg}`).join('; ') : j.detail;
+    throw new Error(d || r.statusText);
+  }
+  return j;
+};
+function showError(e) {
+  const box = document.querySelector('#result');
+  if (box) box.innerHTML = `<div class="errbox">${esc(e && e.message || e)}</div>`;
+}
+window.addEventListener('unhandledrejection', ev => showError(ev.reason));
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+
+async function init() {
+  const L = await api('/labels');
+  $('#intentSel').innerHTML = L.intents.map(i => `<option>${i}</option>`).join('');
+  $('#slotSel').innerHTML += L.slots.map(s => `<option value="${s}">${s}</option>`).join('');
+  const C = await api('/colors');
+  $('#seen').innerHTML = C.colors.map(c => `<option>${c}</option>`).join('') + '<option>nothing</option>';
+  $('#modelsel').innerHTML = C.models.map(m => `<option>${m}</option>`).join('');
+  health(); setInterval(health, 5000);
+}
+async function health() {
+  try {
+    const h = await api('/health');
+    $('#qlc').textContent = h.qlc_connected ? 'QLC+ connected' : 'QLC+ offline';
+    $('#qlc').className = 'badge ' + (h.qlc_connected ? 'ok' : 'bad');
+    $('#model').textContent = h.model_version;
+    $('#lat').textContent = h.parse_p95_ms != null ? `parse p95 ${h.parse_p95_ms.toFixed(1)} ms` : 'parse - ms';
+    $('#bpm').textContent = h.bpm ? `BPM ${h.bpm} (${h.bpm_source})` : 'BPM -';
+  } catch (e) { $('#qlc').textContent = 'lightai offline'; $('#qlc').className = 'badge bad'; }
+}
+function renderChips() {
+  const c = cur.cmd;
+  $('#chips').innerHTML = c.words.map((w, i) => {
+    const t = cur.tags[i]; const slot = t === 'O' ? '' : t.slice(2);
+    return `<span class="chip ${slot ? 's-' + slot : ''} ${cur.sel === i ? 'sel' : ''}" data-i="${i}">${esc(w)}<small>${esc(t)}</small></span>`;
+  }).join('');
+  document.querySelectorAll('.chip').forEach(el => el.onclick = () => {
+    cur.sel = +el.dataset.i; renderChips();
+    const t = cur.tags[cur.sel]; $('#slotSel').value = t === 'O' ? 'O' : t.slice(2);
+  });
+}
+function tagsFromSpans(c) {
+  const tags = c.words.map(() => 'O');
+  for (const s of c.spans) for (let i = s.start; i < s.end; i++) tags[i] = (i === s.start ? 'B-' : 'I-') + s.slot;
+  return tags;
+}
+function markup(words, tags) {
+  const out = []; let slot = null, buf = [];
+  const flush = () => { if (slot) out.push(`[${slot}:${buf.join(' ')}]`); slot = null; buf = []; };
+  words.forEach((w, i) => {
+    const t = tags[i];
+    if (t.startsWith('B-')) { flush(); slot = t.slice(2); buf = [w]; }
+    else if (t.startsWith('I-') && slot === t.slice(2)) buf.push(w);
+    else { flush(); out.push(w); }
+  });
+  flush(); return out.join(' ');
+}
+$('#slotSel').onchange = () => {
+  if (cur.sel === null) return;
+  const s = $('#slotSel').value, i = cur.sel;
+  if (s === 'O') cur.tags[i] = 'O';
+  else cur.tags[i] = (i > 0 && cur.tags[i - 1] !== 'O' && cur.tags[i - 1].slice(2) === s) ? 'I-' + s : 'B-' + s;
+  if (s !== 'O' && i + 1 < cur.tags.length && cur.tags[i + 1] === 'B-' + s) cur.tags[i + 1] = 'I-' + s;
+  for (let j = 0; j < cur.tags.length; j++) {
+    const t = cur.tags[j];
+    if (t.startsWith('I-') && (j === 0 || cur.tags[j - 1] === 'O' || cur.tags[j - 1].slice(2) !== t.slice(2))) cur.tags[j] = 'B-' + t.slice(2);
+  }
+  renderChips();
+};
+$('#teach').onclick = async () => {
+  const m = markup(cur.cmd.words, cur.tags);
+  try {
+    await api('/teach', {text: cur.cmd.text, intent: $('#intentSel').value, marked: m, predicted: {intent: cur.cmd.intent, spans: cur.cmd.spans}});
+    $('#teachmsg').textContent = 'saved: ' + m + ' (used at the next nightly training)';
+  } catch (e) { $('#teachmsg').textContent = 'error: ' + e.message; }
+};
+async function parse() {
+  const text = $('#cmd').value.trim(); if (!text) return;
+  const r = await api('/plan', {text});
+  cur.cmd = r.command; cur.plan = r.plan; cur.tags = tagsFromSpans(r.command); cur.sel = null;
+  $('#parsed').classList.remove('hidden');
+  $('#conf').textContent = `${r.command.intent} ${(r.command.confidence * 100).toFixed(0)}% · ${r.command.latency_ms.toFixed(1)} ms`;
+  $('#intentSel').value = r.command.intent;
+  $('#clarify').textContent = r.command.clarify || '';
+  renderChips(); renderPlan(r.plan);
+  $('#json').textContent = JSON.stringify(r, null, 2);
+  hist(text, r.plan);
+  const live = ['set_bpm', 'blackout', 'blackout_release', 'stop_all'].includes(r.plan.intent);
+  const sure = r.command.confidence >= 0.9 && !(r.command.ambiguities || []).some(a => a.startsWith('accepted '));
+  if (['feedback', 'query.functions', 'query.fixtures', 'query.status'].concat(live && sure ? [r.plan.intent] : []).includes(r.plan.intent)
+      && !r.plan.needs_confirmation && r.plan.mode !== 'clarify') apply().catch(showError);
+}
+function renderPlan(p) {
+  $('#plan').classList.remove('hidden');
+  $('#planid').textContent = `${p.plan_id} · ${p.mode}`;
+  $('#summary').textContent = p.summary;
+  $('#warnings').innerHTML = (p.warnings || []).map(w => '⚠ ' + esc(w)).join('<br>');
+  $('#assumptions').innerHTML = (p.assumptions || []).map(a => `<li>${esc(a.fact)} <span class="muted small">(${esc(a.source)})</span></li>`).join('') || '<li class="muted">none</li>';
+  $('#actions').innerHTML = (p.actions || []).map(a => `<li><b>${esc(a.op)}</b> ${esc(a.describe || '')}</li>`).join('');
+  $('#result').innerHTML = ''; $('#results').innerHTML = '';
+  $('#apply').classList.toggle('hidden', p.mode === 'clarify' || p.mode === 'info' && !(p.actions || []).length);
+  $('#preview').classList.toggle('hidden', !(p.followup && p.followup.preview));
+  $('#keep').classList.add('hidden');
+  $('#apply').textContent = p.intent === 'propose_look' ? 'Play preview' : (p.mode === 'structural' ? 'Apply to show' : 'Run');
+  if (p.look && p.look.results) $('#results').innerHTML = table(p.look.results);
+}
+function table(rows) {
+  if (!rows.length) return '<div class="muted">no results</div>';
+  const keys = Object.keys(rows[0]).filter(k => !['roles', 'zones'].includes(k));
+  return `<table><tr>${keys.map(k => `<th>${k}</th>`).join('')}</tr>` + rows.slice(0, 80).map(r => `<tr>${keys.map(k => `<td>${esc(typeof r[k] === 'object' ? JSON.stringify(r[k]) : r[k])}</td>`).join('')}</tr>`).join('') + '</table>';
+}
+async function apply(extra = {}) {
+  const p = cur.plan; if (!p) return;
+  if (['delete_look', 'add_fixture'].includes(p.intent) && !extra.allow_running_reload && !confirm(p.summary + '\n\nApply this change to the show?')) return;
+  const res = await api('/execute', {plan_id: p.plan_id, confirm: true, ...extra});
+  showResult(res);
+  const blocked = (res.results || []).find(r => r.blocked);
+  if (blocked) {
+    $('#result').innerHTML += `<div class="warnbox">${esc(blocked.note)} <button id="forcereload" class="warn">Reload anyway</button></div>`;
+    $('#forcereload').onclick = () => apply({allow_running_reload: true});
+    return;
+  }
+  if (res.ok && ['propose_look', 'create_look', 'preview'].includes(p.intent)) { cur.lastActionPlan = p; $('#outcome').classList.remove('hidden'); }
+  if (res.ok && p.intent === 'propose_look') $('#keep').classList.remove('hidden');
+  const cal = (res.results || []).find(r => r.calibration);
+  if (cal) showCal(cal);
+  const fb = (res.results || []).find(r => r.op === 'feedback');
+  if (fb) $('#learned').innerHTML = learnedHtml(fb);
+  if (p.intent === 'feedback' && p.followup && p.followup.update_plan_id) { $('#outcome').classList.remove('hidden'); offerFix(p.followup.update_plan_id, p.summary); }
+  const st = (res.results || []).find(r => r.running);
+  if (st) $('#results').innerHTML = table(st.running);
+}
+function showResult(res) {
+  const why = (res.results || []).find(r => r.note || r.error);
+  $('#result').innerHTML = `<div class="${res.ok ? 'okbox' : 'errbox'}">${res.ok ? 'done' : esc(res.clarify || (why && (why.note || why.error)) || 'not done')} · ${res.latency_ms ?? ''} ms</div>`;
+  $('#json').textContent = JSON.stringify(res, null, 2);
+}
+let pendingFix = null;
+function offerFix(planId, note) {
+  pendingFix = planId;
+  $('#applyfix').classList.toggle('hidden', !planId);
+  $('#fixnote').textContent = note || '';
+}
+$('#applyfix').onclick = async () => {
+  if (!pendingFix) return;
+  const res = await api('/execute', {plan_id: pendingFix, confirm: true});
+  showResult(res);
+  const blocked = (res.results || []).find(r => r.blocked);
+  let final = res;
+  if (blocked) {
+    if (!confirm(blocked.note + '\n\nReload anyway?')) { offerFix(pendingFix, 'not applied: ' + blocked.note); return; }
+    final = await api('/execute', {plan_id: pendingFix, confirm: true, allow_running_reload: true});
+    showResult(final);
+  }
+  offerFix(null, final.ok ? 'look updated' : 'not applied');
+};
+function learnedHtml(r) {
+  return `<b>Learned (${esc((r.routed_to || []).join(', ') || 'nothing')}):</b><ul>${(r.changes || []).map(c => `<li>${esc(c)}</li>`).join('')}</ul>` +
+    ((r.followups || []).length ? `<div class="warnbox">Next: ${(r.followups || []).map(esc).join(' · ')}</div>` : '');
+}
+$('#preview').onclick = async () => { const res = await api('/preview', {plan_id: cur.plan.plan_id}); showResult(res); cur.lastActionPlan = cur.plan; $('#outcome').classList.remove('hidden'); };
+$('#keep').onclick = async () => { const r = await api('/apply_proposal', {plan_id: cur.plan.plan_id}); cur.plan = r.plan; renderPlan(r.plan); $('#json').textContent = JSON.stringify(r, null, 2); };
+$('#discard').onclick = () => { $('#plan').classList.add('hidden'); $('#parsed').classList.add('hidden'); cur.plan = null; };
+$('#apply').onclick = () => apply();
+$('#go').onclick = () => parse().catch(showError);
+$('#cmd').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.ctrlKey) {
+    e.preventDefault();
+    if (!cur.cmd || cur.cmd.text !== $('#cmd').value.trim()) { parse().catch(showError); return; }
+    apply().catch(err => showError(err));
+  }
+  else if (e.key === 'Enter') { parse().catch(showError); e.preventDefault(); }
+  else if (e.key === 'Escape') $('#discard').onclick();
+});
+document.querySelectorAll('#outcome button[data-v], #outcome button[data-issue]').forEach(b => b.onclick = async () => {
+  const p = cur.lastActionPlan || cur.plan; if (!p) return;
+  const issues = [];
+  let verdict = b.dataset.v || 'wrong';
+  const k = b.dataset.issue;
+  if (k === 'color') issues.push({kind: 'color', expected: (p.look && p.look.params && p.look.params.colors || [null])[0], observed: $('#seen').value, fixture_id: $('#seenfx').value === '' ? null : +$('#seenfx').value});
+  else if (k === 'fixture') {
+    if ($('#wrongfx').value === '') { $('#learned').textContent = 'type the number of the fixture that lit instead'; return; }
+    issues.push({kind: 'fixture', observed: $('#wrongfx').value, fixture_id: +$('#wrongfx').value});
+  }
+  else if (k === 'model') {
+    if ($('#modelfx').value === '') { $('#learned').textContent = 'type the fixture number first'; return; }
+    issues.push({kind: 'model', fixture_id: +$('#modelfx').value, observed: $('#modelsel').value});
+  }
+  else if (k) issues.push({kind: k, direction: b.dataset.dir || null});
+  if (k && ['speed', 'intensity', 'size'].includes(k)) verdict = 'adjust';
+  const r = await api('/feedback', {plan_id: p.plan_id, verdict, issues, free_text: b.textContent});
+  $('#learned').innerHTML = learnedHtml(r);
+  if (r.update_plan) offerFix(r.update_plan.plan_id, r.update_plan.summary);
+  else if (r.adjusted_proposal) offerFix(null, 'proposal adjusted: ' + r.adjusted_proposal.changes.join('; ') + ' - preview again or Keep it');
+  $('#json').textContent = JSON.stringify(r, null, 2);
+});
+function showCal(c) {
+  clearTimeout(window.calHide);
+  $('#calib').classList.remove('hidden');
+  $('#calq').innerHTML = c.calibration ? `Step ${c.step}/${c.of}: <b>${esc(c.label)}</b><br>${esc(c.question)}` + (c.learned ? `<div class="okbox">learned: ${esc(c.learned)}</div>` : '') : `Calibration ${esc(c.result)}${c.learned ? ': ' + esc(c.learned) : ''}`;
+}
+document.querySelectorAll('#calbtns button').forEach(b => b.onclick = async () => {
+  const r = await api('/calibrate', {answer: b.dataset.a});
+  showCal(r); $('#json').textContent = JSON.stringify(r, null, 2);
+  clearTimeout(window.calHide);
+  if (!r.calibration) window.calHide = setTimeout(() => $('#calib').classList.add('hidden'), 4000);
+});
+$('#tap').onclick = async () => { const r = await api('/bpm', {tap: true}); $('#bpm').textContent = r.bpm ? `BPM ${r.bpm} (tap)` : `tap ${r.taps}…`; };
+$('#bpmset').onclick = async () => { const v = parseFloat($('#bpmv').value); if (v) { const r = await api('/bpm', {bpm: v}); $('#bpm').textContent = `BPM ${r.bpm}`; } };
+$('#stopbtn').onclick = async () => { const r = await api('/stop', {}); $('#json').textContent = JSON.stringify(r, null, 2); $('#calib').classList.add('hidden'); };
+function hist(text, p) {
+  const d = document.createElement('div');
+  d.innerHTML = `<b>${esc(text)}</b> <span class="muted">→ ${esc(p.intent)} · ${esc(p.summary)}</span>`;
+  d.onclick = () => { $('#cmd').value = text; $('#cmd').focus(); };
+  $('#hist').prepend(d);
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+# Target colors by name, as RGB 0-255.
+# "confirmed" = seen and approved on the real rig by the operator (2026-06-22).
+# "defaults"  = reasonable starting points, not yet confirmed; correct them with the
+#               console's "color wrong" feedback and they move to confirmed.
+confirmed:
+  white: [255, 255, 255]
+  red: [255, 0, 0]
+  yellow: [255, 255, 0]
+  green: [0, 255, 0]
+  orange: [255, 110, 0]
+  blue: [15, 15, 255]
+  pink: [255, 5, 140]
+defaults:
+  purple: [140, 0, 255]
+  magenta: [255, 0, 255]
+  cyan: [0, 255, 255]
+  amber: [255, 150, 0]
+  warm white: [255, 170, 90]
+  cool white: [200, 225, 255]
+  lavender: [170, 120, 255]
+  uv: [70, 0, 255]
+  lime: [150, 255, 0]
+  teal: [0, 190, 150]
+aliases:
+  violet: purple
+  indigo: purple
+  plum: purple
+  rose: pink
+  hot pink: pink
+  fuchsia: magenta
+  crimson: red
+  scarlet: red
+  deep red: red
+  navy: blue
+  deep blue: blue
+  royal blue: blue
+  sky blue: cyan
+  aqua: cyan
+  turquoise: teal
+  gold: amber
+  golden: amber
+  warm: warm white
+  cool: cool white
+  cold white: cool white
+  daylight: cool white
+  ultraviolet: uv
+  black light: uv
+  blacklight: uv
+  mint: teal
+  emerald: green
+# How a named color is realized on fixtures with extra emitters. Values are 0-255 per role.
+# Anything not listed is computed: white = min(r,g,b) goes to the W channel, the rest stays RGB.
+emitter_mixes:
+  white: {red: 0, green: 0, blue: 0, white: 255}
+  warm white: {red: 255, green: 120, blue: 0, white: 255, amber: 255}
+  cool white: {red: 0, green: 40, blue: 120, white: 255}
+  amber: {red: 0, green: 0, blue: 0, amber: 255}
+  orange: {red: 255, green: 40, blue: 0, amber: 255}
+  uv: {red: 40, green: 0, blue: 255, uv: 255}
