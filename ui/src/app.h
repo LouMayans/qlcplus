@@ -267,6 +267,15 @@ public slots:
 
     void slotSaveAutostart(QString fileName);
 
+    /** Web access: reload the open project file from disk (keeps its file name). */
+    void slotWebLoadProjectFile(QString path, bool force, QString *result);
+
+    /** Web access: save the open project to its file. */
+    void slotWebSaveProjectFile(QString *result);
+
+    /** Web access: "<file path>|<1 if modified>". */
+    void slotWebProjectFileInfo(QString *result);
+
 private:
     QString m_fileName;
 };

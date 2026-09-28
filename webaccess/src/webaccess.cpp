@@ -455,6 +455,80 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
                                 m_doc, m_sd, m_sd->getCurrentUniverseIndex(),
                                 0, m_sd->getSlidersNumber()));
         }
+        else if (apiCmd == "lightaiVersion")
+        {
+            wsAPIMessage.append("1");
+        }
+        else if (apiCmd == "getProjectFile")
+        {
+            QString info;
+            emit projectFileInfo(&info);
+            wsAPIMessage.append(info);
+        }
+        else if (apiCmd == "loadProjectFile")
+        {
+            if (m_auth && user && user->level < SUPER_ADMIN_LEVEL)
+                return;
+
+            if (cmdList.count() < 3)
+                return;
+
+            QString result = QStringLiteral("ERR|not connected");
+            bool force = (cmdList.count() > 3 && cmdList[3] == "force");
+            m_pendingProjectLoaded = false;
+            emit loadProjectFile(cmdList[2], force, &result);
+            wsAPIMessage.append(result);
+        }
+        else if (apiCmd == "saveProject")
+        {
+            if (m_auth && user && user->level < SUPER_ADMIN_LEVEL)
+                return;
+
+            QString result = QStringLiteral("ERR|not connected");
+            emit saveProjectFile(&result);
+            wsAPIMessage.append(result);
+        }
+        else if (apiCmd == "getFunctionSpeed")
+        {
+            if (cmdList.count() < 3)
+                return;
+
+            quint32 fID = cmdList[2].toUInt();
+            Function *f = m_doc->function(fID);
+            if (f == NULL)
+                wsAPIMessage.append(QString("%1|ERR|no such function").arg(fID));
+            else
+                wsAPIMessage.append(QString("%1|%2|%3|%4").arg(fID).arg(f->fadeInSpeed()).arg(f->fadeOutSpeed()).arg(f->duration()));
+        }
+        else if (apiCmd == "setFunctionSpeed")
+        {
+            if (m_auth && user && user->level < SIMPLE_DESK_AND_VC_LEVEL)
+                return;
+
+            if (cmdList.count() < 6)
+                return;
+
+            quint32 fID = cmdList[2].toUInt();
+            Function *f = m_doc->function(fID);
+            if (f == NULL)
+            {
+                wsAPIMessage.append(QString("%1|ERR|no such function").arg(fID));
+            }
+            else
+            {
+                bool ok = false;
+                uint value = cmdList[3].toUInt(&ok);
+                if (ok)
+                    f->setFadeInSpeed(value);
+                value = cmdList[4].toUInt(&ok);
+                if (ok)
+                    f->setFadeOutSpeed(value);
+                value = cmdList[5].toUInt(&ok);
+                if (ok)
+                    f->setDuration(value);
+                wsAPIMessage.append(QString("%1|%2|%3|%4").arg(fID).arg(f->fadeInSpeed()).arg(f->fadeOutSpeed()).arg(f->duration()));
+            }
+        }
         //qDebug() << "Simple desk channels:" << wsAPIMessage;
 
         conn->webSocketWrite(wsAPIMessage);

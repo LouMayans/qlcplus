@@ -1611,6 +1611,103 @@ void App::slotLoadDocFromMemory(QString xmlData)
         qDebug() << "XML doesn't have a Workspace tag";
 }
 
+void App::slotWebProjectFileInfo(QString *result)
+{
+    if (result == NULL)
+        return;
+
+    *result = QString("%1|%2").arg(QDir::toNativeSeparators(fileName())).arg(m_doc->isModified() ? 1 : 0);
+}
+
+void App::slotWebLoadProjectFile(QString path, bool force, QString *result)
+{
+    if (result == NULL)
+        return;
+
+    QFileInfo target(path);
+    if (target.isAbsolute() == false || target.isFile() == false ||
+        target.suffix().compare(QStringLiteral("qxw"), Qt::CaseInsensitive) != 0)
+    {
+        *result = QStringLiteral("ERR|not an existing absolute .qxw path");
+        return;
+    }
+
+    if (fileName().isEmpty() == false &&
+        QFileInfo(fileName()).canonicalFilePath().compare(target.canonicalFilePath(), Qt::CaseInsensitive) != 0)
+    {
+        *result = QStringLiteral("ERR|only the open project file can be reloaded");
+        return;
+    }
+
+    if (m_doc->isModified() == true && force == false)
+    {
+        *result = QStringLiteral("ERR|unsaved changes in QLC+");
+        return;
+    }
+
+    QXmlStreamReader *reader = QLCFile::getXMLReader(target.absoluteFilePath());
+    if (reader == NULL || reader->device() == NULL || reader->hasError())
+    {
+        *result = QStringLiteral("ERR|cannot read the file");
+        return;
+    }
+
+    while (reader->atEnd() == false)
+    {
+        if (reader->readNext() == QXmlStreamReader::DTD)
+            break;
+    }
+
+    if (reader->hasError() || reader->dtdName() != KXMLQLCWorkspace)
+    {
+        QLCFile::releaseXMLReader(reader);
+        *result = QStringLiteral("ERR|not a QLC+ workspace");
+        return;
+    }
+
+    clearDocument();
+    m_doc->setWorkspacePath(target.absolutePath());
+
+    bool loaded = loadXML(*reader, true, true);
+    QLCFile::releaseXMLReader(reader);
+
+    if (loaded == false)
+    {
+        *result = QStringLiteral("ERR|load failed");
+        return;
+    }
+
+    setFileName(target.absoluteFilePath());
+    m_doc->resetModified();
+
+    if (FixtureManager::instance() != NULL)
+        FixtureManager::instance()->updateView();
+    if (InputOutputManager::instance() != NULL)
+        InputOutputManager::instance()->updateList();
+    if (Monitor::instance() != NULL)
+        Monitor::instance()->updateView();
+
+    *result = QStringLiteral("OK");
+}
+
+void App::slotWebSaveProjectFile(QString *result)
+{
+    if (result == NULL)
+        return;
+
+    if (fileName().isEmpty() == true)
+    {
+        *result = QStringLiteral("ERR|project has no file name");
+        return;
+    }
+
+    QFile::FileError error = saveXML(fileName());
+    if (error != QFile::NoError)
+        *result = QString("ERR|save failed (%1)").arg(int(error));
+    else
+        *result = QString("OK|%1").arg(QDir::toNativeSeparators(fileName()));
+}
+
 void App::slotSaveAutostart(QString fileName)
 {
     /* Set the workspace path before saving the new XML. In this way local files
