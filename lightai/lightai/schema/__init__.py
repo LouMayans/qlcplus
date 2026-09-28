@@ -75,6 +75,7 @@ class Plan(BaseModel):
     needs_confirmation: bool = False
     look: Optional[dict[str, Any]] = None
     followup: Optional[dict[str, Any]] = None
+    show: Optional[str] = None  # the show file the plan was made for
 
 
 IssueKind = Literal["color", "fixture", "movement", "dark", "speed", "intensity", "size", "model", "meaning"]

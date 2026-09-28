@@ -175,6 +175,13 @@ def fillers(rig: Rig) -> dict:
         "direction_rot2": ("direction", ["counter clockwise", "counter-clockwise", "anti clockwise", "anti-clockwise", "clockwise",
                                          "to the left", "to the right", "left", "right", "ccw", "cw"]),
         "target2": ("target", targets),
+        # iteration 5: several fixtures at once, re-addressing
+        "count": ("count", ["2", "3", "4", "5", "6", "8", "10", "12", "two", "three", "four", "five", "six", "a couple of", "a pair of", "3x"]),
+        "mode2": ("mode", ["7address type", "7 address", "7 channel type", "7-ch", "14ch", "16 channel", "3 address", "4 channel type",
+                           "6-channel", "8 dmx channel", "7 address type"]),
+        "address_u": ("address", ["universe 1", "universe 2", "universe one", "universe two"]),
+        "address_any": ("address", ["universe 1", "universe 2", "address 100", "250", "dmx 97", "universe 1 address 300",
+                                    "universe 2 starting at 200", "2.150", "dmx 1", "address 450", "universe 1 from 320", "300"]),
     }
 
 

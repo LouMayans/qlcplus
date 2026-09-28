@@ -148,7 +148,7 @@ class FakeQlc:
             if not self.fork:
                 return [head]
             if cmd == "lightaiVersion":
-                return [head + "1"]
+                return [head + "2"]
             if cmd == "getProjectFile":
                 return [head + f"{self.project or ''}|{1 if self.modified else 0}"]
             if cmd == "loadProjectFile" and len(p) > 2:
@@ -161,6 +161,17 @@ class FakeQlc:
                 if self.modified and not force:
                     return [head + "ERR|unsaved changes in QLC+"]
                 self.project = target
+                self.load(target)
+                return [head + "OK"]
+            if cmd == "openProjectFile" and len(p) > 2:
+                target = Path(p[2])
+                force = len(p) > 3 and p[3] == "force"
+                if not target.is_absolute() or not target.is_file() or target.suffix.lower() != ".qxw":
+                    return [head + "ERR|not an existing absolute .qxw path"]
+                if self.modified and not force:
+                    return [head + "ERR|unsaved changes in QLC+"]
+                self.project = target
+                self.modified = False
                 self.load(target)
                 return [head + "OK"]
             if cmd == "saveProject":

@@ -80,6 +80,29 @@ async def supports_fork_commands(client: QlcClient) -> bool:
         return False
 
 
+async def fork_version(client: QlcClient) -> int:
+    """0 on a stock build; 1 = lightai commands; 2 = also openProjectFile."""
+    try:
+        parts = (await client.request("QLC+API|lightaiVersion", timeout=0.5)).split("|")
+    except QlcError:
+        return 0
+    return int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else 0
+
+
+async def open_project_file(client: QlcClient, path: Path, force: bool = False, timeout: float = 20.0) -> dict:
+    """Fork v2: make QLC+ open this show file (keeps the file name, so Save writes to it)."""
+    t0 = time.perf_counter()
+    msg = f"QLC+API|openProjectFile|{Path(path).resolve()}" + ("|force" if force else "")
+    parts = (await client.request(msg, timeout=timeout)).split("|")
+    if len(parts) < 3 or parts[2] != "OK":
+        detail = "|".join(parts[2:])
+        if "unsaved changes" in detail:
+            return {"opened": False, "blocked": True, "note": "QLC+ has unsaved changes; confirm to discard them and open the main show"}
+        raise QlcError(f"openProjectFile failed: {detail}")
+    loaded = await wait_project_loaded(client, timeout)
+    return {"opened": True, "loaded": loaded, "seconds": round(time.perf_counter() - t0, 2)}
+
+
 async def project_file(client: QlcClient) -> Optional[dict]:
     """Which file the fork build has open, or None on a stock build."""
     if not await supports_fork_commands(client):

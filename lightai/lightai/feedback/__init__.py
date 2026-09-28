@@ -152,7 +152,8 @@ class FeedbackRouter:
                         followups.append(f"calibrate fixture {fx.id}")
             elif iss.kind == "model" and iss.fixture_id is not None and iss.observed:
                 routed.add("rig_facts")
-                facts.set_fixture_model_hint(iss.fixture_id, iss.observed, plan_id=fb.plan_id)
+                if getattr(self.rig, "is_main", True):  # fixture IDs are the main show's; another show keeps no per-fixture facts
+                    facts.set_fixture_model_hint(iss.fixture_id, iss.observed, plan_id=fb.plan_id)
                 cur = self.rig.fixtures[iss.fixture_id].key if iss.fixture_id in self.rig.fixtures else "?"
                 changes.append(f"fixture {iss.fixture_id} is really a {iss.observed} (patched as {cur})")
                 if cur != iss.observed:

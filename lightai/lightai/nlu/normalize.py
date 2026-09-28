@@ -307,7 +307,7 @@ def norm_address(raw: str) -> dict:
     u = re.search(r"\buniverse\s*(\d+)|\bu\s*(\d+)\b", t)
     if u:
         out["universe"] = int(u.group(1) or u.group(2)) - 1
-    a = re.search(r"\b(?:address|addr|dmx|channel|start(?:ing)? at|at)\s*#?\s*(\d+)", t)
+    a = re.search(r"\b(?:address|addr|dmx|channel|start(?:ing)? at|starting from|from|at)\s*#?\s*(\d+)", t)
     if a:
         out["address"] = int(a.group(1)) - 1
     elif not u:
@@ -318,8 +318,45 @@ def norm_address(raw: str) -> dict:
 
 
 def norm_mode(raw: str) -> dict:
+    """'14 channel mode', '7address type', '7-ch', '7 dmx channels', 'extended' -> {text, channels}."""
+    t = digits_for_words(raw.lower())
+    m = re.search(r"(\d+)\s*-?\s*(?:ch\b|chs\b|chan|channel|address|addr|dmx|slot)", t)
+    if m:
+        return {"text": raw.strip(), "channels": int(m.group(1))}
     num = parse_number(raw)
     return {"text": raw.strip(), "channels": int(num) if num is not None else None}
+
+
+COUNT_WORDS = {"a couple": 2, "a couple of": 2, "couple of": 2, "a pair": 2, "a pair of": 2, "pair of": 2, "both": 2}
+
+
+def norm_count(raw: str) -> dict:
+    """'3', 'three', 'a couple of', '3x' -> {count}; 'a few' stays unknown (ask)."""
+    t = raw.lower().strip()
+    for k, v in COUNT_WORDS.items():
+        if t == k:
+            return {"count": v}
+    m = re.fullmatch(r"x?\s*(\d{1,3})\s*x?", t)
+    if m:
+        return {"count": int(m.group(1))}
+    n = parse_number(t)
+    return {"count": int(n)} if n is not None and float(n).is_integer() and n > 0 else {}
+
+
+def prefer_rig_model(rig: Rig, val: dict) -> dict:
+    """Among equally good library matches, the model already patched in the show wins ('vpar' -> American DJ/VPar)."""
+    if not val.get("ambiguous"):
+        return val
+    norm = lambda s: re.sub(r"[^a-z0-9]", "", s.lower())  # noqa: E731
+    in_rig = {(norm(fx.manufacturer), norm(fx.model)) for fx in rig.fixtures.values()}
+    top = [c for c in val.get("candidates", []) if c["score"] >= (val.get("score") or 0) - 1e-9]
+    hits = [c for c in top if (norm(c["manufacturer"]), norm(c["model"])) in in_rig]
+    if len(hits) == 1:
+        out = dict(val, manufacturer=hits[0]["manufacturer"], model=hits[0]["model"], score=hits[0]["score"])
+        out.pop("ambiguous", None)
+        out["note"] = "the model already in your show"
+        return out
+    return val
 
 
 def resolve_library_model(library, raw: str) -> dict:
@@ -329,6 +366,10 @@ def resolve_library_model(library, raw: str) -> dict:
     if not words:
         return {"unresolved": raw}
     nums = [w for w in words if w.isdigit()]
+    from lightai.rig.house import singular
+
+    forms = [{w, singular(w)} for w in words]  # 'pars' matches 'Par 64'
+    whole = "".join(singular(w) for w in words)
     best = []
     for manufacturer, model in library.all_models():
         hay = re.sub(r"[^a-z0-9 ]", " ", f"{manufacturer} {model}")
@@ -336,12 +377,22 @@ def resolve_library_model(library, raw: str) -> dict:
         joined = hay.replace(" ", "")
         if nums and not all(n in tokens or n in joined for n in nums):
             continue
-        hits = sum(1 for w in words if w in tokens or (len(w) > 3 and w in joined))
+        hits = sum(1 for f in forms if any(w in tokens or ((len(w) > 3 or (len(w) >= 2 and not w.isdigit() and any(ch.isdigit() for ch in w)))
+                                                             and w in joined) for w in f))
+        if len(whole) >= 3 and whole in joined:  # 'l 1015', 'par 64': the letters and digits run together in the name
+            hits = len(words)
         if hits == 0:
             continue
         score = hits / len(words) + (0.2 if model in " ".join(words) else 0.0)
         best.append((score, manufacturer, model))
     best.sort(key=lambda x: (-x[0], len(x[2])))
+    seen_keys, uniq = set(), []
+    for b in best:  # the same model filed under 'American DJ' and 'American_DJ' is one candidate
+        k = (re.sub(r"[^a-z0-9]", "", b[1].lower()), re.sub(r"[^a-z0-9]", "", b[2].lower()))
+        if k not in seen_keys:
+            seen_keys.add(k)
+            uniq.append(b)
+    best = uniq
     if not best:
         return {"unresolved": raw}
     cands = [{"manufacturer": b[1], "model": b[2], "score": round(b[0], 3)} for b in best[:5]]
@@ -500,6 +551,14 @@ class TargetResolver:
                  if p and not p.isdigit() and re.search(r"(?<![a-z0-9])" + re.escape(p) + r"(?![a-z0-9])", fx.name.lower())]
         if len(cands) == 1:
             return [cands[0].id], "fixture name (partial)"
+        from lightai.rig.house import house_models, match_house_models
+
+        hits = match_house_models(self.rig, p, house=house_models(self.rig, only_rig=True), need_model_word=True, zones=False)
+        if hits:  # 'chauvet swarms', 'thin pars', 'beam v3', 'rgbs': every fixture of that model
+            top = [e for pts, e in hits if pts == hits[0][0]]
+            ids = [i for e in top for i in e["ids"]]
+            if ids:
+                return ids, "model " + " / ".join(f"{e['manufacturer']} {e['model']}" for e in top)
         return [], None
 
     def label(self, raw: str) -> str:
@@ -587,8 +646,12 @@ def normalize_slot(rig: Rig, slot: str, raw: str, context_before: str = "", inte
         return norm_observed(rig, raw)
     if slot == "fixture_model":
         if intent == "add_fixture":
-            return resolve_library_model(rig.library, raw)
+            from lightai.rig.house import assume_house_model
+
+            return assume_house_model(rig, raw, prefer_rig_model(rig, resolve_library_model(rig.library, raw)))
         return resolve_model(rig, raw)
+    if slot == "count":
+        return norm_count(raw)
     if slot == "address":
         return norm_address(raw)
     if slot == "mode":

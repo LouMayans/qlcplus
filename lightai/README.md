@@ -43,12 +43,49 @@ Things you can say:
 - **New looks:** "slow blue wash breathing at 60 BPM", "pink and blue chase on the pars", "big fast white sweep on the beams", "mirrored green circles on the spots", "orange strobe on the tetras as an override".
 - **Assume and try:** "make an assumption on fixture 5 and make it move". It previews live, then asks how it looked. Press *Keep it* to save the look.
 - **Fix the rig map:** "fixture 3 needs to be rotated 90 degrees", "move wash 1 left 50 cm", "rename fixture 21 to DJ Wall".
+- **Patch:** "add 3 vpar 7 channel fixtures to universe 1" (puts them at the first free addresses, back to back),
+  "add 3 american dj pars to universe 1 and 4 to universe 2" (two groups), "add 2 pars", "hang 2 moving heads on universe 1",
+  "add a chauvet intimidator spot 260 at universe 2 address 150", "move fixture 16 to universe 1 address 300",
+  "move the vpars to universe 1" (first free block), "change the dmx address of wash 1 to 250".
+  A vague model ("pars", "american dj par", "moving heads", "spots") means the one your shows use most: the main show counts
+  first, then the other shows in `SaveFile`. The plan says which model it assumed and which others you own also match; a
+  model you name exactly is used as said. Without a mode it uses the mode your other fixtures of that model use. Overlaps
+  are refused with the first free block that fits. Set the same address on the unit itself (menu or DIP switches).
+- **Your fixtures by name:** any name of a fixture you have works: the models in your shows (`SaveFile`) and your own
+  definitions (`Fixtures\` in the repo, `%USERPROFILE%\QLC+\Fixtures`), by model, maker, version or the names you gave
+  them: "add a swarm", "add a betopper l1015", "add 2 beam230 v2", "thin pars at 50%", "chauvet swarms off". Your
+  fixtures come before the QLC+ library; when a name fits several of yours equally ("betopper", "mayans"), it asks.
+- **Which show changes:** lightai edits the show QLC+ has open, as long as it is saved as a file. The console header
+  shows it ("show: ..."; "lightai edits ..." in orange when they differ). A new, unsaved QLC+ show has no file to edit:
+  type a name in the header and press **New show** instead. That creates an empty show next to the main show (the main
+  show's DMX outputs, no fixtures), opens it in QLC+ and lets lightai edit it. **Open main show in QLC+** goes back.
+  What it learned about your main show's fixtures (zones, aliases, stage order, the kill function) applies to the main
+  show only; what it learned about fixture models applies to every show.
+- **History:** every command you type is logged with what came of it (`C:\lightai-data\history.jsonl`); the last 50 are
+  at http://127.0.0.1:8765/history.
 - **Live control:** "washes at 40%", "fog on", "grand master 75%", "start auto chaser show 3", "stop everything", "blackout", "lights back on", "release the washes".
 - **Teach the rig:** "find blue on fixture 34", "what does channel 6 on fixture 1 do", "calibrate fixture 31".
 - **Feedback:** "that was pink not blue", "too fast", "too dim", "fixture 34 is a v3", "looks good".
 - **Tempo:** tap the **TAP** button or say "bpm 126". New looks use it. On the fork build, running AI looks are retimed live.
 
 Anything unclear gets a question back instead of a guess.
+
+## The models
+- **Where they live:** `C:\lightai-data\models\v1`, `v2`, ... (about 65 MB each) and `models\retriever` (MiniLM, 23 MB).
+  `models\current.txt` names the one in use. They are not in git: they are large, every retrain adds another, and they
+  can be rebuilt from the training data. `data\seed.txt`, `lightai\train\grammar.yaml` and the rig facts it learns
+  (`lightai\rig\learned.yaml`) are in git; your corrections and ratings are in `C:\lightai-data`
+  (`corrections.jsonl`, `feedback.jsonl`), which is not. Back up `C:\lightai-data` to keep them.
+- **Where they come from:** the base models are downloaded once from Hugging Face (free, Apache-2.0):
+  `distilbert-base-uncased` for understanding commands and `sentence-transformers/all-MiniLM-L6-v2` for matching function
+  names. They are cached in `%USERPROFILE%\.cache\huggingface`. Training fine-tunes the base model here on the laptop.
+- **Trying other models:** any Hugging Face encoder of the BERT family can be trained on the same data, for example
+  ```
+  C:\lightai-env\venv\Scripts\python -m lightai train --epochs 5 --encoder bert-base-uncased
+  C:\lightai-env\venv\Scripts\python -m lightai train --epochs 5 --encoder google/electra-small-discriminator
+  ```
+  Without `--promote-if-better` nothing changes in use; each run leaves `metrics.json` in its model folder (dev accuracy,
+  golden and must-abstain results, parse speed) so the runs can be compared. Bigger models are slower and need more RAM.
 
 ## How it learns
 | Loop | You do | It updates | When |

@@ -191,9 +191,24 @@ def _cached_yaml(path: Path) -> dict:
     return copy.deepcopy(hit[1])
 
 
+SHOW_ONLY = ("stage_order", "kill_function_id", "protected_functions", "exclude_from_all", "fixtures")
+
+
+def portable_overrides(overrides: dict) -> dict:
+    """For a show other than the main one: facts about fixture models and the general rules only. Zones, the stage
+    order, the kill and protected functions and per-fixture facts are keyed by the main show's fixture and function IDs."""
+    out = {k: v for k, v in overrides.items() if k not in SHOW_ONLY and k != "zones"}
+    zones = {n: {k: v for k, v in (z or {}).items() if k != "ids"} for n, z in (overrides.get("zones") or {}).items() if n == "all"}
+    if zones:
+        out["zones"] = zones
+    out["other_show"] = True
+    return out
+
+
 class Rig:
     def __init__(self, cfg: Config, workspace: Workspace, overrides: dict, colors: ColorBook, library: FixtureLibrary) -> None:
         self.cfg = cfg
+        self.is_main = not overrides.get("other_show")
         self.ws = workspace
         self.overrides = overrides
         self.colors = colors
@@ -225,6 +240,8 @@ class Rig:
         ws = Workspace.load(project or cfg.project_path)
         overrides = _cached_yaml(cfg.overrides_path)
         overrides = deep_merge(overrides, LearnedFacts(cfg.learned_path).overlay())
+        if not cfg.is_main_show(project or cfg.project_path):
+            overrides = portable_overrides(overrides)
         colors = ColorBook(_cached_yaml(cfg.colors_path))
         return cls(cfg, ws, overrides, colors, FixtureLibrary.shared(cfg.fixture_dirs))
 

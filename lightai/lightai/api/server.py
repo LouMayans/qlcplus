@@ -20,6 +20,7 @@ import asyncio
 import hmac
 import json
 import os
+import subprocess
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -52,6 +53,7 @@ class ExecIn(BaseModel):
     plan_id: str = Field(max_length=64)
     confirm: bool = False
     allow_running_reload: bool = False
+    allow_other_show: bool = False
 
 
 class PlanRef(BaseModel):
@@ -68,6 +70,16 @@ class TeachIn(BaseModel):
 class BpmIn(BaseModel):
     bpm: Optional[float] = Field(None, ge=40, le=220, allow_inf_nan=False)
     tap: bool = False
+
+
+class OpenShowIn(BaseModel):
+    force: bool = False  # discard unsaved changes in QLC+
+    start_if_closed: bool = True
+
+
+class NewShowIn(BaseModel):
+    name: str = Field(min_length=1, max_length=64)
+    force: bool = False  # discard unsaved changes in QLC+
 
 
 class AnswerIn(BaseModel):
@@ -181,7 +193,19 @@ def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = N
 
     @app.post("/plan")
     async def plan(body: TextIn) -> dict:
+        await follow_qlc()
         cmd, p = ai().plan(body.text)
+        if p.mode == "structural" and any(a.op == "reload" for a in p.actions):
+            try:
+                s = await show_info()
+            except Exception:  # the warning is a courtesy; the executor checks again before writing
+                s = {}
+            if s.get("running") and s.get("fork_version") and not s.get("follows"):  # QLC+ shows another show than lightai edits
+                what = f"'{Path(s['open']).name}'" if s.get("open") else "a new, unsaved show"
+                name = Path(ai().cfg.project_path).name
+                p.warnings.insert(0, f"QLC+ has {what} open, but this changes {name}. Applying it opens {name} in QLC+ in place of that show.")
+        history_log({"plan_id": p.plan_id, "text": body.text, "intent": cmd.intent, "confidence": round(cmd.confidence, 3),
+                     "mode": p.mode, "summary": p.summary[:300], "show": Path(p.show).name if p.show else None})
         return {"command": cmd.model_dump(), "plan": p.model_dump()}
 
     def get_plan(pid: str):
@@ -196,7 +220,41 @@ def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = N
 
     @app.post("/execute")
     async def execute(body: ExecIn) -> dict:
-        return await ai().executor.execute(get_plan(body.plan_id), confirm=body.confirm, allow_running_reload=body.allow_running_reload)
+        res = await ai().executor.execute(get_plan(body.plan_id), confirm=body.confirm, allow_running_reload=body.allow_running_reload,
+                                            allow_other_show=body.allow_other_show)
+        why = next((r.get("note") or r.get("error") for r in res.get("results") or [] if r.get("note") or r.get("error")), None)
+        history_log({"plan_id": body.plan_id, "executed": bool(res.get("ok")),
+                     "note": str(res.get("clarify") or ("needs confirmation" if res.get("needs_confirmation") else "") or why or "")[:200]})
+        return res
+
+    def history_log(row: dict) -> None:
+        """Every command typed and what came of it: C:\\lightai-data\\history.jsonl (5 MB, then history.1.jsonl)."""
+        path = ai().cfg.data_dir / "history.jsonl"
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            if path.exists() and path.stat().st_size > 5_000_000:
+                path.replace(path.with_name("history.1.jsonl"))
+            with open(path, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps({"ts": datetime.now(timezone.utc).isoformat(timespec="seconds"), **row}, ensure_ascii=False) + "\n")
+        except OSError:
+            pass
+
+    @app.get("/history")
+    async def history(limit: int = Query(50, ge=1, le=500)) -> list:
+        """The last commands typed (newest last), each with its plan and, once run, whether it worked."""
+        path = ai().cfg.data_dir / "history.jsonl"
+        if not path.exists():
+            return []
+        rows = []
+        for line in path.read_text(encoding="utf-8").splitlines()[-limit * 3:]:
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+        done = {r["plan_id"]: r for r in rows if "executed" in r}
+        out = [dict(r, executed=done[r["plan_id"]]["executed"], result=done[r["plan_id"]]["note"]) if r.get("plan_id") in done else r
+               for r in rows if "text" in r]
+        return out[-limit:]
 
     @app.post("/preview")
     async def preview(body: PlanRef) -> dict:
@@ -288,6 +346,146 @@ def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = N
         if ai().session.calibration:
             return await ex.calibrate_end("stopped")
         return {"stopped": True}
+
+    async def show_info() -> dict:
+        from lightai.exec.http import fork_version, project_file
+
+        main = ai().cfg.main_show()
+        active = Path(ai().cfg.project_path)
+        launcher = Path(ai().cfg.qlc_launcher)
+        try:
+            c = await ai().executor.ensure_client()
+        except QlcError:
+            return {"running": False, "main": str(main), "active": str(active), "active_is_main": ai().cfg.is_main_show(),
+                    "launcher": str(launcher) if launcher.exists() else None}
+        ver = await fork_version(c)
+        info = await project_file(c) if ver else None
+        open_path = (info or {}).get("path") or None
+        is_main = bool(open_path) and Path(open_path).resolve() == main.resolve()
+        follows = bool(open_path) and Path(open_path).resolve() == active.resolve()
+        return {"running": True, "open": open_path, "modified": (info or {}).get("modified"), "main": str(main),
+                "is_main": is_main, "active": str(active), "active_is_main": ai().cfg.is_main_show(), "follows": follows,
+                "fork_version": ver, "can_open": ver >= 2}
+
+    follow_state = {"t": 0.0}
+
+    async def follow_qlc(force: bool = False) -> None:
+        """lightai edits the show QLC+ has open when that show is a saved .qxw file (a new, unsaved show has no file)."""
+        from lightai.exec.http import project_file, supports_fork_commands
+
+        now = time.monotonic()
+        if not force and now - follow_state["t"] < 2.0:
+            return
+        follow_state["t"] = now
+        ex = ai().executor
+        if ex._struct_lock.locked():  # never swap the rig under a running change
+            return
+        try:
+            c = await ex.ensure_client()
+            if not await supports_fork_commands(c):
+                return
+            info = await project_file(c)
+        except QlcError:
+            return
+        path = (info or {}).get("path")
+        if not (path and path.lower().endswith(".qxw") and Path(path).is_file()):
+            return
+        if Path(path).resolve() == Path(ai().cfg.project_path).resolve():
+            return
+        await ex.stop_preview()
+        if ai().session.calibration is not None:
+            await ex.calibrate_end("QLC+ switched shows")
+        try:
+            ai().switch_show(Path(path))
+        except Exception as exc:  # a show lightai can't read: keep editing the current one
+            print(f"[lightai] can't edit {path}: {exc}", flush=True)
+
+    @app.get("/qlc/show")
+    async def qlc_show() -> dict:
+        await follow_qlc(force=True)
+        return await show_info()
+
+    async def open_in_qlc(target: Path, force: bool = False, start_if_closed: bool = True) -> dict:
+        """Open a show file in QLC+ (starting QLC+ with the usual launcher when it is closed); lightai edits it after."""
+        from lightai.exec.http import open_project_file
+
+        ex = ai().executor
+        info = await show_info()
+        started = False
+        if not info["running"]:
+            launcher = Path(ai().cfg.qlc_launcher)
+            if not start_if_closed or not launcher.exists():
+                raise HTTPException(503, "QLC+ is not running" + ("" if launcher.exists() else f" and there is no launcher at {launcher}"))
+            subprocess.Popen(["cmd.exe", "/c", str(launcher)], cwd=str(launcher.parent), creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            started = True
+            for _ in range(60):
+                await asyncio.sleep(0.5)
+                ex.client._down_until = 0.0  # retry now instead of after the fail-fast pause
+                info = await show_info()
+                if info["running"]:
+                    break
+            else:
+                raise HTTPException(504, "QLC+ was started but its web access did not answer within 30 s")
+        if info.get("open") and Path(info["open"]).resolve() == Path(target).resolve():
+            if not ai().switch_show(target):
+                ai().reload_rig()
+            return {"ok": True, "started": started, "already": not started, "open": info["open"],
+                    "note": f"QLC+ started with {Path(target).name}" if started else f"{Path(target).name} is already open in QLC+"}
+        if not info.get("can_open"):
+            raise HTTPException(409, "this QLC+ build can't switch shows from lightai; install the current fork build "
+                                     "(lightai\\tools\\install-fork-build.ps1 while QLC+ is closed)")
+        if info.get("modified") and not force:
+            shown = Path(info["open"]).name if info.get("open") else "a new, unsaved show"
+            return {"ok": False, "needs_confirmation": True, "open": info.get("open"),
+                    "note": f"QLC+ has unsaved changes in '{shown}'. Open {Path(target).name} anyway? Those changes would be lost."}
+        await ex.stop_preview()
+        if ai().session.calibration is not None:
+            await ex.calibrate_end("QLC+ is switching shows")
+        async with ex._struct_lock:
+            res = await open_project_file(ex.client, Path(target), force=force or bool(info.get("modified")))
+        ai().session.overridden.clear()
+        ok = bool(res.get("opened") and res.get("loaded"))
+        if ok and not ai().switch_show(target):
+            ai().reload_rig()
+        return {"ok": ok, "started": started, "open": str(target), **res,
+                "note": f"opened {Path(target).name} in QLC+" if ok else res.get("note", "QLC+ did not confirm the load")}
+
+    @app.post("/qlc/new-show")
+    async def qlc_new_show(body: NewShowIn) -> dict:
+        """An empty show next to the main show (its DMX outputs, no fixtures), opened in QLC+; lightai edits it after."""
+        from lightai.rig.newshow import create_empty_show, show_path
+
+        main = ai().cfg.main_show()
+        try:
+            dest = show_path(main.parent, body.name)
+        except ValueError as exc:
+            raise HTTPException(422, f"show name: {exc}")
+        if dest.exists():
+            raise HTTPException(409, f"a show called '{dest.stem}' already exists; pick another name")
+        info = await show_info()
+        if info["running"] and not info.get("can_open"):
+            raise HTTPException(409, "this QLC+ build can't switch shows from lightai; install the current fork build")
+        if info["running"] and info.get("modified") and not body.force:
+            shown = Path(info["open"]).name if info.get("open") else "a new, unsaved show"
+            return {"ok": False, "needs_confirmation": True, "open": info.get("open"),
+                    "note": f"QLC+ has unsaved changes in '{shown}'. Open the new show anyway? Those changes would be lost."}
+        create_empty_show(main, dest)
+        try:
+            res = await open_in_qlc(dest, force=body.force, start_if_closed=True)
+        except HTTPException:
+            dest.unlink(missing_ok=True)  # nothing opened it: the name stays free
+            raise
+        if res.get("ok"):
+            res["note"] = f"created {dest.name} (no fixtures; the main show's DMX outputs) and opened it in QLC+. lightai edits it now."
+        return {**res, "created": str(dest)}
+
+    @app.post("/qlc/open-show")
+    async def qlc_open_show(body: OpenShowIn) -> dict:
+        """Open the main show in QLC+ (starting QLC+ when it is closed); lightai edits the main show after."""
+        res = await open_in_qlc(ai().cfg.main_show(), force=body.force, start_if_closed=body.start_if_closed)
+        if res.get("ok") and res.get("already"):
+            res["note"] = "the main show is already open in QLC+"
+        return res
 
     @app.get("/rig")
     async def rig() -> dict:

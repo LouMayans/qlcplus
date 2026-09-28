@@ -56,6 +56,72 @@ def merge_spans(spans: list) -> list:
 MOVEMENT_SPECIFICITY = ["circle_wave", "figure8", "ballyhoo", "sweep", "running_light", "breathe", "strobe", "color_chase", "circle", "blackout_kill", "color_wash"]
 
 
+COUNT_WORD = r"(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|a couple of|a pair of|couple of|pair of)"
+PATCH_COUNT = re.compile(r"\b(?:add|patch|install|put|plug in|set up|hang|mount|rig up|need|want|got|have|bought|order)\s+(?:(?:in|up|another)\s+)?"
+                         + COUNT_WORD + r"\b(?!\s*(?:%|percent|degrees?|cm|mm|m\b|bpm|seconds?))", re.I)
+X_COUNT = re.compile(r"\b(\d{1,2})\s*x\b|\bx\s*(\d{1,2})\b|\b" + COUNT_WORD + r"\s+(?:more|new|extra)\b", re.I)
+# '7 address type' is a mode; 'universe 2 address 150' is not (a number follows, or 'universe' comes before)
+MODE_PHRASE = re.compile(r"(?<!universe )(?<!uni )\b(\d{1,3})\s*-?\s*(?:ch|chs|chan\w*|channel\w*|address\w*|addr|dmx|slot\w*)\b"
+                         r"(?!\s*#?\s*\d)(?:\s+(?:mode|type|version))?", re.I)
+MODEL_FILLER = re.compile(r"\b(?:fixtures?|units?|lights?|type|mode|more|new|extra|another|of|the|a|an|to|on|in|at|into|for)\b", re.I)
+JUNK_NAMES = {"universe", "type", "fixtures", "fixture", "mode", "units", "address", "dmx"}
+
+
+def address_from_text(text: str) -> tuple:
+    """'to universe 1', 'universe 2 address 150', '2.300', 'starting at 200', 'dmx 97' -> ({universe, address} 0-based, phrase)."""
+    from lightai.nlu.normalize import digits_for_words
+
+    t = digits_for_words(text.lower())
+    m = re.search(r"\b(\d+)\s*[./:]\s*(\d+)\b", t)
+    if m:
+        return {"universe": int(m.group(1)) - 1, "address": int(m.group(2)) - 1}, m.group(0)
+    out, parts = {}, []
+    u = re.search(r"\b(?:universe|uni)\s*#?\s*(\d+)\b", t)
+    if u:
+        out["universe"] = int(u.group(1)) - 1
+        parts.append(u.group(0))
+    a = re.search(r"\b(?:address|addr|dmx|start(?:ing)? at|starting from|from|at)\s*#?\s*(\d+)\b(?!\s*(?:%|percent|bpm))", t)
+    if a:
+        out["address"] = int(a.group(1)) - 1
+        parts.append(a.group(0))
+    return out, " ".join(parts)
+
+
+PATCH_WHAT = re.compile(r"\b(?:add|patch|install|plug in|set up|hang|mount|bought|got|have)\s+(.+?)"
+                        r"(?=\s+(?:to|on|in|at|into|called|named|as)\b|[,.!?]|$)", re.I)
+# 'add 2 pars', 'add swarm fixture to project', 'add a swarm to universe 1': no number means one
+PATCH_START = re.compile(r"^\s*(?:please\s+)?(?:add|patch|install|hang|mount)\s+"
+                         r"(?:" + COUNT_WORD + r"\s*x?\s+(?:more\s+)?|(?:a|an|another|one more)\s+)?"
+                         r"(?!(?:to|on|at|into|percent|points?|bpm|seconds?|degrees?|the|this|that|it|them|some)\b)(?P<what>[a-z][a-z0-9 \-]*?)"
+                         r"(?=\s+(?:to|on|in|at|into)\s+(?:universe|uni|address|addr|dmx)\b"
+                         r"|\s+(?:to|in|into)\s+(?:the\s+|this\s+|my\s+|our\s+|a\s+)?(?:project|show|patch|rig|workspace|file)\b"
+                         r"|\s+(?:called|named|as)\b|\s*[.!]?\s*$)", re.I)
+DEST = re.compile(r"\b(?:to|on|in|into|onto|at)\s+(?:universe|uni)\s*#?\s*(\d+)"
+                  r"(?:\s*,?\s*(?:address|addr|dmx|start(?:ing)? at|starting from|from|at)\s*#?\s*(\d+))?", re.I)
+
+
+def patch_groups(text: str) -> list:
+    """'add 3 pars to universe 1 and 4 to universe 2' -> [(None, {universe: 0}, raw), (4, {universe: 1}, raw)].
+    The first group takes the sentence's count; each later group takes the number said just before its universe."""
+    from lightai.nlu.normalize import digits_for_words, norm_count
+
+    t = digits_for_words(text.lower())
+    dests = list(DEST.finditer(t))
+    if len(dests) < 2:
+        return []
+    out = []
+    for i, m in enumerate(dests):
+        addr = {"universe": int(m.group(1)) - 1}
+        if m.group(2):
+            addr["address"] = int(m.group(2)) - 1
+        n = None
+        if i:
+            c = re.search(r"\b" + COUNT_WORD + r"\s*x?\b", t[dests[i - 1].end():m.start()], re.I)
+            n = norm_count(c.group(1)).get("count") if c else None
+        out.append((n, addr, m.group(0).strip()))
+    return out
+
+
 class Parser:
     def __init__(self, rig: Rig, model: NluModel, retriever: Optional[Retriever] = None) -> None:
         self.rig = rig
@@ -410,14 +476,221 @@ class Parser:
             cmd.slots["fixture_model"] = [SlotValue(raw=rest, value=v)]
             cmd.ambiguities.append(f"read the fixture model as '{rest}'")
 
+    def level_only(self, cmd: LightCommand) -> None:
+        """'mayans beam230 at 50%' read as 'create a look' (0.94): a sentence that is only fixtures and a percentage, with
+        fixtures that resolve, is a level change."""
+        if cmd.intent == "set_level":
+            return
+        m = re.fullmatch(r"\s*(?:set\s+|put\s+|bring\s+)?(?:the\s+|all\s+(?:the\s+)?)?(.+?)\s+(?:at|to)\s+(\d{1,3})\s*(?:%|percent)\s*[.!]?\s*",
+                         cmd.text, re.I)
+        if not m or int(m.group(2)) > 100 or any(cmd.slots.get(s) for s in ("color", "movement", "rate", "strobe", "fade", "function_ref")
+                                                 if cmd.first(s) is not None and cmd.first(s).raw.lower() not in m.group(1).lower()):
+            return
+        val = normalize_slot(self.rig, "target", m.group(1))
+        if not val.get("fixture_ids"):
+            return
+        cmd.ambiguities.append(f"'{cmd.text.strip()}' sets a level (model said {cmd.intent} at {cmd.confidence:.2f})")
+        cmd.intent_top = [("set_level", 1.0)] + [t for t in cmd.intent_top if t[0] != "set_level"]
+        cmd.intent, cmd.confidence = "set_level", max(cmd.confidence, 0.9)
+        for s in ("color", "movement", "rate", "strobe", "fade", "function_ref", "name"):
+            cmd.slots.pop(s, None)
+        cmd.slots["target"] = [SlotValue(raw=m.group(1), value=val)]
+        pct = f"{m.group(2)}%"
+        cmd.slots["intensity"] = [SlotValue(raw=pct, value=normalize_slot(self.rig, "intensity", pct))]
+
+    def join_model_spans(self, cmd: LightCommand) -> None:
+        """'beam230 v3' tagged as target 'beam230' + movement 'v3', 'mayans wash' as model 'mayans' + movement 'wash': when
+        the next tag's words make a more exact name of one of your fixture models, they belong to the same name."""
+        from lightai.rig.house import house_models, match_house_models
+
+        spans = sorted(cmd.spans, key=lambda s: s.start)
+        for a, b in zip(spans, spans[1:]):
+            if a.slot not in ("target", "fixture_model") or b.start != a.end or b not in cmd.spans \
+                    or b.slot not in ("movement", "function_ref", "name", "direction", "observed", "target", "fixture_model"):
+                continue
+            house = house_models(self.rig, only_rig=a.slot == "target")
+            joined = f"{a.text} {b.text}"
+            one = match_house_models(self.rig, a.text, house=house, need_model_word=True, zones=False)
+            both = match_house_models(self.rig, joined, house=house, need_model_word=True, zones=False)
+            if not both or (one and both[0][0] <= one[0][0]):
+                continue
+            first = next((sv for sv in cmd.slots.get(a.slot) or [] if sv.raw == a.text), None)
+            second = next((sv for sv in cmd.slots.get(b.slot) or [] if sv.raw == b.text), None)
+            if first is None:
+                continue
+            first.raw, first.value = joined, normalize_slot(self.rig, a.slot, joined, intent=cmd.intent)
+            if second is not None:
+                cmd.slots[b.slot].remove(second)
+                if not cmd.slots[b.slot]:
+                    cmd.slots.pop(b.slot)
+            a.end, a.text = b.end, joined
+            cmd.spans.remove(b)
+            cmd.ambiguities.append(f"'{joined}' is one fixture name")
+
+    def maker_targets(self, cmd: LightCommand) -> None:
+        """'mayans washes at 50%' tagged as two targets, 'mayans' and 'washes': the maker's name narrows the other target
+        to that maker's fixtures instead of standing alone as every Mayans fixture."""
+        tv = cmd.slots.get("target") or []
+        if len(tv) < 2:
+            return
+        from lightai.rig.house import house_models, match_house_models
+
+        house = house_models(self.rig, only_rig=True)
+        makers = []
+        for sv in tv:
+            hits = match_house_models(self.rig, sv.raw, house=house, need_model_word=True, zones=False)
+            if hits and all(pts == 0 for pts, _ in hits):
+                makers.append((sv, {i for _, e in hits for i in e["ids"]}))
+        if not makers or len(makers) == len(tv):
+            return
+        for sv, ids in makers:
+            tv.remove(sv)
+            for other in tv:
+                keep = [i for i in other.value.get("fixture_ids") or [] if i in ids]
+                if keep:
+                    other.value = dict(other.value, fixture_ids=keep)
+            cmd.ambiguities.append(f"'{sv.raw}' is the maker: only its fixtures")
+
+    def patch_intent(self, cmd: LightCommand) -> None:
+        """'add 2 pars': too short for the model to be sure (0.30). A count plus words that name a fixture model you use
+        (or exactly one library model) is a patch request."""
+        from lightai.nlu.normalize import resolve_library_model
+        from lightai.rig.house import match_house_models
+
+        m = PATCH_START.match(cmd.text)
+        if not m or (cmd.intent == "add_fixture" and cmd.confidence >= 0.8):
+            return
+        strong = bool(re.search(r"\b(?:fixtures?|units?)\b", m.group("what"), re.I)) or bool(re.search(
+            r"^\s+(?:to|in|into|on)\s+(?:the\s+|this\s+|my\s+)?(?:project|show|patch|universe|uni)\b", cmd.text[m.end("what"):], re.I))
+        # a move never says 'add/hang'; 'none' is no reading at all; 'fixture' or 'to project' is patch wording
+        if cmd.confidence >= 0.8 and cmd.intent not in ("fixture_edit.readdress", "none") and not strong:
+            return
+        if re.search(r"\b(?:to|on|in|at|into|onto|for|with|from)\b", m.group("what"), re.I):  # 'add 2 washes to the look'
+            return
+        what = re.sub(r"\s+", " ", MODEL_FILLER.sub(" ", MODE_PHRASE.sub(" ", m.group("what")))).strip()
+        if not what:
+            return
+        lib = resolve_library_model(self.rig.library, what)
+        counted = bool(m.group(1))  # without a number only a model you name counts ('add swarm'), never an alias ('add fog')
+        if not match_house_models(self.rig, what, need_model_word=not counted) and (lib.get("unresolved") or lib.get("ambiguous")):
+            return
+        cmd.ambiguities.append(f"'{m.group(0).strip()}' patches new fixtures (model said {cmd.intent} at {cmd.confidence:.2f})")
+        cmd.intent_top = [("add_fixture", 1.0)] + [t for t in cmd.intent_top if t[0] != "add_fixture"]
+        cmd.intent, cmd.confidence = "add_fixture", max(cmd.confidence, 0.9)
+        for sv in cmd.slots.get("fixture_model") or []:  # normalized for another intent: redo it as a library model
+            sv.value = normalize_slot(self.rig, "fixture_model", sv.raw, intent="add_fixture")
+
+    def patch_words(self, cmd: LightCommand) -> None:
+        """add_fixture / fixture_edit.readdress: count, universe and address come from the words; the model phrase is cleaned."""
+        if cmd.intent not in ("add_fixture", "fixture_edit.readdress"):
+            return
+        if cmd.slots.pop("function_ref", None):  # 'add 1 par': 'par' also tagged as a function; patching uses none
+            cmd.ambiguities.append("ignored a function name: patching doesn't use functions")
+        from lightai.nlu.normalize import norm_count, norm_mode, prefer_rig_model, resolve_library_model
+        from lightai.rig.house import assume_house_model
+
+        addr, phrase = address_from_text(cmd.text)
+        if addr:  # 'to universe 1' is universe 1, never address 1
+            old = cmd.first("address")
+            if old is None or old.value != addr:
+                cmd.slots["address"] = [SlotValue(raw=phrase, value=addr)]
+                cmd.ambiguities.append(f"address read from the words: '{phrase}'")
+        if cmd.intent == "fixture_edit.readdress":
+            tv = cmd.first("target")
+            if tv is None or not tv.value.get("fixture_ids"):  # 'move the vpars to universe 1' tagged 'the' as the target
+                m = re.search(r"\b(?:move|readdress|re-address|repatch|re-patch|shift|put|swap|give|assign|address of|set)\s+(.+?)"
+                              r"(?=\s+(?:to|on|at|over to|onto|into|the address|address)\b)", cmd.text, re.I)
+                if m:
+                    words = re.sub(r"^(?:the|all the|all)\s+", "", m.group(1).strip(), flags=re.I)
+                    val = normalize_slot(self.rig, "target", words)
+                    if val.get("fixture_ids"):
+                        cmd.slots["target"] = [SlotValue(raw=words, value=val)]
+                        cmd.ambiguities.append(f"fixtures read as '{words}'")
+            return
+        for sv in list(cmd.slots.get("name") or []):  # 'universe', 'type' tagged as a name
+            if sv.raw.lower().strip() in JUNK_NAMES:
+                cmd.slots["name"].remove(sv)
+        for sv in list(cmd.slots.get("target") or []):  # 'fixtures' tagged as a target
+            if not sv.value.get("fixture_ids"):
+                cmd.slots["target"].remove(sv)
+        for slot in ("name", "target"):
+            if slot in cmd.slots and not cmd.slots[slot]:
+                cmd.slots.pop(slot)
+        if not cmd.slots.get("count"):
+            m = PATCH_COUNT.search(cmd.text) or X_COUNT.search(cmd.text)
+            if m:
+                raw = next(g for g in m.groups() if g)
+                val = norm_count(raw)
+                if val:
+                    cmd.slots["count"] = [SlotValue(raw=raw, value=val)]
+                    cmd.ambiguities.append(f"read '{raw}' as how many fixtures")
+        groups = patch_groups(cmd.text)
+        if groups:  # '3 ... to universe 1 and 4 to universe 2': one count and one address per group, in order
+            first = cmd.first("count")
+            counts = [first if first is not None else SlotValue(raw="?", value={})]
+            counts += [SlotValue(raw=str(n) if n else "?", value={"count": n} if n else {}) for n, _, _ in groups[1:]]
+            cmd.slots["count"] = counts
+            cmd.slots["address"] = [SlotValue(raw=raw, value=addr) for _, addr, raw in groups]
+            cmd.ambiguities.append("groups read from the words: " + "; ".join(
+                f"{c.value.get('count', '?')} {raw}" for c, (_, _, raw) in zip(counts, groups)))
+        sv = cmd.first("fixture_model")
+        if sv is not None and re.fullmatch(r"\s*\d+\s*", sv.raw):  # a lone number names no model
+            sv.value = {"unresolved": sv.raw}
+        if sv is None:  # nothing tagged: the words after the verb, up to where/what they are called
+            m = PATCH_WHAT.search(cmd.text)
+            if not m:
+                return
+            sv = SlotValue(raw=m.group(1), value={})
+            cmd.slots["fixture_model"] = [sv]
+        raw = sv.raw
+        rest = cmd.text.replace(phrase, " ") if phrase else cmd.text  # never read the address as a mode
+        mm = MODE_PHRASE.search(raw) or (MODE_PHRASE.search(rest) if not cmd.slots.get("mode") else None)
+        if mm and not cmd.slots.get("mode"):
+            cmd.slots["mode"] = [SlotValue(raw=mm.group(0), value=norm_mode(mm.group(0)))]
+        cnt = cmd.first("count")
+
+        def cleaned(s: str) -> str:
+            s = MODE_PHRASE.sub(" ", s)
+            if cnt is not None and cnt.raw != "?":
+                s = re.sub(r"^\s*" + re.escape(cnt.raw) + r"\b", " ", s, flags=re.I)
+            s = re.sub(r"^\s*" + COUNT_WORD + r"\s*x?\b", " ", s, flags=re.I)
+            s = MODEL_FILLER.sub(" ", s)
+            return re.sub(r"\s+", " ", s).strip()
+
+        def resolve(s: str) -> dict:
+            return assume_house_model(self.rig, s, prefer_rig_model(self.rig, resolve_library_model(self.rig.library, s)))
+
+        clean = cleaned(raw)
+        if clean and (clean.lower() != raw.lower().strip() or sv.value.get("ambiguous") or sv.value.get("unresolved") or not sv.value):
+            val = resolve(clean)
+            if not val.get("unresolved"):
+                sv.raw, sv.value = clean, val
+                cmd.ambiguities.append(f"fixture model read as '{clean}'")
+        if sv.value.get("ambiguous") or sv.value.get("unresolved") or not sv.value:  # the tagger caught part of a name ('moving' of 'moving head')
+            m = PATCH_WHAT.search(cmd.text)
+            wide = cleaned(m.group(1)) if m else ""
+            if wide and wide.lower() != sv.raw.lower().strip():
+                val = resolve(wide)
+                if not val.get("unresolved") and not val.get("ambiguous"):
+                    sv.raw, sv.value = wide, val
+                    cmd.ambiguities.append(f"fixture model read as '{wide}'")
+
     def repair(self, cmd: LightCommand) -> None:
         """Deterministic fixes for known tagger confusions; each one is recorded in ambiguities."""
+        self.join_model_spans(cmd)
+        self.level_only(cmd)
+        self.patch_intent(cmd)
+        self.maker_targets(cmd)
         if re.fullmatch(r"\s*release( (all|everything|overrides|the overrides|all overrides|all channels))?\s*[.!]?\s*", cmd.text, re.I) \
                 and cmd.intent != "release":
             cmd.ambiguities.append(f"'{cmd.text.strip()}' hands every override back to the looks (model said {cmd.intent})")
             cmd.intent_top = [("release", 1.0)] + cmd.intent_top
             cmd.intent, cmd.confidence = "release", max(cmd.confidence, 0.9)
-        elif re.fullmatch(r"\s*(all )?(the )?lights? (back )?(on|up)( please)?\s*[.!]?\s*", cmd.text, re.I) and cmd.intent != "blackout_release":
+        elif re.fullmatch(r"\s*(full |total )?(black ?out|blackout)( now| please| everything)?\s*[.!]*\s*", cmd.text, re.I) and cmd.intent != "blackout":
+            cmd.ambiguities.append(f"'{cmd.text.strip()}' is the blackout (model said {cmd.intent})")
+            cmd.intent_top = [("blackout", 1.0)] + cmd.intent_top
+            cmd.intent, cmd.confidence = "blackout", max(cmd.confidence, 0.9)
+        elif re.fullmatch(r"\s*(turn )?(all )?(the )?lights? (back )?(on|up)( please| now)?\s*[.!]*\s*", cmd.text, re.I) and cmd.intent != "blackout_release":
             cmd.ambiguities.append(f"'{cmd.text.strip()}' ends the blackout (model said {cmd.intent})")
             cmd.intent_top = [("blackout_release", 1.0)] + cmd.intent_top
             cmd.intent, cmd.confidence = "blackout_release", max(cmd.confidence, 0.9)
@@ -434,6 +707,7 @@ class Parser:
         self.function_fallback(cmd, cmd.text)
         self.feedback_colors(cmd)
         self.fixture_model_retry(cmd)
+        self.patch_words(cmd)
         self.speed_change(cmd)
         for sv in list(cmd.slots.get("observed") or []):
             if set(sv.value) == {"text"} and re.fullmatch(SENTIMENT, sv.raw.lower().strip()):
@@ -579,6 +853,8 @@ def projection(cmd: LightCommand) -> dict:
         out["address"] = {k: v for k, v in cmd.slots["address"][0].value.items() if k in ("universe", "address")}
     if cmd.slots.get("mode"):
         out["mode"] = cmd.slots["mode"][0].value.get("text")
+    if cmd.slots.get("count"):
+        out["count"] = cmd.slots["count"][0].value.get("count")
     if cmd.slots.get("function_ref"):
         out["function_ref"] = cmd.slots["function_ref"][0].value.get("name")
     out["clarify"] = bool(cmd.clarify)

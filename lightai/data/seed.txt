@@ -574,3 +574,118 @@ fixture_edit.rename | rename [target:fixture 17] to [name:Right Column]
 fixture_edit.rename | call [target:wash 1] [name:SL Wash Low]
 add_fixture | add another [fixture_model:chauvet slimpar 64]
 add_fixture | patch one more [fixture_model:showtec phantom 65] at [address:dmx 400]
+
+# --- iteration 5: add several fixtures at free addresses; move fixtures to other DMX addresses
+add_fixture | add [count:3] [fixture_model:vpar] [mode:7address type] fixtures to [address:universe 1]
+add_fixture | add [count:3] [fixture_model:vpars] in [mode:7 channel mode] on [address:universe 1]
+add_fixture | patch [count:two] more [fixture_model:tetra bars] on [address:universe 2]
+add_fixture | we bought [count:4] [fixture_model:chauvet slimpar pro h usb] add them to [address:universe 2]
+add_fixture | add [count:6] [fixture_model:beam230] [mode:16 channel] fixtures on [address:universe 1]
+add_fixture | add [count:2] [fixture_model:venue thinpar 38] in [mode:7-ch mode] starting at [address:dmx 300]
+add_fixture | put [count:a couple of] [fixture_model:vpars] on [address:universe 2]
+add_fixture | add [count:8] [fixture_model:generic dimmers] to [address:universe 2 starting at 400]
+add_fixture | patch [count:5] [fixture_model:american dj vpar] at [address:2.150]
+add_fixture | add [count:3] new [fixture_model:vpar] [mode:7 address] units to [address:universe 1]
+add_fixture | i need [count:4] more [fixture_model:ayra compar 10] on [address:universe 2]
+add_fixture | add [count:10] [fixture_model:ledj slimline] [mode:3 channel] on [address:universe 2]
+add_fixture | add [count:three] [fixture_model:vpar] [mode:7 channel type] fixtures on [address:universe one]
+add_fixture | add [count:2] [fixture_model:vpar] fixtures called [name:Bar Left] on [address:universe 2]
+add_fixture | add a [fixture_model:vpar] to [address:universe 1]
+add_fixture | patch [count:4] [fixture_model:thinpar 38] [mode:7 address type] on [address:universe 2]
+add_fixture | add [count:12] [fixture_model:generic rgb] [mode:3 address] fixtures to [address:universe 2]
+add_fixture | hang [count:two] [fixture_model:martin mac aura] in [mode:14 channel mode] on [address:universe 1]
+add_fixture | add [count:3x] [fixture_model:vpar] to [address:universe 1]
+add_fixture | set up [count:6] [fixture_model:vpars] from [address:address 100]
+fixture_edit.readdress | move [target:fixture 16] to [address:address 100]
+fixture_edit.readdress | move [target:fixture 16] to [address:universe 1 address 300]
+fixture_edit.readdress | readdress [target:fixture 5] to [address:dmx 289]
+fixture_edit.readdress | change the dmx address of [target:wash 1] to [address:250]
+fixture_edit.readdress | set the address of [target:fixture 12] to [address:universe 2 address 97]
+fixture_edit.readdress | re-patch [target:fixture 30] at [address:2.400]
+fixture_edit.readdress | move [target:the vpars] to [address:universe 1]
+fixture_edit.readdress | move [target:the tetras] to [address:universe 2 starting at 200]
+fixture_edit.readdress | put [target:fixture 16] on [address:universe 1]
+fixture_edit.readdress | give [target:fixture 20] the address [address:300]
+fixture_edit.readdress | [target:fixture 17] should be at [address:dmx 150]
+fixture_edit.readdress | move [target:wash 3] to the next free address on [address:universe 2]
+fixture_edit.readdress | shift [target:fixture 16] to [address:address 120 on universe 2]
+fixture_edit.readdress | readdress [target:spots 1 to 4] starting at [address:dmx 1]
+fixture_edit.readdress | patch [target:fixture 16] to [address:universe 1 dmx 289] instead
+fixture_edit.readdress | move [target:the bar wash] to [address:address 450]
+fixture_edit.readdress | change the start address of [target:fixture 29] to [address:dmx 60]
+fixture_edit.readdress | re-address [target:the pars] to [address:universe 1 from 320]
+fixture_edit.readdress | swap [target:fixture 16] over to [address:universe 1]
+fixture_edit.readdress | move [target:fixture 16] address to [address:200]
+fixture_edit.move | move [target:fixture 16] [direction:left] [distance:1 m] on the map
+fixture_edit.move | move [target:wash 2] [direction:up] [distance:50 cm] on the stage plan
+
+# --- iteration 5: short commands, blackout versus lights back on (they share the word 'blackout')
+blackout | blackout
+blackout | blackout!
+blackout | blackout now
+blackout | full blackout
+blackout | black out
+blackout | lights out
+blackout | go dark now
+blackout_release | lights on
+blackout_release | lights back on
+blackout_release | turn the lights on
+blackout_release | turn the lights back on
+blackout_release | all lights on
+blackout_release | lights up
+blackout_release | end the blackout
+blackout_release | blackout off
+release | release
+release | release all
+release | release everything
+stop_all | stop all
+stop_all | stop everything now
+
+# --- iteration 6: several groups in one patch request; short 'add 2 pars' and hang/mount/install wording
+add_fixture | Add [count:3] [fixture_model:american dj par lights] [mode:7 address] to [address:universe 1] and [count:4] to [address:universe 2]
+add_fixture | add [count:3] [fixture_model:american dj pars] to [address:universe 1] and [count:4] to [address:universe 2]
+add_fixture | add [count:2] [fixture_model:vpars] to [address:universe 1] and [count:2] to [address:universe 2]
+add_fixture | patch [count:4] [fixture_model:beams] on [address:universe 1] and [count:2] on [address:universe 2]
+add_fixture | add [count:2] [fixture_model:pars] [mode:7 channel] to [address:universe 2 address 100] and [count:3] to [address:universe 1 address 400]
+add_fixture | add [count:three] [fixture_model:washes] to [address:universe 1] and [count:two] more to [address:universe 2]
+add_fixture | add [count:2] [fixture_model:pars]
+add_fixture | add [count:1] [fixture_model:par] to [address:universe 2]
+add_fixture | add [count:three] [fixture_model:tetras]
+add_fixture | add [count:two] more [fixture_model:washes]
+add_fixture | hang [count:2] [fixture_model:moving heads] on [address:universe 1]
+add_fixture | mount [count:4] [fixture_model:pars] on [address:universe 2]
+add_fixture | install [count:2] [fixture_model:beam230s] on [address:universe 1]
+add_fixture | hang [count:a couple of] [fixture_model:vpars]
+add_fixture | add [count:6] [fixture_model:american dj par lights] [mode:7 address]
+add_fixture | patch [count:2] [fixture_model:tetra bars]
+add_fixture | add [count:4] [fixture_model:moving heads]
+add_fixture | add [count:2] [fixture_model:spots] to [address:universe 1]
+
+# --- iteration 8: patch requests without a number, 'to project' / 'to the show'
+add_fixture | add [fixture_model:swarm] fixture to project
+add_fixture | add [fixture_model:swarm] fixture to [address:universe 1]
+add_fixture | add a [fixture_model:swarm] to [address:universe 2]
+add_fixture | add another [fixture_model:swarm 5 fx] to the show
+add_fixture | add [fixture_model:vpar] to the project
+add_fixture | add a [fixture_model:moving head] to this show
+add_fixture | add [fixture_model:tetra bar] to the patch
+add_fixture | add [fixture_model:swarm] to [address:universe 1 address 200]
+add_fixture | patch a [fixture_model:wash] into the show
+add_fixture | add one more [fixture_model:swarm]
+
+# --- iteration 9: makers and model names as fixture groups; local fixture definitions by name
+set_level | [target:mayans washes] at [intensity:50%]
+set_level | [target:mayans beam230s] at [intensity:60%]
+set_level | [target:venue tetras] at [intensity:40%]
+set_level | [target:american dj pars] to [intensity:70%]
+set_level | [target:thin pars] at [intensity:30%]
+set_level | [target:revolver wash] at [intensity:80%]
+set_level | [target:beam230 v3s] at [intensity:25%]
+set_level | [target:chauvet swarms] [intensity:off]
+add_fixture | add [count:2] [fixture_model:beam230v2] to [address:universe 1]
+add_fixture | add a [fixture_model:revolver wash] to the show
+add_fixture | add a [fixture_model:betopper l1015]
+add_fixture | add [count:2] [fixture_model:lf2405] strobes to [address:universe 2]
+add_fixture | add a [fixture_model:wash]
+add_fixture | add a [fixture_model:swarm]
+add_fixture | add a [fixture_model:par]

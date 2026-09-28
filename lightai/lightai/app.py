@@ -48,6 +48,32 @@ class LightAI:
             self.reload_rig()
         return self.rig
 
+    def switch_show(self, path: Path) -> bool:
+        """Edit another show file from now on (the one QLC+ has open). Facts keyed by the main show's fixture IDs stay
+        with the main show. False when lightai already edits that file."""
+        path = Path(path)
+        old = Path(self.cfg.project_path)
+        try:
+            if path.resolve() == old.resolve():
+                return False
+        except OSError:
+            pass
+        if self.cfg.main_project_path is None:
+            self.cfg.main_project_path = old
+        self.cfg.project_path = path
+        try:
+            self.reload_rig()
+        except Exception:
+            self.cfg.project_path = old  # a show lightai can't read: keep editing the previous one
+            self.reload_rig()
+            raise
+        s = self.session
+        s.last_command = s.last_plan = s.last_action_plan = None
+        s.overridden.clear()
+        s.gm_changed = False
+        s.rated.clear()
+        return True
+
     def reload_rig(self) -> None:
         self.rig = Rig.load(self.cfg)
         self.prefs.palette = list(self.rig.overrides.get("house_palette") or self.prefs.palette)
@@ -101,6 +127,7 @@ class LightAI:
             "model_version": self.model.version,
             "labels_version": self.model.labels_version,
             "project": str(self.cfg.project_path),
+            "main_project": str(self.cfg.main_show()),
             "functions": len(self.rig.functions),
             "fixtures": len(self.rig.fixtures),
             "bpm": self.session.bpm,

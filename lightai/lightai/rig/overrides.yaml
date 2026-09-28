@@ -40,7 +40,7 @@ zones:
     aliases: [stage pars, stage floor pars, truss floor pars, floor pars]
   pars:
     ids: [16, 17, 18, 28, 29]
-    aliases: [pars, par, par cans, vpars, vpar]
+    aliases: [pars, par, par cans]  # 'vpar(s)' is the VPar model (fixtures 16, 17, 28, 29), not the ThinPAR in this zone
   center_truss:
     ids: [18]
     aliases: [center truss, thinpar, center washes, center truss washes]

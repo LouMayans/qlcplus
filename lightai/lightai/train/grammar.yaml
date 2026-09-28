@@ -163,6 +163,16 @@ add_fixture:
   - {n: 40, t: "we <got|bought|have> a new {lib_model}<, add it|, patch it|> <at {address}|>"}
   - {n: 30, t: "patch {lib_model} <at|on> {address}"}
   - {n: 30, t: "<add|new> fixture<:|> {lib_model} <named|called|as> {name}<| at {address}>"}
+  # --- iteration 5: several fixtures at once
+  - {n: 80, t: "<add|patch|put|install|hang|we need|i need> {count} <|more |new |extra >{lib_model}<| fixtures| units| lights><| in {mode}| {mode2}>< to {address_u}| on {address_u}| at {address}>"}
+  - {n: 40, t: "<add|patch> {count} {mode2} {lib_model}<| fixtures| units> <to|on> {address_u}"}
+  - {n: 30, t: "<we got|we bought> {count} <new |more |>{lib_model}<, add them|, patch them|> <to|on> {address_u}"}
+fixture_edit.readdress:
+  - {n: 80, t: "<move|readdress|re-address|repatch|re-patch|shift|put> <the |>{target} <to|on|at> {address_any}"}
+  - {n: 50, t: "<change|set> the <dmx |start |>address of <the |>{target} to {address_any}"}
+  - {n: 30, t: "<give|assign> <the |>{target} <the |>address {address_any}"}
+  - {n: 30, t: "<the |>{target} should <be at|be on|start at> {address_any}"}
+  - {n: 30, t: "<move|shift|put> <the |>{target} to the next free address on {address_u}"}
 none:
   - {n: 80, t: "<is|are> the {place} <open|closed|still open|working|busy|full|ready|clean|locked|on fire|packed|empty>"}
   - {n: 40, t: "is it <raining|snowing|cold|hot|late|busy|crowded|windy|raining outside|cold outside> <tonight|today|>"}

@@ -12,7 +12,7 @@ from lightai.compiler import compile_look, write_look
 from lightai.compiler.spec import LookParams
 from lightai.compiler.writer import write_workspace
 from lightai.config import Config
-from lightai.exec.http import reload_project
+from lightai.exec.http import fork_version, load_project_file, open_project_file, project_file, reload_project, supports_fork_commands
 from lightai.exec.wsclient import QlcClient, QlcError
 from lightai.feedback import FeedbackRouter
 from lightai.rig.facts import LearnedFacts
@@ -39,6 +39,13 @@ def color_in(rig, text: str):
             if c:
                 return c
     return None
+
+
+def _same_file(a, b) -> bool:
+    try:
+        return Path(a).resolve() == Path(b).resolve()
+    except OSError:
+        return False
 
 
 class Executor:
@@ -74,10 +81,15 @@ class Executor:
             except QlcError:
                 self.pending_release.add((u, ch))
 
-    async def execute(self, plan: Plan, confirm: bool = False, allow_running_reload: bool = False, wait_preview: bool = False) -> dict:
+    async def execute(self, plan: Plan, confirm: bool = False, allow_running_reload: bool = False, wait_preview: bool = False,
+                      allow_other_show: bool = False) -> dict:
         t0 = time.perf_counter()
         if plan.mode == "clarify":
             return {"ok": False, "clarify": plan.summary, "plan_id": plan.plan_id}
+        if plan.show and not _same_file(plan.show, self.cfg.project_path):  # its IDs and addresses belong to that show
+            return {"ok": False, "plan_id": plan.plan_id,
+                    "clarify": f"That was planned for {Path(plan.show).name}, but lightai now edits "
+                               f"{Path(self.cfg.project_path).name}. Type it again."}
         if plan.needs_confirmation and not confirm:
             return {"ok": False, "needs_confirmation": True, "plan_id": plan.plan_id, "summary": plan.summary}
         urgent = plan.intent in ("blackout",)
@@ -92,24 +104,39 @@ class Executor:
         if structural:
             await self._struct_lock.acquire()
         try:
-            return await self._execute(plan, t0, allow_running_reload, wait_preview, structural)
+            return await self._execute(plan, t0, allow_running_reload, wait_preview, structural, allow_other_show)
         finally:
             if structural:
                 self._struct_lock.release()
 
-    async def _execute(self, plan: Plan, t0: float, allow_running_reload: bool, wait_preview: bool, structural: bool) -> dict:
+    async def _execute(self, plan: Plan, t0: float, allow_running_reload: bool, wait_preview: bool, structural: bool,
+                       allow_other_show: bool = False) -> dict:
         self._was_running = []
+        self._switch_show = None
         if structural:
+            other = None
             try:
                 c = await self.ensure_client()
-                rig = self.get_rig()
-                running = await c.running_functions(sorted(rig.functions))
-                # only top-level functions: a parent restarts its own parts. Restarting a part ourselves gives it a second
-                # start source, and stopping the look by name later leaves that part running.
-                parts = {r for f in running if f in rig.functions for r in rig.functions[f].refs}
-                self._was_running = [f for f in running if f not in parts]
+                other = await self._other_show(c)
+                if other is None:  # functions running in another show say nothing about this one
+                    rig = self.get_rig()
+                    running = await c.running_functions(sorted(rig.functions))
+                    # only top-level functions: a parent restarts its own parts. Restarting a part ourselves gives it a second
+                    # start source, and stopping the look by name later leaves that part running.
+                    parts = {r for f in running if f in rig.functions for r in rig.functions[f].refs}
+                    self._was_running = [f for f in running if f not in parts]
             except QlcError:
                 self._was_running = []
+            if other is not None and not allow_other_show:  # checked before anything is written
+                what = f"'{other['path']}'" if other["path"] else "a new, unsaved show"
+                lost = " Its unsaved changes would be lost." if other["modified"] else ""
+                name = Path(self.cfg.project_path).name
+                return {"ok": False, "plan_id": plan.plan_id, "latency_ms": round((time.perf_counter() - t0) * 1000.0, 2),
+                        "results": [{"op": "preflight", "blocked": True, "other_show": True, "open": other["path"],
+                                     "modified": other["modified"], "target": name,
+                                     "note": f"QLC+ has {what} open, but lightai edits {name}. Nothing was changed. "
+                                             f"Applying changes {name} and opens it in QLC+ in place of that show.{lost}"}]}
+            self._switch_show = other
             if self._was_running and not allow_running_reload:
                 rig = self.get_rig()
                 names = [rig.functions[i].name for i in self._was_running[:6] if i in rig.functions]
@@ -142,7 +169,7 @@ class Executor:
                 traceback.print_exc()
                 res = {"error": f"unexpected {type(exc).__name__}: {exc}"}
             res["op"] = action.op
-            if action.op in ("write_look", "edit_fixture", "update_look", "delete_look", "add_widget", "add_fixture"):
+            if action.op in ("write_look", "edit_fixture", "update_look", "delete_look", "add_widget", "add_fixture", "readdress"):
                 wrote = bool(wrote) or not (res.get("skipped") or res.get("existing"))
                 if action.op == "write_look" and res.get("skipped") and not wrote:
                     # identical to the FILE is not the same as loaded in QLC+: an earlier reload may have been blocked
@@ -178,6 +205,30 @@ class Executor:
         c = await self.ensure_client()
         return await c.running_functions(ids)
 
+    async def _other_show(self, c: QlcClient) -> Optional[dict]:
+        """The show QLC+ has open when it is not lightai's file ('' = a new, unsaved show). Stock QLC+ can't tell: None."""
+        if not await supports_fork_commands(c):
+            return None
+        info = await project_file(c)
+        if not info:
+            return None
+        path = info.get("path") or ""
+        if path and Path(path).resolve() == Path(self.cfg.project_path).resolve():
+            return None
+        return {"path": path, "modified": bool(info.get("modified"))}
+
+    async def _open_main_show(self, c: QlcClient, other: dict) -> dict:
+        """The operator confirmed: QLC+ swaps the show it has open for lightai's file."""
+        was = other["path"] or "a new, unsaved show"
+        if await fork_version(c) >= 2:
+            r = await open_project_file(c, self.cfg.project_path, force=True)
+            return {"strategy": "openProjectFile", "loaded": bool(r.get("loaded")), "switched_from": was,
+                    **({"note": r["note"]} if r.get("note") else {})}
+        if not other["path"]:  # fork v1: loadProjectFile opens the file over an untitled show
+            return dict(await load_project_file(c, self.cfg.project_path, force=True), switched_from=was)
+        return {"strategy": "loadProjectFile", "loaded": False, "blocked": True,
+                "note": f"this QLC+ build can't switch shows; open {self.cfg.project_path} in QLC+ (File > Open)"}
+
     async def _op_reload(self, args: dict, plan: Plan, allow_running_reload: bool = False, **_) -> dict:
         strategy = args.get("strategy") or self.cfg.reload_strategy
         if strategy == "none":
@@ -188,7 +239,11 @@ class Executor:
             return {"strategy": strategy, "loaded": False, "error": f"QLC+ not reachable ({exc})",
                     "note": "the show file was saved (a backup was made) but QLC+ could not reload it; reload the show in QLC+"}
         running = list(getattr(self, "_was_running", []) or [])
-        res = await reload_project(c, self.cfg.project_path, strategy, force=allow_running_reload)
+        switch = getattr(self, "_switch_show", None)
+        if switch is not None:
+            res = await self._open_main_show(c, switch)
+        else:
+            res = await reload_project(c, self.cfg.project_path, strategy, force=allow_running_reload)
         if res.get("blocked"):
             return res
         if not res.get("loaded"):
@@ -294,17 +349,33 @@ class Executor:
         from lightai.compiler.validate import validate_workspace
 
         rig = self.get_rig(fresh=True)
-        if int(args["id"]) in rig.fixtures:
-            raise ValueError(f"fixture ID {args['id']} is taken; plan again")
-        rig.ws.add_fixture_element(int(args["id"]), args["name"], args["manufacturer"], args["model"], args["mode"],
-                                   int(args["universe"]), int(args["address"]), int(args["channels"]))
+        fixtures = args.get("fixtures") or [args]
+        for f in fixtures:
+            if int(f["id"]) in rig.fixtures:
+                raise ValueError(f"fixture ID {f['id']} is taken; plan again")
+            rig.ws.add_fixture_element(int(f["id"]), f["name"], f["manufacturer"], f["model"], f["mode"],
+                                       int(f["universe"]), int(f["address"]), int(f["channels"]))
         errors, _ = validate_workspace(rig.ws)
         errors = [e for e in errors if "overlaps" in e or "past channel 512" in e]
         if errors:
             raise ValueError(errors[0])
         res = write_workspace(rig.ws, self.cfg.project_path, self.cfg.backups_dir, self.cfg.backups_keep)
         self.on_rig_change()
-        return {"fixture_id": int(args["id"]), "backup": res["backup"]}
+        ids = [int(f["id"]) for f in fixtures]
+        return {"fixture_id": ids[0], "fixture_ids": ids, "backup": res["backup"]}
+
+    async def _op_readdress(self, args: dict, plan: Plan, **_) -> dict:
+        from lightai.compiler.validate import validate_workspace
+
+        ws = Workspace.load(self.cfg.project_path)
+        changes = [ws.readdress_fixture(int(m["fixture_id"]), int(m["universe"]), int(m["address"])) for m in args["moves"]]
+        errors, _ = validate_workspace(ws)
+        errors = [e for e in errors if "overlaps" in e or "past channel 512" in e]
+        if errors:
+            raise ValueError(errors[0])
+        res = write_workspace(ws, self.cfg.project_path, self.cfg.backups_dir, self.cfg.backups_keep)
+        self.on_rig_change()
+        return {"moved": changes, "backup": res["backup"]}
 
     async def _op_set_channels(self, args: dict, plan: Plan, **_) -> dict:
         c = await self.ensure_client()

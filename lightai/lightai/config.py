@@ -26,7 +26,9 @@ def _default_data_dir() -> Path:
 class Config:
     data_dir: Path = field(default_factory=_default_data_dir)
     project_path: Path = REPO_ROOT / "SaveFile" / "Main Project.qxw"
+    main_project_path: Optional[Path] = None  # the club's main show; project_path is the show lightai edits right now
     roles_template: Path = REPO_ROOT / "SaveFile" / "Blank Rig Template.qxw"
+    qlc_launcher: Path = Path(r"C:\qlcplus\start-qlcplus.bat")  # used by the console's "open main show" when QLC+ is closed
     overrides_path: Path = PACKAGE_DIR / "rig" / "overrides.yaml"
     learned_path: Path = PACKAGE_DIR / "rig" / "learned.yaml"
     colors_path: Path = LIGHTAI_DIR / "data" / "colors.yaml"
@@ -61,7 +63,28 @@ class Config:
 
     @property
     def sidecar_path(self) -> Path:
-        return self.project_path.parent / "lightai-looks.json"
+        """What lightai generated: lightai-looks.json for the main show, <show>.lightai-looks.json for any other show."""
+        if self.is_main_show():
+            return self.project_path.parent / "lightai-looks.json"
+        return self.project_path.parent / f"{Path(self.project_path).stem}.lightai-looks.json"
+
+    @property
+    def local_fixture_dirs(self) -> list:
+        """Your own fixture definitions (the repo's Fixtures folder, the QLC+ user folder), not the QLC+ library."""
+        out = []
+        for d in (Path.home() / "QLC+" / "Fixtures", REPO_ROOT / "Fixtures"):
+            if d.is_dir() and d not in out:
+                out.append(d)
+        return out
+
+    def main_show(self) -> Path:
+        return Path(self.main_project_path or self.project_path)
+
+    def is_main_show(self, path: Optional[Path] = None) -> bool:
+        try:
+            return Path(path or self.project_path).resolve() == self.main_show().resolve()
+        except OSError:
+            return False
 
     def current_model_dir(self) -> Optional[Path]:
         marker = self.models_dir / "current.txt"

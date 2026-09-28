@@ -44,6 +44,10 @@ kbd{background:#222838;border:1px solid #333b50;border-radius:4px;padding:1px 5p
 <header>
   <h1>lightai</h1>
   <span id="qlc" class="badge">QLC+ ?</span>
+  <span id="show" class="badge" title="">show ?</span>
+  <button id="openshow" class="hidden" title="open lightai's show file in QLC+">Open main show in QLC+</button>
+  <input id="newshowname" placeholder="new show name" maxlength="60" size="15" title="name of the new show file (saved next to the main show)">
+  <button id="newshow" title="create an empty show with the main show's DMX outputs, open it in QLC+ and let lightai edit it">New show</button>
   <span id="model" class="badge">model ?</span>
   <span id="lat" class="badge">parse - ms</span>
   <span class="row" style="margin-left:auto">
@@ -158,6 +162,22 @@ const api = async (path, body) => {
   }
   return j;
 };
+async function refreshShow() {
+  const b = $('#show'), btn = $('#openshow');
+  try {
+    const s = await api('/qlc/show');
+    const edits = (s.active || '').split(/[\\/]/).pop();
+    if (!s.running) {
+      b.textContent = 'QLC+ closed · lightai edits ' + edits; b.title = s.active || ''; b.style.color = '#ffb347';
+      btn.textContent = 'Start QLC+ with the main show'; btn.classList.toggle('hidden', !s.launcher);
+      return;
+    }
+    const name = s.open ? s.open.split(/[\\/]/).pop() : 'a new, unsaved show';
+    b.textContent = 'show: ' + name + (s.modified ? ' (unsaved)' : '') + (s.follows ? '' : ' · lightai edits ' + edits);
+    b.title = (s.open || '') + (s.active ? '\nlightai edits ' + s.active : ''); b.style.color = s.follows ? '' : '#ffb347';
+    btn.textContent = 'Open main show in QLC+'; btn.classList.toggle('hidden', !!s.is_main);
+  } catch (e) { b.textContent = 'show ?'; }
+}
 function showError(e) {
   const box = document.querySelector('#result');
   if (box) box.innerHTML = `<div class="errbox">${esc(e && e.message || e)}</div>`;
@@ -267,15 +287,17 @@ function table(rows) {
 }
 async function apply(extra = {}) {
   const p = cur.plan; if (!p) return;
-  if (['delete_look', 'add_fixture'].includes(p.intent) && !extra.allow_running_reload && !confirm(p.summary + '\n\nApply this change to the show?')) return;
+  if (['delete_look', 'add_fixture', 'fixture_edit.readdress'].includes(p.intent) && !extra.allow_running_reload && !extra.allow_other_show && !confirm(p.summary + '\n\nApply this change to the show?')) return;
   const res = await api('/execute', {plan_id: p.plan_id, confirm: true, ...extra});
   showResult(res);
   const blocked = (res.results || []).find(r => r.blocked);
   if (blocked) {
-    $('#result').innerHTML += `<div class="warnbox">${esc(blocked.note)} <button id="forcereload" class="warn">Reload anyway</button></div>`;
-    $('#forcereload').onclick = () => apply({allow_running_reload: true});
+    const other = !!blocked.other_show;
+    $('#result').innerHTML += `<div class="warnbox">${esc(blocked.note)} <button id="forcereload" class="warn">${other ? 'Apply to ' + esc(blocked.target || 'the main show') + ' and open it in QLC+' : 'Reload anyway'}</button></div>`;
+    $('#forcereload').onclick = () => apply(other ? {...extra, allow_other_show: true} : {...extra, allow_running_reload: true});
     return;
   }
+  if (res.ok && p.mode === 'structural') refreshShow();
   if (res.ok && ['propose_look', 'create_look', 'preview'].includes(p.intent)) { cur.lastActionPlan = p; $('#outcome').classList.remove('hidden'); }
   if (res.ok && p.intent === 'propose_look') $('#keep').classList.remove('hidden');
   const cal = (res.results || []).find(r => r.calibration);
@@ -304,8 +326,9 @@ $('#applyfix').onclick = async () => {
   const blocked = (res.results || []).find(r => r.blocked);
   let final = res;
   if (blocked) {
-    if (!confirm(blocked.note + '\n\nReload anyway?')) { offerFix(pendingFix, 'not applied: ' + blocked.note); return; }
-    final = await api('/execute', {plan_id: pendingFix, confirm: true, allow_running_reload: true});
+    const other = !!blocked.other_show;
+    if (!confirm(blocked.note + (other ? '\n\nApply to ' + (blocked.target || 'the main show') + ' and open it in QLC+?' : '\n\nReload anyway?'))) { offerFix(pendingFix, 'not applied: ' + blocked.note); return; }
+    final = await api('/execute', {plan_id: pendingFix, confirm: true, ...(other ? {allow_other_show: true} : {allow_running_reload: true})});
     showResult(final);
   }
   offerFix(null, final.ok ? 'look updated' : 'not applied');
@@ -370,7 +393,33 @@ function hist(text, p) {
   d.onclick = () => { $('#cmd').value = text; $('#cmd').focus(); };
   $('#hist').prepend(d);
 }
+$('#openshow').onclick = async () => {
+  let r = await api('/qlc/open-show', {});
+  if (r.needs_confirmation) {
+    if (!confirm(r.note)) return;
+    r = await api('/qlc/open-show', {force: true});
+  }
+  $('#json').textContent = JSON.stringify(r, null, 2);
+  $('#result').innerHTML = `<div class="${r.ok ? 'okbox' : 'errbox'}">${esc(r.note || (r.ok ? 'main show open in QLC+' : 'not opened'))}</div>`;
+  refreshShow();
+};
+$('#newshow').onclick = async () => {
+  const name = $('#newshowname').value.trim();
+  if (!name) { $('#newshowname').focus(); showError('Type a name for the new show first.'); return; }
+  let r = await api('/qlc/new-show', {name});
+  if (r.needs_confirmation) {
+    if (!confirm(r.note)) return;
+    r = await api('/qlc/new-show', {name, force: true});
+  }
+  $('#json').textContent = JSON.stringify(r, null, 2);
+  $('#result').innerHTML = `<div class="${r.ok ? 'okbox' : 'errbox'}">${esc(r.note || (r.ok ? 'new show open in QLC+' : 'not opened'))}</div>`;
+  if (r.ok) $('#newshowname').value = '';
+  refreshShow();
+};
+$('#newshowname').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); $('#newshow').click(); } };
 init();
+refreshShow();
+setInterval(refreshShow, 15000);
 </script>
 </body>
 </html>

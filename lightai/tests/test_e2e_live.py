@@ -16,12 +16,13 @@ import pytest
 
 from lightai.config import load_config
 from lightai.devtools import QlcInstance, make_test_project
+from lightai.exec.http import fork_version
 
 pytestmark = pytest.mark.skipif(os.environ.get("LIGHTAI_E2E") != "1", reason="set LIGHTAI_E2E=1 to run against an isolated QLC+")
 
 
 FORK_EXE = Path(r"C:\lightai-data\qlcplus-fork\qlcplus.exe")
-BUILDS = [("stock", Path(r"C:\qlcplus\qlcplus.exe"))] + ([("fork", FORK_EXE)] if FORK_EXE.exists() else [])
+BUILDS = [("installed", Path(r"C:\qlcplus\qlcplus.exe"))] + ([("fork", FORK_EXE)] if FORK_EXE.exists() else [])
 
 
 @pytest.mark.parametrize("build,exe", BUILDS)
@@ -45,9 +46,10 @@ def test_create_rotate_propose_live(tmp_path, build, exe):
             assert res["ok"], res
             reload = next(r for r in res["results"] if r["op"] == "reload")
             assert reload["loaded"] and reload["look_visible"]
-            assert reload["strategy"] == ("loadProjectFile" if build == "fork" else "post_loadProject")
             main_id = plan.look["main_id"]
             c = ai.executor.client
+            is_fork = await fork_version(c) > 0  # C:\qlcplus holds the fork build once install-fork-build.ps1 ran
+            assert reload["strategy"] == ("loadProjectFile" if is_fork else "post_loadProject")
             await c.set_function(main_id, True)
             await asyncio.sleep(0.5)
             assert await c.function_status(main_id) == "Running"

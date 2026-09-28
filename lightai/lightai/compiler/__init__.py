@@ -50,7 +50,7 @@ def write_look(rig: Rig, look: Look, path: Optional[Path] = None, text: str = ""
     """Add the look to the rig's workspace, back up + write the file, record it in the sidecar."""
     cfg = rig.cfg
     target = Path(path) if path else cfg.project_path
-    sidecar = Sidecar(target.parent / "lightai-looks.json")
+    sidecar = Sidecar(cfg.sidecar_path if target.resolve() == Path(cfg.project_path).resolve() else target.parent / "lightai-looks.json")
     existing = sidecar.find_hash(look_hash(look))
     if existing and existing.get("main_id") in rig.functions:
         return {"skipped": True, "reason": "identical look already exists", "main_id": existing["main_id"], "name": existing["name"]}

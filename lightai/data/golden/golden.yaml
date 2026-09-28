@@ -172,4 +172,9 @@
   intent: update_look
   expect: {function_ref: "Default Scene Club 1", rate: {word: fast}}
   plan: refuse  # a hand-made function: lightai only rewrites looks it created
-
+- text: "add 3 vpar 7 channel fixtures to universe 1"
+  intent: add_fixture
+  expect: {fixture_model: "vpar", count: 3, address: {universe: 0}, mode: "7 channel"}
+- text: "move fixture 16 to universe 1 address 300"
+  intent: fixture_edit.readdress
+  expect: {target: [16], address: {universe: 0, address: 299}}

@@ -45,7 +45,7 @@ def compare(want: dict, got: dict) -> list:
         elif k == "function_ref" and isinstance(w, str) and isinstance(g, str):
             if w.lower() != g.lower():
                 diffs.append(f"{k}: want {w!r} got {g!r}")
-        elif k == "name" and isinstance(w, str) and isinstance(g, str):
+        elif k in ("name", "fixture_model") and isinstance(w, str) and isinstance(g, str):  # 'vpar' == 'VPar
             if w.lower() != g.lower():
                 diffs.append(f"{k}: want {w!r} got {g!r}")
         elif w != g:

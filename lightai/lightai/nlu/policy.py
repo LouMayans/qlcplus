@@ -52,6 +52,7 @@ REQUIRED = {
     "fixture_edit.rotate": ["target", "angle"],
     "fixture_edit.move": ["target", "direction"],
     "fixture_edit.rename": ["target", "name"],
+    "fixture_edit.readdress": ["target", "address"],
     "set_bpm": ["rate"],
     "update_look": ["function_ref"],
     "delete_look": ["function_ref"],
@@ -66,12 +67,13 @@ QUESTIONS = {
     "value": "What value (0-255 or a percentage)?",
     "angle": "By how many degrees?",
     "direction": "Which direction: left, right, up or down?",
+    "address": "Which address? e.g. 'universe 2 address 150' or 'address 100'",
     "name": "What should the new name be?",
     "rate": "What BPM?",
     "intensity": "What level (e.g. 50%, full, off)?",
     "fixture_model": "Which fixture model? (manufacturer and model, e.g. 'Chauvet Intimidator Spot 260')",
 }
-STRUCTURAL = {"create_look", "fixture_edit.rotate", "fixture_edit.move", "fixture_edit.rename",
+STRUCTURAL = {"create_look", "fixture_edit.rotate", "fixture_edit.move", "fixture_edit.rename", "fixture_edit.readdress",
               "update_look", "delete_look", "add_widget", "add_fixture"}
 
 

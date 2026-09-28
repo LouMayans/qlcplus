@@ -1,6 +1,6 @@
 # Label set for the lightai language model. Bump labels_version whenever an intent or slot
 # is added, renamed or removed; every dataset row, correction and model records it.
-labels_version: 2
+labels_version: 3
 
 intents:
   create_look: "build a new look/function in the show file"
@@ -18,6 +18,7 @@ intents:
   fixture_edit.rotate: "rotate a fixture on the 2D stage map"
   fixture_edit.move: "move a fixture on the 2D stage map"
   fixture_edit.rename: "rename a fixture in the patch"
+  fixture_edit.readdress: "move fixtures to another DMX universe / address in the patch"
   query.functions: "list or search existing functions"
   query.fixtures: "list or describe fixtures and zones"
   query.status: "what is running right now"
@@ -48,3 +49,4 @@ slots:
   fixture_model: "V3, BEAM230 V2, the wash model, Chauvet Intimidator Spot 260"
   mode: "a fixture mode: 14 channel mode, extended"
   address: "a DMX address: universe 2 address 150, dmx 289"
+  count: "how many fixtures: 3, three, a couple of"

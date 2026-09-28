@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 
-WORD_RE = re.compile(r"[A-Za-z]+(?:'[A-Za-z]+)?\d*[A-Za-z]*|\d+(?:\.\d+)?|[^\sA-Za-z\d]")
+WORD_RE = re.compile(r"[A-Za-z]+(?:'[A-Za-z]+)?(?:\d+[A-Za-z]*)*|\d+(?:\.\d+)?|[^\sA-Za-z\d]")  # 'beam230v2' is one word
 MARK_RE = re.compile(r"\[([a-z_.]+):([^\]]+)\]")
 
 

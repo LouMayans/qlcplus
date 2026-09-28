@@ -445,6 +445,16 @@ class Workspace:
                 n += 1
         return n
 
+    def readdress_fixture(self, fid: int, universe: int, address: int) -> dict:
+        """Move a fixture to another 0-based universe / DMX address. Functions refer to fixtures by ID, so they stay intact."""
+        el = self.fixture_el(fid)
+        if el is None:
+            raise KeyError(f"fixture {fid} not found")
+        u, a = kid(el, "Universe"), kid(el, "Address")
+        before = [int(u.text), int(a.text)]
+        u.text, a.text = str(int(universe)), str(int(address))
+        return {"fixture_id": fid, "before": before, "after": [int(universe), int(address)]}
+
     def rename_fixture(self, fid: int, name: str) -> dict:
         el = self.fixture_el(fid)
         if el is None:

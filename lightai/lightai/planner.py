@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections import Counter
 from typing import Optional
 
 from lightai.compiler import CompileError, compile_look
@@ -47,7 +48,7 @@ class Planner:
         return []
 
     def _plan(self, intent: str, mode: str, summary: str, **kw) -> Plan:
-        return Plan(plan_id=self.session.new_plan_id(), intent=intent, mode=mode, summary=summary, **kw)
+        return Plan(plan_id=self.session.new_plan_id(), intent=intent, mode=mode, summary=summary, show=str(self.cfg.project_path), **kw)
 
     def plan(self, cmd: LightCommand) -> Plan:
         if cmd.clarify:
@@ -704,6 +705,13 @@ class Planner:
         if fd is None or not fd.modes:
             raise ValueError(f"no usable definition for {mv['manufacturer']} {mv['model']}")
         assumptions = []
+        if mv.get("note"):
+            assumptions.append({"fact": f"{fd.manufacturer} {fd.model}, {mv['note']}", "source": "your shows"})
+        if mv.get("alternatives"):
+            alts = ", ".join(f"{x['manufacturer']} {x['model']}" for x in mv["alternatives"])
+            assumptions.append({"fact": f"also in your shows: {alts}; name it to use it instead", "source": "your shows"})
+        norm = lambda v: re.sub(r"[^a-z0-9]", "", v.lower())  # noqa: E731
+        mine = [f for f in self.rig.fixtures.values() if norm(f.manufacturer) == norm(fd.manufacturer) and f.model.lower() == fd.model.lower()]
         mode_slot = cmd.first("mode")
         modes = list(fd.modes.values())
         mode = None
@@ -716,40 +724,154 @@ class Planner:
                 if want["text"].lower() in m.name.lower():
                     mode = m
                     break
+        if mode is None:  # the mode your other fixtures of this model run in
+            used = [n for n, _ in Counter(getattr(f, "mode", "") for f in mine).most_common() if n] + [mv.get("house_mode") or ""]
+            for n in used:
+                mode = next((m for m in modes if n and m.name == n), None)
+                if mode is not None:
+                    assumptions.append({"fact": f"mode '{mode.name}' ({len(mode.channels)} ch): the mode your other {fd.model} fixtures use", "source": "your shows"})
+                    break
         if mode is None:
             mode = max(modes, key=lambda m: len(m.channels))
             assumptions.append({"fact": f"mode '{mode.name}' ({len(mode.channels)} ch): the mode with the most channels", "source": "default"})
         nch = len(mode.channels)
-        addr = (cmd.first("address").value if cmd.first("address") else {})
-        is_mover = fd.type.lower() in ("moving head", "scanner")
-        universe = addr.get("universe", 0 if is_mover else 1)
-        used = sorted((f.address, f.address + f.channels) for f in self.rig.fixtures.values() if f.universe == universe)
-        if "address" in addr:
-            start = addr["address"]
+        counts = cmd.slots.get("count") or []
+        addrs = [sv.value for sv in cmd.slots.get("address") or []]
+        if len(counts) > 1 and len(counts) == len(addrs):
+            groups = list(zip(counts, addrs))
         else:
-            start = 0
-            for a, b in used:
-                if start + nch <= a:
-                    break
-                start = max(start, b)
-            assumptions.append({"fact": f"first free address in universe {universe + 1}: {start + 1}", "source": "patch"})
-        if "universe" not in addr:
-            assumptions.append({"fact": f"universe {universe + 1} ({'movers go on universe 1' if is_mover else 'LED/effects go on universe 2'})", "source": "rig convention"})
-        if start < 0 or start + nch > 512:
-            raise ValueError(f"{nch} channels don't fit at address {start + 1}")
-        clash = [f for f in self.rig.fixtures.values() if f.universe == universe and not (start + nch <= f.address or f.address + f.channels <= start)]
-        if clash:
-            raise ValueError(f"address {start + 1}-{start + nch} overlaps {', '.join(f'{f.name} ({f.address + 1}-{f.address + f.channels})' for f in clash)}")
+            groups = [(counts[0] if counts else None, addrs[0] if addrs else {})]
+        is_mover = fd.type.lower() in ("moving head", "scanner")
+        wanted = []
+        for cv, addr in groups:
+            n = int(cv.value.get("count") or 0) if cv else 1
+            if cv and not n:
+                if len(groups) > 1 and "universe" in addr:
+                    raise ValueError(f"how many go to universe {addr['universe'] + 1}? e.g. '3 to universe 1 and 4 to universe 2'")
+                raise ValueError(f"how many is '{cv.raw}'? Say a number, e.g. 'add 3 ...'")
+            universe = addr.get("universe", 0 if is_mover else 1)
+            if not 0 <= universe < 16:
+                raise ValueError(f"universe {universe + 1} doesn't exist here")
+            if "universe" not in addr:
+                assumptions.append({"fact": f"universe {universe + 1} ({'movers go on universe 1' if is_mover else 'LED/effects go on universe 2'})", "source": "rig convention"})
+            wanted.append((n, universe, addr))
+        count = sum(n for n, _, _ in wanted)
+        if not 1 <= count <= 32:
+            raise ValueError(f"{count} fixtures is more than I patch at once (1-32)")
+        taken: dict = {}  # blocks given to earlier groups of this same command
+        placed = []
+        for n, universe, addr in wanted:
+            before = tuple(taken.get(universe, ()))
+            starts = self._place(universe, [nch] * n, start=addr.get("address"), avoid=before)
+            for a in starts:
+                if any(a < y and x < a + nch for x, y in before):
+                    raise ValueError(f"address {a + 1}-{a + nch} on universe {universe + 1} is already given to the fixtures before it in this command")
+                taken.setdefault(universe, []).append((a, a + nch))
+                placed.append((universe, a))
+            if "address" not in addr:
+                assumptions.append({"fact": f"first free {'block' if n > 1 else 'address'} on universe {universe + 1}: {starts[0] + 1}", "source": "patch"})
         nv = cmd.first("name")
-        fid = max(self.rig.fixtures, default=-1) + 1
-        name = nv.value["name"] if nv else f"{fd.model} #{fid}"
-        return self._plan("add_fixture", "structural",
-                          f"Patch '{name}' = {fd.manufacturer} {fd.model} ({mode.name}, {nch} ch) at universe {universe + 1} address {start + 1}, fixture ID {fid}",
-                          actions=[Action(op="add_fixture", args={"id": fid, "name": name, "manufacturer": fd.manufacturer, "model": fd.model,
-                                                                  "mode": mode.name, "universe": universe, "address": start, "channels": nch},
-                                          describe="add the fixture to the patch"),
+        first_id = max(self.rig.fixtures, default=-1) + 1
+        ids = list(range(first_id, first_id + count))
+        if nv:
+            names = [nv.value["name"]] if count == 1 else [f"{nv.value['name']} {k + 1}" for k in range(count)]
+        else:
+            names = [f"{fd.model} {len(mine) + k + 1}" for k in range(count)]
+        fixtures = [{"id": i, "name": nm, "manufacturer": fd.manufacturer, "model": fd.model, "mode": mode.name,
+                     "universe": u, "address": a, "channels": nch} for i, nm, (u, a) in zip(ids, names, placed)]
+        unis = list(dict.fromkeys(f["universe"] for f in fixtures))
+        per = {u: ", ".join(f"'{f['name']}' at {f['address'] + 1}-{f['address'] + nch}" for f in fixtures if f["universe"] == u) for u in unis}
+        if len(unis) == 1:
+            where = f"on universe {unis[0] + 1}: {per[unis[0]]}"
+        else:
+            where = "; ".join(f"{sum(1 for f in fixtures if f['universe'] == u)} on universe {u + 1}: {per[u]}" for u in unis)
+        summary = (f"Patch {count} x {fd.manufacturer} {fd.model} ({mode.name}, {nch} ch) {where} "
+                   f"(fixture ID{'s ' + str(ids[0]) + '-' + str(ids[-1]) if count > 1 else ' ' + str(ids[0])})")
+        warn = [f"set each new unit's own DMX start address to match ({', '.join(str(f['address'] + 1) for f in fixtures)}) "
+                "on its menu or DIP switches"]
+        args = fixtures[0] if count == 1 else {"fixtures": fixtures}
+        return self._plan("add_fixture", "structural", summary,
+                          actions=[Action(op="add_fixture", args=args, describe=f"add {count} fixture(s) to the patch in {self.cfg.project_path.name}"),
                                    Action(op="reload", args={"strategy": self.cfg.reload_strategy}, describe="reload the show into QLC+")],
-                          assumptions=assumptions, warnings=self._structural_warnings(), needs_confirmation=True)
+                          assumptions=assumptions, warnings=warn + self._structural_warnings(), needs_confirmation=True)
+
+    def _place(self, universe: int, sizes: list, start: Optional[int] = None, exclude: tuple = (), avoid: tuple = ()) -> list:
+        """Start addresses (0-based) for fixtures of these channel counts: back to back from `start`, else the first free
+        block that fits them all, else each in the first gap that fits it. `avoid` ranges (a moved fixture's current spot)
+        are never picked automatically, but an explicit `start` may overlap them."""
+        others = [f for f in self.rig.fixtures.values() if f.universe == universe and f.id not in set(exclude)]
+        avoid = tuple(avoid)
+
+        def clash(a: int, b: int) -> list:
+            return [f for f in others if not (b <= f.address or f.address + f.channels <= a)]
+
+        total = sum(sizes)
+        gaps = sorted({0} | {f.address + f.channels for f in others} | {b for _, b in avoid})
+        first_block = next((a for a in gaps if a + total <= 512 and not clash(a, a + total)
+                            and all(a + total <= x or y <= a for x, y in avoid)), None)
+        if start is not None:
+            out, a = [], int(start)
+            for n in sizes:
+                if a < 0 or a + n > 512:
+                    raise ValueError(f"{n} channels don't fit at address {a + 1}: a universe has 512")
+                c = clash(a, a + n)
+                if c:
+                    hint = f"; the first free block of {total} channels on universe {universe + 1} starts at {first_block + 1}" if first_block is not None else ""
+                    raise ValueError(f"address {a + 1}-{a + n} on universe {universe + 1} overlaps "
+                                     + ", ".join(f"{f.name} ({f.address + 1}-{f.address + f.channels})" for f in c) + hint)
+                out.append(a)
+                a += n
+            return out
+        if first_block is not None:
+            out, a = [], first_block
+            for n in sizes:
+                out.append(a)
+                a += n
+            return out
+        taken = [(f.address, f.address + f.channels) for f in others] + list(avoid)
+        out = []
+        for n in sizes:
+            for a in sorted({0} | {b for _, b in taken}):
+                if a + n <= 512 and all(a + n <= x or y <= a for x, y in taken):
+                    out.append(a)
+                    taken.append((a, a + n))
+                    break
+            else:
+                raise ValueError(f"universe {universe + 1} has no free block of {n} channels left")
+        return out
+
+    def _fixture_edit_readdress(self, cmd: LightCommand) -> Plan:
+        ids = target_ids(cmd)
+        if not ids:
+            raise ValueError("which fixture should move to a new address?")
+        addr = cmd.first("address").value if cmd.first("address") else {}
+        if not addr:
+            raise ValueError("to which address? e.g. 'universe 2 address 150' or 'address 100'")
+        fxs = [self.rig.fixtures[i] for i in ids]
+        unis = {f.universe for f in fxs}
+        universe = addr.get("universe", fxs[0].universe if len(unis) == 1 else None)
+        if universe is None:
+            raise ValueError("these fixtures are on different universes; say which universe they should go to")
+        if "address" not in addr and all(f.universe == universe for f in fxs):
+            where = ", ".join(f"'{f.name}' {f.address + 1}-{f.address + f.channels}" for f in fxs)
+            return self._plan("fixture_edit.readdress", "info", f"Already on universe {universe + 1} ({where}). "
+                              f"Say the new address, e.g. 'move them to address 300' or 'to universe 2'")
+        here = tuple((f.address, f.address + f.channels) for f in fxs if f.universe == universe)  # 'move' means somewhere else
+        starts = self._place(universe, [f.channels for f in fxs], start=addr.get("address"), exclude=tuple(ids), avoid=here)
+        moves = [{"fixture_id": f.id, "universe": universe, "address": a, "before": [f.universe, f.address]}
+                 for f, a in zip(fxs, starts) if (f.universe, f.address) != (universe, a)]
+        if not moves:
+            return self._plan("fixture_edit.readdress", "info", "Nothing to change: already at that address")
+        lines = [f"'{f.name}' (fixture {f.id}): universe {f.universe + 1} address {f.address + 1}-{f.address + f.channels} to "
+                 f"universe {universe + 1} address {a + 1}-{a + f.channels}" for f, a in zip(fxs, starts) if (f.universe, f.address) != (universe, a)]
+        warn = ["set each unit's own DMX start address to its new value on its menu or DIP switches, or it won't respond"]
+        if any(m["before"][0] != universe for m in moves):
+            warn.append(f"universe {universe + 1} must be patched to the output these fixtures are wired to")
+        assumptions = [] if "address" in addr else [{"fact": f"first free block on universe {universe + 1}: {starts[0] + 1}", "source": "patch"}]
+        return self._plan("fixture_edit.readdress", "structural", "Re-address " + "; ".join(lines),
+                          actions=[Action(op="readdress", args={"moves": moves}, describe=f"change the DMX address of {len(moves)} fixture(s)"),
+                                   Action(op="reload", args={"strategy": self.cfg.reload_strategy}, describe="reload the show into QLC+")],
+                          assumptions=assumptions, warnings=warn + self._structural_warnings(), needs_confirmation=True)
 
     def _none(self, cmd: LightCommand) -> Plan:
         return self._plan("none", "clarify", "That doesn't sound like a lighting request.")
