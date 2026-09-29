@@ -20,9 +20,11 @@
 #include <QDebug>
 #include <QMap>
 #include <QTimer>
+#include <QUrl>
 #include <qmath.h>
 
 #include "webaccesssimpledesk.h"
+#include "webaccessstage.h"
 #include "webaccessnetwork.h"
 #include "commonjscss.h"
 #include "vcaudiotriggers.h"
@@ -48,6 +50,7 @@
 #include "qhttpresponse.h"
 #include "qhttpconnection.h"
 #include "qlcconfig.h"
+#include "qlcfile.h"
 
 
 WebAccess::WebAccess(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdInstance,
@@ -59,8 +62,10 @@ WebAccess::WebAccess(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdInstanc
     , m_loopIntervalMs(10000)
     , m_loopIndex(-1)
     , m_loopRunning(false)
+    , m_stage(new WebAccessStage(doc, this))
 {
     m_loopTimer->setSingleShot(false);
+    connect(m_stage, &WebAccessStage::broadcast, this, [this](const QString &message) { sendWebSocketMessage(message); });
     connect(m_loopTimer, SIGNAL(timeout()), this, SLOT(slotLoopAdvance()));
 
     connect(m_vc, SIGNAL(loaded()),
@@ -91,6 +96,10 @@ void WebAccess::slotHandleHTTPRequest(QHttpRequest *req, QHttpResponse *resp)
         sendHtmlResponse(resp, content);
         return;
     }
+
+    // 3D stage view and its model/gobo files
+    if (handleStageHTTPRequest(resp, reqUrl))
+        return;
 
     CommonRequestResult commonResult = handleCommonHTTPRequest(req, resp, user, reqUrl, content);
     if (commonResult == CommonRequestResult::Handled)
@@ -136,6 +145,11 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
         if (cmdList[1] == "opMode")
             emit toggleDocMode();
 
+        return;
+    }
+    if (cmdList[0] == "VIS")
+    {
+        handleStageCommand(conn, user, cmdList, data);
         return;
     }
     if (handleCommonWebSocketCommand(conn, user, cmdList, "[webaccess]", false))
@@ -457,7 +471,7 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
         }
         else if (apiCmd == "lightaiVersion")
         {
-            wsAPIMessage.append("2");  // 2: openProjectFile
+            wsAPIMessage.append("3");  // 2: openProjectFile, 3: 3D stage (getStageRig, VIS|...)
         }
         else if (apiCmd == "getProjectFile")
         {
@@ -542,6 +556,33 @@ void WebAccess::slotHandleWebSocketRequest(QHttpConnection *conn, QString data)
                     f->setDuration(value);
                 wsAPIMessage.append(QString("%1|%2|%3|%4").arg(fID).arg(f->fadeInSpeed()).arg(f->fadeOutSpeed()).arg(f->duration()));
             }
+        }
+        else if (apiCmd == "getStageRig")
+        {
+            wsAPIMessage.append(m_stage->rigJson(currentShowPath()));
+        }
+        else if (apiCmd == "getStage")
+        {
+            wsAPIMessage.append(m_stage->stageJson(currentShowPath()));
+        }
+        else if (apiCmd == "saveStage")
+        {
+            if (m_auth && user && user->level < SIMPLE_DESK_AND_VC_LEVEL)
+                return;
+
+            // the JSON may contain '|': take everything after "QLC+API|saveStage|"
+            wsAPIMessage.append(m_stage->saveStage(currentShowPath(), data.section('|', 2)));
+        }
+        else if (apiCmd == "getProps")
+        {
+            wsAPIMessage.append(m_stage->propsJson());
+        }
+        else if (apiCmd == "saveProps")
+        {
+            if (m_auth && user && user->level < SIMPLE_DESK_AND_VC_LEVEL)
+                return;
+
+            wsAPIMessage.append(m_stage->saveProps(data.section('|', 2)));
         }
         //qDebug() << "Simple desk channels:" << wsAPIMessage;
 
@@ -712,9 +753,74 @@ void WebAccess::slotHandleWebSocketClose(QHttpConnection *conn)
         delete user;
         conn->userData = 0;
     }
+    m_stage->unsubscribe(conn);
     conn->deleteLater();
 
     m_webSocketsList.removeOne(conn);
+}
+
+/*********************************************************************
+ * 3D stage view (/stage)
+ *********************************************************************/
+
+QString WebAccess::currentShowPath()
+{
+    QString info;
+    emit projectFileInfo(&info);
+    return info.section('|', 0, 0);
+}
+
+bool WebAccess::handleStageHTTPRequest(QHttpResponse *resp, const QString &reqUrl)
+{
+    if (reqUrl == "/stage")
+    {
+        if (!serveWebFile(resp, "/stage.html", "text/html"))
+            sendNotFound(resp);
+        return true;
+    }
+
+    QString root;
+    QString relPath;
+    if (reqUrl.startsWith("/stage-lib/"))
+    {
+        root = webFilePath("stage-lib");
+        relPath = reqUrl.mid(11);
+    }
+    else if (reqUrl.startsWith("/gobos/"))
+    {
+        root = QLCFile::systemDirectory(GOBODIR).absolutePath();
+        relPath = reqUrl.mid(7);
+    }
+    else
+    {
+        return false;
+    }
+
+    relPath = QUrl::fromPercentEncoding(relPath.toUtf8());
+    QString mime = WebAccessStage::mimeType(relPath);
+    QString filePath = WebAccessStage::safeJoin(root, relPath);
+    if (mime.isEmpty() || filePath.isEmpty() || !sendFile(resp, filePath, mime))
+        sendNotFound(resp);
+
+    return true;
+}
+
+void WebAccess::handleStageCommand(QHttpConnection *conn, const WebAccessUser *user,
+                                   const QStringList &cmdList, const QString &data)
+{
+    if (m_auth && user && user->level < SIMPLE_DESK_AND_VC_LEVEL)
+        return;
+
+    if (cmdList.count() < 2)
+        return;
+
+    const QString &cmd = cmdList[1];
+    if (cmd == "SUBSCRIBE")
+        m_stage->subscribe(conn);
+    else if (cmd == "UNSUBSCRIBE")
+        m_stage->unsubscribe(conn);
+    else if (cmd == "PREVIEW" || cmd == "PREVIEW_STOP")
+        m_stage->relay(data);
 }
 
 void WebAccess::slotFunctionStarted(quint32 fid)

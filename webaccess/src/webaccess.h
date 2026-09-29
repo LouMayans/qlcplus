@@ -26,6 +26,7 @@
 #include "webaccessbase.h"
 
 class QTimer;
+class WebAccessStage;
 class VCAudioTriggers;
 class VirtualConsole;
 class VCSoloFrame;
@@ -131,6 +132,16 @@ protected:
     int m_loopIntervalMs;           // switch interval
     int m_loopIndex;                // index of the currently-playing chaser, or -1
     bool m_loopRunning;
+
+    /************************************************************************
+     * 3D stage view (/stage)
+     ************************************************************************/
+    QString currentShowPath();
+    bool handleStageHTTPRequest(QHttpResponse *resp, const QString &reqUrl);
+    void handleStageCommand(QHttpConnection *conn, const WebAccessUser *user,
+                            const QStringList &cmdList, const QString &data);
+
+    WebAccessStage *m_stage;
 
 signals:
     void toggleDocMode();

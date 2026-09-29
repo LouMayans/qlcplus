@@ -1,0 +1,186 @@
+/*
+  stage-propeditor.css
+
+  Styling for the full-screen prop editor built by stage-propeditor.js.
+  Reuses the colour tokens already defined on :root by stage.css
+  (--bg/--panel/--panel2/--accent/--muted/--edge) - this file only needs to
+  be <link>ed alongside stage.css, not merged into it.
+*/
+
+#prop-editor-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg, #0b0c10);
+  color: #e8eaf0;
+  font: 12px/1.4 system-ui, sans-serif;
+}
+#prop-editor-overlay.hidden { display: none; }
+
+.pe-topbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--panel, #15171f);
+  border-bottom: 1px solid var(--edge, #2a2d38);
+}
+.pe-topbar h2 { font-size: 13px; margin: 0 10px 0 0; white-space: nowrap; }
+.pe-topbar .pe-spacer { flex: 1 1 auto; }
+.pe-topbar input[type="text"] { background: var(--panel2, #1b1e28); color: inherit; border: 1px solid var(--edge, #2a2d38); border-radius: 3px; padding: 4px 6px; }
+.pe-topbar select { background: var(--panel2, #1b1e28); color: inherit; border: 1px solid var(--edge, #2a2d38); border-radius: 3px; padding: 4px 6px; }
+.pe-topbar label { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+
+.pe-body { flex: 1 1 auto; display: flex; min-height: 0; }
+
+.pe-panel {
+  flex: 0 0 260px;
+  overflow-y: auto;
+  background: var(--panel, #15171f);
+  padding: 10px;
+  box-sizing: border-box;
+}
+.pe-panel.pe-right { border-left: 1px solid var(--edge, #2a2d38); }
+.pe-panel.pe-left { border-right: 1px solid var(--edge, #2a2d38); }
+
+.pe-viewport-wrap { flex: 1 1 auto; position: relative; min-width: 0; }
+.pe-viewport-wrap canvas { display: block; width: 100%; height: 100%; }
+.pe-viewport-hint {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  color: var(--muted, #8a8f9c);
+  font-size: 11px;
+  background: rgba(10, 11, 15, 0.55);
+  padding: 4px 8px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.pe-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted, #8a8f9c); margin: 12px 0 6px; }
+.pe-section-title:first-child { margin-top: 0; }
+
+.pe-list { display: flex; flex-direction: column; gap: 3px; max-height: 220px; overflow-y: auto; }
+.pe-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 7px;
+  border: 1px solid var(--edge, #2a2d38);
+  border-radius: 3px;
+  cursor: pointer;
+  background: var(--panel2, #1b1e28);
+}
+.pe-row:hover { border-color: var(--accent, #00d0ff); }
+.pe-row.selected { background: #143a4a; border-color: var(--accent, #00d0ff); }
+.pe-row .pe-row-label { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pe-add-row { display: flex; gap: 6px; margin-top: 6px; }
+.pe-add-row select { flex: 1 1 auto; }
+
+.pe-field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; margin: 6px 0; }
+.pe-field-grid label { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: var(--muted, #8a8f9c); }
+.pe-field-grid label.pe-span2 { grid-column: 1 / -1; }
+.pe-field-grid input, .pe-field-grid select {
+  background: var(--panel2, #1b1e28);
+  color: #e8eaf0;
+  border: 1px solid var(--edge, #2a2d38);
+  border-radius: 3px;
+  padding: 4px 6px;
+  font: inherit;
+}
+.pe-field-grid input.invalid { border-color: #e05a5a; }
+.pe-field-grid input[type="color"] { padding: 1px; height: 26px; }
+
+.pe-face-toggles { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 6px 0; }
+.pe-face-toggles label { display: flex; align-items: center; gap: 4px; font-size: 11px; }
+
+.pe-btn-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.pe-btn-row button { flex: 1 1 auto; }
+
+button.pe-btn, .pe-topbar button, .pe-panel button {
+  background: var(--panel2, #1b1e28);
+  color: #e8eaf0;
+  border: 1px solid var(--edge, #2a2d38);
+  border-radius: 3px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font: inherit;
+}
+button.pe-btn:hover, .pe-topbar button:hover, .pe-panel button:hover { border-color: var(--accent, #00d0ff); }
+button.pe-btn.primary, .pe-topbar button.primary { background: #0a5a6b; border-color: var(--accent, #00d0ff); }
+button.pe-btn.danger { border-color: #e05a5a; }
+button.pe-btn.danger:hover { background: #4a1f1f; }
+
+.pe-status { margin-top: 8px; font-size: 11px; min-height: 14px; }
+.pe-status.ok { color: #6adf8a; }
+.pe-status.error { color: #e05a5a; }
+
+.pe-model-picker { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto; margin: 6px 0; }
+.pe-model-picker .pe-row { cursor: pointer; }
+
+/* -------------------------------------------------- texture swatch field -- */
+/* Used by both the prop editor's part panel and stage-editor.js's per-part
+   instance "Look" rows (see stage-textures.js openTexturePicker). */
+.pe-texture-swatch { display: flex; align-items: center; gap: 6px; margin: 6px 0; }
+.pe-texture-swatch .pe-texture-thumb {
+  width: 34px; height: 34px; border-radius: 3px; overflow: hidden; flex: 0 0 auto;
+  background: repeating-conic-gradient(#2a2d38 0% 25%, #1b1e28 0% 50%) 0 0 / 10px 10px;
+  border: 1px solid var(--edge, #2a2d38);
+}
+.pe-texture-swatch .pe-texture-thumb img, .pe-texture-swatch .pe-texture-thumb canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pe-texture-swatch .pe-texture-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+
+/* ------------------------------------------------------------ filters UI -- */
+.tex-filters { display: flex; flex-direction: column; gap: 5px; margin: 6px 0; }
+.tex-filter-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted, #8a8f9c); }
+.tex-filter-row span { flex: 0 0 72px; }
+.tex-filter-row input[type="range"] { flex: 1 1 auto; }
+.tex-filter-row input[type="color"] { flex: 0 0 auto; width: 28px; height: 22px; padding: 1px; }
+
+/* ---------------------------------------------------------- texture picker -- */
+.tex-picker-overlay {
+  position: fixed; inset: 0; z-index: 600;
+  background: rgba(6, 7, 10, 0.65);
+  display: flex; align-items: center; justify-content: center;
+  font: 12px/1.4 system-ui, sans-serif; color: #e8eaf0;
+}
+.tex-picker-overlay.hidden { display: none; }
+.tex-picker-modal {
+  width: min(920px, 92vw); height: min(640px, 86vh);
+  background: var(--panel, #15171f);
+  border: 1px solid var(--edge, #2a2d38);
+  border-radius: 6px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.tex-picker-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--edge, #2a2d38); }
+.tex-picker-tabs { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; }
+.tex-picker-tab {
+  background: var(--panel2, #1b1e28); color: #e8eaf0; border: 1px solid var(--edge, #2a2d38);
+  border-radius: 3px; padding: 4px 9px; cursor: pointer; font: inherit;
+}
+.tex-picker-tab:hover { border-color: var(--accent, #00d0ff); }
+.tex-picker-tab.active { background: #0a5a6b; border-color: var(--accent, #00d0ff); }
+.tex-picker-search { background: var(--panel2, #1b1e28); color: inherit; border: 1px solid var(--edge, #2a2d38); border-radius: 3px; padding: 5px 8px; width: 180px; }
+.tex-picker-close { background: transparent; border: none; color: #e8eaf0; cursor: pointer; font-size: 14px; }
+.tex-picker-grid {
+  flex: 1 1 auto; overflow-y: auto; padding: 10px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: 10px;
+  align-content: start;
+}
+.tex-picker-tile { cursor: pointer; border: 1px solid transparent; border-radius: 4px; padding: 4px; text-align: center; }
+.tex-picker-tile:hover { border-color: var(--edge, #2a2d38); }
+.tex-picker-tile.selected { border-color: var(--accent, #00d0ff); background: #143a4a; }
+.tex-picker-thumb { width: 96px; height: 96px; border-radius: 3px; overflow: hidden; margin: 0 auto 4px; background: #0b0c10; }
+.tex-picker-thumb img, .tex-picker-thumb canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tex-picker-thumb.tex-picker-none { display: flex; align-items: center; justify-content: center; color: var(--muted, #8a8f9c); font-size: 11px; }
+.tex-picker-name { font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted, #8a8f9c); }
+.tex-picker-foot { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-top: 1px solid var(--edge, #2a2d38); }
+.tex-picker-foot .pe-spacer { flex: 1 1 auto; }
+.tex-picker-foot button { background: var(--panel2, #1b1e28); color: #e8eaf0; border: 1px solid var(--edge, #2a2d38); border-radius: 3px; padding: 5px 12px; cursor: pointer; font: inherit; }
+.tex-picker-foot button.primary { background: #0a5a6b; border-color: var(--accent, #00d0ff); }
+.tex-picker-foot button:hover { border-color: var(--accent, #00d0ff); }

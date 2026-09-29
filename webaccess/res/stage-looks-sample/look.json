@@ -1,0 +1,51 @@
+{
+  "id": "sample-spot-1",
+  "name": "Sample Spot 250 (hand-made test fixture)",
+  "manufacturer": "SampleCo",
+  "category": "Moving Head",
+  "dimensionsInches": [10, 10, 14],
+  "panRange": [-270, 270],
+  "tiltRange": [-130, 130],
+  "beam": { "angleDeg": 12, "fieldAngleDeg": 14, "radiusInches": 1.5, "type": "spot", "lumens": 8000, "kelvin": 7000 },
+  "parts": [
+    {
+      "name": "base",
+      "role": "base",
+      "parent": null,
+      "file": null,
+      "primitive": "box",
+      "matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+      "sizeMetres": [0.25, 0.25, 0.15]
+    },
+    {
+      "name": "yoke",
+      "role": "yoke",
+      "parent": "base",
+      "file": null,
+      "primitive": "cylinder",
+      "matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.12, 0, 0, 0, 1],
+      "sizeMetres": [0.22, 0.22, 0.05]
+    },
+    {
+      "name": "head",
+      "role": "head",
+      "parent": "yoke",
+      "file": null,
+      "primitive": "box",
+      "matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.15, 0, 0, 0, 1],
+      "sizeMetres": [0.18, 0.18, 0.22]
+    },
+    {
+      "name": "beam_lens",
+      "role": "beam",
+      "parent": "head",
+      "file": null,
+      "primitive": "cylinder",
+      "matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.08, 0, 0, 0, 1],
+      "sizeMetres": [0.09, 0.09, 0.02]
+    }
+  ],
+  "gobos": [],
+  "prismFacets": null,
+  "movable": true
+}

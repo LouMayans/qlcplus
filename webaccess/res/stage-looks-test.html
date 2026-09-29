@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>stage-looks smoke test</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #14161b; color: #ddd; font: 13px/1.4 system-ui, sans-serif; }
+  #hud { position: fixed; top: 8px; left: 8px; z-index: 2; background: rgba(0,0,0,0.55); padding: 8px 12px; border-radius: 6px; max-width: 480px; white-space: pre-wrap; }
+  canvas { display: block; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./three/build/three.module.min.js",
+    "three/addons/": "./three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="hud">stage-looks-test: loading...</div>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { loadLookIndex, buildLook, selftest } from "./stage-looks.js";
+
+const hud = document.getElementById("hud");
+function log(line) {
+  hud.textContent += "\n" + line;
+  console.log(line);
+}
+
+// -------------------------------------------------------------- scene --
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x14161b);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.05, 50);
+camera.position.set(2.2, 1.8, 3.2);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0.75, 0.3, 0);
+controls.update();
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+sun.position.set(2, 4, 2);
+sun.castShadow = true;
+scene.add(sun);
+
+const grid = new THREE.GridHelper(6, 24, 0x445, 0x223);
+scene.add(grid);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), new THREE.MeshStandardMaterial({ color: 0x1c1e24 }));
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// -------------------------------------------------------------- fixtures --
+// Each entry: { built, xOffset, panAmp, tiltAmp, speed }
+const rigs = [];
+
+function addLensAxisLine(built) {
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0.6, 0)]);
+  const mat = new THREE.LineBasicMaterial({ color: 0x00e5ff });
+  const line = new THREE.Line(geo, mat);
+  built.lens.add(line);
+}
+
+function mount(built, x) {
+  built.root.position.set(x, 0, 0);
+  scene.add(built.root);
+  addLensAxisLine(built);
+  rigs.push({ built, panAmp: 60 + Math.random() * 40, tiltAmp: 30 + Math.random() * 20, speed: 0.5 + Math.random() * 0.4, phase: Math.random() * 10 });
+  log(`mounted "${built.name}" at x=${x.toFixed(2)} movable=${built.movable} lensR(in)=${built.lensRadiusInches} beamDeg=${built.beamAngleDeg} h(in)=${built.heightInches}`);
+}
+
+async function main() {
+  const st = selftest();
+  log(`selftest: ${st.pass} pass, ${st.fail} fail` + (st.fail ? " -> " + JSON.stringify(st.results.filter((r) => !r.ok)) : ""));
+
+  // Real stage-lib index, if the downloader has produced one yet.
+  let movableGdtfEntries = [];
+  try {
+    const idx = await loadLookIndex("/stage-lib/");
+    movableGdtfEntries = (idx.looks || []).filter((l) => l.movable && l.path);
+    log(`loadLookIndex: ${idx.looks.length} looks in index.json (${movableGdtfEntries.length} movable GDTF looks)`);
+  } catch (err) {
+    log("loadLookIndex: not available yet (" + err.message + ") - using the hand-made sample instead");
+  }
+
+  // Hand-made sample (see .../stage-lib/samples/sample-spot-1/look.json,
+  // sourced from webaccess/res/stage-looks-sample/look.json) - used whenever
+  // the real downloader hasn't produced movable GDTF looks yet, served the
+  // same way real ones would be (under /stage-lib/, since the dev server
+  // only serves arbitrary paths/extensions under /stage-lib/ and /gobos/).
+  // Lives under samples/, NOT gdtf/ - the gdtf/ folder must only ever
+  // contain real downloads (see .claude/memory/stage-visualizer.md).
+  const sampleEntry = { id: "sample-spot-1", name: "Sample Spot (hand-made)", path: "samples/sample-spot-1/look.json", movable: true, beamAngleDeg: 12 };
+  const toBuild = movableGdtfEntries.slice(0, 3);
+  while (toBuild.length < 3) toBuild.push(sampleEntry);
+
+  let x = 0;
+  for (const entry of toBuild) {
+    try {
+      const built = await buildLook(entry, { baseUrl: "/stage-lib/" });
+      mount(built, x);
+      x += 1.5;
+    } catch (err) {
+      log(`FAILED to build "${entry.id}": ${err.message}`);
+    }
+  }
+
+  // Built-in moving_head.dae fallback path.
+  try {
+    const builtinEntry = { id: "builtin-moving-head", name: "Moving Head (builtin dae)", model: "builtin/moving_head.dae", movable: true, beamAngleDeg: 15 };
+    const built = await buildLook(builtinEntry, { baseUrl: "/stage-lib/" });
+    mount(built, x);
+  } catch (err) {
+    log("FAILED to build builtin moving_head.dae: " + err.message);
+  }
+
+  log("done - animating pan/tilt, orbit with mouse.");
+}
+
+main();
+
+// -------------------------------------------------------------- loop --
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  for (const r of rigs) {
+    const pan = Math.sin(t * r.speed + r.phase) * r.panAmp;
+    const tilt = Math.sin(t * r.speed * 0.7 + r.phase) * r.tiltAmp;
+    r.built.setPanTilt(pan, tilt);
+  }
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

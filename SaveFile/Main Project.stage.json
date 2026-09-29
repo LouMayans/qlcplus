@@ -1,0 +1,2638 @@
+{
+  "version": 1,
+  "units": "in",
+  "room": {
+    "width": 576,
+    "depth": 480,
+    "height": 192,
+    "haze": 0.35
+  },
+  "anchor": [
+    288.0,
+    222.0,
+    0.0
+  ],
+  "fixtures": {
+    "0": {
+      "model": "Mayans/BEAM230V2",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        288.0,
+        126.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "1": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        411.4375,
+        126.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "2": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        329.125,
+        126.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "3": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        246.875,
+        318.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "4": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        370.3125,
+        126.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "5": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        370.3125,
+        318.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "6": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        329.125,
+        318.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "7": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        205.6875,
+        126.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "8": {
+      "model": "Mayans/WASH",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        144.0,
+        270.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "9": {
+      "model": "Mayans/WASH",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        144.0,
+        174.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "10": {
+      "model": "Mayans/WASH",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        432.0,
+        270.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "11": {
+      "model": "Mayans/WASH",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        432.0,
+        174.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "12": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        205.6875,
+        318.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "13": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        246.875,
+        126.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "14": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        164.5625,
+        126.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "15": {
+      "model": "Mayans/BEAM230",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        411.4375,
+        318.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "16": {
+      "model": "American DJ/VPar",
+      "rot": [
+        0,
+        0,
+        90
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        20.0,
+        216.0,
+        0.0
+      ],
+      "hang": "floor"
+    },
+    "17": {
+      "model": "American DJ/VPar",
+      "rot": [
+        0,
+        0,
+        -90
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        556.0,
+        216.0,
+        0.0
+      ],
+      "hang": "floor"
+    },
+    "18": {
+      "model": "Venue/ThinPAR 38",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        250.0,
+        222.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "19": {
+      "model": "Venue/Tetra Bar",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        218.0,
+        318.0,
+        0.0
+      ],
+      "hang": "floor"
+    },
+    "20": {
+      "model": "Venue/Tetra Bar",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        358.0,
+        318.0,
+        0.0
+      ],
+      "hang": "floor"
+    },
+    "21": {
+      "model": "Generic/Generic RGB",
+      "rot": [
+        0,
+        0,
+        -90
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        566.0,
+        410.0,
+        96.0
+      ],
+      "hang": "wall"
+    },
+    "22": {
+      "model": "Generic/Generic RGB",
+      "rot": [
+        0,
+        0,
+        -90
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        566.0,
+        60.0,
+        96.0
+      ],
+      "hang": "wall"
+    },
+    "23": {
+      "model": "Generic/Generic RGB",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        288.0,
+        160.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "24": {
+      "model": "Generic/Generic RGB",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        240.0,
+        222.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "25": {
+      "model": "Generic/Generic RGB",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        336.0,
+        222.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "26": {
+      "model": "Chauvet/Swarm 5 FX",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        144.0,
+        126.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "27": {
+      "model": "Generic/Generic RGB",
+      "rot": [
+        0,
+        0,
+        90
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        10.0,
+        410.0,
+        96.0
+      ],
+      "hang": "wall"
+    },
+    "28": {
+      "model": "American DJ/VPar",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        250.0,
+        20.0,
+        24.0
+      ],
+      "hang": "floor"
+    },
+    "29": {
+      "model": "American DJ/VPar",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        326.0,
+        20.0,
+        24.0
+      ],
+      "hang": "floor"
+    },
+    "30": {
+      "model": "Chauvet/Swarm 5 FX",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        288.0,
+        60.0,
+        150.0
+      ],
+      "hang": "hung"
+    },
+    "31": {
+      "model": "Mayans/Revolver Wash",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        288.0,
+        222.0,
+        182.0
+      ],
+      "hang": "hung"
+    },
+    "32": {
+      "model": "Generic/Generic RGB",
+      "rot": [
+        0,
+        0,
+        90
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        10.0,
+        60.0,
+        96.0
+      ],
+      "hang": "wall"
+    },
+    "33": {
+      "model": "Generic/Generic",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        200.0,
+        45.0,
+        0.0
+      ],
+      "hang": "floor"
+    },
+    "34": {
+      "model": "Mayans/BEAM230 V3",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        164.5625,
+        318.0,
+        174.0
+      ],
+      "hang": "hung"
+    },
+    "35": {
+      "model": "Mayans/BEAM230 V3",
+      "rot": [
+        0,
+        0,
+        0
+      ],
+      "invertPan": false,
+      "invertTilt": false,
+      "panOffset": 0,
+      "tiltOffset": 0,
+      "look": null,
+      "pos": [
+        288.0,
+        318.0,
+        174.0
+      ],
+      "hang": "hung"
+    }
+  },
+  "models": {},
+  "objects": [
+    {
+      "id": "o1",
+      "prop": "club-wall-back",
+      "name": "Back wall",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        288.0,
+        3.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o2",
+      "prop": "club-wall-front",
+      "name": "Front wall",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        288.0,
+        477.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o3",
+      "prop": "club-wall-left",
+      "name": "Left wall",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        3.0,
+        240.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o4",
+      "prop": "club-wall-right",
+      "name": "Right wall",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        573.0,
+        240.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o5",
+      "prop": "club-ceiling",
+      "name": "Ceiling",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        288.0,
+        240.0,
+        186.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o6",
+      "prop": "club-entrance-doors",
+      "name": "Entrance",
+      "category": "decor",
+      "aliases": [
+        "the entrance",
+        "the door"
+      ],
+      "pos": [
+        500.0,
+        477.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o7",
+      "prop": "club-back-bar-cabinet",
+      "name": "Back bar",
+      "category": "decor",
+      "aliases": [
+        "the back bar"
+      ],
+      "pos": [
+        220.0,
+        468.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o8",
+      "prop": "club-bar-counter",
+      "name": "Bar",
+      "category": "bar",
+      "aliases": [
+        "the bar",
+        "bar counter"
+      ],
+      "pos": [
+        220.0,
+        420.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o9",
+      "prop": "club-dj-foam-panel",
+      "name": "DJ acoustic foam",
+      "category": "decor",
+      "aliases": [
+        "the foam"
+      ],
+      "pos": [
+        288.0,
+        8.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o10",
+      "prop": "club-dj-stage-deck",
+      "name": "DJ stage deck",
+      "category": "stage",
+      "aliases": [
+        "the stage"
+      ],
+      "pos": [
+        288.0,
+        54.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o11",
+      "prop": "club-dj-console",
+      "name": "DJ console",
+      "category": "dj",
+      "aliases": [
+        "the booth",
+        "dj",
+        "dj booth"
+      ],
+      "pos": [
+        288.0,
+        45.0,
+        24.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o12",
+      "prop": "club-speaker-stack",
+      "name": "Speaker stack L",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        190.0,
+        45.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o13",
+      "prop": "club-speaker-stack",
+      "name": "Speaker stack R",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        386.0,
+        45.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o14",
+      "prop": "club-dance-floor",
+      "name": "Dance floor",
+      "category": "floor_area",
+      "aliases": [
+        "the floor"
+      ],
+      "pos": [
+        288.0,
+        222.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o15",
+      "prop": "club-point-marker",
+      "name": "Dance floor centre",
+      "category": "point",
+      "aliases": [
+        "centre of the dance floor",
+        "middle of the floor"
+      ],
+      "pos": [
+        288.0,
+        222.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o16",
+      "prop": "club-truss-288",
+      "name": "Truss - back edge",
+      "category": "decor",
+      "aliases": [
+        "the truss"
+      ],
+      "pos": [
+        288.0,
+        126.0,
+        174.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o17",
+      "prop": "club-truss-288",
+      "name": "Truss - front edge",
+      "category": "decor",
+      "aliases": [
+        "the truss"
+      ],
+      "pos": [
+        288.0,
+        318.0,
+        174.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o18",
+      "prop": "club-truss-192",
+      "name": "Truss - left edge",
+      "category": "decor",
+      "aliases": [
+        "the truss"
+      ],
+      "pos": [
+        144.0,
+        222.0,
+        174.0
+      ],
+      "rz": 90,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o19",
+      "prop": "club-truss-192",
+      "name": "Truss - right edge",
+      "category": "decor",
+      "aliases": [
+        "the truss"
+      ],
+      "pos": [
+        432.0,
+        222.0,
+        174.0
+      ],
+      "rz": 90,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o20",
+      "prop": "club-truss-288",
+      "name": "Truss - centre cross X",
+      "category": "decor",
+      "aliases": [
+        "the truss"
+      ],
+      "pos": [
+        288.0,
+        222.0,
+        174.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o21",
+      "prop": "club-truss-192",
+      "name": "Truss - centre cross Y",
+      "category": "decor",
+      "aliases": [
+        "the truss"
+      ],
+      "pos": [
+        288.0,
+        222.0,
+        174.0
+      ],
+      "rz": 90,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o22",
+      "prop": "club-truss-288",
+      "name": "Truss - front line",
+      "category": "decor",
+      "aliases": [
+        "the truss"
+      ],
+      "pos": [
+        288.0,
+        350.0,
+        174.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o23",
+      "prop": "club-vip-sofa-3",
+      "name": "VIP booth L 1",
+      "category": "booth",
+      "aliases": [
+        "vip",
+        "the vip booths"
+      ],
+      "pos": [
+        60.0,
+        140.0,
+        0.0
+      ],
+      "rz": 90,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o24",
+      "prop": "club-vip-table",
+      "name": "VIP table L 1",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        110.0,
+        140.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o25",
+      "prop": "club-vip-sofa-2",
+      "name": "VIP booth L 2",
+      "category": "booth",
+      "aliases": [
+        "vip",
+        "the vip booths"
+      ],
+      "pos": [
+        60.0,
+        330.0,
+        0.0
+      ],
+      "rz": 90,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o26",
+      "prop": "club-vip-table",
+      "name": "VIP table L 2",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        110.0,
+        330.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o27",
+      "prop": "club-vip-sofa-3",
+      "name": "VIP booth R 1",
+      "category": "booth",
+      "aliases": [
+        "vip",
+        "the vip booths"
+      ],
+      "pos": [
+        516.0,
+        140.0,
+        0.0
+      ],
+      "rz": -90,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o28",
+      "prop": "club-vip-table",
+      "name": "VIP table R 1",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        466.0,
+        140.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o29",
+      "prop": "club-vip-sofa-2",
+      "name": "VIP booth R 2",
+      "category": "booth",
+      "aliases": [
+        "vip",
+        "the vip booths"
+      ],
+      "pos": [
+        516.0,
+        330.0,
+        0.0
+      ],
+      "rz": -90,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o30",
+      "prop": "club-vip-table",
+      "name": "VIP table R 2",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        466.0,
+        330.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o31",
+      "prop": "club-cocktail-table",
+      "name": "Cocktail table 1",
+      "category": "table",
+      "aliases": [
+        "the tables"
+      ],
+      "pos": [
+        140.0,
+        380.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o32",
+      "prop": "club-cocktail-stool",
+      "name": "Cocktail stool 1a",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        140.0,
+        358.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Cocktail table 1"
+    },
+    {
+      "id": "o33",
+      "prop": "club-cocktail-stool",
+      "name": "Cocktail stool 1b",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        140.0,
+        402.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Cocktail table 1"
+    },
+    {
+      "id": "o34",
+      "prop": "club-cocktail-table",
+      "name": "Cocktail table 2",
+      "category": "table",
+      "aliases": [
+        "the tables"
+      ],
+      "pos": [
+        230.0,
+        380.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o35",
+      "prop": "club-cocktail-stool",
+      "name": "Cocktail stool 2a",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        230.0,
+        358.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Cocktail table 2"
+    },
+    {
+      "id": "o36",
+      "prop": "club-cocktail-stool",
+      "name": "Cocktail stool 2b",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        230.0,
+        402.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Cocktail table 2"
+    },
+    {
+      "id": "o37",
+      "prop": "club-cocktail-table",
+      "name": "Cocktail table 3",
+      "category": "table",
+      "aliases": [
+        "the tables"
+      ],
+      "pos": [
+        326.0,
+        380.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o38",
+      "prop": "club-cocktail-stool",
+      "name": "Cocktail stool 3a",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        326.0,
+        358.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Cocktail table 3"
+    },
+    {
+      "id": "o39",
+      "prop": "club-cocktail-stool",
+      "name": "Cocktail stool 3b",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        326.0,
+        402.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Cocktail table 3"
+    },
+    {
+      "id": "o40",
+      "prop": "club-cocktail-table",
+      "name": "Cocktail table 4",
+      "category": "table",
+      "aliases": [
+        "the tables"
+      ],
+      "pos": [
+        416.0,
+        380.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o41",
+      "prop": "club-cocktail-stool",
+      "name": "Cocktail stool 4a",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        416.0,
+        358.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Cocktail table 4"
+    },
+    {
+      "id": "o42",
+      "prop": "club-cocktail-stool",
+      "name": "Cocktail stool 4b",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        416.0,
+        402.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Cocktail table 4"
+    },
+    {
+      "id": "o43",
+      "prop": "club-bar-stool",
+      "name": "Bar stool 1",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        60.0,
+        396.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Bar"
+    },
+    {
+      "id": "o44",
+      "prop": "club-bar-stool",
+      "name": "Bar stool 2",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        124.0,
+        396.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Bar"
+    },
+    {
+      "id": "o45",
+      "prop": "club-bar-stool",
+      "name": "Bar stool 3",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        188.0,
+        396.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Bar"
+    },
+    {
+      "id": "o46",
+      "prop": "club-bar-stool",
+      "name": "Bar stool 4",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        252.0,
+        396.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Bar"
+    },
+    {
+      "id": "o47",
+      "prop": "club-bar-stool",
+      "name": "Bar stool 5",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        316.0,
+        396.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Bar"
+    },
+    {
+      "id": "o48",
+      "prop": "club-bar-stool",
+      "name": "Bar stool 6",
+      "category": "seating",
+      "aliases": [],
+      "pos": [
+        380.0,
+        396.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null,
+      "parent": "Bar"
+    },
+    {
+      "id": "o49",
+      "prop": "club-potted-plant",
+      "name": "Potted plant",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        30.0,
+        30.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o50",
+      "prop": "club-potted-plant",
+      "name": "Potted plant",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        546.0,
+        30.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o51",
+      "prop": "club-potted-plant",
+      "name": "Potted plant",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        30.0,
+        450.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o52",
+      "prop": "club-potted-plant",
+      "name": "Potted plant",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        546.0,
+        450.0,
+        0.0
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o53",
+      "prop": "club-pendant-lamp",
+      "name": "Pendant lamp",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        100.0,
+        440.0,
+        132.625
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o54",
+      "prop": "club-pendant-lamp",
+      "name": "Pendant lamp",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        220.0,
+        440.0,
+        132.625
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    },
+    {
+      "id": "o55",
+      "prop": "club-pendant-lamp",
+      "name": "Pendant lamp",
+      "category": "decor",
+      "aliases": [],
+      "pos": [
+        340.0,
+        440.0,
+        132.625
+      ],
+      "rz": 0,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": null
+    }
+  ],
+  "propDefs": {
+    "club-wall-right": {
+      "name": "Wall",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp4",
+          "shape": "box",
+          "size": [
+            6.0,
+            480.0,
+            192.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            96.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f2efe9",
+          "material": "brick-red",
+          "side": "front",
+          "hiddenFaces": [
+            "right",
+            "top",
+            "bottom",
+            "front",
+            "back"
+          ]
+        }
+      ]
+    },
+    "club-potted-plant": {
+      "name": "Potted plant",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp30",
+          "shape": "model",
+          "modelId": "potted_plant_04",
+          "size": [
+            27.625,
+            25.875,
+            33.125
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-back-bar-cabinet": {
+      "name": "Back-bar cabinet",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp8",
+          "shape": "model",
+          "modelId": "modern_wooden_cabinet",
+          "size": [
+            96.125,
+            20.5,
+            26.8125
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "cp9",
+          "shape": "model",
+          "modelId": "wine_bottles_01",
+          "size": [
+            26.625,
+            3.1875,
+            13.0
+          ],
+          "pos": [
+            0.0,
+            -6.0,
+            26.8125
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "cp11",
+          "shape": "box",
+          "size": [
+            90.0,
+            1.0,
+            30.0
+          ],
+          "pos": [
+            0.0,
+            9.0,
+            40.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f0f0f0",
+          "material": "mirror"
+        }
+      ]
+    },
+    "club-cocktail-table": {
+      "name": "Cocktail table",
+      "category": "table",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp28",
+          "shape": "model",
+          "modelId": "side_table_tall_01",
+          "size": [
+            15.125,
+            15.125,
+            30.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-speaker-stack": {
+      "name": "Speaker stack",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp21",
+          "shape": "box",
+          "size": [
+            30.0,
+            26.0,
+            40.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            20.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#111111",
+          "material": "matte"
+        },
+        {
+          "id": "cp22",
+          "shape": "box",
+          "size": [
+            26.0,
+            22.0,
+            30.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            55.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#111111",
+          "material": "matte"
+        }
+      ]
+    },
+    "club-point-marker": {
+      "name": "Point marker",
+      "category": "point",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp24",
+          "shape": "box",
+          "size": [
+            4.0,
+            4.0,
+            1.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.5
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ff00ff",
+          "material": "matte"
+        }
+      ]
+    },
+    "club-dj-console": {
+      "name": "DJ console",
+      "category": "dj",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp18",
+          "shape": "box",
+          "size": [
+            100.0,
+            20.0,
+            38.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            19.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2c2c32",
+          "material": "matte"
+        },
+        {
+          "id": "cp19",
+          "shape": "box",
+          "size": [
+            90.0,
+            14.0,
+            4.0
+          ],
+          "pos": [
+            0.0,
+            6.0,
+            40.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#222222",
+          "material": "gloss"
+        }
+      ]
+    },
+    "club-wall-front": {
+      "name": "Wall",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp2",
+          "shape": "box",
+          "size": [
+            576.0,
+            6.0,
+            192.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            96.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f2efe9",
+          "material": "brick-red",
+          "side": "front",
+          "hiddenFaces": [
+            "right",
+            "left",
+            "top",
+            "bottom",
+            "back"
+          ]
+        }
+      ]
+    },
+    "club-bar-stool": {
+      "name": "Bar stool",
+      "category": "seating",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp16",
+          "shape": "model",
+          "modelId": "bar_chair_round_01",
+          "size": [
+            19.0,
+            19.125,
+            29.5
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-vip-table": {
+      "name": "VIP coffee table",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp27",
+          "shape": "model",
+          "modelId": "modern_coffee_table_01",
+          "size": [
+            47.1875,
+            47.1875,
+            14.5
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-vip-sofa-3": {
+      "name": "VIP sofa",
+      "category": "booth",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp25",
+          "shape": "model",
+          "modelId": "sofa_03",
+          "size": [
+            107.5,
+            36.375,
+            44.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-wall-back": {
+      "name": "Wall",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp1",
+          "shape": "box",
+          "size": [
+            576.0,
+            6.0,
+            192.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            96.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f2efe9",
+          "material": "brick-red",
+          "side": "front",
+          "hiddenFaces": [
+            "right",
+            "left",
+            "top",
+            "bottom",
+            "front"
+          ]
+        }
+      ]
+    },
+    "club-entrance-doors": {
+      "name": "Entrance doors",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp7",
+          "shape": "box",
+          "size": [
+            72.0,
+            3.0,
+            84.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            42.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#3a3a3a",
+          "material": "metal"
+        }
+      ]
+    },
+    "club-truss-288": {
+      "name": "Truss 24'",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp32",
+          "shape": "truss",
+          "trussType": "box12",
+          "length": 288.0,
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-dj-stage-deck": {
+      "name": "DJ stage deck",
+      "category": "stage",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp17",
+          "shape": "box",
+          "size": [
+            144.0,
+            72.0,
+            24.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            12.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2a2a30",
+          "material": "matte"
+        }
+      ]
+    },
+    "club-dj-foam-panel": {
+      "name": "DJ acoustic foam",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp6",
+          "shape": "box",
+          "size": [
+            220.0,
+            2.0,
+            96.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            48.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#101012",
+          "material": "black-acoustic-foam"
+        }
+      ]
+    },
+    "club-truss-192": {
+      "name": "Truss 16'",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp33",
+          "shape": "truss",
+          "trussType": "box12",
+          "length": 192.0,
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-wall-left": {
+      "name": "Wall",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp3",
+          "shape": "box",
+          "size": [
+            6.0,
+            480.0,
+            192.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            96.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f2efe9",
+          "material": "brick-red",
+          "side": "front",
+          "hiddenFaces": [
+            "left",
+            "top",
+            "bottom",
+            "front",
+            "back"
+          ]
+        }
+      ]
+    },
+    "club-cocktail-stool": {
+      "name": "Cocktail stool",
+      "category": "seating",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp29",
+          "shape": "model",
+          "modelId": "metal_stool_02",
+          "size": [
+            13.875,
+            14.0,
+            34.8125
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-pendant-lamp": {
+      "name": "Pendant lamp",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp31",
+          "shape": "model",
+          "modelId": "hanging_industrial_lamp",
+          "size": [
+            21.625,
+            21.625,
+            53.375
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-dance-floor": {
+      "name": "Dance floor",
+      "category": "floor_area",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp23",
+          "shape": "box",
+          "size": [
+            240.0,
+            192.0,
+            2.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#15151f",
+          "material": "glossy-tile"
+        }
+      ]
+    },
+    "club-vip-sofa-2": {
+      "name": "VIP sofa",
+      "category": "booth",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp26",
+          "shape": "model",
+          "modelId": "sofa_02",
+          "size": [
+            71.125,
+            32.1875,
+            27.875
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "club-bar-counter": {
+      "name": "Bar counter",
+      "category": "bar",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp12",
+          "shape": "box",
+          "size": [
+            360.0,
+            24.0,
+            42.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            21.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#3a2a20",
+          "material": "gloss"
+        },
+        {
+          "id": "cp13",
+          "shape": "box",
+          "size": [
+            364.0,
+            3.0,
+            3.0
+          ],
+          "pos": [
+            0.0,
+            -12.0,
+            42.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#c9a227",
+          "material": "metal"
+        },
+        {
+          "id": "cp15",
+          "shape": "box",
+          "size": [
+            360.0,
+            2.0,
+            38.0
+          ],
+          "pos": [
+            0.0,
+            -13.0,
+            19.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8a6440",
+          "material": "wood-panel"
+        }
+      ]
+    },
+    "club-ceiling": {
+      "name": "Wall",
+      "category": "decor",
+      "aliases": [],
+      "parts": [
+        {
+          "id": "cp5",
+          "shape": "box",
+          "size": [
+            576.0,
+            480.0,
+            6.0
+          ],
+          "pos": [
+            0.0,
+            0.0,
+            3.0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#141416",
+          "material": "black-acoustic-foam",
+          "side": "front",
+          "hiddenFaces": [
+            "right",
+            "left",
+            "top",
+            "front",
+            "back"
+          ]
+        }
+      ]
+    }
+  }
+}

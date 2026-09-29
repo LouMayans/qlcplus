@@ -44,6 +44,9 @@
   #status { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
   #dot { width:11px; height:11px; border-radius:50%; background:var(--warn); transition:background .2s; }
   #dot.ok { background:var(--on); }
+  #stageLink { color:var(--muted); font-size:13px; text-decoration:none; border:1px solid var(--edge);
+               border-radius:6px; padding:4px 10px; margin-left:auto; margin-right:14px; }
+  #stageLink:hover { color:#fff; }
   main { padding:16px; max-width:900px; margin:0 auto; }
   section { background:var(--panel); border:1px solid var(--edge); border-radius:14px;
             padding:14px; margin-bottom:16px; }
@@ -141,6 +144,7 @@
 <body>
 <header>
   <h1>Mayans Lightning Control</h1>
+  <a id="stageLink" href="/stage">3D Stage</a>
   <div id="status"><span id="dot"></span><span id="statusText">connecting…</span></div>
 </header>
 

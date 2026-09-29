@@ -25,6 +25,25 @@ set(WEBFILES_CLASSIC
     virtualconsole.css
     virtualconsole.js
     control.html
+    stage.html
+    stage.css
+    stage-settings.css
+    stage-app.js
+    stage-ws.js
+    stage-units.js
+    stage-rig.js
+    stage-scene.js
+    stage-editor.js
+    stage-camera.js
+    stage-props.js
+    stage-textures.js
+    stage-propeditor.js
+    stage-propeditor.css
+    stage-truss.js
+    stage-looks.js
+    stage-beams.js
+    stage-render.js
+    stage-ledstrip.js
 )
 
 if(qmlui)
@@ -38,3 +57,11 @@ set(WEBFILES_PATH "${INSTALLROOT}/${WEBFILESDIR}")
 
 # Install the webfiles target to the specified path
 install(FILES ${WEBFILES} DESTINATION ${WEBFILES_PATH})
+
+# 3D stage view: vendored three.js (keeps its folder layout for relative imports)
+# and QLC+'s generic fixture meshes as built-in looks
+if(NOT qmlui)
+    install(DIRECTORY three DESTINATION ${WEBFILES_PATH})
+    file(GLOB STAGE_BUILTIN_MESHES ${CMAKE_CURRENT_SOURCE_DIR}/../../resources/meshes/fixtures/*.dae)
+    install(FILES ${STAGE_BUILTIN_MESHES} DESTINATION ${WEBFILES_PATH}/stage-lib/builtin)
+endif()

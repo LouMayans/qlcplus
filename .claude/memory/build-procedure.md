@@ -81,6 +81,17 @@ cmake --install build-mingw            # runs cmake_install.cmake directly (NO r
 `cmake --install` just copies already-built files.) If you ever need the tests, fix the
 deprecation in the upstream test sources or drop `-Werror` for the `*_test` targets.
 
+### Gotcha: plain `ninja` hangs on `translate.sh` (seen 2026-09-28)
+The `translations` target is `ALL` and runs `./translate.sh release ui` through `cmd.exe`. On this
+PC `.sh` opens in **VS Code**, so a new VS Code window opens `translate.sh` and ninja waits
+forever, with no CPU use. **Build explicit targets instead:**
+`ninja -C build-mingw main/qlcplus.exe webaccess/src/qlcpluswebaccess.dll` (add plugin DLLs as
+needed), then `cmake --install build-mingw [--prefix C:/qlcplus-dev]`. If it hangs anyway, kill
+the `ninja` process and the `Code.exe` whose command line ends in `translate.sh`.
+**Never install over `C:\qlcplus` while the live QLC+ runs from it (port 9999).** Use
+`--prefix C:/qlcplus-dev`, and run that copy with PATH=`C:\msys64\mingw64\bin` +
+`QT_PLUGIN_PATH=C:\msys64\mingw64\share\qt5\plugins` (see [[stage-visualizer]]).
+
 ## Make C:\qlcplus double-clickable (one-time — already done; redo only if a new Qt module is pulled in)
 The tool is named **`windeployqt-qt5`** in MSYS2 (plain `windeployqt` is not on PATH). It is
 INSUFFICIENT alone: it copies the Qt5*.dll's then aborts (exit 1) on "libGLESv2.dll does not

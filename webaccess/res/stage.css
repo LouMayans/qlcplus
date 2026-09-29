@@ -1,0 +1,733 @@
+/* stage.css - dark UI for the 3D Stage visualizer/editor. Works down to
+   tablet widths (~768px): the side panels collapse to overlays. */
+
+:root {
+  --bg: #0b0c10;
+  --panel: #15171f;
+  --panel2: #1b1e28;
+  --edge: #262b38;
+  --txt: #e8eaf0;
+  --muted: #8b93a7;
+  --accent: #00d0ff;
+  --on: #00e676;
+  --warn: #ff3b30;
+  --amber: #ffb020;
+}
+
+* { box-sizing: border-box; }
+
+/* Operator preference: no native scrollbar chrome anywhere in the app.
+   Firefox: a fully-transparent thin scrollbar by default, tinted only while
+   hovered or actively scrolling (see the ".scrolling" class toggled by the
+   shared helper in stage-app.js, since "scroll" events don't bubble and
+   :active-scrolling has no CSS selector). WebKit/Blink: same idea via the
+   ::-webkit-scrollbar pseudo-elements. Scrolling itself (wheel/touch/drag)
+   keeps working - only the visual thumb is hidden until needed. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+*:hover, *.scrolling {
+  scrollbar-color: rgba(160, 170, 190, 0.45) transparent;
+}
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: transparent; border-radius: 3px; }
+*:hover::-webkit-scrollbar-thumb, *.scrolling::-webkit-scrollbar-thumb {
+  background: rgba(160, 170, 190, 0.45);
+}
+/* No horizontal scrollbar anywhere - panels/lists only ever scroll vertically. */
+#left-panel, #right-panel, .list, #settings-popup, #settings-body,
+#context-menu, .ctx-submenu, #selftest-panel, .look-gallery, .look-gallery-body {
+  overflow-x: hidden;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* item 1: no accidental text selection anywhere in the app shell while
+   click-dragging - except inside actual form fields, which need it. */
+input, textarea, select {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+button, select, input {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--txt);
+  background: #20242f;
+  border: 1px solid var(--edge);
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.primary { background: #0a5a6b; border-color: var(--accent); }
+button.danger { background: #4a1414; border-color: var(--warn); }
+button.active { background: #143a4a; border-color: var(--accent); }
+
+input.invalid { border-color: var(--warn); outline: none; box-shadow: 0 0 0 1px var(--warn); }
+
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  background: linear-gradient(#181b24, #101218);
+  border-bottom: 1px solid var(--edge);
+  flex-wrap: wrap;
+}
+#topbar-left, #topbar-mid, #topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+#topbar h1 { font-size: 15px; margin: 0; letter-spacing: .4px; }
+
+#conn-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+#conn-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--warn); }
+#conn-dot.ok { background: var(--on); }
+#conn-dot.demo { background: var(--amber); }
+
+#show-name { font-size: 12px; color: var(--muted); padding: 2px 8px; border: 1px solid var(--edge); border-radius: 6px; }
+
+button:disabled { opacity: 0.35; cursor: default; }
+button:disabled:hover { border-color: var(--edge); }
+
+#settings-anchor { position: relative; }
+#settings-btn { font-size: 15px; line-height: 1; }
+/* #settings-popup is now a centered, tabbed modal (dialog + backdrop) -
+   layout/sizing lives in stage-settings.css; this file only keeps the
+   scrolling-body rule below (shared: header/footer stay fixed, only the
+   middle scrolls) and the backdrop-filter/quality-low rules further down,
+   which already target #settings-popup by id. */
+/* item 14a: header stays put, the settings themselves scroll */
+#settings-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* a flex item's default min-height:auto would refuse to shrink below its
+     content size, defeating max-height/overflow above - this lets it shrink
+     so the header stays fixed and only the body scrolls (item 14a) */
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.settings-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); margin: 4px 0; }
+.settings-head { color: var(--txt); margin-bottom: 6px; flex-shrink: 0; }
+.settings-group { margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--edge); }
+.settings-group:last-of-type { border-bottom: none; }
+.settings-group input[type="range"] { width: 100%; }
+.settings-presets { flex-wrap: wrap; margin-top: 6px; }
+.settings-presets button { font-size: 11px; padding: 4px 6px; }
+.icon-btn { padding: 2px 6px; }
+/* always-visible frame-rate readout in the top bar */
+#fps-badge { font: 600 12px/1 ui-monospace, Consolas, monospace; padding: 5px 8px; margin-right: 6px; border-radius: 6px;
+  background: rgba(255,255,255,0.06); color: #7ee787; cursor: pointer; min-width: 54px; text-align: center; }
+#fps-badge.warn { color: #f2cc60; }
+#fps-badge.bad { color: #ff7b72; }
+#settings-popup .inline-field { margin: 4px 0; }
+#settings-popup select, #settings-popup input[type="text"] { width: auto; }
+
+.btn-group { display: flex; gap: 4px; }
+.inline-field { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+
+#dirty-badge {
+  background: #4a3410;
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+.hidden { display: none !important; }
+
+#reload-banner {
+  background: #3a2a10;
+  color: var(--amber);
+  border-bottom: 1px solid var(--amber);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#main {
+  display: flex;
+  height: calc(100vh - 46px);
+  position: relative;
+}
+
+/* item 8: VS Code-style narrow activity bar picking which side panel shows */
+#activity-bar {
+  width: 44px;
+  min-width: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+  background: #101218;
+  border-right: 1px solid var(--edge);
+}
+.activity-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 0;
+}
+.activity-btn:hover { border-color: var(--edge); color: var(--txt); }
+.activity-btn.active { background: #143a4a; border-color: var(--accent); color: var(--accent); }
+
+#left-panel, #right-panel {
+  width: 260px;
+  min-width: 220px;
+  overflow-y: auto;
+  background: var(--panel);
+  border-right: 1px solid var(--edge);
+  padding: 10px;
+}
+/* The Properties panel floats OVER the viewport instead of sharing the flex
+   row with it, so opening/closing a selection never resizes the canvas or
+   shifts the camera's framing (operator requirement, 2026-09-28). Being
+   absolutely positioned takes it out of #main's flex flow entirely, so
+   #viewport (flex:1) keeps the full width on its own - no JS needed beyond
+   not calling scene.resize() for this (see stage-editor.js). */
+#right-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 25;
+  border-right: none;
+  border-left: 1px solid var(--edge);
+  background: rgba(21, 23, 31, 0.92);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.35);
+}
+
+#viewport {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#viewport canvas { display: block; }
+
+.stage-label {
+  color: #fff;
+  background: rgba(10, 12, 18, 0.6);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.panel-block { margin-bottom: 16px; }
+.panel-block h2, #right-panel h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+.panel-block .hint, .hint { color: var(--muted); font-weight: normal; text-transform: none; letter-spacing: 0; font-size: 11px; }
+
+.list { display: flex; flex-direction: column; gap: 2px; max-height: 220px; overflow-y: auto; margin-bottom: 6px; }
+.list-row {
+  padding: 5px 7px;
+  border-radius: 5px;
+  background: var(--panel2);
+  cursor: pointer;
+  font-size: 12px;
+  border: 1px solid transparent;
+}
+.list-row:hover { border-color: var(--edge); }
+.list-row.selected { background: #143a4a; border-color: var(--accent); }
+.list-row.warn { color: var(--amber); }
+.list-row { display: flex; align-items: center; gap: 6px; }
+.list-row.locked { opacity: 0.55; font-style: italic; }
+.list-row .lock-toggle { cursor: pointer; flex: 0 0 auto; }
+.list-row .list-row-label { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.face-toggles { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 6px 0 10px; }
+.face-toggles .hint { flex-basis: 100%; }
+.face-toggle { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+
+.field-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.field-grid label { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
+.field-grid input, .field-grid select { width: 120px; }
+
+.field-list .field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.field-list .field-row input, .field-list .field-row select { width: 120px; }
+.field-list .btn-row { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+
+#selftest-panel {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 14px;
+  z-index: 50;
+}
+#selftest-panel h2 { margin-top: 0; }
+.selftest-row { display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--edge); font-size: 12px; }
+.selftest-row.pass { color: var(--on); }
+.selftest-row.fail { color: var(--warn); }
+#selftest-summary { font-weight: bold; margin-bottom: 8px; }
+
+#hud-legend {
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 30; /* above the floating Properties panel (z-index 25) so it's never hidden under it */
+  background: rgba(10, 12, 18, 0.7);
+  color: var(--muted);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 11px;
+  white-space: nowrap;
+  pointer-events: none;
+  max-width: 95vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#context-menu {
+  position: fixed;
+  z-index: 80;
+  min-width: 180px;
+  max-width: 90vw;
+  background: var(--panel2);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  font-size: 12px;
+  /* item 14b: a long menu (e.g. "Add object") clamps to the viewport and
+     scrolls internally instead of running off the bottom */
+  max-height: calc(100vh - 20px);
+  max-height: calc(100dvh - 20px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.ctx-item {
+  position: relative;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ctx-item:hover { background: #20242f; }
+.ctx-item.disabled { color: var(--muted); cursor: not-allowed; }
+.ctx-item.disabled:hover { background: none; }
+.ctx-item.has-submenu::after { content: ""; }
+.ctx-sep { height: 1px; margin: 4px 2px; background: var(--edge); }
+.ctx-submenu {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: -4px;
+  min-width: 200px;
+  max-width: 90vw;
+  max-height: calc(100vh - 20px);
+  max-height: calc(100dvh - 20px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--panel2);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+.ctx-item.has-submenu:hover > .ctx-submenu { display: block; }
+/* JS flips a menu/submenu that would open past the right or bottom edge */
+.ctx-submenu.flip-left { left: auto; right: 100%; }
+.ctx-submenu.flip-up { top: auto; bottom: -4px; }
+#context-menu.flip-up { transform-origin: bottom; }
+
+/* item 10: prop-library rows are draggable onto the 3D view */
+#props-library-list .list-row { cursor: grab; }
+#props-library-list .list-row:active { cursor: grabbing; }
+.prop-drag-ghost {
+  position: fixed;
+  z-index: 100;
+  pointer-events: none;
+  left: 0;
+  top: 0;
+  background: var(--panel2);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--txt);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  transform: translate(-50%, -50%);
+}
+
+/* item 7: the Delete/Backspace + context-menu delete confirmation popup */
+#delete-confirm {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+}
+#delete-confirm .confirm-box {
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  padding: 16px;
+  max-width: 360px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+#delete-confirm-text { margin-bottom: 12px; font-size: 13px; }
+.confirm-actions { justify-content: flex-end; }
+
+.stage-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 60px;
+  transform: translateX(-50%) translateY(10px);
+  background: #1c2230;
+  border: 1px solid var(--accent);
+  color: var(--txt);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  z-index: 90;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+.stage-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---- Look picker (Properties panel "Look" row -> gallery popover) ---- */
+.look-row-current {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.look-row-current .look-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--txt); }
+
+#look-gallery-popover {
+  position: fixed;
+  z-index: 85;
+  width: 360px;
+  max-width: 92vw;
+  max-height: calc(100vh - 20px);
+  max-height: calc(100dvh - 20px);
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+.look-gallery-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--edge);
+  flex-shrink: 0;
+}
+.look-gallery-head strong { font-size: 12px; }
+.look-gallery-note {
+  padding: 8px 12px;
+  color: var(--muted);
+  font-size: 11px;
+  border-bottom: 1px solid var(--edge);
+  flex-shrink: 0;
+}
+.look-gallery-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-height: 0;
+  flex: 1 1 auto;
+  padding: 10px 12px;
+}
+.look-group-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin: 12px 0 6px;
+}
+.look-group-title:first-child { margin-top: 0; }
+.look-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.look-card {
+  background: var(--panel2);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  text-align: center;
+}
+.look-card:hover { border-color: var(--accent); }
+.look-card.current { border-color: var(--on); }
+.look-card .look-thumb {
+  width: 100%;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0e1016;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  overflow: hidden;
+}
+.look-card .look-thumb img { max-width: 100%; max-height: 100%; }
+.look-card .look-thumb .look-thumb-spinner { color: var(--muted); font-size: 10px; }
+.look-card .look-card-name { font-size: 11px; color: var(--txt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.look-card .look-card-meta { font-size: 10px; color: var(--muted); }
+.look-card .look-movable-badge {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #143a4a;
+  color: var(--accent);
+  font-size: 9px;
+}
+.look-confirm { padding: 4px 0 0; }
+.look-confirm p { margin: 0 0 10px; color: var(--txt); }
+.look-confirm .btn-row { display: flex; flex-direction: column; gap: 6px; }
+.look-confirm .btn-row button { width: 100%; }
+
+@media (max-width: 900px) {
+  #left-panel, #right-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 20;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+  }
+  #left-panel { left: 0; }
+  #right-panel { right: 0; }
+  #topbar h1 { display: none; }
+  #topbar-mid { gap: 6px; }
+}
+
+/* ================================================================
+   Overnight build (2026-09-28, wave 1): Settings tabs, Graphics tab,
+   perf HUD, minimap, crosshair, keybinding help, photo mode. See
+   .claude/memory/stage-visualizer.md "Overnight build contracts".
+   ================================================================ */
+
+.settings-tabs { padding: 0 0 8px; flex-shrink: 0; border-bottom: 1px solid var(--edge); margin-bottom: 8px; }
+.settings-tab-btn {
+  flex: 1 1 auto;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+.settings-tab-btn.active { background: var(--panel2); color: var(--txt); border-color: var(--edge); }
+.settings-tab.hidden { display: none; }
+
+.quality-preset-btn.active { background: var(--accent); color: #04222a; border-color: var(--accent); font-weight: 600; }
+
+/* Generic Graphics settings rows, built from stage-render.js's
+   RENDER_SETTINGS_SCHEMA (grouped by .graphics-group, one per schema
+   "group"). */
+.graphics-group { margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--edge); }
+.graphics-group:last-child { border-bottom: none; }
+.graphics-group-title { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+.graphics-group select { width: 100%; }
+
+/* Sleek translucent dark HUD panels (Capture/grandMA3-3D/Depence-style):
+   blurred glass panels, consistent radius/spacing, smooth fades. */
+#perf-hud, #minimap-wrap {
+  position: fixed;
+  z-index: 40;
+  background: rgba(12, 14, 20, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  transition: opacity 0.2s ease;
+}
+#settings-popup, #hud-legend, #context-menu, #look-gallery-popover, .prop-drag-ghost {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#perf-hud {
+  top: 54px;
+  right: 12px;
+  padding: 8px 12px;
+  min-width: 140px;
+  font-size: 11px;
+  color: var(--txt);
+  pointer-events: none;
+}
+.perf-row { display: flex; justify-content: space-between; gap: 14px; padding: 1px 0; }
+.perf-row span:first-child { color: var(--muted); }
+#perf-gpu { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; }
+
+#minimap-wrap {
+  bottom: 46px;
+  right: 12px;
+  padding: 6px;
+}
+#minimap-canvas {
+  display: block;
+  border-radius: 6px;
+  cursor: crosshair;
+  background: #05060a;
+}
+
+#crosshair {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 35;
+  color: rgba(255,255,255,0.75);
+  pointer-events: none;
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.8));
+}
+
+#keybind-help {
+  position: fixed;
+  inset: 0;
+  z-index: 96;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+#keybind-help-box {
+  background: rgba(21, 23, 31, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  padding: 16px;
+  width: 480px;
+  max-width: 92vw;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+#keybind-help-body { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; font-size: 12px; }
+#keybind-help-body .kb-row { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px dashed var(--edge); }
+#keybind-help-body kbd {
+  background: var(--panel2);
+  border: 1px solid var(--edge);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  color: var(--txt);
+}
+
+/* Photo mode / "Hide UI" (Tab, topbar camera button, bottom toolbar button -
+   all three drive the same body.photo-mode class): hide every UI chrome
+   element, leaving only the 3D view. #bottom-toolbar is deliberately NOT in
+   this list - it must stay on screen (semi-transparent, bottom-right) so the
+   operator has a way to bring the UI back. */
+body.photo-mode #topbar,
+body.photo-mode #left-panel,
+body.photo-mode #right-panel,
+body.photo-mode #activity-bar,
+body.photo-mode #hud-legend,
+body.photo-mode #perf-hud,
+body.photo-mode #minimap-wrap,
+body.photo-mode .stage-toast {
+  display: none !important;
+}
+/* #main normally reserves calc(100vh - 46px) for the topbar below it; with
+   the topbar hidden the 3D view should fill the entire window. */
+body.photo-mode #main {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Bottom-right toolbar (item 4): small, semi-transparent, always on top of
+   the legend/toasts and never hidden by photo-mode, so "Hide UI" can always
+   be undone with a click. */
+#bottom-toolbar {
+  position: fixed;
+  right: 12px;
+  bottom: 10px;
+  z-index: 95;
+  display: flex;
+  gap: 6px;
+  background: rgba(10, 12, 18, 0.55);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 4px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+#bottom-toolbar button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 5px 9px;
+  white-space: nowrap;
+  background: rgba(32, 36, 47, 0.75);
+}
+
+/* Perf item 7: backdrop-filter blur is a full-screen-ish compositing cost
+   that hits integrated GPUs (Intel UHD etc.) hard - drop it at Low quality
+   (stage-app.js toggles this class from the current render settings) and
+   fall back to a plain, still-readable translucent panel background. */
+body.quality-low #perf-hud,
+body.quality-low #minimap-wrap,
+body.quality-low #settings-popup,
+body.quality-low #hud-legend,
+body.quality-low #context-menu,
+body.quality-low #look-gallery-popover,
+body.quality-low .prop-drag-ghost,
+body.quality-low #keybind-help-box,
+body.quality-low #bottom-toolbar {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(12, 14, 20, 0.92);
+}

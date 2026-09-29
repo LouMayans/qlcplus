@@ -453,9 +453,10 @@ void QHttpConnection::slotWebSocketPollTimeout()
         m_webSocket->ping();
 }
 
-void QHttpConnection::webSocketWrite(const QString &message)
+void QHttpConnection::webSocketWrite(const QString &message, bool log)
 {
-    qDebug() << "[webSocketWrite] message length:" << message.size() << "message:" << message;
+    if (log)
+        qDebug() << "[webSocketWrite] message length:" << message.size() << "message:" << message;
 
     if (m_webSocket && m_webSocket->state() == QAbstractSocket::ConnectedState)
         m_webSocket->sendTextMessage(message);

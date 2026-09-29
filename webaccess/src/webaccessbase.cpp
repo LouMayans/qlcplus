@@ -132,6 +132,13 @@ bool extractMultipartFilePayload(const QHttpRequest *req, QByteArray &payload, Q
 }
 }
 
+QString WebAccessBase::s_bindAddress;
+
+void WebAccessBase::setBindAddress(const QString &address)
+{
+    s_bindAddress = address;
+}
+
 WebAccessBase::WebAccessBase(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *sdInstance,
                              int portNumber, bool enableAuth, const QString &passwdFile,
                              const QString &sslCertFile, const QString &sslKeyFile,
@@ -172,7 +179,17 @@ WebAccessBase::WebAccessBase(Doc *doc, VirtualConsole *vcInstance, SimpleDesk *s
             qWarning() << "[WebAccess] Failed to enable HTTPS; falling back to plain HTTP";
     }
 
-    m_httpServer->listen(QHostAddress::Any, portNumber ? portNumber : DEFAULT_PORT_NUMBER);
+    QHostAddress bindAddress = QHostAddress::Any;
+    if (!s_bindAddress.isEmpty())
+    {
+        QHostAddress parsedAddress(s_bindAddress);
+        if (parsedAddress.isNull() == false)
+            bindAddress = parsedAddress;
+        else
+            qWarning() << "[WebAccess] Invalid --web-bind address:" << s_bindAddress << "- listening on any interface";
+    }
+
+    m_httpServer->listen(bindAddress, portNumber ? portNumber : DEFAULT_PORT_NUMBER);
 
 #if defined(Q_WS_X11) || defined(Q_OS_LINUX)
     m_netConfig = new WebAccessNetwork();

@@ -1,0 +1,85 @@
+{
+  "_comment": "Categories -> candidate matches for the GDTF Share fetcher (tools/stagelib/fetch_gdtf.py). `match` is a case-insensitive regex tested against \"<manufacturer> <fixture>\". Keep ~3 candidates per described archetype where they exist on GDTF Share.",
+  "categories": {
+    "spot_beam_movers": [
+      {"match": "clay\\s*paky.*sharpy", "note": "Clay Paky Sharpy / Sharpy Plus (priority: spot/beam mover)"},
+      {"match": "chauvet.*intimidator.*(spot|beam|hybrid)", "note": "Chauvet Intimidator Spot/Beam/Hybrid (priority)"},
+      {"match": "chauvet.*rogue.*r\\s*[12].*(spot|beam)|rogue\\s*r\\s*[12]\\b", "note": "Chauvet Rogue R1/R2 Spot/Beam (priority)"},
+      {"match": "adj.*focus\\s*spot", "note": "ADJ Focus Spot (priority)"},
+      {"match": "adj.*vizi\\s*(beam|spot)", "note": "ADJ Vizi Beam/Vizi Spot (priority)"},
+      {"match": "martin.*mac\\s*(encore|era|axiom)", "note": "Martin MAC Encore/ERA/Axiom (priority)"},
+      {"match": "robe.*(megapointe|pointe\\b|esprite|robin.*spot)", "note": "Robe MegaPointe/Pointe/Esprite/Robin Spot (priority)"},
+      {"match": "elation.*(platinum\\s*beam|fuze\\s*spot|proteus)", "note": "Elation Platinum Beam/Fuze Spot/Proteus (priority)"},
+      {"match": "(beam\\s*-?\\s*230|7\\s*r\\b.*beam|beam.*7\\s*r\\b)", "note": "generic Beam 230/7R (priority)"}
+    ],
+    "beam230": [
+      {"match": "clay\\s*paky.*sharpy(?!.*wash)(?!.*spot)", "note": "Clay Paky Sharpy - the reference 230W 7R beam"},
+      {"match": "(beam\\s*-?\\s*230|230\\s*w.*beam|7\\s*r\\b.*beam|beam.*7\\s*r\\b)", "note": "generic/Chinese Beam 230 7R clones"},
+      {"match": "chauvet.*intimidator.*beam", "note": "Chauvet Intimidator Beam series"},
+      {"match": "adj.*vizi\\s*beam", "note": "ADJ Vizi Beam"},
+      {"match": "elation.*platinum.*beam", "note": "Elation Platinum Beam"}
+    ],
+    "led_wash_zoom": [
+      {"match": "chauvet.*intimidator.*wash", "note": "Chauvet Intimidator Wash (LED zoom wash)"},
+      {"match": "adj.*(focus\\s*wash|vizi\\s*wash)", "note": "ADJ Focus Wash / Vizi Wash"},
+      {"match": "martin.*mac\\s*aura", "note": "Martin MAC Aura zoom wash"}
+    ],
+    "small_par": [
+      {"match": "adj.*v\\s*-?par", "note": "ADJ VPar"},
+      {"match": "(?:^|\\s)rgba?\\s*par\\b", "note": "generic small RGBA par"},
+      {"match": "chauvet.*sm\\s*par|slimpar", "note": "Chauvet SlimPAR small RGBA par"}
+    ],
+    "thin_par": [
+      {"match": "venue.*thin\\s*par\\s*38", "note": "Venue ThinPAR 38"},
+      {"match": "thin\\s*par\\s*38", "note": "generic ThinPAR 38 clone"},
+      {"match": "chauvet.*slimpar.*(38|64)", "note": "Chauvet SlimPAR thin-pack par"}
+    ],
+    "led_bar": [
+      {"match": "venue.*tetra\\s*bar", "note": "Venue Tetra Bar"},
+      {"match": "\\bled\\s*bar\\b", "note": "generic LED bar"},
+      {"match": "chauvet.*colorband", "note": "Chauvet COLORband LED bar"}
+    ],
+    "multi_fx": [
+      {"match": "chauvet.*swarm\\s*5", "note": "Chauvet Swarm 5 FX"},
+      {"match": "chauvet.*swarm", "note": "other Chauvet Swarm multi-FX"},
+      {"match": "(multi\\s*-?\\s*fx|multifx)", "note": "generic multi-FX fixture"}
+    ],
+    "tilt_bar_strobe": [
+      {"match": "betopper", "note": "Betopper tilt bar / matrix strobe"},
+      {"match": "tilt\\s*bar", "note": "generic tilt bar"},
+      {"match": "matrix.*strobe", "note": "generic matrix strobe"}
+    ],
+    "led_panel": [
+      {"match": "\\bled\\s*panel\\b", "note": "generic RGB LED panel"},
+      {"match": "\\bpixel\\s*panel\\b", "note": "pixel-mapped LED panel"},
+      {"match": "\\bvideo\\s*panel\\b", "note": "LED video panel"}
+    ],
+    "fog": [
+      {"match": "\\bfog\\s*machine\\b", "note": "generic fog machine"},
+      {"match": "antari.*fog", "note": "Antari fog machine"},
+      {"match": "chauvet.*(hurricane|fog)", "note": "Chauvet Hurricane / fog machine"}
+    ],
+    "club_movers": [
+      {"match": "chauvet.*(intimidator|rogue)", "note": "Chauvet Intimidator & Rogue series club movers"},
+      {"match": "adj.*(focus|vizi)\\b", "note": "ADJ Focus / Vizi series"},
+      {"match": "martin.*(mac\\s*aura|mac\\s*quantum|mac\\s*encore)", "note": "Martin MAC Aura/Quantum/Encore"},
+      {"match": "robe.*(robin|megapointe|esprite)", "note": "Robe Robin / MegaPointe / Esprite"},
+      {"match": "elation.*(fuze|proteus)", "note": "Elation Fuze / Proteus"}
+    ],
+    "bars_strobes_pixel": [
+      {"match": "\\bpixel\\s*bar\\b", "note": "generic pixel bar"},
+      {"match": "chauvet.*(colorband|colorado)", "note": "Chauvet COLORband / COLORado"},
+      {"match": "martin.*atomic", "note": "Martin Atomic strobe"},
+      {"match": "(2|4)\\s*-?\\s*light\\s*blinder", "note": "2/4-light blinder"},
+      {"match": "\\buplight\\b", "note": "generic uplight"}
+    ],
+    "lasers_fx": [
+      {"match": "\\bderby\\b", "note": "generic derby effect"},
+      {"match": "(multi\\s*-?\\s*fx|multifx)", "note": "generic multi-FX fixture"},
+      {"match": "\\blaser\\b", "note": "generic laser fixture"},
+      {"match": "mirror\\s*ball", "note": "mirror ball"},
+      {"match": "\\bhazer\\b", "note": "hazer"},
+      {"match": "\\bfogger\\b|\\bfog\\s*machine\\b", "note": "fogger / fog machine"}
+    ]
+  }
+}

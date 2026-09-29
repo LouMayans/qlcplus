@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<!--
+  Q Light Controller Plus - 3D Stage visualizer/editor (fork addition).
+  Served at "/stage" by webaccess. Offline, vendored three.js - no build
+  step, no npm, no CDN. See .claude/memory/stage-visualizer.md for the
+  full protocol/format spec this page implements against.
+
+  Hash options (never query strings - webaccess 404s any "?" URL):
+    /stage#demo      no WebSocket; a built-in fake rig + animated DMX
+    /stage#selftest  runs the pure-function self tests in a visible panel
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>3D Stage - QLC+</title>
+<link rel="stylesheet" href="stage.css">
+<!-- P's prop-editor styles (stage-propeditor.js/.css - "P" file ownership,
+     see .claude/memory/stage-visualizer.md) -->
+<link rel="stylesheet" href="stage-propeditor.css">
+<!-- Settings popup redesign (CS2-style centered/tabbed modal) - styles only,
+     markup lives in this file, logic in stage-app.js. -->
+<link rel="stylesheet" href="stage-settings.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./three/build/three.module.min.js",
+    "three/addons/": "./three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<header id="topbar">
+  <div id="topbar-left">
+    <h1>3D Stage</h1>
+    <span id="show-name" title="The QLC+ show this stage follows"></span>
+    <div id="conn-status"><span id="conn-dot"></span><span id="conn-text">connecting...</span></div>
+  </div>
+
+  <div id="topbar-mid">
+    <div class="btn-group" id="mode-switch">
+      <button id="mode-view-btn" class="mode-btn active" data-mode="view">View</button>
+      <button id="mode-edit-btn" class="mode-btn" data-mode="edit">Edit</button>
+    </div>
+    <label class="inline-field">Snap
+      <select id="snap-select"></select>
+    </label>
+    <select id="camera-preset-select">
+      <option value="foh">FOH</option>
+      <option value="top">Top</option>
+      <option value="side">Side</option>
+      <option value="stage">Stage</option>
+    </select>
+    <select id="seat-select" title="Seats">
+      <option value="">Free camera</option>
+    </select>
+    <button id="seat-tour-btn" class="icon-btn" title="Tour: cycle seats automatically">&#9654;</button>
+    <select id="render-mode-select" title="Render mode">
+      <option value="lit">Lit</option>
+      <option value="beams">Beams only</option>
+      <option value="unlit">Unlit</option>
+      <option value="wireframe">Wireframe</option>
+    </select>
+    <div class="btn-group">
+      <button id="undo-btn" title="Undo (Ctrl+Z)" disabled>&#8630;</button>
+      <button id="redo-btn" title="Redo (Ctrl+Y)" disabled>&#8631;</button>
+    </div>
+    <div id="settings-anchor">
+      <button id="settings-btn" title="Settings">&#9881;</button>
+    </div>
+  </div>
+
+  <div id="topbar-right">
+    <span id="fps-badge" title="Frames per second (click for the performance HUD)">-- FPS</span>
+    <div class="btn-group">
+      <button id="perf-hud-btn" class="icon-btn" title="Performance HUD">&#128202;</button>
+      <button id="screenshot-btn" class="icon-btn" title="Screenshot">&#128247;</button>
+      <button id="fullscreen-btn" class="icon-btn" title="Fullscreen">&#9974;</button>
+      <button id="photo-mode-btn" class="icon-btn" title="Photo mode (Tab): hide all UI">&#127909;</button>
+      <button id="help-btn" class="icon-btn" title="Keybindings (? or H)">?</button>
+    </div>
+    <span id="dirty-badge" class="hidden">Unsaved changes</span>
+    <button id="revert-btn">Revert</button>
+    <button id="save-btn" class="primary">Save</button>
+  </div>
+</header>
+
+<div id="hud-legend">WASD move &middot; Q/E down/up &middot; Shift fast &middot; 1/2/3 gizmo &middot; Left-click select &middot; Left-drag pan/move &middot; Middle-drag orbit &middot; Wheel off &middot; Right-click menu &middot; Hold Alt move / Shift rotate / Ctrl scale &middot; Ctrl+Z undo / Ctrl+Y redo &middot; [ / ] seats &middot; F free cam &middot; Tab photo mode &middot; ? help</div>
+<div id="context-menu" class="hidden"></div>
+<div id="look-gallery-popover" class="hidden"></div>
+
+<div id="crosshair" class="hidden"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2v6M12 16v6M2 12h6M16 12h6" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></div>
+
+<div id="perf-hud" class="hidden">
+  <div class="perf-row"><span>FPS</span><span id="perf-fps">-</span></div>
+  <div class="perf-row"><span>JS ms/frame</span><span id="perf-js-ms">-</span></div>
+  <div class="perf-row"><span>Render ms</span><span id="perf-frame-ms">-</span></div>
+  <div class="perf-row"><span>Draw calls</span><span id="perf-draws">-</span></div>
+  <div class="perf-row"><span>Triangles</span><span id="perf-tris">-</span></div>
+  <div class="perf-row"><span>Lights</span><span id="perf-lights">-</span></div>
+  <div class="perf-row"><span>Beams</span><span id="perf-beams">-</span></div>
+  <div class="perf-row"><span>Res scale</span><span id="perf-res">-</span></div>
+  <div class="perf-row"><span>GPU</span><span id="perf-gpu" title="">-</span></div>
+</div>
+
+
+<div id="settings-popup" class="hidden">
+  <div id="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="settings-row settings-head">
+      <strong id="settings-title">Settings</strong>
+      <button id="settings-close-btn" class="icon-btn" title="Close">&#10005;</button>
+    </div>
+
+    <div class="btn-group settings-tabs" role="tablist">
+      <button type="button" class="settings-tab-btn active" data-tab="video" role="tab">Video</button>
+      <button type="button" class="settings-tab-btn" data-tab="graphics" role="tab">Graphics</button>
+      <button type="button" class="settings-tab-btn" data-tab="camera" role="tab">Camera &amp; Controls</button>
+      <button type="button" class="settings-tab-btn" data-tab="interface" role="tab">Interface</button>
+      <button type="button" class="settings-tab-btn" data-tab="keys" role="tab">Keys</button>
+    </div>
+
+    <div id="settings-body">
+      <div id="settings-tab-video" class="settings-tab">
+        <div class="settings-group">
+          <div class="settings-group-title">Quality preset</div>
+          <div class="btn-group settings-presets" id="quality-preset-group">
+            <button type="button" class="quality-preset-btn" data-preset="low">Low</button>
+            <button type="button" class="quality-preset-btn" data-preset="medium">Medium</button>
+            <button type="button" class="quality-preset-btn" data-preset="high">High</button>
+            <button type="button" class="quality-preset-btn" data-preset="ultra">Ultra</button>
+            <button type="button" class="quality-preset-btn" data-preset="custom" disabled>Custom</button>
+          </div>
+        </div>
+        <div id="video-settings-body"><!-- built generically from stage-render.js's RENDER_SETTINGS_SCHEMA (Quality group) --></div>
+      </div>
+
+      <div id="settings-tab-graphics" class="settings-tab hidden">
+        <div id="graphics-settings-body"><!-- built generically from stage-render.js's RENDER_SETTINGS_SCHEMA (everything but Quality) --></div>
+        <div class="settings-group">
+          <div class="settings-group-title">Beam appearance</div>
+          <div class="setting-row">
+            <span class="setting-label">Beam width &times;</span>
+            <span class="setting-control"><input type="range" id="beam-width-slider" min="0.25" max="3" step="0.05" value="1"><span class="setting-value" id="beam-width-value">1.00</span></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Beam brightness</span>
+            <span class="setting-control"><input type="range" id="beam-brightness-slider" min="0.1" max="3" step="0.05" value="1"><span class="setting-value" id="beam-brightness-value">1.00</span></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Beam length limit (ft)</span>
+            <span class="setting-control"><input type="text" id="beam-length-input" value="40" style="width:70px"></span>
+          </div>
+        </div>
+      </div>
+
+      <div id="settings-tab-camera" class="settings-tab hidden">
+        <div class="settings-group">
+          <div class="settings-group-title">Field of view</div>
+          <div class="setting-row">
+            <span class="setting-label">Field of view</span>
+            <span class="setting-control"><input type="range" id="fov-slider" min="20" max="130" step="1" value="55"><span class="setting-value" id="fov-value">55°</span></span>
+          </div>
+          <div class="btn-group settings-presets">
+            <button type="button" class="fov-preset" data-fov="55">Normal</button>
+            <button type="button" class="fov-preset" data-fov="80">Wide</button>
+            <button type="button" class="fov-preset" data-fov="110">Ultra wide</button>
+            <button type="button" class="fov-preset" data-fov="130">Fisheye-ish</button>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Movement</div>
+          <div class="setting-row">
+            <span class="setting-label">Move speed (ft/s)</span>
+            <span class="setting-control"><input type="range" id="move-speed-slider" min="1" max="60" step="1" value="8"><span class="setting-value" id="move-speed-value">8</span></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Fast (Shift) multiplier</span>
+            <span class="setting-control"><input type="range" id="fast-mul-slider" min="1" max="10" step="0.5" value="3"><span class="setting-value" id="fast-mul-value">3.0&times;</span></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Up/down speed (ft/s)</span>
+            <span class="setting-control"><input type="range" id="vert-speed-slider" min="1" max="40" step="1" value="6"><span class="setting-value" id="vert-speed-value">6</span></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label" title="Mouse-look yaw/pitch rate (middle-drag or flying)">Mouse look sensitivity</span>
+            <span class="setting-control"><input type="range" id="orbit-sens-slider" min="0.2" max="3" step="0.05" value="1"><span class="setting-value" id="orbit-sens-value">1.00&times;</span></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Pan sensitivity</span>
+            <span class="setting-control"><input type="range" id="pan-sens-slider" min="0.2" max="3" step="0.05" value="1"><span class="setting-value" id="pan-sens-value">1.00&times;</span></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Smooth movement</span>
+            <span class="setting-control"><label class="toggle-switch"><input type="checkbox" id="smooth-move-toggle" checked><span class="toggle-slider"></span></label></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label" title="Stops looking up/down from tilting the direction you walk">Keep level while walking</span>
+            <span class="setting-control"><label class="toggle-switch"><input type="checkbox" id="keep-level-toggle"><span class="toggle-slider"></span></label></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label" title="Off: middle-drag free-looks like a flight sim. On: it orbits around the current view centre.">Middle-drag orbits around the view centre</span>
+            <span class="setting-control"><label class="toggle-switch"><input type="checkbox" id="orbit-middle-toggle"><span class="toggle-slider"></span></label></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Scroll wheel</span>
+            <span class="setting-control">
+              <select id="wheel-mode-select">
+                <option value="off">Off</option>
+                <option value="zoom">Zoom</option>
+                <option value="speed">Adjust move speed</option>
+              </select>
+            </span>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Seats</div>
+          <div class="setting-row">
+            <span class="setting-label">Tour interval (s)</span>
+            <span class="setting-control"><input type="range" id="tour-interval-slider" min="3" max="60" step="1" value="8"><span class="setting-value" id="tour-interval-value">8</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div id="settings-tab-interface" class="settings-tab hidden">
+        <div class="settings-group">
+          <div class="settings-group-title">Scene display</div>
+          <div class="setting-row">
+            <span class="setting-label">Show room box</span>
+            <span class="setting-control"><label class="toggle-switch"><input type="checkbox" id="room-box-toggle" checked><span class="toggle-slider"></span></label></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Show floor grid</span>
+            <span class="setting-control"><label class="toggle-switch"><input type="checkbox" id="floor-grid-toggle" checked><span class="toggle-slider"></span></label></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Labels</span>
+            <span class="setting-control"><label class="toggle-switch"><input type="checkbox" id="labels-toggle" checked><span class="toggle-slider"></span></label></span>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Performance HUD</div>
+          <div class="setting-row">
+            <span class="setting-label">Show performance panel</span>
+            <span class="setting-control"><label class="toggle-switch"><input type="checkbox" id="perf-hud-toggle"><span class="toggle-slider"></span></label></span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label" title="Step the quality preset down one level if FPS stays under 85% of the target for 5 seconds">Auto performance</span>
+            <span class="setting-control"><label class="toggle-switch"><input type="checkbox" id="auto-perf-toggle"><span class="toggle-slider"></span></label></span>
+          </div>
+        </div>
+      </div>
+
+      <div id="settings-tab-keys" class="settings-tab hidden">
+        <div class="settings-group">
+          <div class="settings-group-title">Keyboard &amp; mouse (reference only)</div>
+          <div id="settings-keybind-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-footer">
+      <button id="settings-reset-tab-btn">Reset tab to defaults</button>
+      <button id="settings-reset-all-btn">Reset all</button>
+      <button id="settings-close-footer-btn" class="primary">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="keybind-help" class="hidden">
+  <div class="confirm-box" id="keybind-help-box">
+    <div class="settings-row settings-head">
+      <strong>Keybindings</strong>
+      <button id="keybind-help-close" class="icon-btn" title="Close">&#10005;</button>
+    </div>
+    <div id="keybind-help-body"></div>
+  </div>
+</div>
+<div id="delete-confirm" class="hidden">
+  <div class="confirm-box">
+    <div id="delete-confirm-text"></div>
+    <div class="btn-group confirm-actions">
+      <button id="delete-confirm-cancel">Cancel</button>
+      <button id="delete-confirm-ok" class="danger">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="reload-banner" class="hidden">
+  <span id="reload-banner-text">Saved elsewhere.</span>
+  <button id="reload-banner-btn">Reload</button>
+  <button id="reload-banner-dismiss">Dismiss</button>
+</div>
+
+<main id="main">
+  <nav id="activity-bar">
+    <button id="activity-scene-btn" class="activity-btn" data-panel="scene" title="Scene">Scn</button>
+    <button id="activity-props-btn" class="activity-btn" data-panel="props" title="Props">Prp</button>
+    <button id="activity-settings-btn" class="activity-btn" title="Settings">&#9881;</button>
+  </nav>
+  <aside id="left-panel">
+
+    <section id="edit-section" class="mode-section">
+      <div class="panel-block">
+        <h2>Fixtures</h2>
+        <div id="fixtures-list" class="list"></div>
+      </div>
+      <div class="panel-block">
+        <h2>Unplaced <span class="hint">(double-click to place)</span></h2>
+        <div id="unplaced-list" class="list"></div>
+      </div>
+      <div class="panel-block">
+        <h2>Objects</h2>
+        <div id="objects-list" class="list"></div>
+      </div>
+      <div class="panel-block">
+        <h2>Anchor</h2>
+        <div class="field-grid">
+          <label>X <input type="text" id="anchor-x"></label>
+          <label>Y <input type="text" id="anchor-y"></label>
+          <label>Z <input type="text" id="anchor-z"></label>
+        </div>
+        <button id="anchor-set-btn">Set anchor to selected</button>
+      </div>
+      <div class="panel-block">
+        <h2>Room</h2>
+        <div class="field-grid">
+          <label>Width <input type="text" id="room-width"></label>
+          <label>Depth <input type="text" id="room-depth"></label>
+          <label>Height <input type="text" id="room-height"></label>
+        </div>
+      </div>
+      <div class="panel-block">
+        <h2>Distribute</h2>
+        <div class="field-grid">
+          <label>Axis
+            <select id="distribute-axis"><option value="x">X across</option><option value="y">Y depth</option></select>
+          </label>
+          <label>Spacing <input type="text" id="distribute-spacing" placeholder="e.g. 3'"></label>
+        </div>
+        <button id="distribute-btn">Distribute selected</button>
+      </div>
+    </section>
+
+    <section id="props-section" class="mode-section" style="display:none">
+      <!-- The old in-panel parts builder (name/category/aliases fields,
+           parts list, add-part, place/save buttons) is gone: editing now
+           happens in stage-propeditor.js's full-screen openPropEditor(),
+           which both "New prop" and clicking a library row open (see
+           stage-props.js's initPropsMode) and which U's Properties-panel
+           "Edit prop..." button also calls. -->
+      <div class="panel-block">
+        <h2>Prop library</h2>
+        <div id="props-library-list" class="list"></div>
+        <button id="props-new-btn">New prop</button>
+      </div>
+    </section>
+
+  </aside>
+
+  <div id="viewport"></div>
+
+  <aside id="right-panel">
+    <h2>Properties</h2>
+    <div id="selection-empty" class="hint">Nothing selected.</div>
+    <div id="selection-fields" class="field-list" style="display:none"></div>
+  </aside>
+</main>
+
+<!-- Bottom-right toolbar: stays visible even in "Hide UI"/photo mode, so the
+     operator always has a click-target to bring the rest of the UI back. -->
+<div id="bottom-toolbar">
+  <button id="bottom-hide-ui-btn" class="icon-btn" title="Hide all UI (Tab)">&#127909; <span id="bottom-hide-ui-label">Hide UI</span></button>
+  <button id="bottom-house-btn" class="icon-btn" title="House lights: the room's work light (off = only the fixtures light the club)">&#128161; House lights</button>
+  <button id="bottom-labels-btn" class="icon-btn active" title="Toggle fixture/object name labels">&#127991; Labels</button>
+</div>
+
+<div id="selftest-panel" class="hidden">
+  <h2>Self test</h2>
+  <div id="selftest-summary"></div>
+  <div id="selftest-results"></div>
+</div>
+
+<script type="module" src="stage-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+/* stage-settings.css - the redesigned Settings popup: a centered, tabbed
+   modal (CS2-style tab rail + sectioned rows), replacing the old small
+   dropdown anchored under the gear button. Loaded after stage.css (see
+   stage.html <head>), so rules here win over stage.css at equal
+   specificity - most selectors below reuse the existing #settings-popup /
+   .settings-tab-btn / .settings-group / .graphics-group* classes stage.css
+   and stage-app.js already define/build, just restyled and resized.
+   See .claude/memory/stage-visualizer.md for the file-ownership contract:
+   this file, stage.html's popup markup, and stage-app.js's popup logic are
+   this agent's files; stage.css itself only got two small, targeted edits. */
+
+/* ---- backdrop + dialog shell -------------------------------------------- */
+#settings-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 6, 10, 0.58);
+  padding: 16px; /* phone-width gutter when the dialog itself hits max-width/height */
+}
+
+#settings-dialog {
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  height: 80vh;
+  max-width: 1100px;
+  max-height: 760px;
+  min-width: 0;
+  min-height: 0;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  overflow: hidden; /* header/tabs/footer are fixed; only #settings-body scrolls */
+}
+
+/* Header: title + close, never scrolls */
+#settings-dialog .settings-head {
+  flex: 0 0 auto;
+  padding: 14px 18px;
+  margin: 0;
+  border-bottom: 1px solid var(--edge);
+  font-size: 15px;
+}
+#settings-dialog .settings-head strong { font-size: 15px; letter-spacing: 0.2px; }
+#settings-dialog .settings-head .icon-btn { font-size: 14px; }
+
+/* ---- tab rail (CS2-style horizontal tabs) -------------------------------- */
+#settings-dialog .settings-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 2px;
+  padding: 8px 14px 0;
+  margin: 0;
+  border-bottom: 1px solid var(--edge);
+  background: rgba(255, 255, 255, 0.015);
+}
+#settings-dialog .settings-tab-btn {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-radius: 6px 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 9px 16px;
+  margin-bottom: -1px;
+}
+#settings-dialog .settings-tab-btn:hover { color: var(--txt); border-color: transparent; }
+#settings-dialog .settings-tab-btn.active {
+  background: var(--panel2);
+  color: var(--accent);
+  border-color: var(--edge) var(--edge) transparent;
+  border-bottom: 2px solid var(--accent);
+  font-weight: 600;
+}
+
+/* ---- scrolling body ------------------------------------------------------ */
+#settings-dialog #settings-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 16px 20px;
+}
+#settings-dialog .settings-tab.hidden { display: none; }
+
+#settings-dialog .settings-group,
+#settings-dialog .graphics-group {
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--edge);
+}
+#settings-dialog .settings-group:last-child,
+#settings-dialog .graphics-group:last-child { border-bottom: none; margin-bottom: 0; }
+
+#settings-dialog .settings-group-title,
+#settings-dialog .graphics-group-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+/* Row: label on the left (with optional description as a native tooltip),
+   control on the right - sliders show their live numeric value inline. */
+#settings-dialog .setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 7px 0;
+  font-size: 12.5px;
+}
+#settings-dialog .setting-label {
+  color: var(--txt);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+#settings-dialog .setting-label[title] { cursor: help; border-bottom: 1px dotted var(--muted); }
+#settings-dialog .setting-control {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+  justify-content: flex-end;
+}
+#settings-dialog .setting-control input[type="range"] { width: 130px; }
+#settings-dialog .setting-control select { min-width: 110px; }
+#settings-dialog .setting-value {
+  color: var(--muted);
+  font: 600 11.5px/1 ui-monospace, Consolas, monospace;
+  min-width: 3.2em;
+  text-align: right;
+}
+
+/* Quality/FOV preset button rows keep using .settings-presets */
+#settings-dialog .settings-presets { flex-wrap: wrap; margin-top: 2px; }
+#settings-dialog .settings-presets button { font-size: 11px; padding: 4px 8px; }
+
+/* ---- toggle switch (used in place of a bare checkbox in every row) ------- */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 19px;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+.toggle-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+.toggle-switch .toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #2a2f3d;
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.toggle-switch .toggle-slider::before {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #c7cdda;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.toggle-switch input:checked + .toggle-slider {
+  background: #0a5a6b;
+  border-color: var(--accent);
+}
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(15px);
+  background: var(--accent);
+}
+.toggle-switch input:focus-visible + .toggle-slider { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Keys tab: reuse the keybind-help overlay's kbd/row look ------------- */
+#settings-keybind-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 18px;
+  font-size: 12px;
+}
+#settings-keybind-body .kb-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--edge);
+}
+#settings-keybind-body kbd {
+  background: var(--panel2);
+  border: 1px solid var(--edge);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  color: var(--txt);
+}
+
+/* ---- footer: fixed, never scrolls ---------------------------------------- */
+#settings-dialog .settings-footer {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--edge);
+  background: rgba(255, 255, 255, 0.015);
+}
+#settings-dialog .settings-footer #settings-reset-tab-btn,
+#settings-dialog .settings-footer #settings-reset-all-btn { font-size: 12px; }
+
+/* ---- narrow / phone widths: 16px gutters, single-column tab rail scrolls,
+   rows stack label-over-control if they can't fit side by side. ---------- */
+@media (max-width: 640px) {
+  #settings-popup { padding: 0; }
+  #settings-dialog {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  #settings-dialog .settings-tabs {
+    overflow-x: auto;
+    padding: 8px 10px 0;
+  }
+  #settings-dialog #settings-body { padding: 12px 16px; }
+  #settings-dialog .setting-row { flex-wrap: wrap; row-gap: 6px; }
+  #settings-dialog .setting-control { min-width: 0; width: 100%; justify-content: space-between; }
+  #settings-dialog .setting-control input[type="range"] { flex: 1 1 auto; width: auto; }
+}

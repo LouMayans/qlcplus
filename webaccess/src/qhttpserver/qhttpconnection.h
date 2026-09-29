@@ -93,7 +93,7 @@ private:
      *************************************************************************/
 public:
     QHttpConnection *enableWebSocket();
-    void webSocketWrite(const QString &message);
+    void webSocketWrite(const QString &message, bool log = true);
 
 Q_SIGNALS:
     void webSocketDataReady(QHttpConnection *conn, QString data);

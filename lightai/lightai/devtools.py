@@ -177,7 +177,7 @@ class QlcInstance:
             raise RuntimeError(f"port {self.port} is already in use; refusing to start a test instance there")
         self._lock(timeout)
         self.settings = snapshot_settings()
-        args = [str(self.exe), "-w", "-wp", str(self.port), "-p", "-o", str(self.project), *self.extra_args]
+        args = [str(self.exe), "-w", "-wp", str(self.port), "--web-bind", "127.0.0.1", "-p", "-o", str(self.project), *self.extra_args]
         env = dict(os.environ)
         if self.env:
             env.update(self.env)

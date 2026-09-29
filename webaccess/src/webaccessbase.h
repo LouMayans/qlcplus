@@ -47,6 +47,11 @@ public:
     virtual ~WebAccessBase();
     void closeServer();
 
+    /** Set the address the web server should listen on (e.g. "127.0.0.1").
+     *  Must be called before a WebAccess/WebAccessQml instance is constructed.
+     *  An empty string (the default) means "listen on any interface". */
+    static void setBindAddress(const QString &address);
+
 protected:
     enum class CommonRequestResult
     {
@@ -100,6 +105,9 @@ protected:
     QHttpServer *m_httpServer;
     QList<QHttpConnection *> m_webSocketsList;
     bool m_pendingProjectLoaded;
+
+private:
+    static QString s_bindAddress;
 };
 
 #endif // WEBACCESSBASE_H

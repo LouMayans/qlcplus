@@ -70,3 +70,6 @@ __pycache__/
 # lightai: automatic show backups (git keeps the history) and test coverage data
 SaveFile/backups/
 .coverage
+
+# 3D stage test outputs (screenshots/json from tools/stagelib/*_check.py, live_drive.py) - regenerated on demand
+lightai/reports/stage/

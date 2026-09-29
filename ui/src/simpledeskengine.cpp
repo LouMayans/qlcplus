@@ -26,6 +26,7 @@
 
 #include "simpledeskengine.h"
 #include "genericfader.h"
+#include "inputoutputmap.h"
 #include "mastertimer.h"
 #include "fadechannel.h"
 #include "cuestack.h"
@@ -71,6 +72,30 @@ void SimpleDeskEngine::clearContents()
         delete cs;
     m_cueStacks.clear();
     m_values.clear();
+
+    // Dismiss any per-universe faders requested from the current Universe
+    // objects. A project (re)load replaces the Doc's Universe objects
+    // (InputOutputMap::loadXML() -> removeAllUniverses()/addUniverse()),
+    // so a cached fader left in m_fadersMap would become detached from the
+    // new Universe's active fader list: getFader() would keep handing out
+    // that stale fader, and values written into it would never reach the
+    // live DMX output again (channel overrides would silently stop working
+    // after a reload). Clearing the map here forces getFader() to request
+    // a fresh fader from whatever Universe exists once the desk is used
+    // again.
+    QMapIterator<quint32, QSharedPointer<GenericFader> > faderIt(m_fadersMap);
+    while (faderIt.hasNext())
+    {
+        faderIt.next();
+        QSharedPointer<GenericFader> fader = faderIt.value();
+        if (fader.isNull())
+            continue;
+
+        Universe *universe = m_doc->inputOutputMap()->universe(faderIt.key());
+        if (universe != NULL)
+            universe->dismissFader(fader);
+    }
+    m_fadersMap.clear();
 }
 
 /****************************************************************************

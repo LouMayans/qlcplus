@@ -43,6 +43,7 @@ if(qmlui)
 else()
     list(APPEND WEBACCESS_SOURCES
         webaccess.cpp webaccess.h
+        webaccessstage.cpp webaccessstage.h
     )
 endif()
 

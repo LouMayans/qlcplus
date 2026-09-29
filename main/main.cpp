@@ -76,6 +76,9 @@ namespace QLCArgs
     /** Number of a specific port to use for webaccess */
     int webAccessPort = 0;
 
+    /** Address the web access server should listen on (empty = any interface) */
+    QString webAccessBindAddress;
+
     /** If true, the authentication feature of the web interface will be enabled */
     bool enableWebAuth = false;
 
@@ -179,6 +182,7 @@ void printUsage()
     cout << "  -v or --version\t\tPrint version information" << endl;
     cout << "  -w or --web\t\t\tEnable remote web access" << endl;
     cout << "  -wp or --web-port <port>\t\tSet the port to use for web access" << endl;
+    cout << "  --web-bind <address>\t\tBind the web access server to a specific address (e.g. 127.0.0.1), instead of all interfaces" << endl;
     cout << "  -wa or --web-auth\t\tEnable remote web access with users authentication" << endl;
     cout << "  -a or --web-auth-file <file>\tSpecify a file where to store web access basic authentication credentials" << endl;
     cout << "  --web-cert <file>\t\tPEM certificate (chain) file to serve web access over HTTPS/WSS" << endl;
@@ -280,6 +284,11 @@ bool parseArgs()
         {
             if (it.hasNext() == true)
                 QLCArgs::webAccessPort = it.next().toInt();
+        }
+        else if (arg == "--web-bind")
+        {
+            if (it.hasNext() == true)
+                QLCArgs::webAccessBindAddress = it.next();
         }
         else if (arg == "-wa" || arg == "--web-auth")
         {
@@ -383,6 +392,9 @@ int main(int argc, char** argv)
 
     if (QLCArgs::enableWebAccess == true)
     {
+        if (!QLCArgs::webAccessBindAddress.isEmpty())
+            WebAccessBase::setBindAddress(QLCArgs::webAccessBindAddress);
+
         WebAccess *webAccess = new WebAccess(app.doc(), VirtualConsole::instance(), SimpleDesk::instance(),
                                              QLCArgs::webAccessPort, QLCArgs::enableWebAuth, QLCArgs::webAccessPasswordFile,
                                              QLCArgs::webAccessCertFile, QLCArgs::webAccessKeyFile);
