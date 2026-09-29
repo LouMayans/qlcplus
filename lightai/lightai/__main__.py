@@ -50,6 +50,7 @@ def build_parser() -> argparse.ArgumentParser:
     sv.add_argument("--port", type=int, default=None)
     sv.add_argument("--cors", nargs="*", default=None, help="allowed origins for a website/LWC caller")
     sv.add_argument("--no-embeddings", action="store_true", help="lexical function matching only (saves ~60 MB)")
+    sv.add_argument("--qlc-port", type=int, default=None, help="override the QLC+ web access port (default: config/env, then 9999)")
 
     sub.add_parser("repl", help="interactive terminal console")
 

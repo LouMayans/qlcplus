@@ -35,6 +35,7 @@ from pydantic import BaseModel, Field
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from lightai.app import LightAI
+from lightai.api.stage_proxy import add_stage_routes
 from lightai.exec.wsclient import QlcError
 from lightai.nlu.text import parse_markup, split_words
 from lightai.schema import OutcomeFeedback, labels
@@ -107,6 +108,7 @@ def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = N
                 except Exception:
                     pass
             await ex.client.close()
+            await app.state.stage.aclose()
 
     app = FastAPI(title="lightai", version="0.1", lifespan=lifespan)
     hosts = list(allowed_hosts or LOOPBACK_HOSTS)
@@ -510,6 +512,12 @@ def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = N
     async def colors() -> dict:
         return {"colors": ai().rig.colors.names(), "models": sorted({fx.key for fx in ai().rig.fixtures.values()})}
 
+    # The 3D stage view, proxied from QLC+ at a different path on this same port (see
+    # stage_proxy.py). Registered LAST: its catch-all route only ever sees requests that missed
+    # every route above. Nothing here connects to QLC+ until a browser asks for /stage or opens
+    # the WebSocket bridge.
+    app.state.stage = add_stage_routes(app, ai, token)
+
     return app
 
 
@@ -521,6 +529,8 @@ def serve_main(args) -> int:
     cfg = load_config()
     host = args.host or cfg.api_host
     port = args.port or cfg.api_port
+    if getattr(args, "qlc_port", None):
+        cfg.qlc_port = args.qlc_port
     token = os.environ.get("LIGHTAI_TOKEN") or None
     loopback = host in LOOPBACK_HOSTS
     if not loopback and not token:

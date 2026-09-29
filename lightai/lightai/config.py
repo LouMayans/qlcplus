@@ -1,7 +1,7 @@
 """Runtime configuration.
 
 Defaults work on the booth laptop. Override with %LIGHTAI_DATA%\\config.yaml or environment
-variables (LIGHTAI_DATA, LIGHTAI_PROJECT, LIGHTAI_QLC_URL, LIGHTAI_QLC_TLS_NAME).
+variables (LIGHTAI_DATA, LIGHTAI_PROJECT, LIGHTAI_QLC_URL, LIGHTAI_QLC_TLS_NAME, LIGHTAI_QLC_PORT).
 """
 
 from __future__ import annotations
@@ -124,6 +124,8 @@ def load_config(path: Optional[Path] = None) -> Config:
         cfg.project_path = Path(env["LIGHTAI_PROJECT"])
     if env.get("LIGHTAI_QLC_URL"):
         cfg.qlc_url = env["LIGHTAI_QLC_URL"]
+    if env.get("LIGHTAI_QLC_PORT"):
+        cfg.qlc_port = int(env["LIGHTAI_QLC_PORT"])
     if env.get("LIGHTAI_QLC_TLS_NAME"):
         cfg.tls_server_name = env["LIGHTAI_QLC_TLS_NAME"]
     return cfg

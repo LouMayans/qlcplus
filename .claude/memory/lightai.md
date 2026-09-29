@@ -121,6 +121,57 @@ the drop"); a level with no target moves the grand master only if the text says 
 only at >= 0.9 confidence. QLC+'s Simple Desk writes at priority 0, so it loses to any P>0 look (lightai warns and refuses
 calibration there; making the desk win is an open engine decision for the user).
 
+**3D stage proxy (2026-09-29):** the browser 3D stage view (QLC+'s `/stage`, see
+[[stage-visualizer]]) is now also reachable through the lightai server itself, on lightai's own
+port at the same paths - `lightai/lightai/api/stage_proxy.py` (`add_stage_routes`, called from
+`create_app` in `api/server.py` right before `return app`, registered LAST so its catch-all GET
+route `/{full_path:path}` never shadows another lightai route - it only proxies paths starting
+with `stage`/`three/`/`gobos/`, plus the exact path `favicon.ico`, and 404s everything else
+itself without asking QLC+). Nothing stage-related connects until a browser actually requests
+`/stage` or opens `/qlcplusWS`; the console at `/` only gets a "3D Stage" link, no preloaded
+assets. HTTP is proxied with a shared, lazily-created `httpx.AsyncClient` (stream=True end to
+end, so multi-MB glTF/texture GETs are never buffered in memory); the WebSocket is bridged with
+one fresh raw `websockets` connection per browser socket (pumped both ways; either side closing
+closes the other, which ends the 30Hz DMX subscription). Both paths reuse `wsclient`'s own
+URL/TLS/auth logic (`candidate_urls`, `basic_auth_header`, `open_ws`, `tls_context`,
+`is_loopback` - `QlcClient._candidates`/`_open` were refactored to call the same `candidate_urls`/
+`open_ws` so there's one source of truth, not two copies that could drift). QLC+ unreachable ->
+a friendly 502 page; a stock QLC+ build with no `/stage` -> a friendly 404 page. `_http_bases`
+tries https then http when `qlc_url` is "auto" (matching `QlcClient`); the httpx client uses a
+short **connect** timeout (3s) but a long **read** timeout (30s) - without that split, probing
+https against a plain-http QLC+ (the normal case, e.g. the `:9998` dev build) hung for the FULL
+timeout doing a TLS handshake it could never finish, instead of failing over to http in ~3s (hit
+this live during testing; fixed before this shipped). The winning scheme is cached 30s so it's
+only paid once per cold start, not once per asset.
+Token: when the server has one (non-loopback `--host`), only `/stage` itself and `/qlcplusWS`
+require `?token=...` (checked with `hmac.compare_digest`, same as the header check elsewhere);
+sub-resource GETs (js/css/three/stage-lib/gobos/favicon) are never gated - a `<script src>` or a
+`<link>` can't add a header or a query param itself, and nothing sensitive is in them.
+`webaccess/res/stage-ws.js` forwards `?token=...` from `location.search` onto its own
+`/qlcplusWS` URL (a no-op when QLC+ serves the page directly). `console.html`'s existing
+`?token=`/`sessionStorage` TOKEN logic now also rewrites the "3D Stage" link's href to
+`/stage?token=...` when a token is set.
+New `serve` flag `--qlc-port` (and env `LIGHTAI_QLC_PORT`) overrides `cfg.qlc_port` for testing
+against a second QLC+ instance without touching `%LIGHTAI_DATA%\config.yaml` - e.g. `python -m
+lightai serve --port 8766 --qlc-port 9998 --no-embeddings` (from `lightai/`) points a throwaway
+lightai server at the dev QLC+ + stage build on `:9998` instead of the real rig on `:9999`.
+Verified live this way: opened `http://127.0.0.1:8766/stage` in a visible Chrome via CDP (the
+`tools/stagelib/click_check.py` pattern) - `window.__stage.status()` connected with 36 fixtures,
+`assetsPending()` reached 0, `dmxStats()` showed frames arriving on 2 universes, zero console
+errors/exceptions; `click_check.py --url http://127.0.0.1:8766/stage` itself PASSED (all 14
+view/edit click checks); `http://127.0.0.1:8766/` (the console) still loaded and its HTML has no
+`/stage` or `/three` request, only the inert link. Tests: `lightai/tests/test_stage_proxy.py`
+(HTTP proxy against `fakeqlc.FakeQlcHttp` - new, a tiny `ThreadingHTTPServer`-based fake static
+file server, added to `fakeqlc.py`; WS bridge round-trip and token enforcement against the
+existing `fakeqlc.FakeQlc`; 502 on a dead port) - 6 tests, builds a bare `FastAPI()` +
+`add_stage_routes` rather than the full `create_app`/`LightAI` stack, so it doesn't need a
+promoted model. Whole suite: 352 passed, 2 skipped, unaffected.
+**For the real rig install (`C:\qlcplus`, port 9999) to serve `/stage` through lightai in
+production:** it needs the fork build with the 3D stage feature actually installed (the same
+`install-fork-build.ps1` used for the other fork commands); until then, `/stage` through lightai
+on `:9999` correctly shows the friendly "this QLC+ build has no 3D stage" 404 page rather than
+erroring.
+
 **Gotchas:** QLC+ saves **Hidden scenes with all values 0** (never generate Hidden; ignore hidden scenes as
 evidence). The BEAM230 base wheel has more slots than its `.qxf` lists (show uses 16, 48=purple?, 72 cyan,
 96 orange fanta, 104 emerald) - see audit "wheel slots from function names". A test QLC+ instance writes
@@ -129,4 +180,4 @@ than ~6-8k characters fail here: write long scripts to a file first. The Bash to
 backslash into one, so write regexes with single backslashes inside raw strings. Python's write_text on Windows writes CRLF
 (most lightai files are CRLF now, each file consistent); Git Bash `grep $'\r'` does not detect CR, use Python. Training needs RAM: auto low-memory
 mode (frozen embeddings + 3 layers) below 2.5 GB free; runs at below-normal priority.
-Related: [[build-procedure]], [[priority-system-rebuild]], [[salesforce-qlcplus-integration]], [[mayans-beam-color-rgb]].
+Related: [[build-procedure]], [[priority-system-rebuild]], [[salesforce-qlcplus-integration]], [[mayans-beam-color-rgb]], [[stage-visualizer]].

@@ -72,6 +72,11 @@ export class StageWS {
     try {
       const proto = window.location.protocol === "https:" ? "wss://" : "ws://";
       url = proto + window.location.host + "/qlcplusWS";
+      // Served through the lightai proxy with a token in the page URL (?token=...): the
+      // WebSocket handshake can't carry a header, so pass it the same way the page got it.
+      // QLC+ itself has no token concept and never puts one in the URL, so this is a no-op there.
+      const token = new URLSearchParams(window.location.search).get("token");
+      if (token) url += "?token=" + encodeURIComponent(token);
     } catch (e) {
       return;
     }

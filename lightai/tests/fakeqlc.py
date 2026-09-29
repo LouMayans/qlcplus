@@ -12,6 +12,7 @@ import asyncio
 import socket
 import threading
 from collections import defaultdict
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Optional
 
@@ -202,3 +203,51 @@ class FakeQlc:
             self.gm = int(p[1])
             return []
         return []
+
+
+class FakeQlcHttp:
+    """A tiny fake of QLC+'s static-file HTTP side (the /stage, /stage-lib, /three, /gobos files
+    the lightai stage proxy fetches) - a fixed table of path -> (status, content_type, body).
+    An unlisted path answers 404, like a real QLC+ that doesn't have that file (or, for "/stage"
+    itself, a stock build with no 3D stage at all)."""
+
+    def __init__(self, routes: Optional[dict] = None) -> None:
+        self.routes: dict = routes or {}
+        self.requests: list = []  # (path, headers) for every request seen, newest last
+        self.port = free_port()
+        outer = self
+
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *_a) -> None:  # quiet: pytest -q shouldn't get raw HTTP logs
+                pass
+
+            def do_GET(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler's naming
+                outer.requests.append((self.path, dict(self.headers)))
+                route = outer.routes.get(self.path.split("?", 1)[0])
+                if route is None:
+                    self.send_response(404)
+                    self.send_header("Content-Type", "text/plain")
+                    self.end_headers()
+                    self.wfile.write(b"not found")
+                    return
+                status, ctype, body = route
+                self.send_response(status)
+                self.send_header("Content-Type", ctype)
+                self.end_headers()
+                self.wfile.write(body)
+
+        self.server = ThreadingHTTPServer(("127.0.0.1", self.port), Handler)
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+
+    @property
+    def url(self) -> str:
+        return f"http://127.0.0.1:{self.port}"
+
+    def start(self) -> "FakeQlcHttp":
+        self.thread.start()
+        return self
+
+    def stop(self) -> None:
+        self.server.shutdown()
+        self.server.server_close()
+        self.thread.join(5)

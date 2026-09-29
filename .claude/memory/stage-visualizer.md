@@ -1521,3 +1521,15 @@ instance were used).
 - `window.__stage.three()` test hook → {renderer, scene, camera} for CDP perf experiments.
 - LED strips were removed from the demo project + club_scene.py at the operator's request (2026-09-29);
   strip functionality will be revisited later.
+
+## Served through lightai too, on the same port (2026-09-29)
+`/stage` now also runs behind the lightai AI-assistant server, at a different path on the SAME
+port - `http://<lightai host:port>/stage` - as a reverse proxy in `lightai/lightai/api/stage_proxy.py`
+(`add_stage_routes`, wired into `create_app` in `lightai/lightai/api/server.py`, registered LAST
+so its catch-all `/{full_path:path}` route never shadows an existing lightai route). QLC+ is
+still the only thing that serves the page; lightai never copies the stage files. See
+`.claude/memory/lightai.md` for the routes, token and `--qlc-port` details (kept there since it's
+an api/server.py feature, not a stage-page one). Nothing on the stage side changed except
+`webaccess/res/stage-ws.js`, which now appends `?token=...` to its own `/qlcplusWS` URL when the
+page URL has one (a no-op when QLC+ serves the page directly, since QLC+ never puts a token in
+the URL).

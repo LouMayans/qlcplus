@@ -48,6 +48,7 @@ kbd{background:#222838;border:1px solid #333b50;border-radius:4px;padding:1px 5p
   <button id="openshow" class="hidden" title="open lightai's show file in QLC+">Open main show in QLC+</button>
   <input id="newshowname" placeholder="new show name" maxlength="60" size="15" title="name of the new show file (saved next to the main show)">
   <button id="newshow" title="create an empty show with the main show's DMX outputs, open it in QLC+ and let lightai edit it">New show</button>
+  <a id="stagelink" href="/stage" target="_blank" rel="noopener" title="open the 3D stage view (QLC+'s /stage, proxied through lightai)" style="text-decoration:none"><button type="button">3D Stage</button></a>
   <span id="model" class="badge">model ?</span>
   <span id="lat" class="badge">parse - ms</span>
   <span class="row" style="margin-left:auto">
@@ -152,6 +153,7 @@ const TOKEN = (() => {
   if (t) { try { history.replaceState(null, '', location.pathname); } catch (e) { /* ignore */ } }
   try { if (t) sessionStorage.setItem('lightai_token', t); return t || sessionStorage.getItem('lightai_token') || ''; } catch (e) { return t || ''; }
 })();
+if (TOKEN) { const sl = document.getElementById('stagelink'); if (sl) sl.href = '/stage?token=' + encodeURIComponent(TOKEN); }
 const api = async (path, body) => {
   const headers = TOKEN ? {'X-LightAI-Token': TOKEN} : {};
   const r = await fetch(path, body === undefined ? {headers} : {method: 'POST', headers: {...headers, 'Content-Type': 'application/json'}, body: JSON.stringify(body)});

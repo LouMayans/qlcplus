@@ -117,6 +117,32 @@ def load_credentials(cfg: Config) -> tuple[Optional[str], Optional[str]]:
     return doc.get("username"), doc.get("password")
 
 
+def candidate_urls(url: str, host: str, port: int) -> list[str]:
+    """The wss-then-ws fallback QlcClient tries, usable without an instance (the stage proxy's
+    own upstream connections reuse this so they never drift from QlcClient's logic)."""
+    if url and url != "auto":
+        return [url]
+    return [f"wss://{host}:{port}/qlcplusWS", f"ws://{host}:{port}/qlcplusWS"]
+
+
+def basic_auth_header(username: Optional[str], password: Optional[str]) -> dict[str, str]:
+    if username is None:
+        return {}
+    token = base64.b64encode(f"{username}:{password or ''}".encode()).decode()
+    return {"Authorization": f"Basic {token}"}
+
+
+async def open_ws(url: str, host: str, tls_server_name: Optional[str], auth: dict[str, str], timeout: float = 3.0):
+    """Open one raw upstream connection with the same TLS/verification rules as QlcClient._open."""
+    u = urlparse(url)
+    kwargs: dict = dict(ping_interval=None, max_size=2**22, open_timeout=timeout, additional_headers=auth)
+    if u.scheme == "wss":
+        kwargs["ssl"] = tls_context(u.hostname or host, tls_server_name)
+        if tls_server_name:
+            kwargs["server_hostname"] = tls_server_name
+    return await websockets.connect(url, **kwargs)
+
+
 class QlcClient:
     def __init__(
         self,
@@ -171,21 +197,10 @@ class QlcClient:
         return {"Authorization": f"Basic {token}"}
 
     def _candidates(self) -> list[str]:
-        if self.url and self.url != "auto":
-            return [self.url]
-        return [
-            f"wss://{self.host}:{self.port}/qlcplusWS",
-            f"ws://{self.host}:{self.port}/qlcplusWS",
-        ]
+        return candidate_urls(self.url, self.host, self.port)
 
     async def _open(self, url: str):
-        u = urlparse(url)
-        kwargs: dict = dict(ping_interval=None, max_size=2**22, open_timeout=3, additional_headers=self.auth_header())
-        if u.scheme == "wss":
-            kwargs["ssl"] = tls_context(u.hostname or self.host, self.tls_server_name)
-            if self.tls_server_name:
-                kwargs["server_hostname"] = self.tls_server_name
-        return await websockets.connect(url, **kwargs)
+        return await open_ws(url, self.host, self.tls_server_name, self.auth_header())
 
     async def ensure_connected(self) -> None:
         """Connect once, even when several commands arrive together (double-checked under a lock)."""
