@@ -449,10 +449,10 @@ function updateHudLegend(vs) {
     vs.wheelMode === "zoom" ? "Wheel zoom" : vs.wheelMode === "speed" ? "Wheel adjusts move speed" : "Wheel off";
   const middleText = vs.orbitMiddle ? "Middle-drag orbit" : "Middle-drag look";
   el.textContent = app.mode === "edit"
-    ? "WASD move · Q/E down/up · Shift fast · 1/2/3 gizmo · Left-click select · " +
+    ? "WASD move · Q/E down/up · Arrows look · Shift fast · 1/2/3 gizmo · Left-click select · " +
       "Left-drag pan/move · " + middleText + " · " + wheelText + " · Right-click menu · " +
       "Hold Alt move / Shift rotate / Ctrl scale · Ctrl+Z undo / Ctrl+Y redo"
-    : "WASD move · Q/E down/up · Shift fast · Click: identify (again or Esc clears) · " +
+    : "WASD move · Q/E down/up · Arrows look · Shift fast · Click: identify (again or Esc clears) · " +
       "Left-drag pan · " + middleText + " · " + wheelText + " · Edit mode to change the layout";
 }
 

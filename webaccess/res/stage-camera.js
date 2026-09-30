@@ -9,6 +9,7 @@ import * as THREE from "three";
 
 const FT = 0.3048; // 1 ft in metres (world unit)
 const ACCEL_TIME = 0.15; // seconds to reach full speed when smooth=true
+const LOOK_KEYS_DEG_PER_S = 60; // arrow-key look speed (Shift: twice as fast)
 const GESTURE_IDLE_MS = 350; // gap after which a movement/wheel burst is considered done
 const LOOK_K = 0.0025; // rad per pixel, before lookSensitivity multiplier
 
@@ -95,6 +96,11 @@ export function initCameraControls({ camera, orbit, domElement, getSettings, isB
       case "KeyD": return "d";
       case "KeyQ": return "q";
       case "KeyE": return "e";
+      // arrows look around, like middle-drag (for a trackpad or a mouse without a middle button)
+      case "ArrowLeft": return "left";
+      case "ArrowRight": return "right";
+      case "ArrowUp": return "up";
+      case "ArrowDown": return "down";
       case "ShiftLeft":
       case "ShiftRight": return "shift";
       default: return null;
@@ -128,7 +134,7 @@ export function initCameraControls({ camera, orbit, domElement, getSettings, isB
   }
 
   function scheduleMoveGestureEnd() {
-    if (keys.w || keys.s || keys.a || keys.d || keys.q || keys.e) return;
+    if (keys.w || keys.s || keys.a || keys.d || keys.q || keys.e || keys.left || keys.right || keys.up || keys.down) return;
     if (!anyKeyDown) return;
     if (moveGestureTimer) clearTimeout(moveGestureTimer);
     moveGestureTimer = setTimeout(() => {
@@ -141,6 +147,7 @@ export function initCameraControls({ camera, orbit, domElement, getSettings, isB
 
   function releaseAllKeys() {
     keys.w = keys.s = keys.a = keys.d = keys.q = keys.e = keys.shift = false;
+    keys.left = keys.right = keys.up = keys.down = false;
   }
 
   function onBlur() {
@@ -313,6 +320,8 @@ export function initCameraControls({ camera, orbit, domElement, getSettings, isB
       return;
     }
 
+    const turning = keys.left || keys.right || keys.up || keys.down;
+    if (turning) lookWithKeys(dtSeconds);
     const anyDown = keys.w || keys.s || keys.a || keys.d || keys.q || keys.e;
     let wish = new THREE.Vector3();
 
@@ -340,7 +349,7 @@ export function initCameraControls({ camera, orbit, domElement, getSettings, isB
 
       if (keys.q) wish.y -= settings.verticalSpeed * FT;
       if (keys.e) wish.y += settings.verticalSpeed * FT;
-    } else {
+    } else if (!turning) {
       scheduleMoveGestureEnd();
     }
 
@@ -357,6 +366,38 @@ export function initCameraControls({ camera, orbit, domElement, getSettings, isB
       orbit.target.add(offset);
       orbit.update();
     }
+  }
+
+  // Arrow keys: the same look (or orbit, with the orbit-middle setting) as middle-drag, at a steady turn rate.
+  function lookWithKeys(dtSeconds) {
+    const rate = THREE.MathUtils.degToRad(LOOK_KEYS_DEG_PER_S) * (keys.shift ? 2 : 1) * dtSeconds;
+    const yaw = (keys.left ? 1 : 0) - (keys.right ? 1 : 0); // left turns left, like dragging left
+    const pitch = (keys.up ? 1 : 0) - (keys.down ? 1 : 0); // up looks up, like dragging up
+    if (settings.orbitMiddle) {
+      const rel = new THREE.Vector3().subVectors(camera.position, orbit.target);
+      const r = Math.max(rel.length(), 0.01);
+      let phi = Math.acos(THREE.MathUtils.clamp(rel.y / r, -1, 1));
+      let theta = Math.atan2(rel.x, rel.z);
+      theta += yaw * rate;
+      phi = THREE.MathUtils.clamp(phi + pitch * rate, THREE.MathUtils.degToRad(1), THREE.MathUtils.degToRad(179));
+      const sinPhi = Math.sin(phi);
+      camera.position.set(
+        orbit.target.x + r * sinPhi * Math.sin(theta),
+        orbit.target.y + r * Math.cos(phi),
+        orbit.target.z + r * sinPhi * Math.cos(theta)
+      );
+      camera.lookAt(orbit.target);
+    } else {
+      const dist = Math.max(new THREE.Vector3().subVectors(orbit.target, camera.position).length(), 1);
+      const euler = new THREE.Euler().setFromQuaternion(camera.quaternion, "YXZ");
+      const maxPitch = THREE.MathUtils.degToRad(89);
+      euler.set(THREE.MathUtils.clamp(euler.x + pitch * rate, -maxPitch, maxPitch), euler.y + yaw * rate, 0, "YXZ");
+      camera.quaternion.setFromEuler(euler);
+      const dir = new THREE.Vector3();
+      camera.getWorldDirection(dir);
+      orbit.target.copy(camera.position).addScaledVector(dir, dist);
+    }
+    orbit.update();
   }
 
   function setSettings(s) {
@@ -384,7 +425,7 @@ export function initCameraControls({ camera, orbit, domElement, getSettings, isB
 
   // true while a movement key is held: the editor then leaves Shift to the camera (fast)
   function isFlyActive() {
-    return !!(keys.w || keys.s || keys.a || keys.d || keys.q || keys.e);
+    return !!(keys.w || keys.s || keys.a || keys.d || keys.q || keys.e || keys.left || keys.right || keys.up || keys.down);
   }
 
   // true while the middle-drag mouselook gesture is active (game-UI polish:

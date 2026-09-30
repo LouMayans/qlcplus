@@ -433,12 +433,12 @@ function defaultLookIdForKind(fxModel) {
   }
 }
 
-// QLC+'s generic moving head model is about twice the size of a real club beam/wash head,
-// so its default display size is 35%. models["<Manufacturer>/<Model>"].bodyScale overrides it.
+// Built-in looks come in at their real size (stage-looks.js fits QLC+'s generic moving head to 20 in, the club's
+// BEAM230), so a fixture's display size is 1. models["<Manufacturer>/<Model>"].bodyScale still scales one model.
 export function bodyScaleFor(fxModel, lookId, modelsOverride) {
   const ov = modelsOverride && modelsOverride[fxModel.modelKey];
   if (ov && typeof ov.bodyScale === "number" && ov.bodyScale > 0) return ov.bodyScale;
-  return lookId === "builtin/moving_head" ? 0.35 : 1;
+  return 1;
 }
 
 export function resolveLookId(fxModel, stageFixtureEntry, modelsOverride) {

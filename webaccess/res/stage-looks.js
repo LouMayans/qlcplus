@@ -381,6 +381,11 @@ async function buildFromGdtfLook(look, lookDir, entry) {
 // lens facing -Y); the other built-ins stand on the floor.
 const HUNG_AUTHORED = new Set(["builtin/moving_head", "builtin/par"]);
 
+// Real-world size of a built-in model at scale 1, in inches from the mount face (the legs) to the far end with the
+// head straight. QLC+'s moving_head.dae is authored about 42.5 in tall; the club's moving heads (Mayans BEAM230,
+// measured by the operator) are 20 in, so the model is fitted to that and a fixture's bodyScale stays 1.
+const BUILTIN_HEIGHT_INCHES = { "builtin/moving_head": 20 };
+
 /** Builds the rig for a built-in QLC+ Collada mesh (moving_head/par/...). */
 async function buildFromBuiltinModel(modelUrl, entry) {
   const tpl = await loadModelTemplate(modelUrl);
@@ -434,6 +439,21 @@ async function buildFromBuiltinModel(modelUrl, entry) {
   lens.name = "lensAxis";
   if (hungAuthored) lens.rotation.x = Math.PI; // the model's lens faces its own -Y
   beamAnchor.add(lens);
+
+  const nativeHeight = BUILTIN_HEIGHT_INCHES[entry.id];
+  if (nativeHeight) {
+    // fit the model to its real size on an inner node, so the fixture's own bodyScale (set on the returned root by
+    // the scene) multiplies it instead of replacing it
+    root.updateMatrixWorld(true);
+    const raw = new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3());
+    if (raw.y > 0) {
+      root.scale.setScalar((nativeHeight * IN) / raw.y);
+      const holder = new THREE.Group();
+      holder.name = root.name;
+      holder.add(root);
+      root = holder;
+    }
+  }
 
   root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(root);
