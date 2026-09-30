@@ -115,6 +115,113 @@ zones=False to avoid recursion). Pipeline: `join_model_spans` (target/model + ad
 exact), `level_only` ('<fixtures> at N%' -> set_level), `maker_targets`. `WORD_RE` keeps 'beam230v2' one word. The
 pars zone no longer aliases 'vpar(s)'. `tests/test_names.py` (128 cases) is the regression net for names.
 
+**Iteration 10 (2026-09-29): Claude designer, 3D stage, teaching (report ITERATION-10.md).**
+- *Room:* `rig/stage.py` reads `<show>.stage.json` (inches; X across, Y from the DJ's back wall, Z up; anchor = the
+  dance-floor centre) live; orders, mirror pairs, groups, places, and `aim()` = the exact inverse of `stage-rig.js`
+  (verified 0.0 in on real QLC+ DMX). Positions are provisional: `cfg.positions_final` gates left/right groups and
+  computed mirroring; looks record `stage:<hash>` in facts_used and `design/reaim.py` rebuilds stale ones.
+- *Designer:* `design/` = backend (claude.exe headless, subscription), runlog (Claude tab), spec (DesignResult),
+  validate, composer (loop = Chaser of section Collections; with `minutes` = QLC+ Show, one track per layer), prompt
+  (briefing file: rig, room, recipes, colour names, moods, KB files), jobs (repair rounds), sandbox (port 9997,
+  sanitized copy), research, teacher (nightly labels, weight 1; review_queue.jsonl), moods (`knowledge/moods.yaml`).
+- *claude.exe facts:* newest `%USERPROFILE%\.vscode\extensions\anthropic.claude-code-*\resources\native-binary\claude.exe`;
+  stream-json needs `--verbose`; prompt on stdin; `--json-schema` answer in the result event's `structured_output`;
+  `--system-prompt-file`/`--append-system-prompt-file` exist (not in --help); `--bare` can't use the subscription
+  login; `--tools <list>` + `--strict-mcp-config` cut the fixed overhead ~29.6K -> ~9.7K tokens; the stream's
+  `rate_limit_event` carries the 5-hour / 7-day usage windows.
+- *Gotchas:* FastAPI request models must be module-level in server.py (postponed annotations can't see classes defined
+  inside create_app: the body silently becomes a query param). `getChannelsValues` replies have FOUR fields per channel
+  (index|value|type|override). `QlcInstance` holds a machine-wide lock (one test QLC+ at a time). Since 2026-09-29 the installed
+  `C:\qlcplus` has the 3D stage too (rebuilt from master; backup in C:\qlcplus-backup-20260929). FakeQlc already has
+  a `loop` attribute (its event loop). With TestClient after executing on another loop, close `executor.client` first.
+  Zone names are accepted with underscores. The briefing must list valid colour names (unknown colours were the
+  main repair cause).
+- *Tools:* `tools/check_design_live.py [--real "<request>"]` (isolated dev QLC+ 9994, aim check, plays designs in the
+  3D stage in visible full-screen Chrome); `python -m lightai research "<topic>"`.
+- *Pixels, groups, 3D files, references (2026-09-29):* QLC+ loads a .qxw IN ORDER: a `<FixtureGroup>` must come
+  before the functions (an RGBMatrix read before its group caches 0 steps and never animates) - use
+  `Workspace.add_fixture_group` (add_function routes groups there). Group IDs are their own namespace: they live in
+  `Look.groups` / `ComposedShow.groups`, never in `look.ids` (a group ID in ids once made delete/update remove an
+  unrelated function); a design shares pending groups through `build_look(..., groups=list)`. GDTF draws fixtures
+  HANGING with the beam along -Z, so an MVR identity Matrix = stage `hung`, rot 0 (stage R = M . Rx(180));
+  `mine/formats3d/to_stage.py` only proposes, never writes. Reference library: `<data_dir>/references`, indexed in
+  index.json (failures cached; `lightai refs index --force` retries), `lightai refs list|query`, and
+  `mine/index.references_brief` puts the best matches in every design briefing. `tools/check_console_ui.py` = 28
+  visible-Chrome checks of the console against FakeQlc + a canned Claude.
+- *Labels v4 (2026-09-29, 29 intents / 23 slots):* + `design_show` (planner: mode "design", the console's Design tab
+  button; no QLC+ change), `correction` (app.plan routes a model-detected correction to app.correct with the correction
+  command as the fragment; alone: "nothing to correct"), `scene.add`, `scene.remove`; slots `object`, `coordinates`,
+  `place`. fixture_edit.move/rotate now cover objects and edit the 3D stage whenever the show has one ("2d"/"monitor"
+  words keep the old 2D-map edit). Typed effect words reach the iteration-10 recipes via normalize.MOVEMENT_RECIPES
+  (they used to fall into circle_wave / color_chase). norm_distance returns exact "in" too. Seeds: data/seed.txt
+  iteration-10 sections (~610 lines); grammar templates use `{splace}` (NOT `{place}`: that is a LITERALS list of venue
+  words). tests/standin.py = a stand-in model answering from 'intent | markup' (use_stand_in replaces ai.model, which
+  survives the parser rebuild after every executed change).
+- *3D stage by voice (rig/scene.py, rig/scene_plans.py):* axes = inches, origin a floor corner, +X = the DJ's right
+  looking into the room (= screen-right in the default FOH camera and the top view), +Y from the DJ wall to the bar,
+  +Z up; the editor shows feet-inches RELATIVE TO THE ANCHOR (dance-floor centre), so spoken coordinates are anchor-
+  relative. Objects: `id` (free string), `prop` -> the FILE's own `propDefs` (a new kind must add its propDef there, or
+  the object silently doesn't render), `pos`, yaw in `rot[2]` AND legacy `rz` (write both; +yaw = counter-clockwise
+  seen from above), `scale`, `parent` = the table's NAME (stools). Primitive parts are centred on pos, model parts stand
+  on it. Save through QLC+ `QLC+API|saveStage|<json>` (reply `QLC+API|saveStage|OK|<rev>`, needs fork lightaiVersion
+  3 and QLC+ having this show open): it writes the file (+ one .bak) and broadcasts `VIS|STAGE_SAVED` so open /stage
+  pages reload; a direct file write gives open pages NO notice. lightai keeps its own copies in data_dir/stage-backups;
+  every change carries its `before` value (stale plans are refused; undo = scene.invert). Page hooks for CDP checks:
+  window.__stage.getDraft(), .select(kind, id), .camera('top'). `tools/check_scene_live.py [--standin]` = visible check.
+- *Teacher fix:* labelling runs REPLACE Claude Code's system prompt (--system-prompt-file) and lead with the task;
+  appended, Haiku treated the log as a chat and returned no labels. MAX_THINKING_TOKENS=2048 via the backend's
+  `thinking_tokens`, label timeout 240 s, budget $0.25.
+- *Model v9 (2026-09-29, labels v4) promoted:* golden 66/66, abstain 32/32, dev intent 0.979 / slot F1 0.963 (857).
+  The gate passed but the full test suite caught tagging slips the gate doesn't cover: ALWAYS run the whole suite after
+  a promotion. Guards added in the pipeline (any model): Parser.tidy_models_and_moods (generic words aren't models,
+  mood words aren't colors, add_fixture needs a patch cue else it asks), trim_targets ('fixture 5 by'), scene_coordinates
+  ('on coordinate / at position / at the spot X by Y' needs the lead-in), spatial 'straight down' drops the words from
+  movement/direction, 'X over the dance' + next word. Training takes ~26 min (1,285 steps, 5 epochs, 4 threads).
+- *Desktop/taskbar launcher (2026-09-29):* `lightai.lnk` on the (OneDrive) desktop and in the Start menu ->
+  `C:\lightai-env\venv\Scripts\pythonw.exe tools\open_lightai.pyw` (icon `tools\lightai.ico`): starts `lightai serve`
+  in a minimized console titled "lightai server on port 8765 - close this window to stop it" when /health doesn't
+  answer, then opens Chrome `--new-window` on the console. A .lnk to a .bat can't be pinned; one to an .exe can.
+  Programmatic taskbar pinning is BLOCKED on this Windows 11 (the ExplorerCommandHandler
+  {90AA3A4E-1CBA-4233-B8BB-535773D48449} verb trick does nothing): the operator pins it by right-click. The stage proxy
+  injects a "lightai console" link into #topbar-left of /stage (target "lightai-console"; the console sets window.name).
+- *Installing QLC+ (2026-09-29):* `ninja -C build-mingw -k 0` STALLS on the translations target: it runs
+  `cmd /C .\translate.sh`, and on this PC .sh opens in VS Code, so cmd waits forever (kill that cmd.exe; no .qm files
+  exist anyway). Then `cmake --install build-mingw` (MinGW shell) -> C:\qlcplus (keeps show-path.txt/certs; copies
+  deploy scripts + SaveFile\Main Project.qxw as a fallback). The downloaded 3D models/textures are NOT in the source:
+  `robocopy C:\qlcplus-dev\Web\stage-lib C:\qlcplus\Web\stage-lib /E /XC /XN /XO`. The auto-mode classifier blocks
+  installing into C:\qlcplus ("production deploy") until the operator approves. Check with
+  `tools/check_stage_via_lightai.py` (isolated 9994/8766, visible Chrome: stage file loads, AI moves show live).
+- *Live aiming / triangulation (2026-09-29, rig/aim_live.py):* Parser.beam_refs spots "where spot 2's beam lands",
+  "the end of the beam" (no fixture = the last live aim), "spot 2 beam that ends on the floor", "the same spot as
+  spot 2" -> cmd.spatial["aim_beam"]; numbered fixtures + an aim ("place spot 2 ... straight down") or any beam
+  reference plan `aim_live` (mode live; zones aimed at a place stay a saved look). The executor reads the reference's
+  pan/tilt from QLC+ (getChannelsValues), follows the beam with dmx_to_degrees + beam_direction to the floor (or a
+  deck top), aims with the position recipe (aim "point:x,y,z"), writes live overrides and reads the last channel back
+  (sends have no reply: the read-back orders them). session.last_aim + app.AGAIN ("do it again", "re-aim"...) repeat
+  it with the stage as it is now. Checked live: 14 beams on spot 2's floor spot within 0.02 in (tools/check_aim_live.py).
+- *3D stage arrow keys (webaccess/res/stage-camera.js):* arrows look (or orbit with the orbit-middle setting) like
+  middle-drag, 60 deg/s, Shift x2; QLC+ serves Web files from disk (WebAccessBase::webFilePath -> C:\qlcplus\Web), so a
+  web-only change is a file copy, no rebuild (tools/check_stage_keys.py checks it). Chrome opens MAXIMIZED everywhere
+  (launcher maximizes the console window itself; check tools use --start-maximized), never full screen.
+- *Moving-head size (2026-09-29):* the operator measured the club's spot (Mayans BEAM230): 20 in from the legs to the
+  head, straight. QLC+'s generic moving_head.dae is authored 42.49 in tall and the page used to draw it at bodyScale
+  0.35 (14.9 in). Now stage-looks.js BUILTIN_HEIGHT_INCHES fits builtin/moving_head to 20 in on an inner node and
+  stage-scene.js bodyScaleFor defaults to 1 (the operator wants the model itself right-sized, scene scale 1). Measured
+  in the page: 14.82 w x 11.12 d x 20.00 h in; pan pivot 10.40 in and tilt axis 13.91 in from the legs; the beam
+  starts at the tilt axis, 3.71 in wide. lightai: Stage.beam_origin() = pos + R(0,0,13.91 x bodyScale) for movers
+  on the builtin look (MOVING_HEAD_TILT_AXIS_IN), used by Stage.aim and aim_live. The washes share the model (20 in
+  until measured). Web-only changes: copy the files into C:\qlcplus\Web and C:\qlcplus-dev\Web.
+- *Shell gotcha:* the Bash tool collapses a double backslash (\\) to one even inside quoted heredocs: write
+  backslash-heavy code with the Write tool or chr(92). A \r that sneaks into a Python literal becomes a CR,
+  which read_text turns into a line break. Python's write_text writes CRLF on Windows; fine here (core.autocrlf=true
+  normalizes on commit).
+- *Promotion gate (fixed 2026-09-29):* the dev split is a seeded shuffle of ALL rows, so it reshuffles whenever rows
+  are added and a model's saved metrics.json is from a different dev set (v7 saved slot F1 0.990 but scores 0.968 on
+  the data v8 scored 0.972 on; the nightly wrongly held v8 back). `promote()` now re-scores the current model on the
+  same data (`baseline_metrics`, falling back to metrics.json). `lightai evaluate <dir>` OVERWRITES `<dir>/metrics.json`:
+  back it up when only checking. Pipeline guards from v8's golden misses: `Parser.tidy_look_slots` (filler movement
+  words do/make/go dropped; "big fast" split into size + speed) and a `create_look` AGREE wording rule in policy.py.
+
 **Safety rules in the policy (iteration 4):** blackout / lights-on / stop-all / release never act on negated, future,
 question, reported, "prep", off-topic or partial-rig wording at ANY confidence (the model is often 0.99 on "blackout at
 the drop"); a level with no target moves the grand master only if the text says so; the console auto-fires live intents
