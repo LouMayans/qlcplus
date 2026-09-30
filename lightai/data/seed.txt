@@ -117,8 +117,8 @@ feedback | yes exactly
 feedback | looks good
 feedback | nailed it
 feedback | nope
-feedback | that's not what i meant
-feedback | you misunderstood me
+correction | that's not what i meant
+correction | you misunderstood me
 feedback | close but the color is off it looks [observed:white]
 feedback | the [target:washes] stayed [observed:dark]
 feedback | only half the [target:spots] lit up
@@ -455,7 +455,7 @@ feedback | love it
 feedback | faster please
 feedback | not bad at all
 feedback | wrong fixture came on
-feedback | that isn't what i asked for
+correction | that isn't what i asked for
 feedback | that was the wrong colour, it was [observed:orange]
 fixture_edit.rotate | flip [target:wash 2] [angle:upside down]
 fixture_edit.rotate | rotate [target:fixture 12] by [angle:minus 45]
@@ -689,3 +689,635 @@ add_fixture | add [count:2] [fixture_model:lf2405] strobes to [address:universe 
 add_fixture | add a [fixture_model:wash]
 add_fixture | add a [fixture_model:swarm]
 add_fixture | add a [fixture_model:par]
+
+# --- iteration 10 (labels v4): design_show, correction, their neighbours, new effect words
+# A. design_show
+design_show | create 3 different shows that resemble fast strobing but changing in light a dreamy way
+design_show | design a 20 minute show for the opening
+design_show | make me a dreamy show
+design_show | put together a techno set for tonight
+design_show | come up with 2 shows for the countdown
+design_show | build a show that starts slow and builds up to the drop
+design_show | can you design a show like a rave with lots of [movement:strobes] on the [target:spots]?
+design_show | gimme a sick show for a birthday
+design_show | make a hypnotic light show using the [target:spots] and the [target:tetras]
+design_show | i want a euphoric set for the headliner
+design_show | we need a dark techno show for after midnight
+design_show | could you build a half an hour show for the whole night
+design_show | can you make a 5 minute show for the countdown
+design_show | design a house set with lots of [color:warm white] and [color:amber]
+design_show | write a routine for the closing track
+design_show | give me a couple of shows to pick from for the party
+design_show | whip up a quick show for the vip section
+design_show | draft a light show for the album launch
+design_show | program a sequence that builds from slow to fast
+design_show | come up with a few routines we can rotate through the night
+design_show | design an hour long show for the main room
+design_show | make 2 shows, one chill and one high energy
+design_show | build a latin themed show for the salsa night
+design_show | put together a reggaeton set with lots of [color:red] and [color:gold]
+design_show | create a hip hop show with heavy [movement:strobes] on the drops
+design_show | design an edm show that peaks at the drop
+design_show | make a disco show with [color:gold] and [color:white] [movement:chases]
+design_show | build an 80s show with lots of [color:pink] and [color:cyan]
+design_show | create an ambient show for the chill room
+design_show | design a build-up show that ends in total chaos
+design_show | make a show themed around the drop, nice and explosive
+design_show | can you write a sequence for the opening act
+design_show | i need a show for the closing set
+design_show | design a dreamy show using [color:lavender] and [color:baby blue] on the [target:washes]
+design_show | build a hypnotic sequence with slow [movement:color morphs] on the [target:led walls]
+design_show | make a fast strobing show on the [target:spots] and [target:beams]
+design_show | create a show with [movement:chases] and [movement:sweeps] all over the rig
+design_show | put together a routine with lots of [movement:circles] on the [target:movers]
+design_show | design a show at [rate:128 bpm] for the techno set
+design_show | make a show that runs at [rate:140 bpm] for the dnb set
+design_show | build a slow [rate:90 bpm] show for the lounge
+design_show | create a show with [color:blue] and [color:purple] [movement:sweeps] on the [target:beams]
+design_show | design 3 shows we can swap between during the night
+design_show | make one show for the warm up and one for the peak hour
+design_show | come up with a show for the birthday countdown
+design_show | can you put together a show for the anniversary party
+design_show | build a show for the new single dropping tonight
+design_show | design a program around the headliner's closing track
+design_show | make a routine that syncs with the bass drops
+design_show | write a show for the after party
+design_show | i want a show that feels like a rave
+design_show | design something dreamy and slow building for the opening hour
+design_show | give me a show with [movement:pixel chases] on the [target:tetras]
+design_show | build a show using [color:pink] and [color:cyan] on the [target:washes] and [target:led walls]
+design_show | can you design 2 shows, one dark and one euphoric
+design_show | make a show for the last song of the night
+design_show | design a short show for the confetti drop
+design_show | put together a set that gets darker as the night goes on
+design_show | create a couple of shows for the guest dj
+design_show | build a show with big [movement:strobe bursts] on the [target:pars]
+design_show | design a show that starts with [color:blue] [movement:breathing] and ends in [color:white] [movement:strobe]
+design_show | make me 3 shows for the closing set, all different moods
+design_show | can you build a show for our anniversary event
+design_show | design a dark show for the horror themed night
+design_show | put together a program for the whole set, not just one song
+design_show | create a show with a slow build and a huge strobe finish
+design_show | make a hypnotic show with [movement:color morphs] in [color:teal] and [color:purple]
+design_show | write me a show that follows the energy of the set
+design_show | build a show for the opening 20 minutes
+design_show | design a show around the drop with the [target:spots] and the [target:beams]
+design_show | come up with a show idea for the closing hour
+design_show | make a show that feels euphoric during the build and explosive on the drop
+design_show | i need 2 different shows for tonight's sets
+design_show | can you whip up a show for the vip table reveal
+design_show | design a routine using [color:red] [color:white] and [color:blue] for the flag themed night
+design_show | build a show that uses every fixture in the room
+design_show | make a show with [movement:pixel waves] on the [target:led walls]
+design_show | put together a show for the countdown to midnight
+design_show | create a light show for the wedding first dance
+design_show | design a show for the whole set, from warm up to close
+design_show | give me a show that builds tension before the drop
+design_show | can you design a show for the record release party
+design_show | build me a show with dreamy [color:lavender] [movement:washes] and a big strobe finish
+design_show | make a show for the guest performance
+design_show | design a hypnotic show for the after hours crowd
+design_show | we need a show for the closing ceremony
+design_show | create a show that goes with tonight's setlist
+design_show | design a show for the drop, something huge
+design_show | build a couple of shows for the resident dj to choose from
+design_show | make a show themed around fire and heat, lots of [color:red] and [color:orange]
+design_show | design an underwater themed show with [color:blue] and [color:teal]
+design_show | put together a show for the finale
+design_show | come up with a show that ramps up over 10 minutes
+design_show | design a show like a rave with tons of [movement:strobing] across the [target:spots] and [target:beams]
+design_show | i want a show that's dreamy at first then turns into a strobe fest
+design_show | build a show with [movement:sweeps] and [movement:circles] on the [target:movers] and [target:beams]
+design_show | design a show for the closing set that ends on [color:white]
+design_show | make a show for the vip birthday shoutout
+design_show | could you build a short show for the toast
+design_show | design a show using [color:pink] [color:purple] and [color:blue] [movement:color morphs]
+
+# B. correction
+correction | i said [target:spots] not washes
+correction | not the washes, the [target:spots]
+correction | wrong color, i wanted [color:pink]
+correction | i asked for [count:3] not 4
+correction | you got the color wrong, i wanted [color:blue] not green
+correction | you got the fixtures wrong, i meant the [target:beams]
+correction | that's the wrong function, i meant [function_ref:auto chaser show 3]
+correction | not that fast, i said [rate:slow]
+correction | it was supposed to be [intensity:50%]
+correction | i was talking about the [target:tetras]
+correction | should have been [fixture_model:swarms]
+correction | i was asking for [address:universe 2]
+correction | i said [color:pink] not purple
+correction | i asked for the [target:washes] not the pars
+correction | i wanted [count:4] fixtures not 2
+correction | you got the rate wrong, i wanted [rate:fast]
+correction | wrong, i asked for [movement:circles] not a sweep
+correction | not the pars, the [target:tetras]
+correction | that's the wrong color, i said [color:teal]
+correction | you misheard, i said [target:beam 5] not beam 6
+correction | i said [size:small] not big
+correction | i asked for [intensity:full] not half
+correction | wrong fixture model, it's a [fixture_model:beam230 v2]
+correction | i wanted [color:amber] not orange
+correction | you got the count wrong, i said [count:two] not three
+correction | i said the [target:tetras] not the led walls
+correction | not that function, i meant [function_ref:neon drift]
+correction | i asked for [rate:128 bpm] not 120
+correction | should have been [color:lavender] not purple
+correction | it was supposed to be the [target:washes]
+correction | i said [address:universe 1] not universe 2
+correction | i was talking about [target:fixture 12] not fixture 13
+correction | you got it backwards, i wanted [color:white] not blue
+correction | not the beams, the [target:movers]
+correction | i asked for a [size:bigger] chase not a small one
+correction | wrong, i wanted [movement:strobe] not a wash
+correction | that's the wrong address, it should be [address:dmx 150]
+correction | i said [rate:slow] not fast
+correction | you got the model wrong, it's a [fixture_model:chauvet intimidator spot 260]
+correction | i wanted [target:fixture 5] not fixture 6
+correction | not two, i asked for [count:4]
+correction | i said [color:cyan] not teal
+correction | that's the wrong show, i meant [function_ref:velvet pulse]
+correction | i asked for [intensity:70%] not full
+correction | should have been [rate:126 bpm]
+correction | i wanted the [target:led walls] not the tetras
+correction | you got the side wrong, i said [target:stage left] not stage right
+correction | it was supposed to be a [movement:chase] not a strobe
+correction | wrong, i meant [color:magenta] not pink
+correction | i said [fixture_model:v3] not beam230
+correction | you misheard me, i wanted the [target:pars] not the washes
+correction | i was asking for [count:three] more fixtures not two
+correction | not that address, i said [address:dmx 289]
+correction | i wanted [size:wide] not tight
+correction | that's the wrong rate, i asked for [rate:every 2 seconds]
+correction | i said [target:wash 2] not wash 3
+correction | wrong color again, i wanted [color:baby blue]
+correction | should have been the [target:revolver] not the movers
+correction | i asked for the [movement:pixel wave] not a strobe
+correction | it was supposed to be [color:deep red]
+correction | you got the fixture wrong, it's [fixture_model:betopper l1015]
+correction | i wanted [intensity:dim] not full
+correction | not the spots, the [target:beams]
+correction | i said [rate:fast] not slow
+correction | that's the wrong count, i asked for [count:a couple of] more
+correction | i was talking about [function_ref:red ballyhoo] not the blue one
+correction | wrong, i wanted [target:fixture 34] not fixture 35
+correction | should have been [address:universe 2 address 150]
+correction | i wanted [movement:pixel chase] not a plain strobe
+correction | no, i meant the [target:spots]
+correction | no, i meant [color:pink]
+correction | no, i meant [rate:slow]
+correction | no, i meant [function_ref:neon drift]
+correction | no, i meant [count:3] not 4
+correction | you misunderstood what i said
+correction | that's not what i asked for at all
+correction | i didn't ask for that
+correction | wrong, that's not it
+correction | you got it wrong
+correction | that isn't what i said
+correction | you misheard me
+correction | that's not it
+correction | you got that wrong
+correction | that's not right at all
+correction | i didn't say that
+correction | you heard me wrong
+correction | that's completely wrong
+correction | that is not what i wanted
+correction | you misunderstood the request
+correction | that's not what i asked
+correction | you got confused somewhere
+correction | that's not even close to what i said
+correction | i never asked for that
+correction | that's not what i want
+
+# C. neighbours with existing intents
+create_look | make a dreamy [color:blue] [movement:wash] on the [target:washes]
+create_look | [rate:slow] [color:pink] [movement:color morph] on the [target:washes]
+create_look | give me a moody [color:purple] [movement:breathing] look on the [target:spots]
+create_look | make a hypnotic [color:teal] [movement:wave] on the [target:led walls]
+create_look | i want a chill [color:lavender] [movement:breathe] on the [target:washes]
+create_look | build a romantic [color:pink] [movement:wash] on the [target:panels]
+create_look | make an aggressive [color:red] [movement:strobe] on the [target:tetras]
+create_look | give the [target:beams] an epic [color:white] [movement:sweep]
+create_look | make a sexy slow [color:magenta] [movement:pulse] on the [target:washes]
+create_look | i need a dark [color:deep red] [movement:pulse] look on the [target:spots]
+create_look | build a euphoric [color:gold] [movement:chase] on the [target:pars]
+create_look | make a groovy [color:orange] [movement:sweep] on the [target:movers]
+create_look | give me a spooky [color:green] [movement:wave] on the [target:led walls]
+create_look | make a dreamy [rate:slow] [color:baby blue] [movement:breathing] on the [target:tetras]
+create_look | build a hypnotic [movement:color morph] in [color:teal] and [color:purple] on the [target:washes]
+create_look | make a moody [color:amber] [movement:pulse] look on the [target:columns]
+create_look | give the [target:spots] a dreamy [color:cyan] [movement:sweep]
+create_look | build an eerie [color:green] [movement:strobe] on the [target:beams]
+create_look | i want a sultry [color:red] [movement:wash] on the [target:panels]
+create_look | make a warm [color:amber] [movement:breathing] look on the [target:columns]
+run_function | play the [function_ref:velvet pulse] show
+run_function | start the [function_ref:neon drift] show
+run_function | fire up the [function_ref:midnight run] show
+run_function | launch the [function_ref:solar flare] show
+run_function | kick off the [function_ref:afterglow] show
+stop_function | stop the [function_ref:neon drift] show
+stop_function | end the [function_ref:velvet pulse] show
+stop_function | kill the [function_ref:midnight run] show
+stop_function | cut the [function_ref:solar flare] show
+delete_look | delete the [function_ref:velvet pulse] show
+delete_look | remove the [function_ref:neon drift] show
+delete_look | get rid of the [function_ref:solar flare] show
+query.functions | what shows do we have
+query.functions | list the shows
+query.functions | which shows did claude make
+query.functions | how many shows are there
+query.functions | show me the shows claude designed
+feedback | it came out [observed:green]
+feedback | that looked right
+feedback | the color was off
+feedback | that looked completely wrong
+feedback | the timing felt off
+feedback | close but not quite right
+feedback | the fixture never moved
+feedback | it triggered the wrong show
+feedback | the wrong show played
+feedback | that's closer but still not right
+feedback | the show looked nothing like i asked for
+feedback | it played the wrong one
+none | the show last night was amazing
+none | what time does the show start
+none | are we doing a show on friday
+none | the dj said he wants a better show next week
+none | i said hi to the dj
+none | i meant to call the bar manager
+none | i asked the bartender for ice
+none | the show ran late last night
+none | everyone loved last week's show
+none | is there a show planned for new year's
+
+# D. create_look with new effect words
+create_look | [color:pink] [movement:pixel wave] on the [target:tetras]
+create_look | [rate:slow] [movement:color morph] on the [target:washes] in [color:lavender] and [color:baby blue]
+create_look | [movement:pixel chase] in [color:red] and [color:blue] on the [target:led walls]
+create_look | run a [movement:pixel run] on the [target:tetras] in [color:green]
+create_look | [movement:matrix wave] on the [target:led walls] in [color:cyan]
+create_look | give the [target:tetras] a [movement:colour morph] through [color:purple] and [color:pink]
+create_look | make the [target:washes] [movement:morph] slowly between [color:blue] and [color:teal]
+create_look | [movement:fade through colors] on the [target:led walls]
+create_look | put a [movement:dimmer wave] across the [target:pars]
+create_look | build an [movement:intensity wave] on the [target:washes]
+create_look | [movement:strobe chase] in [color:white] across the [target:tetras]
+create_look | run a [movement:strobe run] on the [target:pars] in [color:red]
+create_look | give me a [movement:strobe burst] on the [target:spots]
+create_look | [movement:strobe bursts] on the [target:beams] in [color:white]
+create_look | [rate:fast] [movement:pixel chase] on the [target:led walls] in [color:orange] and [color:yellow]
+create_look | [color:teal] [movement:pixel wave] across the [target:tetras]
+create_look | make a [movement:matrix wave] on the [target:led walls] with [color:pink] and [color:purple]
+create_look | [movement:colour morph] on the [target:washes] between [color:amber] and [color:red]
+create_look | [rate:slow] [movement:morph] on the [target:led walls] in [color:cyan] and [color:teal]
+create_look | [movement:fade through colors] on the [target:washes] [rate:slow]
+create_look | [movement:dimmer wave] on the [target:tetras] in [color:blue]
+create_look | [movement:intensity wave] across the [target:pars] [rate:medium]
+create_look | [movement:strobe chase] on the [target:spots] [rate:fast]
+create_look | give the [target:led walls] a [movement:strobe run] in [color:white]
+create_look | [color:red] [movement:strobe burst] on the [target:tetras]
+create_look | [movement:strobe bursts] across the [target:pars] and [target:spots]
+create_look | [movement:pixel run] on the [target:tetras] [rate:slow] in [color:pink]
+create_look | [movement:pixel chase] on the [target:led walls] in [color:blue] [color:white] and [color:red]
+create_look | [movement:color morph] on the [target:tetras] through [color:gold] and [color:orange]
+create_look | make the [target:led walls] do a [movement:matrix wave] in [color:lavender]
+create_look | [rate:every 2 seconds] [movement:dimmer wave] on the [target:washes]
+create_look | [movement:intensity wave] on the [target:led walls] [rate:slow]
+create_look | [movement:morph] the [target:washes] from [color:blue] to [color:purple]
+create_look | [color:cyan] [movement:pixel wave] on the [target:led walls] [rate:fast]
+create_look | [movement:fade through colors] on the [target:tetras] and [target:led walls]
+create_look | [target:spots] [movement:circles] left to right
+create_look | [color:pink] [target:washes] [movement:dimmer wave] center out
+create_look | aim the [target:spots] at the dj
+create_look | cross the [target:beams] over the dance floor
+create_look | point the [target:movers] at the bar
+create_look | [target:spots] straight down
+create_look | [movement:sweep] the [target:beams] right to left in [color:blue]
+create_look | [color:white] [movement:chase] on the [target:pars] back to front
+create_look | aim the [target:movers] at the dance floor
+create_look | point the [target:beams] towards the dj
+create_look | cross the [target:washes] over the dance floor in [color:purple]
+create_look | [target:tetras] [movement:wave] near the bar
+create_look | [target:beams] straight down in [color:red]
+create_look | [color:green] [movement:sweep] on the [target:spots] left to right
+create_look | aim the [target:pars] at the bar
+# --- iteration 10: from the operator's own command (history, 2026-09-28, which also asked for a button; v7 said add_widget at 0.998); a lightshow is a show
+design_show | create a [color:yellow] [movement:strobing] lightshow with [target:all of the fixtures]
+design_show | make a lightshow for tonight
+design_show | create a [color:blue] and [color:pink] lightshow
+design_show | build a lightshow with [movement:strobes] and [movement:sweeps]
+design_show | can you make a lightshow that feels dreamy
+design_show | program a lightshow for the drop
+design_show | create a [movement:strobing] light show with [target:all the fixtures]
+design_show | make a [color:red] lightshow using [target:every fixture]
+
+# --- iteration 10 (labels v4): the 3D scene by voice: move, place, rotate, add and remove fixtures and objects
+# E. fixture_edit.move
+fixture_edit.move | move [target:table 3] with its chairs [distance:a foot] to the [direction:right] from the stage
+fixture_edit.move | move [target:fixture 12] [distance:one foot] to the [direction:left]
+fixture_edit.move | place [target:fixture 7] on [coordinates:5 foot by 5 foot]
+fixture_edit.move | move [target:table 1] [distance:6 inches] to the [direction:left]
+fixture_edit.move | shift [target:cocktail table 2] [distance:a couple of feet] to the [direction:right]
+fixture_edit.move | slide [target:vip table 1] [distance:3 feet 6 inches] [direction:forward]
+fixture_edit.move | nudge [target:fixture 9] [distance:a few inches] [direction:up]
+fixture_edit.move | push [target:table 4] [distance:half a foot] [direction:back]
+fixture_edit.move | pull the [target:bar stool] [distance:a foot] [direction:front]
+fixture_edit.move | drag the [target:high top] [distance:two feet] [direction:left]
+fixture_edit.move | bump [target:fixture 16] [distance:a foot and a half] [direction:right]
+fixture_edit.move | [direction:raise] [target:fixture 5] [distance:a foot]
+fixture_edit.move | [direction:raise] [target:wash 2] [distance:6 inches]
+fixture_edit.move | [direction:lower] [target:fixture 34] [distance:a few inches]
+fixture_edit.move | [direction:lower] the [target:pendant lamp] [distance:one foot]
+fixture_edit.move | move the [target:speaker stack l] [distance:a couple of feet] [direction:higher]
+fixture_edit.move | move the [target:speaker stack r] [distance:6 inches] [direction:lower]
+fixture_edit.move | move [target:table 2] [distance:a foot] [direction:stage left]
+fixture_edit.move | move [target:table 3] [distance:a foot] [direction:stage right]
+fixture_edit.move | move the [target:vip table] [place:closer to the bar]
+fixture_edit.move | move the [target:couch] [place:closer to the stage]
+fixture_edit.move | slide [target:cocktail table 1] [place:next to the dj booth]
+fixture_edit.move | shift the [target:high top] [place:in front of the bar]
+fixture_edit.move | put [target:table 4] [place:in front of the stage]
+fixture_edit.move | move the [target:stools] [place:by the bar]
+fixture_edit.move | place [target:fixture 3] [place:on the truss]
+fixture_edit.move | move [target:fixture 21] [place:away from the stage]
+fixture_edit.move | move [target:vip table 2] [place:closer to the bar] [distance:a couple of feet]
+fixture_edit.move | shift the [target:bar stools] [place:next to the dj booth]
+fixture_edit.move | move the [target:potted plant] [place:by the entrance]
+fixture_edit.move | slide [target:table 1] to [coordinates:x 10 y 20]
+fixture_edit.move | move [target:fixture 16] to [coordinates:12 by 30 feet]
+fixture_edit.move | put the [target:round table] at [coordinates:10 by 20 feet]
+fixture_edit.move | move [target:cocktail table 3] to [coordinates:5 foot by 5 foot]
+fixture_edit.move | place the [target:high top] at [coordinates:x 12 y 18]
+fixture_edit.move | move [target:table 3] with its chairs [distance:a couple of feet] [direction:left]
+fixture_edit.move | shift [target:table 2] with the stools [distance:a foot] [direction:right]
+fixture_edit.move | move the [target:vip booth] and its table [distance:a foot] [direction:back]
+fixture_edit.move | slide [target:fixture 12] [distance:one foot] [direction:up] from the stage
+fixture_edit.move | move [target:fixture 8] [distance:6 inches] [direction:down] as seen from the dance floor
+fixture_edit.move | move [target:table 1] [distance:a foot] [direction:left] from where the dj stands
+fixture_edit.move | nudge the [target:dj console] [distance:a few inches] [direction:forward]
+fixture_edit.move | shift the [target:dj stage deck] [distance:half a foot] [direction:back]
+fixture_edit.move | move the [target:truss] [distance:a foot] [direction:up]
+fixture_edit.move | lower the [target:truss] [distance:6 inches]
+fixture_edit.move | raise the front [target:truss] [distance:a foot]
+fixture_edit.move | move the back [target:truss] [distance:a couple of feet] [direction:right]
+fixture_edit.move | slide [target:vip booth 1] [distance:a foot] [direction:left]
+fixture_edit.move | move [target:vip booth 2] [distance:a few inches] [direction:right]
+fixture_edit.move | shift [target:bar stool 3] [distance:one foot] [direction:back]
+fixture_edit.move | move [target:bar stool 5] [place:closer to the bar]
+fixture_edit.move | drag the [target:couch] [distance:two feet] [direction:forward]
+fixture_edit.move | move the [target:sofa] [place:in front of the stage]
+fixture_edit.move | push the [target:podium] [distance:a foot] [direction:left]
+fixture_edit.move | move the [target:riser] [distance:6 inches] [direction:right]
+fixture_edit.move | slide the [target:screen] [distance:a foot] [direction:up]
+fixture_edit.move | move the [target:tv] [distance:a few inches] [direction:down]
+fixture_edit.move | move [target:fixture 5] [distance:3 feet 6 inches] [direction:left]
+fixture_edit.move | move [target:fixture 19] [distance:a foot] [direction:right] from the stage
+fixture_edit.move | shift the [target:spots] [distance:6 inches] [direction:forward]
+fixture_edit.move | move the [target:washes] [distance:a foot] [direction:back]
+fixture_edit.move | move the [target:movers] [distance:a couple of feet] [direction:up]
+fixture_edit.move | slide [target:cocktail table 4] [distance:a few inches] [direction:left]
+fixture_edit.move | move [target:table 2] [distance:one foot] [direction:right] with its chairs
+fixture_edit.move | shift [target:vip table 2] with its chairs [distance:a foot] [direction:left]
+fixture_edit.move | move the [target:high top] and its stools [distance:a couple of feet] [direction:back]
+fixture_edit.move | move the [target:couch] [place:next to the dj booth]
+fixture_edit.move | shift the [target:speaker stack l] [place:next to the stage]
+fixture_edit.move | move the [target:podium] [place:in front of the bar]
+fixture_edit.move | move [target:table 3] [place:away from the stage]
+fixture_edit.move | move [target:fixture 30] [distance:a foot] [direction:higher]
+fixture_edit.move | move [target:fixture 31] [distance:6 inches] [direction:lower]
+fixture_edit.move | put the [target:chairs] [place:by the bar]
+fixture_edit.move | move the [target:chairs] [distance:a foot] [direction:back]
+fixture_edit.move | slide [target:table 4] [distance:a couple of feet] [direction:forward]
+fixture_edit.move | move the [target:plant] [distance:a foot] [direction:right]
+fixture_edit.move | reposition [target:table 1] [distance:two feet] [direction:left]
+fixture_edit.move | reposition [target:fixture 34] [place:closer to the bar]
+fixture_edit.move | relocate the [target:high top] [place:in front of the stage]
+fixture_edit.move | set [target:table 2] at [coordinates:10 by 20 feet]
+fixture_edit.move | put the [target:couch] at [coordinates:x 12 y 18]
+fixture_edit.move | move the [target:pendant lamp] [distance:a few inches] [direction:up]
+fixture_edit.move | move [target:cocktail stool 2a] [distance:a foot] [direction:left]
+fixture_edit.move | move [target:cocktail stool 2b] [distance:a foot] [direction:right]
+fixture_edit.move | move the [target:dj booth] [distance:a couple of feet] [direction:back]
+fixture_edit.move | slide the [target:dj booth] [place:closer to the dance floor]
+fixture_edit.move | move [target:table 3] [distance:a foot] [direction:stage left] from the stage
+fixture_edit.move | move [target:vip booth 2] with its table [distance:a foot] [direction:right]
+fixture_edit.move | move the [target:high top] [distance:a foot] [direction:left] as seen from the dance floor
+fixture_edit.move | can you move [target:table 4] [place:closer to the bar]
+
+# F. fixture_edit.rotate
+fixture_edit.rotate | rotate [target:fixture 5] [angle:90 degrees]
+fixture_edit.rotate | turn [target:table 3] [angle:45 degrees] [direction:clockwise]
+fixture_edit.rotate | flip [target:fixture 8] [angle:upside down]
+fixture_edit.rotate | rotate [target:spot 2] [angle:upside down]
+fixture_edit.rotate | turn the [target:high top] [angle:a quarter turn]
+fixture_edit.rotate | mount [target:fixture 4] on the wall
+fixture_edit.rotate | hang [target:fixture 9] [angle:upside down]
+fixture_edit.rotate | stand [target:fixture 3] on the floor
+fixture_edit.rotate | turn [target:vip booth 1] to face the dance floor
+fixture_edit.rotate | rotate [target:table 1] [angle:90 degrees] [direction:counterclockwise]
+fixture_edit.rotate | turn [target:cocktail table 2] [angle:180 degrees]
+fixture_edit.rotate | spin [target:fixture 12] [angle:30 degrees] [direction:clockwise]
+fixture_edit.rotate | rotate the [target:dj console] [angle:a quarter turn]
+fixture_edit.rotate | turn [target:vip table 1] [angle:45 degrees] [direction:counterclockwise]
+fixture_edit.rotate | flip [target:fixture 16] [angle:180 degrees]
+fixture_edit.rotate | rotate [target:table 4] to face the bar
+fixture_edit.rotate | turn the [target:high top] [angle:90 degrees] [direction:clockwise]
+fixture_edit.rotate | rotate [target:fixture 21] [angle:270 degrees]
+fixture_edit.rotate | turn the [target:couch] to face the stage
+fixture_edit.rotate | rotate [target:bar stool 2] [angle:90 degrees]
+fixture_edit.rotate | turn [target:vip booth 2] [angle:a quarter turn]
+fixture_edit.rotate | flip [target:spot 6] [angle:upside down]
+fixture_edit.rotate | mount [target:fixture 30] on the truss
+fixture_edit.rotate | hang [target:fixture 34] [angle:upside down] over the dance floor
+fixture_edit.rotate | stand [target:fixture 19] on the floor by the bar
+fixture_edit.rotate | turn the [target:podium] [angle:45 degrees]
+fixture_edit.rotate | rotate the [target:high top] [angle:180 degrees] [direction:clockwise]
+fixture_edit.rotate | spin [target:beam 3] [angle:a quarter turn] [direction:counterclockwise]
+fixture_edit.rotate | turn [target:table 2] to face the dj booth
+fixture_edit.rotate | rotate the [target:riser] [angle:90 degrees]
+fixture_edit.rotate | flip [target:fixture 5] [angle:upside down] on the map
+fixture_edit.rotate | turn [target:vip table 2] [angle:30 degrees] [direction:clockwise]
+fixture_edit.rotate | mount [target:fixture 8] on the ceiling
+fixture_edit.rotate | rotate [target:cocktail table 4] [angle:a quarter turn]
+fixture_edit.rotate | turn the [target:screen] [angle:90 degrees]
+fixture_edit.rotate | rotate [target:fixture 9] [angle:15 degrees] [direction:counterclockwise]
+fixture_edit.rotate | turn the [target:dj booth] to face the crowd
+fixture_edit.rotate | flip [target:wash 3] [angle:upside down]
+fixture_edit.rotate | rotate [target:table 3] [angle:60 degrees]
+fixture_edit.rotate | turn the [target:tv] to face the bar
+fixture_edit.rotate | spin [target:fixture 27] [angle:45 degrees] [direction:clockwise]
+fixture_edit.rotate | rotate the [target:high top] [angle:three quarters of a turn]
+fixture_edit.rotate | turn [target:cocktail table 1] [angle:90 degrees] [direction:counterclockwise]
+fixture_edit.rotate | mount [target:fixture 12] on the wall by the entrance
+fixture_edit.rotate | hang [target:fixture 16] [angle:upside down] above the dj console
+fixture_edit.rotate | rotate [target:vip booth 1] [angle:a quarter turn] [direction:clockwise]
+fixture_edit.rotate | turn the [target:podium] to face the dance floor
+fixture_edit.rotate | stand [target:fixture 21] on the floor next to the truss
+fixture_edit.rotate | rotate [target:bar stool 4] [angle:90 degrees]
+fixture_edit.rotate | flip [target:fixture 35] [angle:upside down]
+
+# G. scene.add
+scene.add | add a [object:high top table] and [count:4] [object:stools] [place:next to the dj booth]
+scene.add | put [count:2] [object:speakers] [place:on either side of the stage]
+scene.add | add a [object:couch] [place:in the vip area]
+scene.add | place a [object:table] with [count:4] [object:chairs] at [coordinates:10 by 20 feet]
+scene.add | add [count:3] [object:high tops] [place:along the bar]
+scene.add | we need a [object:pillar] at [coordinates:x 12 y 18]
+scene.add | drop a [object:round table] [place:between the bar and the entrance]
+scene.add | add a [object:bar table] [place:by the entrance]
+scene.add | set up [count:2] [object:cocktail tables] [place:near the dance floor]
+scene.add | bring in a [object:sofa] [place:in front of the stage]
+scene.add | can you add a [object:booth] [place:in the vip area]
+scene.add | add [count:6] [object:bar stools] [place:along the bar]
+scene.add | put a [object:subwoofer] [place:next to the speaker stack]
+scene.add | add a [object:sub] [place:by the dj booth]
+scene.add | drop [count:2] [object:columns] [place:on either side of the dj booth]
+scene.add | we need [count:4] more [object:chairs] [place:by table 2]
+scene.add | add a [object:plant] [place:in the corner]
+scene.add | set up a [object:podium] [place:in front of the stage]
+scene.add | add a [object:riser] [place:by the dj console]
+scene.add | can you add a [object:dj table] [place:next to the dj console]
+scene.add | put a [object:screen] [place:on the truss]
+scene.add | add a [object:tv] [place:above the bar]
+scene.add | place [count:3] [object:high top tables] [place:near the dance floor]
+scene.add | add [count:2] [object:couches] [place:in the vip area]
+scene.add | bring in [count:8] [object:chairs] [place:for the vip party]
+scene.add | drop a [object:cocktail table] [place:next to table 2]
+scene.add | add a [object:round table] [place:in front of the bar]
+scene.add | put [count:4] [object:stools] [place:around the high top]
+scene.add | we need a [object:speaker] [place:by the dj booth]
+scene.add | can you add [count:2] [object:subs] [place:next to the stage]
+scene.add | add a [object:column] [place:by the entrance]
+scene.add | set up [count:5] [object:bar tables] [place:along the back wall]
+scene.add | bring in a [object:booth] [place:closer to the bar]
+scene.add | add a [object:plant] and a [object:pillar] [place:by the entrance]
+scene.add | put a [object:high top table] [place:in the middle of the room]
+scene.add | drop [count:2] [object:round tables] [place:on the dance floor]
+scene.add | add [count:3] [object:chairs] [place:by the dj console]
+scene.add | can you set up a [object:riser] [place:in front of the stage]
+scene.add | we need a [object:podium] [place:next to the dj booth]
+scene.add | add a [object:sofa] and a [object:table] [place:in the vip area]
+scene.add | put [count:2] [object:screens] [place:on either side of the dj booth]
+scene.add | add a [object:tv] [place:by the entrance]
+scene.add | bring in [count:6] [object:bar stools] [place:for the party]
+scene.add | drop a [object:high top] [place:near the bar]
+scene.add | add [count:2] [object:pillars] [place:on either side of the stage]
+scene.add | can you add a [object:couch] [place:by the back wall]
+scene.add | set up a [object:dj table] [place:next to the dj console]
+scene.add | add a [object:column] and a [object:plant] [place:near the entrance]
+scene.add | put a [object:cocktail table] with [count:2] [object:stools] [place:by the window]
+scene.add | we need [count:3] [object:high top tables] [place:for the vip party]
+scene.add | add a [object:booth] and a [object:table] [place:in the vip area]
+scene.add | drop [count:4] [object:chairs] [place:around table 3]
+scene.add | add a [object:speaker] [place:on the truss]
+scene.add | can you add a [object:subwoofer] [place:by the stage]
+scene.add | put a [object:round table] [place:closer to the dance floor]
+scene.add | bring in a [object:high top table] [place:next to the bar]
+scene.add | add [count:2] [object:bar tables] [place:by the entrance]
+scene.add | set up a [object:plant] [place:by the vip booth]
+scene.add | we need a [object:screen] [place:above the dj console]
+scene.add | add a [object:riser] [place:for the dj]
+scene.add | can you drop [count:2] [object:couches] [place:in the vip area]
+scene.add | add a [object:pillar] [place:between the bar and the dance floor]
+scene.add | put [count:3] [object:stools] [place:at the high top]
+scene.add | add a [object:tv] [place:by the bar]
+scene.add | bring in a [object:column] [place:next to the truss]
+scene.add | we need a [object:sub] [place:by the speaker stack]
+scene.add | add a [object:table] [place:in front of the vip booth]
+scene.add | set up [count:2] [object:high tops] [place:near the entrance]
+scene.add | can you add a [object:chair] [place:by the dj console]
+scene.add | drop a [object:booth] [place:in the corner]
+
+# H. scene.remove
+scene.remove | remove [target:table 3]
+scene.remove | delete the [target:stools] [place:by the bar]
+scene.remove | take out the [target:high top] [place:next to the dj booth]
+scene.remove | get rid of the [target:couch]
+scene.remove | remove [target:table 2] and its chairs
+scene.remove | clear the [target:chairs] [place:from the dance floor]
+scene.remove | remove [target:vip booth 2]
+scene.remove | take out the [target:round table] [place:by the entrance]
+scene.remove | get rid of the [target:extra stools]
+scene.remove | remove [target:bar stool 4]
+scene.remove | delete [target:cocktail table 1]
+scene.remove | take away the [target:podium]
+scene.remove | remove the [target:pillar] [place:by the entrance]
+scene.remove | get rid of the [target:screen]
+scene.remove | clear the [target:high tops] [place:from the dance floor]
+scene.remove | remove the [target:speaker stack] [place:by the stage]
+scene.remove | take out [target:vip table 1]
+scene.remove | delete the [target:sofa] [place:in the vip area]
+scene.remove | remove the [target:extra chairs] [place:around table 4]
+scene.remove | get rid of the [target:tv]
+scene.remove | remove the [target:subwoofer]
+scene.remove | take out the [target:plant] [place:by the bar]
+scene.remove | delete [target:table 4] and its stools
+scene.remove | remove the [target:column] [place:by the entrance]
+scene.remove | clear the [target:bar stools] [place:from the bar]
+scene.remove | take out the [target:riser]
+scene.remove | remove the [target:dj table]
+scene.remove | get rid of [target:vip booth 1]
+scene.remove | delete [target:cocktail stool 2a]
+scene.remove | remove the [target:high top table] [place:near the dance floor]
+scene.remove | take away the [target:extra table]
+scene.remove | clear [target:table 2] [place:from the middle of the room]
+scene.remove | remove the [target:booth] [place:by the back wall]
+scene.remove | delete the [target:couch] and its table
+scene.remove | get rid of the [target:extra speaker]
+scene.remove | remove [target:cocktail table 3]
+scene.remove | take out the [target:plant] [place:from the corner]
+scene.remove | remove [target:bar stool 6]
+scene.remove | delete the [target:screen] [place:by the entrance]
+scene.remove | clear the [target:chairs] [place:by the dj console]
+
+# I. neighbours with existing intents
+add_fixture | add [count:4] [fixture_model:pars] to [address:universe 1]
+add_fixture | add [count:5] [fixture_model:swarms] to [address:universe 2]
+add_fixture | patch [count:3] [fixture_model:vpars] on [address:universe 1]
+add_fixture | add [count:2] [fixture_model:moving heads] to [address:universe 2]
+add_fixture | we need [count:4] more [fixture_model:strobes] on [address:universe 1]
+add_fixture | add [count:6] [fixture_model:beams] to [address:universe 2]
+add_fixture | patch a [fixture_model:swarm] at [address:universe 2 address 200]
+add_fixture | add [count:5] [fixture_model:spots] to [address:universe 1]
+add_fixture | hang [count:3] [fixture_model:moving heads] on [address:universe 2]
+add_fixture | install [count:4] [fixture_model:strobes] on [address:universe 1]
+add_fixture | add [count:7] [fixture_model:beam230s] to [address:universe 2]
+add_fixture | patch [count:9] [fixture_model:pars] on [address:universe 1]
+add_fixture | add another [fixture_model:swarm] to [address:universe 2 address 250]
+add_fixture | add [count:5] [fixture_model:vpars] to [address:universe 1 address 100]
+add_fixture | we bought [count:2] more [fixture_model:moving heads], add them to [address:universe 2]
+add_fixture | patch a [fixture_model:strobe] at [address:dmx 250]
+add_fixture | add [count:2] [fixture_model:swarms] and [count:2] [fixture_model:vpars] to [address:universe 2]
+add_fixture | mount [count:4] [fixture_model:spots] on [address:universe 2]
+add_fixture | can you add [count:3] [fixture_model:beams] to [address:universe 1]
+add_fixture | we need [count:2] more [fixture_model:swarms] for the booth
+fixture_edit.rename | rename [target:fixture 40] to [name:Booth Wash]
+fixture_edit.rename | call [target:fixture 41] [name:Truss Spot 1]
+fixture_edit.rename | rename [target:wash 5] to [name:VIP Wash]
+fixture_edit.rename | name [target:fixture 42] [name:Entrance Par]
+fixture_edit.rename | label [target:fixture 43] as [name:Dance Floor Beam]
+none | the tables need wiping
+none | we need more chairs for the vip party tonight
+none | the bouncer moved the stools earlier
+none | table 3 wants bottle service
+none | move the drinks to table 4
+none | can someone bring ice to the bar
+none | put the guest list by the door
+none | the couch in vip is stained
+none | someone spilled a drink on table 2
+none | the high top by the bar is wobbly
+none | we're out of clean glasses at the bar
+none | the vip booth is reserved for tonight
+none | can you wipe down the cocktail tables
+none | the stools need to be cleaned
+none | table 1 is asking for the check
+none | the dj booth is a mess
+none | someone left their jacket on the couch
+create_look | [color:pink] on the [target:spots] near the bar
+create_look | [color:blue] [movement:wash] on the [target:washes] by the dj booth
+create_look | [color:white] [movement:strobe] on the [target:beams] near the entrance
+create_look | [color:red] [movement:sweep] on the [target:spots] in front of the stage
+create_look | [color:green] [movement:circles] on the [target:movers] by the vip booth
+create_look | [color:purple] [movement:wash] on the [target:tetras] near the dance floor
+create_look | [color:amber] [movement:chase] on the [target:pars] by the bar
+create_look | [color:teal] [movement:breathing] on the [target:led walls] near the truss

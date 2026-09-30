@@ -29,9 +29,25 @@ class Config:
     main_project_path: Optional[Path] = None  # the club's main show; project_path is the show lightai edits right now
     roles_template: Path = REPO_ROOT / "SaveFile" / "Blank Rig Template.qxw"
     qlc_launcher: Path = Path(r"C:\qlcplus\start-qlcplus.bat")  # used by the console's "open main show" when QLC+ is closed
+    claude_exe_path: Optional[Path] = None
+    claude_model_design: str = "sonnet"
+    claude_model_label: str = "haiku"
+    claude_model_research: str = "sonnet"
+    design_timeout_s: float = 600.0
+    label_timeout_s: float = 240.0
+    research_timeout_s: float = 900.0
+    claude_budget_design_usd: float = 2.0
+    claude_budget_label_usd: float = 0.25
+    claude_budget_research_usd: float = 3.0
+    sandbox_exe: Optional[Path] = None  # QLC+ build with the 3D stage for design previews (auto when unset)
+    sandbox_port: int = 9997
+    teacher_enabled: bool = True  # the nightly job asks Claude to label what the local model missed
+    positions_final: bool = False  # the 3D stage positions are measured: left/right groups, mirror pairs, precise aims
     overrides_path: Path = PACKAGE_DIR / "rig" / "overrides.yaml"
     learned_path: Path = PACKAGE_DIR / "rig" / "learned.yaml"
     colors_path: Path = LIGHTAI_DIR / "data" / "colors.yaml"
+    knowledge_dir: Path = LIGHTAI_DIR / "knowledge"
+    references_dir: Optional[Path] = None  # the private reference library of other programs' shows (<data_dir>/references)  # research reports + moods.yaml (tests point it at a temp folder)
     fixture_dirs: list = field(
         default_factory=lambda: [
             Path.home() / "QLC+" / "Fixtures",
@@ -118,6 +134,8 @@ def load_config(path: Optional[Path] = None) -> Config:
                 value = Path(value)
             elif key == "fixture_dirs":
                 value = [Path(v) for v in value]
+            elif key in ("claude_exe_path", "sandbox_exe") and value is not None:
+                value = Path(value)
             setattr(cfg, key, value)
     env = os.environ
     if env.get("LIGHTAI_PROJECT"):

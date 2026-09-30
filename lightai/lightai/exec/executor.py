@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import re
 import time
 from pathlib import Path
@@ -183,6 +184,8 @@ class Executor:
             if res.get("error") or res.get("blocked"):
                 ok = False
                 break
+        if ok:
+            self.session.record_executed(plan, results)
         return {"ok": ok, "plan_id": plan.plan_id, "results": results, "latency_ms": round((time.perf_counter() - t0) * 1000.0, 2)}
 
     async def _op_write_look(self, args: dict, plan: Plan, **_) -> dict:
@@ -299,6 +302,8 @@ class Executor:
         else:
             look = compile_look(rig, params)
         ws = rig.ws
+        for group in look.groups:  # a new pixel group goes before the functions (Workspace.add_fixture_group)
+            ws.add_fixture_group(to_element(group))
         if args.get("in_place") and look.ids == args["old_ids"]:
             for spec in look.functions:
                 ws.replace_function(spec.id, to_element(spec))
@@ -317,6 +322,143 @@ class Executor:
         self.on_rig_change()
         return {"main_id": look.main_id, "ids": look.ids, "name": look.name, "in_place": bool(args.get("in_place") and look.ids == args["old_ids"]),
                 "buttons_rebound": rebound, "backup": res["backup"]}
+
+    async def _op_write_design(self, args: dict, plan: Plan, **_) -> dict:
+        """Compose the chosen shows of a design against the show as it is now, and write them in one go."""
+        from lightai.compiler import write_design
+        from lightai.design.composer import compose_design
+        from lightai.design.spec import DesignResult
+
+        rig = self.get_rig(fresh=True)
+        design = DesignResult.model_validate(args["design"])
+        shows = compose_design(rig, design, show_indexes=args.get("shows"), bpm=self.session.bpm)
+        res = write_design(rig, shows, text=args.get("text", ""), source="design", job_id=args.get("job_id", ""))
+        self.on_rig_change()
+        return res
+
+    async def _op_rewrite_design(self, args: dict, plan: Plan, **_) -> dict:
+        """Rebuild one designed show from its stored design (after the 3D layout changed); buttons follow it."""
+        from lightai.compiler import write_design
+        from lightai.compiler.sidecar import Sidecar
+        from lightai.design.composer import compose_design
+        from lightai.design.spec import DesignResult
+
+        rig = self.get_rig(fresh=True)
+        ws = rig.ws
+        for fid in [i for i in args["old_ids"] if ws.function_el(i) is not None]:
+            ws.remove_function(fid)
+            rig.functions.pop(fid, None)
+        side = Sidecar(self.cfg.sidecar_path)
+        side.remove(args["main_id"])
+        side.save()
+        shows = compose_design(rig, DesignResult(shows=[args["spec"]]), bpm=self.session.bpm)
+        res = write_design(rig, shows, text=args.get("text", ""), source="reaim", job_id=args.get("job_id", ""))
+        rebound = rig.ws.rebind_buttons(args["main_id"], shows[0].main_id)
+        if rebound:
+            from lightai.compiler.writer import write_workspace
+
+            write_workspace(rig.ws, self.cfg.project_path, self.cfg.backups_dir, self.cfg.backups_keep)
+        self.on_rig_change()
+        return dict(res, buttons_rebound=rebound, old_main_id=args["main_id"], main_id=shows[0].main_id)
+
+    async def _op_edit_stage(self, args: dict, plan: Plan, **_) -> dict:
+        """Edit the room's 3D stage: re-read the file, make the planned changes (refused when the scene changed since
+        planning), keep a backup, and save through QLC+ (saveStage: every open /stage page reloads) when QLC+ has this
+        show open with the 3D stage; otherwise write the file."""
+        from lightai.rig import scene as sc
+
+        path = Path(args["stage_path"])
+        new = sc.apply_changes(sc.read_doc(path), args["changes"])
+        saved = sc.backup(path, self.cfg.data_dir)
+        how, rev, note = "file", None, ""
+        try:
+            c = await self.ensure_client()
+        except QlcError:
+            c = None
+        if c is not None:
+            try:
+                if await fork_version(c) >= 3 and await self._other_show(c) is None:
+                    reply = await c.request("QLC+API|saveStage|" + json.dumps(new, ensure_ascii=False), reply_prefix="QLC+API|saveStage",
+                                            timeout=10.0)
+                    parts = reply.split("|")
+                    if len(parts) >= 3 and parts[2] == "OK":
+                        how, rev = "qlc", int(parts[3]) if len(parts) > 3 and parts[3].isdigit() else None
+                    else:
+                        note = f"QLC+ didn't save it ({'|'.join(parts[2:])[:80]}); wrote the file instead"
+            except QlcError as exc:
+                note = f"QLC+ didn't answer ({exc}); wrote the file instead"
+        if how == "file":
+            sc.write_doc(path, new)
+            note = note or "wrote the file (no QLC+ with the 3D stage has this show open): reload an open 3D page"
+        self.on_rig_change()
+        return {"saved": how, "rev": rev, "changes": len(args["changes"]), "backup": str(saved) if saved else None,
+                **({"note": note} if note else {})}
+
+    async def _op_aim_live(self, args: dict, plan: Plan, **_) -> dict:
+        """Aim fixtures live (rig/aim_live.py): a beam reference is followed from the reference fixture's pan/tilt as
+        QLC+ outputs them now, down to the floor; the values are live overrides until 'release'."""
+        from lightai.rig import aim_live
+        from lightai.rig.scene import fmt_pos
+
+        rig = self.get_rig(fresh=True)
+        st = rig.stage
+        if st is None:
+            raise QlcError("this show has no 3D stage file")
+        c = await self.ensure_client()
+        target = args["target"]
+        point, note = None, ""
+        if target.get("beam_of") is not None:
+            ref = rig.fixtures[int(target["beam_of"])]
+            pan16, tilt16 = await aim_live.read_pan_tilt(c, ref)
+            point = aim_live.beam_floor_point(st, ref, pan16, tilt16)
+            if point is None:
+                raise QlcError(f"{ref.name}'s beam doesn't reach the floor right now (it points up or level)")
+            note = f"{ref.name}'s beam lands at {fmt_pos(point, st.anchor)}"
+        elif target.get("place"):
+            point = st.target_point(target["place"])
+            if point is None:
+                raise QlcError(f"'{target['place']}' is not a place in the 3D stage")
+        elif target.get("point"):
+            point = tuple(float(v) for v in target["point"])[:3]
+        aim = "down" if target.get("down") else "point:" + ",".join(f"{v:.3f}" for v in point)
+        chans, aimed, skipped = aim_live.aim_channels(rig, [rig.fixtures[int(f)] for f in args["fixtures"]], aim,
+                                                      args.get("color") or "white", float(args.get("intensity") or 1.0))
+        for u, ch, v in chans:
+            await c.set_channel(int(u), int(ch), int(v))
+            self.session.overridden.add((int(u), int(ch)))
+        confirmed = None
+        if chans:  # a read-back after the writes: they are sent without replies, and QLC+ answers in order
+            u, ch, v = chans[-1]
+            got = await c.channel_values(int(u), int(ch), 1)
+            confirmed = bool(got) and got[0]["value"] == int(v)
+        self.session.last_aim = {k: v for k, v in args.items()}
+        res = {"aimed": aimed, "channels": len(chans), "confirmed": confirmed, "target": [round(v, 2) for v in point] if point else "down",
+               "target_shown": fmt_pos(point, st.anchor) if point else "straight down"}
+        if skipped:
+            res["skipped"] = skipped
+        if note:
+            res["note"] = note
+        return res
+
+    async def _op_start_rotation(self, args: dict, plan: Plan, **_) -> dict:
+        """Rotate shows through the night on the QLC+ side (LOOP|SET/INTERVAL/START): it keeps going with no browser."""
+        c = await self.ensure_client()
+        fids = ",".join(str(int(f)) for f in args["main_ids"])
+        await c.request(f"LOOP|SET|{fids}", reply_prefix="LOOP|STATE", timeout=3.0)
+        await c.request(f"LOOP|INTERVAL|{max(10, int(round(float(args['minutes']) * 60)))}", reply_prefix="LOOP|STATE", timeout=3.0)
+        return self._loop_state(await c.request("LOOP|START", reply_prefix="LOOP|STATE", timeout=3.0))
+
+    async def _op_stop_rotation(self, args: dict, plan: Plan, **_) -> dict:
+        c = await self.ensure_client()
+        return self._loop_state(await c.request("LOOP|STOP", reply_prefix="LOOP|STATE", timeout=3.0))
+
+    @staticmethod
+    def _loop_state(reply: str) -> dict:
+        p = reply.split("|")
+        if len(p) < 6:
+            raise QlcError(f"unexpected LOOP reply: {reply[:80]}")
+        return {"running": p[2] == "1", "interval_s": int(p[3] or 0), "current": int(p[4] or 0),
+                "main_ids": [int(x) for x in p[5].split(",") if x.strip()]}
 
     async def _op_delete_look(self, args: dict, plan: Plan, **_) -> dict:
         from lightai.compiler.sidecar import Sidecar

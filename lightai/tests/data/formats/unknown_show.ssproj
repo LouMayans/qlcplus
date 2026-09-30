@@ -1,0 +1,4 @@
+This is a placeholder for lightai tests, not a real SoundSwitch project. SoundSwitch's .ssproj
+content lives behind its own cloud service rather than as a decodable local file (see the format
+survey), so lightai's registry has no decoder for this extension by design. This file only needs
+to exist and carry the .ssproj extension for the NotDecodable test to exercise that path.

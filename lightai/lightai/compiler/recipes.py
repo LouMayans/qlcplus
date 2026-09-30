@@ -41,9 +41,10 @@ def noncontiguous_fine(fx: RigFixture) -> bool:
 
 
 class IdAlloc:
-    def __init__(self, start: int, reserved: Optional[set] = None) -> None:
+    def __init__(self, start: int, reserved: Optional[set] = None, groups: Optional[list] = None) -> None:
         self.cur = start
         self.reserved = reserved or set()
+        self.groups = groups if groups is not None else []  # FixtureGroups minted earlier in the same batch (a design)
 
     def next(self) -> int:
         while self.cur in self.reserved:
@@ -135,9 +136,11 @@ class Values:
 class Recipe:
     key = ""
     label = ""
+    about = ""
     family = "chase"
     needs_color = True
     needs_movement = False
+    options = ("colors", "intensity", "rate", "fade", "order", "priority")
 
     def __init__(self, rig: Rig, p: LookParams, ids: IdAlloc) -> None:
         self.rig = rig
@@ -149,9 +152,27 @@ class Recipe:
         self.name = look_name(p, self.label)
         self.path = f"AI/{category(rig, p)}"
 
+    @classmethod
+    def describe(cls) -> dict:
+        """One line per recipe for the show designer's catalog."""
+        return {"recipe": cls.key, "what": cls.about, "family": cls.family,
+                "needs": "pan/tilt" if cls.needs_movement else ("color or intensity" if cls.needs_color else "-"),
+                "options": list(cls.options)}
+
+    def spatial_ids(self) -> list:
+        """The targets in the look's spatial order (3D stage), else the stage-map order."""
+        order = self.p.order
+        st = self.rig.stage if order else None
+        if order and st is None:
+            self.assumptions.append({"fact": f"no 3D stage file for this show: '{order}' not applied, stage-map order used", "source": "stage"})
+        if order and st is not None:
+            self.facts.add(f"stage:{st.hash}")
+            return st.order(self.p.targets, order)
+        return self.rig.ordered(self.p.targets)
+
     def fixtures(self) -> list:
         out = []
-        for fid in self.rig.ordered(self.p.targets):
+        for fid in self.spatial_ids():
             fx = self.rig.fixtures.get(fid)
             if fx is None:
                 self.skipped.append({"fixture": fid, "reason": "not in the show file"})
@@ -388,7 +409,9 @@ class RunningLight(Recipe):
         )
         main = self.spec("Collection", members=([s_base.id] if s_base else []) + [ch.id])
         main.name = self.name
-        self.assumptions.append({"fact": "runs left to right in stage-map order" + (" and bounces back" if self.p.mirror else ""), "source": "overrides.yaml stage_order"})
+        how = (self.p.order or "left_to_right").replace("_", " ")
+        self.assumptions.append({"fact": f"runs {how}" + (" and bounces back" if self.p.mirror else ""),
+                                 "source": "3D stage" if self.p.order else "overrides.yaml stage_order"})
         return self.finish(([s_base] if s_base else []) + scenes + [ch, main], main)
 
 
@@ -417,11 +440,17 @@ class Movement(Recipe):
         s_base = self.scene(base, "Color")
         max_spread = int(self.rig.rules.get("efx_max_phase_spread_deg", 180))
         n = len(fxs)
+        right = set(self.rig.zones.get("stage_right") or [])
+        st = self.rig.stage
+        if self.p.mirror and st is not None and getattr(self.rig.cfg, "positions_final", False):
+            pairs, _, _ = st.mirror_pairs([fx.id for fx in fxs], {fx.id: fx.key for fx in fxs})
+            right = {b for _, b in pairs}  # measured layout: the right-hand partner of each mirror pair
+            self.facts.add(f"stage:{st.hash}")
         efx_fixtures = []
         for i, fx in enumerate(fxs):
             offset = int(round(i * max_spread / (n - 1))) if (self.phased and n > 1) else 0
             direction = "Forward"
-            if self.p.mirror and fx.id in set(self.rig.zones.get("stage_right") or []):
+            if self.p.mirror and fx.id in right:
                 direction = "Backward"
             efx_fixtures.append(EfxFixtureSpec(id=fx.id, direction=direction, start_offset=offset % 360))
         # QLC+ shares one fader per universe for all fixtures of an EFX and switches it to 8-bit when it
@@ -431,26 +460,44 @@ class Movement(Recipe):
         first = {fx.id: 0 if noncontiguous_fine(fx) else 1 for fx in fxs}
         efx_fixtures.sort(key=lambda e: first[e.id])
         w, h = self.size()
-        efx = self.spec(
-            "EFX",
-            "Move",
-            duration=cycle,
-            run_order=self.run_order,
-            efx={
-                "algorithm": self.algorithm,
-                "width": min(127, w),
-                "height": min(127, h),
-                "x": {"offset": 127, "frequency": self.x_freq, "phase": self.x_phase},
-                "y": {"offset": 127, "frequency": self.y_freq, "phase": self.y_phase},
-            },
-            efx_fixtures=efx_fixtures,
-        )
-        main = self.spec("Collection", members=[s_base.id, efx.id])
+
+        def efx_spec(fixtures: list, cx: int, cy: int, suffix: str) -> FunctionSpec:
+            ww, hh = min(127, w, cx, 255 - cx), min(127, h, cy, 255 - cy)  # stay inside the pan/tilt range
+            return self.spec("EFX", suffix, duration=cycle, run_order=self.run_order, efx_fixtures=fixtures, efx={
+                "algorithm": self.algorithm, "width": max(1, ww), "height": max(1, hh),
+                "x": {"offset": cx, "frequency": self.x_freq, "phase": self.x_phase},
+                "y": {"offset": cy, "frequency": self.y_freq, "phase": self.y_phase}})
+
+        centres = self.aim_centres(fxs) if self.p.aim else {}
+        if centres:  # one EFX per fixture: each moves around its own aim at the place
+            efxs = [efx_spec([e], *centres[e.id], f"Move {self.rig.fixtures[e.id].name}") for e in efx_fixtures if e.id in centres]
+            where = f"around {self.p.aim}"
+        else:
+            efxs = [efx_spec(efx_fixtures, 127, 127, "Move")]
+            where = "centred at pan/tilt 127/127"
+        main = self.spec("Collection", members=[s_base.id] + [e.id for e in efxs])
         main.name = self.name
         self.assumptions.append(
-            {"fact": f"{self.algorithm} centred at pan/tilt 127/127, size {w}x{h}, one cycle {cycle} ms" + (f", phase spread {max_spread} deg" if self.phased else ""), "source": "recipe + club EFX defaults"}
+            {"fact": f"{self.algorithm} {where}, size {w}x{h}, one cycle {cycle} ms" + (f", phase spread {max_spread} deg" if self.phased else ""), "source": "recipe + club EFX defaults"}
         )
-        return self.finish([s_base, efx, main], main)
+        return self.finish([s_base] + efxs + [main], main)
+
+    def aim_centres(self, fxs: list) -> dict:
+        """8-bit pan/tilt centres that point each fixture at the look's place (from the 3D stage)."""
+        st = self.rig.stage
+        if st is None:
+            self.assumptions.append({"fact": f"no 3D stage file: can't aim at '{self.p.aim}', centred instead", "source": "stage"})
+            return {}
+        out = {}
+        for fx in fxs:
+            a = st.aim(fx, self.p.aim)
+            if a is not None:
+                out[fx.id] = (a["pan8"], a["tilt8"])
+        if not out:
+            self.assumptions.append({"fact": f"'{self.p.aim}' is not a place in the stage file or out of reach", "source": "stage"})
+        else:
+            self.facts.add(f"stage:{st.hash}")
+        return out
 
 
 class Circle(Movement):
@@ -545,9 +592,93 @@ class BlackoutKill(Recipe):
         return self.finish([main], main)
 
 
+class Position(Recipe):
+    """Aim moving heads at a place from the 3D stage: all spots on the DJ, beams crossing over the dance floor, a fan
+    across the floor, or straight down. As a layer of a designed show it sets pan/tilt only."""
+    key = "position"
+    label = "Aim"
+    about = "static aim at a place (dj, dance floor, bar, ...): spread together | fan | cross | down"
+    family = "chase"
+    needs_movement = True
+    options = ("aim", "spread", "colors", "intensity", "order")
+
+    def build(self) -> Look:
+        fxs = self.fixtures()
+        st = self.rig.stage
+        if st is None:
+            raise ValueError("position: this show has no 3D stage file (<show>.stage.json), so there is nothing to aim at")
+        spread = (self.p.spread or "together").lower()
+        aim = (self.p.aim or "dance floor").lower()
+        if aim.startswith("point:"):  # an exact spot (a beam's floor hit, coordinates), inches
+            centre = tuple(float(v) for v in aim[6:].split(","))[:3]
+            place = None
+        else:
+            centre = st.target_point(aim) if aim != "down" else None
+            if aim != "down" and centre is None:
+                raise ValueError(f"position: '{aim}' is not a place in the stage file")
+            place = st.place(aim) if aim != "down" else None
+        half_w = (place.size[0] / 2 if place and place.size else 60.0)
+        frac = st.position_fraction([fx.id for fx in fxs], "left_to_right")
+        v = Values()
+        aimed = 0
+        for i, fx in enumerate(fxs):
+            p = st.pos(fx.id)
+            if aim == "down":
+                point = (p[0], p[1], 0.0)
+            elif spread == "fan":
+                point = (centre[0] + (frac.get(fx.id, 0.5) - 0.5) * 2 * half_w, centre[1], centre[2])
+            elif spread == "cross":
+                point = (centre[0] - (frac.get(fx.id, 0.5) - 0.5) * 2 * half_w, centre[1], centre[2])
+            else:
+                point = centre
+            a = st.aim(fx, point)
+            if a is None:
+                self.skipped.append({"fixture": fx.id, "name": fx.name, "reason": f"can't reach {aim}"})
+                continue
+            fine_p, fine_t = fx.has("pan_fine"), fx.has("tilt_fine")
+            v.set(fx, "pan", a["pan"] if fine_p else a["pan8"])
+            v.set(fx, "tilt", a["tilt"] if fine_t else a["tilt8"])
+            if fine_p:
+                v.set(fx, "pan_fine", a["pan_fine"])
+            if fine_t:
+                v.set(fx, "tilt_fine", a["tilt_fine"])
+            if self.p.layer not in ("movement", "position"):  # on its own the look must also be visible
+                self.put_open(v, fx)
+                self.put_color(v, fx, self.color_for(i, fx), 1.0)
+                self.put_intensity(v, fx, self.p.intensity)
+            aimed += 1
+        if not aimed:
+            raise ValueError(f"position: none of the target fixtures can reach {aim}")
+        main = self.spec("Scene", values=v.spec_values(), roles=v.roles, fade_in=int(self.p.fade_ms or 0))
+        where = "straight down" if aim == "down" else (f"a spot at ({centre[0] / 12:.1f}, {centre[1] / 12:.1f}, {centre[2] / 12:.1f}) ft"
+                                                        if aim.startswith("point:") else
+                                                        f"{aim} ({centre[0] / 12:.0f}, {centre[1] / 12:.0f}, {centre[2] / 12:.0f} ft)")
+        self.assumptions.append({"fact": f"aimed {spread} at {where} from the 3D stage", "source": f"stage {st.path.name}"})
+        if not getattr(self.rig.cfg, "positions_final", False):
+            self.assumptions.append({"fact": "aims are approximate until the stage layout is measured; re-aim after updating it", "source": "stage"})
+        self.facts.add(f"stage:{st.hash}")
+        return self.finish([main], main)
+
+
+ColorWash.about = "one static color look on the targets"
+BreathingWash.about = "intensity breathes slowly between a low and a high level"
+ColorChase.about = "all targets step through the colors together"
+RunningLight.about = "one fixture at a time runs along the order (bounces with mirror)"
+Circle.about = "moving heads draw circles"
+CircleWave.about = "circles with a phase spread so a wave travels along the order"
+Ballyhoo.about = "big sweeping searchlight movement"
+Figure8.about = "figure-eight movement"
+Sweep.about = "side to side sweep"
+Strobe.about = "strobe at a speed (very_slow..very_fast)"
+BlackoutKill.about = "kill: everything dark at high priority"
+for _cls in (Circle, CircleWave, Ballyhoo, Figure8, Sweep):
+    _cls.options = ("colors", "intensity", "rate", "size", "order", "aim", "mirror", "priority")
+Strobe.options = ("colors", "intensity", "strobe_speed", "priority")
+
 RECIPES = {
     r.key: r
-    for r in (ColorWash, BreathingWash, ColorChase, RunningLight, Circle, CircleWave, Ballyhoo, Figure8, Sweep, Strobe, BlackoutKill)
+    for r in (ColorWash, BreathingWash, ColorChase, RunningLight, Circle, CircleWave, Ballyhoo, Figure8, Sweep, Strobe,
+              BlackoutKill, Position)
 }
 
 MOVEMENT_TO_RECIPE = {
@@ -569,14 +700,41 @@ MOVEMENT_TO_RECIPE = {
     "sweep": "sweep",
     "strobe": "strobe",
     "blackout": "blackout_kill",
+    "aim": "position",
+    "point": "position",
+    "position": "position",
+    "focus": "position",
 }
 
 
-def build_look(rig: Rig, params: LookParams, start_id: Optional[int] = None, reserved: Optional[set] = None) -> Look:
+def _load_extra() -> None:
+    """More effects live in recipes_fx.py (strobe bursts and chases, colour morphs, dimmer waves)
+    and recipes_pixel.py (RGB Matrix pixel effects)."""
+    try:
+        from lightai.compiler import recipes_fx
+    except ImportError:
+        return
+    for r in getattr(recipes_fx, "RECIPES_FX", ()):
+        RECIPES[r.key] = r
+    MOVEMENT_TO_RECIPE.update(getattr(recipes_fx, "WORDS_FX", {}))
+    try:
+        from lightai.compiler import recipes_pixel
+    except ImportError:
+        return
+    for r in getattr(recipes_pixel, "RECIPES_PIXEL", ()):
+        RECIPES[r.key] = r
+    MOVEMENT_TO_RECIPE.update(getattr(recipes_pixel, "WORDS_PIXEL", {}))
+
+
+_load_extra()
+
+
+def build_look(rig: Rig, params: LookParams, start_id: Optional[int] = None, reserved: Optional[set] = None,
+               groups: Optional[list] = None) -> Look:
     cls = RECIPES.get(params.recipe)
     if cls is None:
         raise ValueError(f"unknown recipe {params.recipe!r}; known: {sorted(RECIPES)}")
-    ids = IdAlloc(start_id if start_id is not None else rig.next_function_id(), reserved)
+    ids = IdAlloc(start_id if start_id is not None else rig.next_function_id(), reserved, groups)
     return cls(rig, params, ids).build()
 
 

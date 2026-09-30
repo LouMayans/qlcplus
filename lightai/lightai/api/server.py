@@ -48,6 +48,53 @@ CONSOLE = Path(__file__).with_name("console.html")
 
 class TextIn(BaseModel):
     text: str = Field(max_length=500)
+    session: Optional[str] = Field(None, max_length=64)  # the console tab, so history can be read as a conversation
+
+
+class CorrectIn(BaseModel):
+    plan_id: str = Field(max_length=64)
+    text: str = Field("", max_length=500)  # what was meant; empty = "that's wrong"
+    session: Optional[str] = Field(None, max_length=64)
+
+
+class DesignIn(BaseModel):
+    text: str = Field(min_length=3, max_length=2000)
+    count: Optional[int] = Field(None, ge=1, le=6)
+    minutes: Optional[float] = Field(None, gt=0, le=60)
+    deep: bool = False  # Opus instead of the default design model
+    session: Optional[str] = Field(None, max_length=64)
+
+
+class RefineIn(BaseModel):
+    text: str = Field(min_length=2, max_length=1000)
+    deep: bool = False
+
+
+class DesignApplyIn(BaseModel):
+    shows: Optional[list[int]] = None  # indexes into the design's shows; None = all of them
+
+
+class Preview3dIn(BaseModel):
+    shows: Optional[list[int]] = None
+
+
+class SandboxPlayIn(BaseModel):
+    main_id: int
+
+
+class RowRef(BaseModel):
+    ts: str = Field(max_length=40)
+    text: str = Field(max_length=500)
+
+
+class ResearchIn(BaseModel):
+    topic: str = Field(min_length=3, max_length=500)
+    deep: bool = False
+
+
+class RotateIn(BaseModel):
+    main_ids: Optional[list[int]] = None  # default: every designed show in the show
+    minutes: float = Field(20.0, ge=0.5, le=240)
 
 
 class ExecIn(BaseModel):
@@ -88,7 +135,7 @@ class AnswerIn(BaseModel):
 
 
 def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = None, allowed_hosts: Optional[list] = None,
-               token: Optional[str] = None) -> FastAPI:
+               token: Optional[str] = None, design_backend=None) -> FastAPI:
     """allowed_hosts: Host header values accepted (DNS-rebinding guard); token: required X-LightAI-Token on every change."""
     from contextlib import asynccontextmanager
 
@@ -107,6 +154,9 @@ def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = N
                     await ex.calibrate_end("server shutting down")
                 except Exception:
                     pass
+            sb = design_state.get("sandbox")
+            if sb is not None and sb.running:  # never leave a sandbox QLC+ behind
+                await sb.stop()
             await ex.client.close()
             await app.state.stage.aclose()
 
@@ -207,7 +257,8 @@ def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = N
                 name = Path(ai().cfg.project_path).name
                 p.warnings.insert(0, f"QLC+ has {what} open, but this changes {name}. Applying it opens {name} in QLC+ in place of that show.")
         history_log({"plan_id": p.plan_id, "text": body.text, "intent": cmd.intent, "confidence": round(cmd.confidence, 3),
-                     "mode": p.mode, "summary": p.summary[:300], "show": Path(p.show).name if p.show else None})
+                     "mode": p.mode, "summary": p.summary[:300], "show": Path(p.show).name if p.show else None,
+                     "session": body.session, "corrects": getattr(cmd, "corrects", None)})
         return {"command": cmd.model_dump(), "plan": p.model_dump()}
 
     def get_plan(pid: str):
@@ -241,6 +292,373 @@ def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = N
         except OSError:
             pass
 
+    @app.post("/correct")
+    async def correct(body: CorrectIn) -> dict:
+        """'Wrong' / 'What I meant...' on a history item: re-plan it with the correction; offers undo when it ran."""
+        try:
+            cmd, p = ai().correct_plan(body.plan_id, body.text)
+        except KeyError as exc:
+            raise HTTPException(404, str(exc))
+        history_log({"plan_id": p.plan_id, "text": cmd.text, "intent": cmd.intent, "confidence": round(cmd.confidence, 3),
+                     "mode": p.mode, "summary": p.summary[:300], "show": Path(p.show).name if p.show else None,
+                     "session": body.session, "corrects": body.plan_id})
+        return {"command": cmd.model_dump(), "plan": p.model_dump()}
+
+    design_state: dict = {}
+    design_tasks: dict = {}
+
+    def design_env() -> dict:
+        """The job store, the run log and the Claude backend, made on first use."""
+        if not design_state:
+            from lightai.design.jobs import JobStore
+            from lightai.design.runlog import RunLog
+
+            runlog = RunLog(Path(ai().cfg.data_dir))
+            if design_backend is not None:
+                backend = design_backend
+            else:
+                from lightai.design.backend import ClaudeCodeBackend
+
+                backend = ClaudeCodeBackend(ai().cfg, runlog)
+            design_state.update(jobs=JobStore(Path(ai().cfg.data_dir)), runlog=runlog, backend=backend)
+        return design_state
+
+    def job_view(job) -> dict:
+        from dataclasses import asdict
+
+        from lightai.compiler.sidecar import Sidecar
+
+        row = asdict(job)
+        side = Sidecar(ai().cfg.sidecar_path)
+        row["applied"] = [{"main_id": e["main_id"], "title": e["title"]} for e in side.designs.values() if e.get("job_id") == job.id]
+        row["running"] = job.id in design_tasks and not design_tasks[job.id].done()
+        return row
+
+    def start_job(job) -> None:
+        from lightai.design.jobs import run_design_job
+
+        env = design_env()
+        design_tasks[job.id] = asyncio.create_task(run_design_job(ai(), job, env["jobs"], env["backend"]))
+
+    @app.post("/design")
+    async def design(body: DesignIn) -> dict:
+        """Start a design job: Claude designs, lightai validates and composes a preview; nothing is written yet."""
+        from lightai.design.jobs import parse_request
+
+        count, minutes = parse_request(body.text)
+        job = design_env()["jobs"].new(body.text, body.count or count, body.minutes or minutes, body.deep)
+        start_job(job)
+        history_log({"design_job": job.id, "text": body.text, "intent": "design_show", "mode": "design",
+                     "summary": f"design {job.count} show(s)" + (f", {job.minutes:g} min" if job.minutes else ""),
+                     "session": body.session})
+        return {"job": job_view(job)}
+
+    @app.get("/design")
+    async def design_list(limit: int = Query(20, ge=1, le=60)) -> list:
+        return [{"id": j.id, "text": j.text, "status": j.status, "count": j.count, "created": j.created,
+                 "shows": [p.get("title") for p in j.preview]} for j in design_env()["jobs"].list(limit)]
+
+    @app.get("/design/shows")
+    async def design_shows() -> list:
+        """The designed shows in the show lightai edits (from its sidecar)."""
+        from lightai.compiler.sidecar import Sidecar
+
+        side = Sidecar(ai().cfg.sidecar_path)
+        return [{k: e.get(k) for k in ("main_id", "title", "kind", "created", "job_id", "text")}
+                | {"functions": len(e.get("ids") or []), "sections": [s.get("name") for s in e.get("sections") or []]}
+                for e in side.designs.values() if e.get("main_id") in ai().rig.functions]
+
+    @app.get("/design/{jid}")
+    async def design_get(jid: str) -> dict:
+        job = design_env()["jobs"].get(jid)
+        if job is None:
+            raise HTTPException(404, f"unknown design job {jid}")
+        return job_view(job)
+
+    @app.post("/design/{jid}/refine")
+    async def design_refine(jid: str, body: RefineIn) -> dict:
+        jobs = design_env()["jobs"]
+        parent = jobs.get(jid)
+        if parent is None or not parent.result:
+            raise HTTPException(409, "that design isn't ready to refine")
+        job = jobs.new(body.text, parent.count, parent.minutes, body.deep, parent=jid)
+        start_job(job)
+        history_log({"design_job": job.id, "text": body.text, "intent": "design_show", "mode": "design",
+                     "summary": f"refine {jid}", "refines": jid})
+        return {"job": job_view(job)}
+
+    @app.post("/design/{jid}/apply")
+    async def design_apply(jid: str, body: DesignApplyIn) -> dict:
+        """A structural plan that writes the chosen shows; run it with /execute (confirmation, other-show guard)."""
+        from lightai.schema import Action, Plan
+
+        job = design_env()["jobs"].get(jid)
+        if job is None or not job.result:
+            raise HTTPException(409, "that design isn't ready")
+        idx = body.shows if body.shows is not None else list(range(len(job.result["shows"])))
+        titles = [job.result["shows"][i]["title"] for i in idx if 0 <= i < len(job.result["shows"])]
+        if not titles:
+            raise HTTPException(422, "no such show in that design")
+        cfg = ai().cfg
+        warnings = ["Reloading replaces the show in QLC+: running functions restart and unsaved QLC+ edits are lost."]
+        if not getattr(cfg, "positions_final", False):
+            warnings.append("aims use the provisional 3D stage positions; re-aim after the layout is measured")
+        plan = Plan(plan_id=ai().session.new_plan_id(), intent="design_show", mode="structural",
+                    summary=f"Add {len(titles)} designed show(s) to {Path(cfg.project_path).name}: " + ", ".join(titles),
+                    actions=[Action(op="write_design", args={"design": job.result, "shows": idx, "text": job.text, "job_id": job.id},
+                                    describe=f"write {len(titles)} show(s) under AI/Shows"),
+                             Action(op="reload", args={"strategy": cfg.reload_strategy}, describe="reload the show into QLC+")],
+                    warnings=warnings, needs_confirmation=True, show=str(cfg.project_path))
+        ai().session.store(plan)
+        return {"plan": plan.model_dump()}
+
+    def sandbox():
+        if "sandbox" not in design_state:
+            from lightai.design.sandbox import Sandbox
+
+            design_state["sandbox"] = Sandbox(ai().cfg)
+        return design_state["sandbox"]
+
+    @app.post("/design/{jid}/preview3d")
+    async def design_preview3d(jid: str, body: Preview3dIn) -> dict:
+        """Play the design on a private, output-less copy of the show in a separate QLC+ with the 3D stage."""
+        job = design_env()["jobs"].get(jid)
+        if job is None or not job.result:
+            raise HTTPException(409, "that design isn't ready")
+        try:
+            return await sandbox().preview(ai(), job.result, body.shows)
+        except (OSError, RuntimeError, TimeoutError, ValueError) as exc:
+            raise HTTPException(500, f"sandbox preview failed: {exc}")
+
+    @app.get("/sandbox")
+    async def sandbox_info() -> dict:
+        sb = design_state.get("sandbox")
+        return {"running": bool(sb and sb.running), "port": sb.port if sb else None,
+                "url": f"http://127.0.0.1:{sb.port}/stage" if sb and sb.running else None, "shows": sb.shows if sb else []}
+
+    @app.post("/sandbox/play")
+    async def sandbox_play(body: SandboxPlayIn) -> dict:
+        try:
+            return await sandbox().play(body.main_id)
+        except RuntimeError as exc:
+            raise HTTPException(409, str(exc))
+
+    @app.post("/sandbox/stop")
+    async def sandbox_stop() -> dict:
+        return await sandbox().stop()
+
+    @app.post("/design/rotate")
+    async def design_rotate(body: RotateIn) -> dict:
+        """Rotate designed shows through the night on the QLC+ side, one every `minutes`."""
+        from lightai.compiler.sidecar import Sidecar
+        from lightai.schema import Action, Plan
+
+        ids = body.main_ids or [e["main_id"] for e in Sidecar(ai().cfg.sidecar_path).designs.values()
+                                if e.get("main_id") in ai().rig.functions]
+        if not ids:
+            raise HTTPException(409, "no designed shows to rotate; apply a design first")
+        plan = Plan(plan_id=ai().session.new_plan_id(), intent="run_function", mode="live", show=str(ai().cfg.project_path),
+                    summary=f"Rotate {len(ids)} show(s), {body.minutes:g} minutes each",
+                    actions=[Action(op="start_rotation", args={"main_ids": ids, "minutes": body.minutes})])
+        ai().session.store(plan)
+        res = await ai().executor.execute(plan, confirm=True)
+        history_log({"plan_id": plan.plan_id, "text": f"rotate shows every {body.minutes:g} min", "intent": "run_function",
+                     "mode": "live", "summary": plan.summary, "executed": bool(res.get("ok")),
+                     "note": "" if res.get("ok") else str(res.get("error") or res.get("clarify") or "")[:200]})
+        return res
+
+    @app.post("/design/rotate/stop")
+    async def design_rotate_stop() -> dict:
+        from lightai.schema import Action, Plan
+
+        plan = Plan(plan_id=ai().session.new_plan_id(), intent="stop_function", mode="live", summary="Stop the show rotation",
+                    show=str(ai().cfg.project_path), actions=[Action(op="stop_rotation", args={})])
+        ai().session.store(plan)
+        return await ai().executor.execute(plan, confirm=True)
+
+    @app.post("/design/show/{main_id}/run")
+    async def design_run(main_id: int) -> dict:
+        c = await ai().executor.ensure_client()
+        await c.set_function(main_id, True)
+        return {"ok": True, "running": main_id}
+
+    @app.post("/design/show/{main_id}/stop")
+    async def design_stop(main_id: int) -> dict:
+        c = await ai().executor.ensure_client()
+        await c.set_function(main_id, False)
+        return {"ok": True, "stopped": main_id}
+
+    @app.post("/design/show/{main_id}/remove")
+    async def design_remove(main_id: int) -> dict:
+        """A structural plan that deletes every function of a designed show; run it with /execute."""
+        from lightai.compiler.sidecar import Sidecar
+        from lightai.schema import Action, Plan
+
+        cfg = ai().cfg
+        entry = Sidecar(cfg.sidecar_path).designs.get(str(main_id))
+        if entry is None:
+            raise HTTPException(404, f"no designed show with main function {main_id}")
+        plan = Plan(plan_id=ai().session.new_plan_id(), intent="delete_look", mode="structural",
+                    summary=f"Remove the designed show '{entry['title']}' ({len(entry['ids'])} functions)",
+                    actions=[Action(op="delete_look", args={"ids": entry["ids"], "main_id": main_id},
+                                    describe=f"delete {len(entry['ids'])} functions"),
+                             Action(op="reload", args={"strategy": cfg.reload_strategy}, describe="reload the show into QLC+")],
+                    needs_confirmation=True, show=str(cfg.project_path))
+        ai().session.store(plan)
+        return {"plan": plan.model_dump()}
+
+    @app.get("/stage/stale")
+    async def stage_stale() -> dict:
+        """Looks and designed shows aimed with an older 3D layout (the console offers 'Re-aim')."""
+        from lightai.design.reaim import stale_entries
+
+        s = stale_entries(ai().get_rig())
+        return {"hash": s["hash"], "looks": [{"main_id": e["main_id"], "name": e.get("name")} for e in s["looks"]],
+                "designs": [{"main_id": e["main_id"], "title": e.get("title")} for e in s["designs"]]}
+
+    @app.post("/reaim")
+    async def reaim() -> dict:
+        """A structural plan that rebuilds every stale look and show; run it with /execute."""
+        from lightai.design.reaim import reaim_plan
+
+        return {"plan": reaim_plan(ai()).model_dump()}
+
+    def _rows(path: Path) -> list:
+        out = []
+        if path.exists():
+            for line in path.read_text(encoding="utf-8").splitlines():
+                try:
+                    out.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
+        return out
+
+    def _rewrite(path: Path, rows: list) -> None:
+        tmp = path.with_name(path.name + ".tmp")
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        tmp.replace(path)
+
+    @app.get("/corrections")
+    async def corrections(source: Optional[str] = None, limit: int = Query(100, ge=1, le=1000)) -> list:
+        """Training examples: the operator's own ('console') and the nightly teacher's ('claude'), newest last."""
+        rows = [r for r in _rows(Path(ai().cfg.data_dir) / "corrections.jsonl") if source is None or r.get("source") == source]
+        return rows[-limit:]
+
+    @app.post("/corrections/undo")
+    async def corrections_undo(body: RowRef) -> dict:
+        """Take a training example back out (it stays in the file, marked not accepted)."""
+        path = Path(ai().cfg.data_dir) / "corrections.jsonl"
+        rows, hit = _rows(path), 0
+        for r in rows:
+            if r.get("ts") == body.ts and r.get("text") == body.text and r.get("accepted", True):
+                r["accepted"], r["undone"] = False, datetime.now(timezone.utc).isoformat(timespec="seconds")
+                hit += 1
+        if not hit:
+            raise HTTPException(404, "no such training example")
+        _rewrite(path, rows)
+        return {"ok": True, "undone": hit}
+
+    @app.get("/review")
+    async def review(limit: int = Query(100, ge=1, le=1000)) -> list:
+        """What the teacher wasn't sure of (labels) and new words it noticed (terms), newest last."""
+        return [r for r in _rows(Path(ai().cfg.data_dir) / "review_queue.jsonl") if not r.get("resolved")][-limit:]
+
+    @app.post("/review/accept")
+    async def review_accept(body: RowRef) -> dict:
+        """Accept a queued label: it becomes a training example (weight 1, like the teacher's clear cases)."""
+        data = Path(ai().cfg.data_dir)
+        rows = _rows(data / "review_queue.jsonl")
+        row = next((r for r in rows if r.get("ts") == body.ts and r.get("text") == body.text and r.get("kind") == "label"
+                    and not r.get("resolved") and not r.get("problem")), None)
+        if row is None:
+            raise HTTPException(404, "no such reviewable label")
+        with open(data / "corrections.jsonl", "a", encoding="utf-8") as fh:
+            fh.write(json.dumps({k: v for k, v in row.items() if k not in ("kind", "problem")} | {"accepted": True, "reviewed": True}) + "\n")
+        row["resolved"] = "accepted"
+        _rewrite(data / "review_queue.jsonl", rows)
+        return {"ok": True}
+
+    @app.post("/review/dismiss")
+    async def review_dismiss(body: RowRef) -> dict:
+        data = Path(ai().cfg.data_dir)
+        rows = _rows(data / "review_queue.jsonl")
+        hit = [r for r in rows if r.get("ts") == body.ts and (r.get("text") == body.text or r.get("word") == body.text) and not r.get("resolved")]
+        if not hit:
+            raise HTTPException(404, "no such review item")
+        for r in hit:
+            r["resolved"] = "dismissed"
+        _rewrite(data / "review_queue.jsonl", rows)
+        return {"ok": True}
+
+    @app.post("/teach/run")
+    async def teach_run() -> dict:
+        """Run the teacher now instead of waiting for the night (it only looks at sessions since its last run)."""
+        from lightai.design.teacher import label_sessions
+
+        env = design_env()
+        return await label_sessions(ai(), env["backend"])
+
+    research_jobs: dict = {}
+
+    @app.post("/research")
+    async def research_start(body: ResearchIn) -> dict:
+        """Claude researches a lighting topic on the web; findings go to lightai/knowledge/research, new mood words
+        to moods.yaml. Runs in the background; the steps show in the Claude tab."""
+        import time as _time
+        import uuid
+
+        from lightai.design.research import research
+
+        rid = f"q{_time.strftime('%m%d-%H%M%S')}-{uuid.uuid4().hex[:4]}"
+        job = {"id": rid, "topic": body.topic, "deep": body.deep, "status": "running", "progress": [], "result": None,
+               "started": _time.time()}
+        research_jobs[rid] = job
+        for old_id in sorted(research_jobs, key=lambda k: research_jobs[k]["started"])[:-20]:
+            research_jobs.pop(old_id, None)
+
+        def on_event(event: dict) -> None:
+            from lightai.design.jobs import _event_step
+
+            line = _event_step(event)
+            if line:
+                job["progress"] = (job["progress"] + [{"t": _time.time(), "text": line}])[-80:]
+
+        async def run() -> None:
+            try:
+                job["result"] = await research(ai(), body.topic, design_env()["backend"], deep=body.deep, on_event=on_event)
+                job["status"] = "done" if job["result"].get("ok") else "error"
+            except Exception as exc:
+                job["status"], job["result"] = "error", {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+        job["task"] = asyncio.create_task(run())
+        history_log({"research_job": rid, "text": body.topic, "intent": "research", "mode": "research", "summary": "research"})
+        return {k: v for k, v in job.items() if k != "task"}
+
+    @app.get("/research")
+    async def research_list() -> list:
+        return [{k: v for k, v in j.items() if k not in ("task", "progress")} for j in
+                sorted(research_jobs.values(), key=lambda j: -j["started"])]
+
+    @app.get("/research/{rid}")
+    async def research_get(rid: str) -> dict:
+        job = research_jobs.get(rid)
+        if job is None:
+            raise HTTPException(404, f"unknown research job {rid}")
+        return {k: v for k, v in job.items() if k != "task"}
+
+    @app.get("/claude/runs")
+    async def claude_runs(kind: Optional[str] = None, limit: int = Query(50, ge=1, le=500)) -> dict:
+        rl = design_env()["runlog"]
+        return {"runs": rl.runs(kind=kind, limit=limit), "totals": rl.totals()}
+
+    @app.get("/claude/runs/{rid}")
+    async def claude_run(rid: str) -> dict:
+        rl = design_env()["runlog"]
+        row = next((r for r in rl.runs(limit=500) if r.get("run_id") == rid), None)
+        if row is None:
+            raise HTTPException(404, f"unknown Claude run {rid}")
+        return {"summary": row, "timeline": rl.timeline(rid), "sources": rl.sources(rid)}
+
     @app.get("/history")
     async def history(limit: int = Query(50, ge=1, le=500)) -> list:
         """The last commands typed (newest last), each with its plan and, once run, whether it worked."""
@@ -254,7 +672,7 @@ def create_app(state: Optional[LightAI] = None, cors_origins: Optional[list] = N
             except json.JSONDecodeError:
                 continue
         done = {r["plan_id"]: r for r in rows if "executed" in r}
-        out = [dict(r, executed=done[r["plan_id"]]["executed"], result=done[r["plan_id"]]["note"]) if r.get("plan_id") in done else r
+        out = [dict(r, executed=done[r["plan_id"]]["executed"], result=done[r["plan_id"]].get("note")) if r.get("plan_id") in done else r
                for r in rows if "text" in r]
         return out[-limit:]
 

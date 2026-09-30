@@ -17,6 +17,7 @@ AGREE = {
     "release": r"\b(release|overrides?|manual levels?|hand .{0,20} back|take over again)\b",
     "query.functions": r"\b(how many|which|what|list|search|show me|find)\b.{0,40}\b(functions?|efx|chasers?|scenes?|looks?|collections?|sequences?|shows?)\b",
     "query.status": r"\b(what'?s (running|on|playing|live)|what is (running|on|playing|live)|anything (running|on|playing)|status|is .{1,40} (running|on|playing|active))\b",
+    "create_look": r"^(?!.*\b(faster|slower|quicker|bigger|smaller|wider|tighter|brighter|dimmer|darker|more|less|stop|kill|delete|remove|again|back)\b).*\b(make|create|build|do|give me|set up)\b.{0,60}\b(circles?|chases?|sweeps?|breathing|pulses?|pulsing|waves?|ballyhoo|figure ?(8|eight)|morph\w*|rainbow|strobing|flicker\w*)\b",
     "query.fixtures": r"\b(how many|which|what|list|describe)\b.{0,40}\b(fixtures?|lights?|patch(ed)?|rig)\b",
 }
 NEGATION = r"\b(don'?t|dont|do not|does not|doesn'?t|never|not|no|without|won'?t|wont|shouldn'?t|can'?t|cannot|nah|nope|hold off|skip|forget)\b"
@@ -49,8 +50,10 @@ REQUIRED = {
     "run_function": ["function_ref"],
     "stop_function": ["function_ref"],
     "set_channel": ["target", "channel", "value"],
-    "fixture_edit.rotate": ["target", "angle"],
-    "fixture_edit.move": ["target", "direction"],
+    "fixture_edit.rotate": ["target"],  # an angle, or flip / upside down / wall words: the planner asks if none
+    "fixture_edit.move": ["target"],  # a direction + distance, coordinates or a place: the planner asks if none
+    "scene.add": ["object"],
+    "scene.remove": ["target"],
     "fixture_edit.rename": ["target", "name"],
     "fixture_edit.readdress": ["target", "address"],
     "set_bpm": ["rate"],
@@ -72,6 +75,7 @@ QUESTIONS = {
     "rate": "What BPM?",
     "intensity": "What level (e.g. 50%, full, off)?",
     "fixture_model": "Which fixture model? (manufacturer and model, e.g. 'Chauvet Intimidator Spot 260')",
+    "object": "What should I add? e.g. 'a high top table and 4 stools', 'two speakers'",
 }
 STRUCTURAL = {"create_look", "fixture_edit.rotate", "fixture_edit.move", "fixture_edit.rename", "fixture_edit.readdress",
               "update_look", "delete_look", "add_widget", "add_fixture"}
@@ -138,6 +142,8 @@ def apply_policy(cmd: LightCommand, defaults: dict | None = None) -> LightComman
             if not any((sv.value.get(key) is not None) if key else sv.value for sv in vals):
                 cmd.clarify = f"I couldn't read '{vals[0].raw}'. " + QUESTIONS.get(slot, f"Missing {slot}.")
                 return cmd
+    if cmd.intent == "design_show":  # Claude reads the words itself: a stray fixture or color word is no reason to ask
+        return cmd
     if cmd.intent in LIVE_ONE and re.search(r"\b(and then|then|after that|and also)\b", cmd.text, re.I):
         cmd.clarify = "One command at a time, please: say the first part, then the next."  # 'blackout and then washes to 50%'
         return cmd
@@ -173,6 +179,8 @@ def apply_policy(cmd: LightCommand, defaults: dict | None = None) -> LightComman
         else:
             cmd.slots.pop("target", None)
     for sv in cmd.slots.get("target") or []:
+        if "objects" in sv.value:  # a table, a stool, the bar: things in the 3D stage (Parser.scene_things asks which one)
+            continue
         if sv.value.get("unresolved") or not sv.value.get("fixture_ids"):
             cmd.clarify = f"I don't know which fixture '{sv.raw}' is. Which one? (a fixture number, name or zone)"
             return cmd

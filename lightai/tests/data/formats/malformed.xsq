@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Deliberately malformed for lightai tests: the root <xsequence> and <head> are well-formed
+     so sniffing still recognizes it as xLights, but the <Effect> tag below is left unclosed and
+     mismatched, so a full parse must fail with a clear error, not a crash. -->
+<xsequence>
+  <head>
+    <song>Broken</song>
+    <sequenceDuration>10.0</sequenceDuration>
+  </head>
+  <ColorPalettes>
+    <ColorPalette>C_BUTTON_Palette1=#FFFFFF,C_CHECKBOX_Palette1=1</ColorPalette>
+  </ColorPalettes>
+  <DisplayElements>
+    <Element type="model" name="Par 1" visible="1"/>
+  </DisplayElements>
+  <ElementEffects>
+    <Element type="model" name="Par 1">
+      <EffectLayer>
+        <Effect ref="0" name="Bars" startTime="0" endTime="5000" palette="0">
+      </EffectLayer>
+    </Element>
+  </ElementEffects>
+</xsequence>

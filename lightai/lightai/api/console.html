@@ -12,8 +12,9 @@ header{display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:
 header h1{font-size:17px;margin:0 12px 0 0;letter-spacing:.3px}
 .badge{padding:3px 9px;border-radius:999px;background:var(--chip);color:var(--dim);font-size:12px}
 .badge.ok{color:var(--ok)}.badge.bad{color:var(--bad)}
-main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;padding:14px 16px;max-width:1500px;margin:0 auto}
-@media (max-width:900px){main{grid-template-columns:1fr}}
+main{padding:14px 16px;max-width:1500px;margin:0 auto}
+.cmdgrid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px}
+@media (max-width:900px){.cmdgrid{grid-template-columns:1fr}}
 section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 section h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:0 0 10px}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -35,9 +36,27 @@ pre{background:#0b0d12;border:1px solid var(--line);border-radius:8px;padding:10
 .warnbox{color:var(--warn)}.errbox{color:var(--bad)}.okbox{color:var(--ok)}
 #bpmv{width:86px}
 .hist div{padding:4px 0;border-bottom:1px dashed var(--line);font-size:13px;cursor:pointer}
+.hist div.sel{color:var(--accent)}
 table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
 .hidden{display:none}
 kbd{background:#222838;border:1px solid #333b50;border-radius:4px;padding:1px 5px;font-size:11px}
+.tabbar{display:flex;gap:4px;padding:8px 16px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabbtn{background:transparent;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;padding:8px 14px;color:var(--dim);cursor:pointer;font:inherit}
+.tabbtn:hover{color:var(--text)}
+.tabbtn.sel{background:var(--panel);color:var(--text);border-color:var(--line)}
+.tabpanel.hidden{display:none}
+#globalerr{margin:8px 16px 0;padding:6px 10px}
+textarea{background:#0f1219;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;resize:vertical}
+.card{background:#12161f;border:1px solid var(--line);border-radius:8px;padding:10px;margin:8px 0}
+.meter{background:#0f1219;border:1px solid var(--line);border-radius:6px;height:8px;overflow:hidden;margin-top:2px}
+.meter>div{height:100%;background:var(--accent)}
+.progresslog{max-height:160px;overflow:auto;background:#0b0d12;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px}
+.hitem{padding:8px 0;border-bottom:1px dashed var(--line)}
+.hrow{padding:6px 10px;border-radius:10px;margin:3px 0;width:fit-content;max-width:92%}
+.hrow.user{background:#1d3350}
+.hrow.bot{background:#20263a}
+.jobsPane{flex:0 0 280px;min-width:220px;max-height:70vh;overflow:auto}
+.jobDetailPane{flex:1;min-width:0}
 </style>
 </head>
 <body>
@@ -48,7 +67,9 @@ kbd{background:#222838;border:1px solid #333b50;border-radius:4px;padding:1px 5p
   <button id="openshow" class="hidden" title="open lightai's show file in QLC+">Open main show in QLC+</button>
   <input id="newshowname" placeholder="new show name" maxlength="60" size="15" title="name of the new show file (saved next to the main show)">
   <button id="newshow" title="create an empty show with the main show's DMX outputs, open it in QLC+ and let lightai edit it">New show</button>
-  <a id="stagelink" href="/stage" target="_blank" rel="noopener" title="open the 3D stage view (QLC+'s /stage, proxied through lightai)" style="text-decoration:none"><button type="button">3D Stage</button></a>
+  <a id="stagelink" href="/stage" target="lightai-stage" title="Open the room's 3D stage in its own tab (it follows the show live; its 'lightai console' link comes back here)" style="text-decoration:none"><button type="button">3D Stage &#8599;</button></a>
+  <button id="reaimBtn" class="hidden warn" title="rebuild looks/shows that were aimed with an older 3D layout">Re-aim after layout change</button>
+  <span id="reaimMsg" class="small"></span>
   <span id="model" class="badge">model ?</span>
   <span id="lat" class="badge">parse - ms</span>
   <span class="row" style="margin-left:auto">
@@ -59,7 +80,16 @@ kbd{background:#222838;border:1px solid #333b50;border-radius:4px;padding:1px 5p
     <button class="danger" id="stopbtn" title="stop preview/calibration">Stop preview</button>
   </span>
 </header>
+<div class="tabbar" id="tabbar">
+  <button class="tabbtn" data-tab="command">Command</button>
+  <button class="tabbtn" data-tab="design">Design</button>
+  <button class="tabbtn" data-tab="claude">Claude</button>
+  <button class="tabbtn" data-tab="history">History</button>
+</div>
+<div id="globalerr" class="errbox small hidden"></div>
 <main>
+<div id="tab-command" class="tabpanel">
+  <div class="cmdgrid">
   <div>
     <section>
       <h2>Tell it what you want</h2>
@@ -79,6 +109,7 @@ kbd{background:#222838;border:1px solid #333b50;border-radius:4px;padding:1px 5p
       </div>
       <div id="chips" class="chips"></div>
       <div id="clarify" class="warnbox"></div>
+      <button id="designSuggest" class="hidden warn" style="margin-top:8px">Design this with Claude</button>
     </section>
     <section id="plan" class="hidden" style="margin-top:14px">
       <h2>Plan <span id="planid" class="badge"></span></h2>
@@ -144,6 +175,104 @@ kbd{background:#222838;border:1px solid #333b50;border-radius:4px;padding:1px 5p
       <div id="hist" class="hist"></div>
     </section>
   </div>
+  </div>
+</div>
+<div id="tab-design" class="tabpanel hidden">
+  <section>
+    <h2>Design with Claude</h2>
+    <div class="row">
+      <textarea id="designText" rows="3" style="flex:1;min-width:260px" placeholder="e.g. Create 3 different shows that resemble fast strobing but changing in a dreamy way"></textarea>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <label class="small muted">Shows <input id="designCount" type="number" min="1" max="6" step="1" style="width:64px" placeholder="1-6"></label>
+      <label class="small muted">Minutes <input id="designMinutes" type="number" min="0.5" max="60" step="0.5" style="width:80px" placeholder="loop"></label>
+      <label class="small muted"><input id="designDeep" type="checkbox"> Deeper (Opus)</label>
+      <button class="primary" id="designGo">Design with Claude</button>
+    </div>
+  </section>
+  <div class="row" style="margin-top:14px;align-items:flex-start;gap:14px">
+    <section class="jobsPane">
+      <h2>Recent jobs</h2>
+      <div id="designJobs" class="hist"></div>
+    </section>
+    <section class="jobDetailPane">
+      <h2>Job <span id="designJobId" class="badge"></span></h2>
+      <div id="designJobBody"><div class="muted">Pick or start a design job.</div></div>
+    </section>
+  </div>
+  <section style="margin-top:14px">
+    <h2>Designed shows in this show</h2>
+    <div class="row">
+      <label class="small muted">Rotate every <input id="rotateMinutes" type="number" min="0.5" max="240" step="0.5" value="20" style="width:70px"> min</label>
+      <button id="rotateStart">Start rotation</button>
+      <button id="rotateStop" class="danger">Stop rotation</button>
+      <span id="rotateMsg" class="small"></span>
+    </div>
+    <div id="designShowsList" style="margin-top:8px"><div class="muted">none yet</div></div>
+  </section>
+  <section id="sandboxSection" class="hidden" style="margin-top:14px">
+    <h2>Sandbox preview</h2>
+    <div class="small muted">plays the design on a private copy of the show in a separate QLC+ with no DMX outputs; the real rig is not touched</div>
+    <div id="sandboxShows" style="margin-top:8px"></div>
+    <div class="row" style="margin-top:8px">
+      <button id="sandboxReopen">Reopen sandbox window</button>
+      <button id="sandboxStop" class="danger">Stop sandbox</button>
+    </div>
+    <div id="sandboxMsg" class="small" style="margin-top:4px"></div>
+  </section>
+</div>
+<div id="tab-claude" class="tabpanel hidden">
+  <section>
+    <h2>Claude usage</h2>
+    <div id="claudeTotals"></div>
+    <div id="claudeLimits"></div>
+    <div class="small muted" id="claudeCostNote">Claude Code's figure; on a subscription this estimates API cost, it isn't billed.</div>
+  </section>
+  <section style="margin-top:14px">
+    <h2>Runs</h2>
+    <div style="overflow:auto">
+      <table id="claudeRunsTable">
+        <thead><tr><th>Time</th><th>Kind</th><th>Request</th><th>Model</th><th>Status</th><th>Duration</th><th>Tokens in/out/cache</th><th>Cost</th></tr></thead>
+        <tbody id="claudeRunsBody"></tbody>
+      </table>
+    </div>
+  </section>
+  <section id="claudeRunDetail" class="hidden" style="margin-top:14px">
+    <h2>Run <span id="claudeRunId" class="badge"></span></h2>
+    <div id="claudeTimeline"></div>
+    <h2 style="margin-top:12px">Sources</h2>
+    <div id="claudeSources" class="small"></div>
+    <h2 style="margin-top:12px">Usage</h2>
+    <pre id="claudeUsage"></pre>
+  </section>
+  <section style="margin-top:14px">
+    <h2>Research</h2>
+    <div class="row">
+      <input id="researchTopic" type="text" style="flex:1;min-width:220px" placeholder="e.g. afrobeats club lighting" maxlength="500">
+      <label class="small muted"><input id="researchDeep" type="checkbox"> Deeper (Opus)</label>
+      <button class="primary" id="researchGo">Research</button>
+    </div>
+    <div id="researchJobs" class="hist" style="margin-top:8px"></div>
+    <div id="researchBody"></div>
+  </section>
+  <section style="margin-top:14px">
+    <h2>Teaching</h2>
+    <div class="row">
+      <button id="teachRunBtn" class="primary">Teach now</button>
+      <span id="teachRunMsg" class="small"></span>
+    </div>
+    <h2 style="margin-top:10px">Review queue</h2>
+    <div id="reviewList"><div class="muted">nothing to review</div></div>
+    <h2 style="margin-top:10px">Recent corrections (Claude)</h2>
+    <div id="correctionsList"><div class="muted">none yet</div></div>
+  </section>
+</div>
+<div id="tab-history" class="tabpanel hidden">
+  <section>
+    <h2>History</h2>
+    <div id="historyList"></div>
+  </section>
+</div>
 </main>
 <script>
 const $ = s => document.querySelector(s);
@@ -154,6 +283,13 @@ const TOKEN = (() => {
   try { if (t) sessionStorage.setItem('lightai_token', t); return t || sessionStorage.getItem('lightai_token') || ''; } catch (e) { return t || ''; }
 })();
 if (TOKEN) { const sl = document.getElementById('stagelink'); if (sl) sl.href = '/stage?token=' + encodeURIComponent(TOKEN); }
+const SESSION = (() => {
+  try {
+    let s = sessionStorage.getItem('lightai_session');
+    if (!s) { s = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2); sessionStorage.setItem('lightai_session', s); }
+    return s;
+  } catch (e) { return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2); }
+})();
 const api = async (path, body) => {
   const headers = TOKEN ? {'X-LightAI-Token': TOKEN} : {};
   const r = await fetch(path, body === undefined ? {headers} : {method: 'POST', headers: {...headers, 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
@@ -181,8 +317,15 @@ async function refreshShow() {
   } catch (e) { b.textContent = 'show ?'; }
 }
 function showError(e) {
+  const msg = String((e && e.message) || e || 'error');
   const box = document.querySelector('#result');
-  if (box) box.innerHTML = `<div class="errbox">${esc(e && e.message || e)}</div>`;
+  if (box) box.innerHTML = `<div class="errbox">${esc(msg)}</div>`;
+  const g = document.querySelector('#globalerr');
+  if (g) {
+    g.textContent = msg; g.classList.remove('hidden');
+    clearTimeout(window._gerrT);
+    window._gerrT = setTimeout(() => g.classList.add('hidden'), 8000);
+  }
 }
 window.addEventListener('unhandledrejection', ev => showError(ev.reason));
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
@@ -254,7 +397,7 @@ $('#teach').onclick = async () => {
 };
 async function parse() {
   const text = $('#cmd').value.trim(); if (!text) return;
-  const r = await api('/plan', {text});
+  const r = await api('/plan', {text, session: SESSION});
   cur.cmd = r.command; cur.plan = r.plan; cur.tags = tagsFromSpans(r.command); cur.sel = null;
   $('#parsed').classList.remove('hidden');
   $('#conf').textContent = `${r.command.intent} ${(r.command.confidence * 100).toFixed(0)}% · ${r.command.latency_ms.toFixed(1)} ms`;
@@ -263,6 +406,16 @@ async function parse() {
   renderChips(); renderPlan(r.plan);
   $('#json').textContent = JSON.stringify(r, null, 2);
   hist(text, r.plan);
+  const words2 = text.split(/\s+/).filter(Boolean);
+  const moodWords = ['dreamy', 'energetic', 'hypnotic', 'ethereal', 'euphoric'];
+  const suggest = r.plan.mode === 'design' || r.plan.mode === 'clarify' || r.command.intent === 'none' || words2.length > 12
+    || /\bshows?\b/i.test(text) || moodWords.some(w => new RegExp('\\b' + w + '\\b', 'i').test(text));
+  const dsBtn = $('#designSuggest');
+  if (dsBtn) {
+    dsBtn.classList.toggle('hidden', !suggest); dsBtn.dataset.text = text;
+    dsBtn.classList.toggle('primary', r.plan.mode === 'design'); dsBtn.classList.toggle('warn', r.plan.mode !== 'design');
+  }
+  refreshHistorySoon();
   const live = ['set_bpm', 'blackout', 'blackout_release', 'stop_all'].includes(r.plan.intent);
   const sure = r.command.confidence >= 0.9 && !(r.command.ambiguities || []).some(a => a.startsWith('accepted '));
   if (['feedback', 'query.functions', 'query.fixtures', 'query.status'].concat(live && sure ? [r.plan.intent] : []).includes(r.plan.intent)
@@ -276,10 +429,11 @@ function renderPlan(p) {
   $('#assumptions').innerHTML = (p.assumptions || []).map(a => `<li>${esc(a.fact)} <span class="muted small">(${esc(a.source)})</span></li>`).join('') || '<li class="muted">none</li>';
   $('#actions').innerHTML = (p.actions || []).map(a => `<li><b>${esc(a.op)}</b> ${esc(a.describe || '')}</li>`).join('');
   $('#result').innerHTML = ''; $('#results').innerHTML = '';
-  $('#apply').classList.toggle('hidden', p.mode === 'clarify' || p.mode === 'info' && !(p.actions || []).length);
+  $('#apply').classList.toggle('hidden', p.mode === 'clarify' || p.mode === 'design' || p.mode === 'info' && !(p.actions || []).length);
   $('#preview').classList.toggle('hidden', !(p.followup && p.followup.preview));
   $('#keep').classList.add('hidden');
-  $('#apply').textContent = p.intent === 'propose_look' ? 'Play preview' : (p.mode === 'structural' ? 'Apply to show' : 'Run');
+  const stageEdit = (p.actions || []).some(a => a.op === 'edit_stage');
+  $('#apply').textContent = p.intent === 'propose_look' ? 'Play preview' : stageEdit ? 'Apply to the 3D stage' : (p.mode === 'structural' ? 'Apply to show' : 'Run');
   if (p.look && p.look.results) $('#results').innerHTML = table(p.look.results);
 }
 function table(rows) {
@@ -292,6 +446,7 @@ async function apply(extra = {}) {
   if (['delete_look', 'add_fixture', 'fixture_edit.readdress'].includes(p.intent) && !extra.allow_running_reload && !extra.allow_other_show && !confirm(p.summary + '\n\nApply this change to the show?')) return;
   const res = await api('/execute', {plan_id: p.plan_id, confirm: true, ...extra});
   showResult(res);
+  refreshHistorySoon();
   const blocked = (res.results || []).find(r => r.blocked);
   if (blocked) {
     const other = !!blocked.other_show;
@@ -309,6 +464,12 @@ async function apply(extra = {}) {
   if (p.intent === 'feedback' && p.followup && p.followup.update_plan_id) { $('#outcome').classList.remove('hidden'); offerFix(p.followup.update_plan_id, p.summary); }
   const st = (res.results || []).find(r => r.running);
   if (st) $('#results').innerHTML = table(st.running);
+  const stage = (res.results || []).find(r => r.op === 'edit_stage');
+  if (res.ok && stage) {  // a 3D-stage edit: an open /stage page reloads by itself when QLC+ saved it
+    const how = stage.saved === 'qlc' ? 'saved through QLC+: an open 3D stage page updates by itself' : 'saved to the file: reload an open 3D stage page';
+    $('#result').innerHTML += `<div class="small muted">${esc(how)} <button id="open3d" class="small">Open the 3D stage</button></div>`;
+    $('#open3d').onclick = () => window.open('/stage' + (TOKEN ? '?token=' + encodeURIComponent(TOKEN) : ''), 'lightai-stage');
+  }
 }
 function showResult(res) {
   const why = (res.results || []).find(r => r.note || r.error);
@@ -419,9 +580,657 @@ $('#newshow').onclick = async () => {
   refreshShow();
 };
 $('#newshowname').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); $('#newshow').click(); } };
+
+/* ==================== tabs ==================== */
+function refreshHistorySoon() { refreshHistory().catch(() => { /* ignore: opportunistic refresh */ }); }
+const TABS = ['command', 'design', 'claude', 'history'];
+function setTab(name) {
+  if (!TABS.includes(name)) name = 'command';
+  TABS.forEach(t => { const el = document.getElementById('tab-' + t); if (el) el.classList.toggle('hidden', t !== name); });
+  document.querySelectorAll('.tabbtn').forEach(b => b.classList.toggle('sel', b.dataset.tab === name));
+  try { localStorage.setItem('lightai_tab', name); } catch (e) { /* ignore */ }
+  if (name === 'design') { refreshDesignJobs(); refreshDesignShows(); }
+  else if (name === 'claude') { refreshClaudeRuns(); refreshResearchJobs(); refreshReview(); refreshCorrections(); }
+  else if (name === 'history') refreshHistory();
+}
+document.querySelectorAll('.tabbtn').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+window.name = 'lightai-console';  // the 3D stage page's 'lightai console' link comes back to this tab
+
+/* ==================== shared: plan -> confirm -> execute (with blocked handling) ==================== */
+async function executeWithBlocked(planId, outEl, extra = {}) {
+  let res;
+  try { res = await api('/execute', {plan_id: planId, confirm: true, ...extra}); }
+  catch (e) { if (outEl) outEl.innerHTML = `<div class="errbox">${esc(e.message || e)}</div>`; return null; }
+  const blocked = (res.results || []).find(r => r.blocked);
+  if (blocked) {
+    const other = !!blocked.other_show;
+    if (outEl) {
+      outEl.innerHTML = `<div class="warnbox">${esc(blocked.note)} <button class="warn" data-reexec>${other ? 'Apply to ' + esc(blocked.target || 'the main show') + ' and open it in QLC+' : 'Reload anyway'}</button></div>`;
+      const b = outEl.querySelector('[data-reexec]');
+      if (b) b.onclick = () => executeWithBlocked(planId, outEl, other ? {...extra, allow_other_show: true} : {...extra, allow_running_reload: true});
+    }
+    return res;
+  }
+  if (outEl) outEl.innerHTML = `<div class="${res.ok ? 'okbox' : 'errbox'}">${esc(res.ok ? 'done' : (res.clarify || 'not done'))}</div>`;
+  return res;
+}
+
+/* ==================== Design tab ==================== */
+let designJobsCache = [];
+let selectedJobId = null;
+let designPollTimer = null;
+
+async function startDesignJob() {
+  const text = $('#designText').value.trim();
+  if (!text) { showError('Type a design request first.'); return; }
+  const count = $('#designCount').value ? +$('#designCount').value : undefined;
+  const minutes = $('#designMinutes').value ? +$('#designMinutes').value : undefined;
+  const deep = $('#designDeep').checked;
+  try {
+    const r = await api('/design', {text, count, minutes, deep, session: SESSION});
+    await refreshDesignJobs();
+    selectJob(r.job.id);
+    refreshHistorySoon();
+  } catch (e) { showError(e); }
+}
+$('#designGo').onclick = () => startDesignJob();
+function designWithClaude(text) {
+  setTab('design');
+  $('#designText').value = text || '';
+  startDesignJob();
+}
+const dsBtn2 = $('#designSuggest');
+if (dsBtn2) dsBtn2.onclick = () => designWithClaude($('#designSuggest').dataset.text || $('#cmd').value.trim());
+
+async function refreshDesignJobs() {
+  try { designJobsCache = await api('/design?limit=30'); } catch (e) { showError(e); return; }
+  $('#designJobs').innerHTML = designJobsCache.map(j => {
+    const shows = (j.shows || []).filter(Boolean).join(', ');
+    return `<div data-id="${esc(j.id)}" class="${selectedJobId === j.id ? 'sel' : ''}">
+        <b>${esc((j.text || '').slice(0, 60))}</b><br>
+        <span class="muted small">${esc(j.status)}${shows ? ' · ' + esc(shows) : ''}</span>
+      </div>`;
+  }).join('') || '<div class="muted">No design jobs yet.</div>';
+  $('#designJobs').querySelectorAll('[data-id]').forEach(el => el.onclick = () => selectJob(el.dataset.id));
+}
+
+function selectJob(id) {
+  selectedJobId = id;
+  $('#designJobs').querySelectorAll('[data-id]').forEach(el => el.classList.toggle('sel', el.dataset.id === id));
+  if (designPollTimer) { clearInterval(designPollTimer); designPollTimer = null; }
+  pollJob();
+  designPollTimer = setInterval(pollJob, 1500);
+}
+
+async function pollJob() {
+  if (!selectedJobId) return;
+  let job;
+  try { job = await api('/design/' + encodeURIComponent(selectedJobId)); }
+  catch (e) { if (designPollTimer) { clearInterval(designPollTimer); designPollTimer = null; } showError(e); return; }
+  renderJob(job);
+  if (!['queued', 'running', 'repairing'].includes(job.status) && designPollTimer) { clearInterval(designPollTimer); designPollTimer = null; }
+}
+
+function renderJob(job) {
+  $('#designJobId').textContent = job.id;
+  const prog = (job.progress || []).map(p => `<div>${esc(new Date(p.t * 1000).toLocaleTimeString())} — ${esc(p.text)}</div>`).join('');
+  const errs = (job.errors || []).length ? `<div class="errbox"><b>Errors:</b><ul>${job.errors.map(e => `<li>${esc(e)}</li>`).join('')}</ul></div>` : '';
+  const warns = (job.warnings || []).length ? `<div class="warnbox"><b>Warnings:</b><ul>${job.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul></div>` : '';
+  const previews = (job.preview || []).map((s, i) => showCard(job, s, i)).join('')
+    || (job.status === 'done' ? '<div class="muted">no shows in this design</div>' : '');
+  const applyAll = (job.preview || []).length > 1 ? `<button data-act="applyall" class="good">Apply all</button>` : '';
+  $('#designJobBody').innerHTML = `
+      <div class="small muted">${esc(job.text)}</div>
+      <div class="row" style="margin:6px 0">
+        <span id="designJobStatus" class="badge">${esc(job.status)}</span>
+        ${job.deep ? '<span class="badge">opus</span>' : ''}
+        ${job.minutes ? `<span class="badge">${esc(job.minutes)} min</span>` : '<span class="badge">loop</span>'}
+        <button data-act="stage3d">Watch in 3D</button>
+        ${applyAll}
+      </div>
+      <div class="progresslog" id="designProgress">${prog}</div>
+      ${errs}${warns}
+      ${job.note ? `<div class="small muted">${esc(job.note)}</div>` : ''}
+      <div id="designPreviews">${previews}</div>
+      <div class="row" style="margin-top:10px">
+        <input id="refineText" type="text" placeholder="refine: e.g. make it slower and add more strobe" style="flex:1;min-width:200px">
+        <button id="refineGo">Refine</button>
+      </div>`;
+  const pel = document.getElementById('designProgress');
+  if (pel) pel.scrollTop = pel.scrollHeight;
+  document.querySelectorAll('#designJobBody [data-act]').forEach(b => b.onclick = () => handleJobAction(job, b));
+  const rg = document.getElementById('refineGo');
+  if (rg) rg.onclick = () => refineJob(job.id);
+}
+
+function handleJobAction(job, b) {
+  const act = b.dataset.act;
+  if (act === 'stage3d') { window.open('/stage' + (TOKEN ? ('?token=' + encodeURIComponent(TOKEN)) : ''), 'lightai-stage'); return; }
+  if (act === 'applyall') { applyShows(job.id, null, b).catch(showError); return; }
+  if (act === 'apply') { applyShows(job.id, [+b.dataset.idx], b).catch(showError); return; }
+  if (act === 'run') { runShow(+b.dataset.main, b).catch(showError); return; }
+  if (act === 'stop') { stopShow(+b.dataset.main, b).catch(showError); return; }
+  if (act === 'remove') { removeShow(+b.dataset.main, b).catch(showError); return; }
+  if (act === 'preview3d') { previewInSandbox(job.id, +b.dataset.idx, b).catch(showError); return; }
+}
+
+function showCard(job, s, i) {
+  const totalMs = (s.sections || []).reduce((a, x) => a + (x.ms || 0), 0);
+  const rows = (s.sections || []).map(sec => {
+    const layers = (sec.layers || []).map(l => {
+      const extra = [];
+      if (l.order) extra.push(esc(l.order));
+      if (l.aim) extra.push('aim ' + esc(l.aim));
+      if (l.colors && l.colors.length) extra.push(esc(l.colors.join('/')));
+      const base = `${esc(l.layer)}: ${esc(l.recipe)} on ${esc((l.targets || []).join('/'))} (${l.fixtures} fixture${l.fixtures === 1 ? '' : 's'})`;
+      return `<span class="chip">${base}${extra.length ? ' · ' + extra.join(' · ') : ''}</span>`;
+    }).join(' ');
+    return `<tr><td>${esc(sec.name)}</td><td>${((sec.ms || 0) / 1000).toFixed(1)}s</td><td>${((sec.fade_ms || 0) / 1000).toFixed(1)}s</td><td>${layers}</td></tr>`;
+  }).join('');
+  const applied = (job.applied || []).find(a => a.title === s.title);
+  const notes = (job.result && job.result.notes) ? `<div class="small muted" style="margin-top:6px">${esc(job.result.notes)}</div>` : '';
+  const assumptions = (s.assumptions || []).length
+    ? `<details><summary class="muted small">Assumptions (${s.assumptions.length})</summary><ul>${s.assumptions.map(a => `<li>${esc(a.fact || JSON.stringify(a))}</li>`).join('')}</ul></details>` : '';
+  const skipped = (s.skipped || []).length
+    ? `<details><summary class="muted small">Skipped (${s.skipped.length})</summary><ul>${s.skipped.map(x => `<li>${esc(JSON.stringify(x))}</li>`).join('')}</ul></details>` : '';
+  const sandboxBtn = `<button data-act="preview3d" data-idx="${i}">Preview in 3D (sandbox)</button>`;
+  const controls = applied
+    ? `<span class="badge ok applied-badge">applied as #${applied.main_id}</span>
+       <span class="runstat small muted" data-main="${applied.main_id}"></span>
+       <button data-act="run" data-main="${applied.main_id}">Run</button>
+       <button data-act="stop" data-main="${applied.main_id}">Stop</button>
+       <button data-act="remove" data-main="${applied.main_id}" class="danger">Remove</button>
+       ${sandboxBtn}`
+    : `<button data-act="apply" data-idx="${i}" class="good">Apply</button>
+       ${sandboxBtn}`;
+  return `<div class="card" data-idx="${i}" data-title="${esc(s.title)}">
+      <div class="row" style="justify-content:space-between">
+        <b>${esc(s.title)}</b>
+        <span class="badge">${esc(s.kind)} · ${(totalMs / 60000).toFixed(1)} min · ${s.functions} fn</span>
+      </div>
+      <table style="margin-top:6px"><tr><th>Section</th><th>Length</th><th>Crossfade</th><th>Layers</th></tr>${rows}</table>
+      ${notes}${assumptions}${skipped}
+      <div class="row" style="margin-top:8px">${controls}</div>
+    </div>`;
+}
+
+async function applyShows(jobId, idx, btn) {
+  let r;
+  try { r = await api(`/design/${encodeURIComponent(jobId)}/apply`, idx ? {shows: idx} : {}); }
+  catch (e) { showError(e); return; }
+  const p = r.plan;
+  const msgText = p.summary + ((p.warnings || []).length ? '\n\n' + p.warnings.join('\n') : '');
+  if (!confirm(msgText)) return;
+  const out = document.createElement('div'); out.className = 'small';
+  btn.insertAdjacentElement('afterend', out);
+  await executeWithBlocked(p.plan_id, out);
+  await refreshDesignJobs();
+  selectJob(jobId);
+  await refreshDesignShows();
+  refreshShow();
+  refreshHistorySoon();
+}
+
+async function removeShow(mainId, btn) {
+  let r;
+  try { r = await api(`/design/show/${mainId}/remove`, {}); }
+  catch (e) { showError(e); return; }
+  const p = r.plan;
+  if (!confirm(p.summary)) return;
+  const out = document.createElement('div'); out.className = 'small';
+  btn.insertAdjacentElement('afterend', out);
+  await executeWithBlocked(p.plan_id, out);
+  await refreshDesignJobs();
+  if (selectedJobId) selectJob(selectedJobId);
+  await refreshDesignShows();
+  refreshShow();
+  refreshHistorySoon();
+}
+
+function setRunStat(mainId, text) {
+  document.querySelectorAll('.runstat[data-main="' + Number(mainId) + '"]').forEach(el => el.textContent = text);
+}
+async function runShow(mainId) { try { await api(`/design/show/${mainId}/run`, {}); setRunStat(mainId, 'running'); } catch (e) { showError(e); } }
+async function stopShow(mainId) { try { await api(`/design/show/${mainId}/stop`, {}); setRunStat(mainId, 'stopped'); } catch (e) { showError(e); } }
+
+async function refreshDesignShows() {
+  let rows;
+  try { rows = await api('/design/shows'); } catch (e) { showError(e); return; }
+  $('#designShowsList').innerHTML = rows.map(s => `
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <b>${esc(s.title)}</b>
+          <span class="badge">${esc(s.kind)} · ${s.functions} fn</span>
+        </div>
+        <div class="small muted">${esc((s.sections || []).join(' → '))}</div>
+        <div class="small muted">${esc(s.text || '')}</div>
+        <div class="row" style="margin-top:6px">
+          <span class="runstat small muted" data-main="${s.main_id}"></span>
+          <button data-act="run" data-main="${s.main_id}">Run</button>
+          <button data-act="stop" data-main="${s.main_id}">Stop</button>
+          <button data-act="remove" data-main="${s.main_id}" class="danger">Remove</button>
+        </div>
+      </div>`).join('') || '<div class="muted">No designed shows yet.</div>';
+  $('#designShowsList').querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
+    const main = +b.dataset.main;
+    if (b.dataset.act === 'run') runShow(main).catch(showError);
+    else if (b.dataset.act === 'stop') stopShow(main).catch(showError);
+    else if (b.dataset.act === 'remove') removeShow(main, b).catch(showError);
+  });
+}
+
+document.getElementById("rotateStart").onclick = async () => {
+  const minutes = +document.getElementById("rotateMinutes").value || 20;
+  const msg = document.getElementById("rotateMsg");
+  try {
+    const r = await api("/design/rotate", {minutes});
+    const row = (r.results || []).find(x => x.op === "start_rotation") || {};
+    msg.innerHTML = r.ok
+      ? `<span class="okbox">rotating ${(row.main_ids || []).length} show(s), ${row.interval_s ? (row.interval_s / 60).toFixed(1) : minutes} min each</span>`
+      : `<span class="errbox">not started</span>`;
+  } catch (e) { showError(e); }
+};
+document.getElementById("rotateStop").onclick = async () => {
+  const msg = document.getElementById("rotateMsg");
+  try {
+    const r = await api("/design/rotate/stop", {});
+    msg.innerHTML = r.ok ? '<span class="muted">rotation stopped</span>' : '<span class="errbox">not stopped</span>';
+  } catch (e) { showError(e); }
+};
+
+async function refineJob(jobId) {
+  const input = document.getElementById('refineText');
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+  let r;
+  try { r = await api(`/design/${encodeURIComponent(jobId)}/refine`, {text, deep: false}); }
+  catch (e) { showError(e); return; }
+  await refreshDesignJobs();
+  selectJob(r.job.id);
+  refreshHistorySoon();
+}
+
+let sandboxState = {url: null, shows: []};
+async function previewInSandbox(jobId, idx, btn) {
+  const origText = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Opening sandbox… (this can take ~20s)';
+  try {
+    const r = await api(`/design/${encodeURIComponent(jobId)}/preview3d`, {shows: [idx]});
+    if (r.url) sandboxState.url = r.url;
+    const seen = new Set(sandboxState.shows.map(s => s.main_id));
+    (r.shows || []).forEach(s => { if (!seen.has(s.main_id)) { sandboxState.shows.push(s); seen.add(s.main_id); } });
+    renderSandboxPanel();
+    $('#sandboxMsg').innerHTML = r.note ? `<span class="muted">${esc(r.note)}</span>` : '';
+    if (r.url) window.open(r.url, 'lightai-sandbox');
+  } catch (e) { showError(e); }
+  finally { btn.disabled = false; btn.textContent = origText; }
+}
+function renderSandboxPanel() {
+  const sec = document.getElementById('sandboxSection');
+  if (!sec) return;
+  sec.classList.toggle('hidden', sandboxState.shows.length === 0 && !sandboxState.url);
+  $('#sandboxShows').innerHTML = sandboxState.shows.map(s => `
+      <div class="row" style="margin:4px 0">
+        <span>${esc(s.title)}</span>
+        <button data-sbplay="${s.main_id}" class="good small">Play in sandbox</button>
+      </div>`).join('') || '<div class="muted small">no shows sent to the sandbox yet</div>';
+  $('#sandboxShows').querySelectorAll('[data-sbplay]').forEach(b => b.onclick = () => sandboxPlay(+b.dataset.sbplay));
+}
+async function sandboxPlay(mainId) {
+  try { await api('/sandbox/play', {main_id: mainId}); $('#sandboxMsg').innerHTML = `<span class="okbox">playing in sandbox (function ${mainId})</span>`; }
+  catch (e) { showError(e); }
+}
+async function sandboxStop() {
+  try { await api('/sandbox/stop', {}); $('#sandboxMsg').innerHTML = '<span class="muted">sandbox stopped</span>'; }
+  catch (e) { showError(e); }
+}
+const sandboxStopBtn = document.getElementById('sandboxStop');
+if (sandboxStopBtn) sandboxStopBtn.onclick = () => sandboxStop();
+const sandboxReopenBtn = document.getElementById('sandboxReopen');
+if (sandboxReopenBtn) sandboxReopenBtn.onclick = () => { if (sandboxState.url) window.open(sandboxState.url, 'lightai-sandbox'); };
+
+/* ==================== Claude tab ==================== */
+function fmtTok(n) { return (n || 0).toLocaleString(); }
+function fmtTime(s) { if (!s) return ''; try { return new Date(s).toLocaleString(); } catch (e) { return s; } }
+
+async function refreshClaudeRuns() {
+  let data;
+  try { data = await api('/claude/runs?limit=100'); } catch (e) { showError(e); return; }
+  renderClaudeTotals(data.totals || {});
+  renderClaudeRuns(data.runs || []);
+}
+function renderClaudeTotals(totals) {
+  const t = totals.today || {}, w = totals.last_7_days || {};
+  $('#claudeTotals').innerHTML = `<table>
+      <tr><th></th><th>Runs</th><th>In</th><th>Out</th><th>Cache read</th><th>Cache write</th><th>Cost</th></tr>
+      <tr><td>Today</td><td>${t.runs || 0}</td><td>${fmtTok(t.input_tokens)}</td><td>${fmtTok(t.output_tokens)}</td><td>${fmtTok(t.cache_read_input_tokens)}</td><td>${fmtTok(t.cache_creation_input_tokens)}</td><td>$${(t.cost_usd || 0).toFixed(3)}</td></tr>
+      <tr><td>7 days</td><td>${w.runs || 0}</td><td>${fmtTok(w.input_tokens)}</td><td>${fmtTok(w.output_tokens)}</td><td>${fmtTok(w.cache_read_input_tokens)}</td><td>${fmtTok(w.cache_creation_input_tokens)}</td><td>$${(w.cost_usd || 0).toFixed(3)}</td></tr>
+    </table>`;
+  const lim = totals.limits;
+  if (lim) {
+    const bar = (label, win) => {
+      if (!win) return '';
+      const pct = Math.max(0, Math.min(100, Math.round((win.utilization || 0) * 100)));
+      const resets = win.resets_at ? fmtTime(win.resets_at) : '?';
+      return `<div class="small" style="margin-top:6px">${esc(label)}: ${pct}% <span class="muted">(resets ${esc(resets)})</span><div class="meter"><div style="width:${pct}%"></div></div></div>`;
+    };
+    $('#claudeLimits').innerHTML = bar('5-hour window', lim.five_hour) + bar('7-day window', lim.seven_day);
+  } else {
+    $('#claudeLimits').innerHTML = '';
+  }
+}
+let claudeRunsCache = [];
+function renderClaudeRuns(runs) {
+  claudeRunsCache = runs;
+  $('#claudeRunsBody').innerHTML = runs.map((r, i) => `
+      <tr data-i="${i}" style="cursor:pointer">
+        <td>${esc(fmtTime(r.started))}</td>
+        <td>${esc(r.kind || '')}</td>
+        <td title="${esc(r.request || '')}">${esc((r.request || '').slice(0, 60))}</td>
+        <td>${esc(r.model || '')}</td>
+        <td class="${r.status === 'ok' ? 'okbox' : (r.status === 'error' ? 'errbox' : 'warnbox')}">${esc(r.status || '')}</td>
+        <td>${r.duration_ms != null ? (r.duration_ms / 1000).toFixed(1) + 's' : ''}</td>
+        <td>${fmtTok(r.input_tokens)}/${fmtTok(r.output_tokens)}/${fmtTok(r.cache_read_input_tokens)}</td>
+        <td>${r.cost_usd != null ? '$' + Number(r.cost_usd).toFixed(3) : ''}</td>
+      </tr>`).join('') || '<tr><td colspan="8" class="muted">no runs yet</td></tr>';
+  $('#claudeRunsBody').querySelectorAll('tr[data-i]').forEach(tr => tr.onclick = () => openClaudeRun(claudeRunsCache[+tr.dataset.i].run_id));
+}
+const STEP_ICON = {init: '▶', text: '💬', thinking: '…', search: '🔎', fetch: '🌐', read: '📄', tool: '🔧', tool_result: '↩', result: '✔', error: '⚠'};
+function collapsible(text) {
+  text = text || '';
+  if (text.length <= 300) return esc(text);
+  const id = 'tl' + Math.random().toString(36).slice(2);
+  return `${esc(text.slice(0, 300))}… <a href="#" data-more="${id}">more</a><span id="${id}" class="hidden">${esc(text.slice(300))}</span>`;
+}
+function renderTimelineStep(s) {
+  const icon = STEP_ICON[s.kind] || '•';
+  let body;
+  if (s.kind === 'search') body = 'search: ' + esc(s.title || '');
+  else if (s.kind === 'fetch' && s.url && /^https?:\/\//i.test(s.url)) body = 'fetch: <a href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.url) + '</a>';
+  else if (s.kind === 'fetch') body = 'fetch: ' + esc(s.url || s.title || '');
+  else if (s.kind === 'read') body = 'read: ' + esc(s.title || '');
+  else if (s.kind === 'text' || s.kind === 'thinking') body = collapsible(s.detail || s.title);
+  else body = esc(s.title || '') + (s.detail ? ' — ' + esc(s.detail.slice(0, 300)) : '');
+  return `<div class="small" style="padding:4px 0;border-bottom:1px dashed var(--line)"><b>${icon} ${esc(s.kind)}</b> ${body}</div>`;
+}
+async function openClaudeRun(runId) {
+  let data;
+  try { data = await api('/claude/runs/' + encodeURIComponent(runId)); } catch (e) { showError(e); return; }
+  $('#claudeRunDetail').classList.remove('hidden');
+  $('#claudeRunId').textContent = runId;
+  $('#claudeTimeline').innerHTML = (data.timeline || []).map(renderTimelineStep).join('') || '<div class="muted">no timeline</div>';
+  $('#claudeTimeline').querySelectorAll('a[data-more]').forEach(a => a.onclick = ev => {
+    ev.preventDefault();
+    const span = document.getElementById(a.dataset.more);
+    if (span) { span.classList.remove('hidden'); a.remove(); }
+  });
+  const srcs = (data.sources || []).filter(s => /^https?:\/\//i.test(s.url || ''));
+  $('#claudeSources').innerHTML = srcs.length
+    ? srcs.map(s => `<div><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title || s.url)}</a></div>`).join('')
+    : '<div class="muted">none</div>';
+  $('#claudeUsage').textContent = JSON.stringify(data.summary || {}, null, 2);
+}
+
+/* ==================== Research ==================== */
+let researchPollTimer = null;
+let selectedResearchId = null;
+
+async function startResearch() {
+  const topicEl = document.getElementById("researchTopic");
+  const topic = topicEl.value.trim();
+  if (!topic) { showError("Type a research topic first."); return; }
+  const deep = document.getElementById("researchDeep").checked;
+  try {
+    const job = await api("/research", {topic, deep});
+    await refreshResearchJobs();
+    selectResearch(job.id);
+  } catch (e) { showError(e); }
+}
+document.getElementById("researchGo").onclick = () => startResearch();
+
+async function refreshResearchJobs() {
+  let jobs;
+  try { jobs = await api("/research"); } catch (e) { showError(e); return; }
+  document.getElementById("researchJobs").innerHTML = jobs.map(j => `
+      <div data-id="${esc(j.id)}" class="${selectedResearchId === j.id ? 'sel' : ''}">
+        <b>${esc(j.topic)}</b> <span class="muted small">${esc(j.status)}</span>
+      </div>`).join("") || '<div class="muted">No research jobs yet.</div>';
+  document.querySelectorAll("#researchJobs [data-id]").forEach(el => el.onclick = () => selectResearch(el.dataset.id));
+}
+
+function selectResearch(id) {
+  selectedResearchId = id;
+  document.querySelectorAll("#researchJobs [data-id]").forEach(el => el.classList.toggle("sel", el.dataset.id === id));
+  if (researchPollTimer) { clearInterval(researchPollTimer); researchPollTimer = null; }
+  pollResearch();
+  researchPollTimer = setInterval(pollResearch, 2000);
+}
+
+async function pollResearch() {
+  if (!selectedResearchId) return;
+  let job;
+  try { job = await api("/research/" + encodeURIComponent(selectedResearchId)); }
+  catch (e) { if (researchPollTimer) { clearInterval(researchPollTimer); researchPollTimer = null; } showError(e); return; }
+  renderResearch(job);
+  if (job.status !== "running" && researchPollTimer) { clearInterval(researchPollTimer); researchPollTimer = null; }
+}
+
+function renderResearch(job) {
+  const prog = (job.progress || []).map(p => `<div>${esc(new Date(p.t * 1000).toLocaleTimeString())} — ${esc(p.text)}</div>`).join("");
+  let resultHtml = "";
+  if (job.result) {
+    if (job.result.ok) {
+      resultHtml = `<div class="okbox small">report: ${esc(job.result.report_path || "")}</div>`
+        + ((job.result.moods_added || []).length ? `<div class="small">moods added: ${esc(job.result.moods_added.join(", "))}</div>` : "")
+        + ((job.result.moods_extended || []).length ? `<div class="small">moods extended: ${esc(job.result.moods_extended.join(", "))}</div>` : "")
+        + ((job.result.dropped || []).length ? `<div class="warnbox small">dropped: ${esc(job.result.dropped.join("; "))}</div>` : "");
+    } else {
+      resultHtml = `<div class="errbox small">${esc(job.result.error || "research failed")}</div>`;
+    }
+  }
+  document.getElementById("researchBody").innerHTML = `
+      <div class="small muted">${esc(job.topic)}</div>
+      <span id="researchStatus" class="badge">${esc(job.status)}</span>
+      <div class="progresslog" style="margin-top:6px">${prog}</div>
+      ${resultHtml}`;
+}
+
+/* ==================== Teaching ==================== */
+function highlightMarkup(marked) {
+  marked = marked || "";
+  const re = /\[([a-z_]+):([^\]]*)\]/gi;
+  let out = "", last = 0, m;
+  while ((m = re.exec(marked)) !== null) {
+    out += esc(marked.slice(last, m.index));
+    out += `<span class="chip s-${esc(m[1])}">${esc(m[2])}</span>`;
+    last = m.index + m[0].length;
+  }
+  out += esc(marked.slice(last));
+  return out;
+}
+
+document.getElementById("teachRunBtn").onclick = async () => {
+  const msg = document.getElementById("teachRunMsg");
+  try {
+    const r = await api("/teach/run", {});
+    msg.innerHTML = `<span class="okbox">sessions ${r.sessions} · labeled ${r.labeled} · queued ${r.queued} `
+      + `· rejected ${r.rejected} · terms ${r.terms} · runs ${(r.runs || []).length}</span>`;
+    await refreshReview();
+    await refreshCorrections();
+  } catch (e) { showError(e); }
+};
+
+async function refreshReview() {
+  let rows;
+  try { rows = await api("/review?limit=100"); } catch (e) { showError(e); return; }
+  document.getElementById("reviewList").innerHTML = rows.map(r => {
+    if (r.kind === "term") {
+      return `<div class="card">
+          <b>${esc(r.word)}</b> <span class="badge">${esc(r.term_kind || "term")}</span>
+          <div class="small">${esc(r.meaning || "")}</div>
+          <button data-dismiss-ts="${esc(r.ts)}" data-dismiss-text="${esc(r.word)}" class="small">Dismiss</button>
+        </div>`;
+    }
+    const corrected = r.corrected || {};
+    return `<div class="card">
+        <div><b>${esc(r.text)}</b> <span class="badge">${esc(corrected.intent || "")}</span> <span class="small muted">conf ${esc(r.confidence)}</span></div>
+        <div class="small">${highlightMarkup(corrected.marked)}</div>
+        ${r.reason ? `<div class="small muted">${esc(r.reason)}</div>` : ""}
+        ${r.problem ? `<div class="warnbox small">${esc(r.problem)}</div>` : ""}
+        <div class="row" style="margin-top:4px">
+          ${r.problem ? "" : `<button data-accept-ts="${esc(r.ts)}" data-accept-text="${esc(r.text)}" class="good small">Accept</button>`}
+          <button data-dismiss-ts="${esc(r.ts)}" data-dismiss-text="${esc(r.text)}" class="small">Dismiss</button>
+        </div>
+      </div>`;
+  }).join("") || '<div class="muted">Nothing to review.</div>';
+  document.querySelectorAll("[data-accept-ts]").forEach(b => b.onclick = async () => {
+    try { await api("/review/accept", {ts: b.dataset.acceptTs, text: b.dataset.acceptText}); await refreshReview(); await refreshCorrections(); }
+    catch (e) { showError(e); }
+  });
+  document.querySelectorAll("[data-dismiss-ts]").forEach(b => b.onclick = async () => {
+    try { await api("/review/dismiss", {ts: b.dataset.dismissTs, text: b.dataset.dismissText}); await refreshReview(); }
+    catch (e) { showError(e); }
+  });
+}
+
+async function refreshCorrections() {
+  let rows;
+  try { rows = await api("/corrections?source=claude&limit=100"); } catch (e) { showError(e); return; }
+  document.getElementById("correctionsList").innerHTML = rows.slice().reverse().map(r => {
+    const corrected = r.corrected || {};
+    const canUndo = r.accepted && !r.undone;
+    const stateBadge = r.undone ? '<span class="badge bad">undone</span>' : (r.accepted ? '<span class="badge ok">accepted</span>' : "");
+    return `<div class="card">
+        <div><b>${esc(r.text)}</b> <span class="badge">${esc(corrected.intent || "")}</span> <span class="small muted">conf ${esc(r.confidence)}</span> ${stateBadge}</div>
+        <div class="small">${highlightMarkup(corrected.marked)}</div>
+        ${(r.evidence || []).length ? `<div class="small muted">evidence: ${esc(r.evidence.join(", "))}</div>` : ""}
+        ${canUndo ? `<button data-undo-ts="${esc(r.ts)}" data-undo-text="${esc(r.text)}" class="warn small">Undo</button>` : ""}
+      </div>`;
+  }).join("") || '<div class="muted">No Claude corrections yet.</div>';
+  document.querySelectorAll("[data-undo-ts]").forEach(b => b.onclick = async () => {
+    try { await api("/corrections/undo", {ts: b.dataset.undoTs, text: b.dataset.undoText}); await refreshCorrections(); }
+    catch (e) { showError(e); }
+  });
+}
+
+/* ==================== History tab ==================== */
+let historyRows = [];
+async function refreshHistory() {
+  try { historyRows = await api('/history?limit=100'); } catch (e) { showError(e); return; }
+  renderHistory();
+}
+function renderHistory() {
+  const rowsById = {};
+  historyRows.forEach(r => { if (r.plan_id) rowsById[r.plan_id] = r; });
+  $('#historyList').innerHTML = historyRows.map(r => {
+    const modeBadge = r.mode ? `<span class="badge">${esc(r.mode)}</span>` : '';
+    const correction = r.corrects ? `<div class="small muted">correction of "${esc((rowsById[r.corrects] || {}).text || r.corrects)}"</div>` : '';
+    let execBit = '';
+    if ('executed' in r) execBit = `<span class="${r.executed ? 'okbox' : 'errbox'}">${r.executed ? '✓' : '✗'}</span> <span class="small muted">${esc(r.result || '')}</span>`;
+    const designLink = r.design_job ? ` <button data-designjob="${esc(r.design_job)}" class="small">open in Design</button>` : '';
+    let actions = '';
+    if (r.plan_id) {
+      actions = `<div class="row" style="margin-top:4px">
+            <button data-wrong="${esc(r.plan_id)}" class="warn small">Wrong</button>
+            <button data-meant="${esc(r.plan_id)}" class="small">What I meant…</button>
+          </div>
+          <div class="row hidden" id="meant-${esc(r.plan_id)}" style="margin-top:4px">
+            <input type="text" id="meantinput-${esc(r.plan_id)}" placeholder="what did you mean" style="flex:1;min-width:160px">
+            <button data-meantgo="${esc(r.plan_id)}" class="small primary">Send</button>
+          </div>
+          <div id="correctout-${esc(r.plan_id)}"></div>`;
+    }
+    return `<div class="hitem"${r.plan_id ? ` data-planid="${esc(r.plan_id)}"` : ''}>
+          <div class="hrow user">${esc(r.text || '')}</div>
+          <div class="hrow bot">${modeBadge} ${esc(r.summary || r.intent || '')}${designLink}</div>
+          ${correction}
+          <div class="small">${execBit}</div>
+          ${actions}
+        </div>`;
+  }).join('') || '<div class="muted">No history yet.</div>';
+  wireHistoryActions();
+  const list = $('#historyList'); if (list) list.scrollTop = list.scrollHeight;
+}
+function wireHistoryActions() {
+  document.querySelectorAll('[data-designjob]').forEach(b => b.onclick = () => { setTab('design'); refreshDesignJobs().then(() => selectJob(b.dataset.designjob)); });
+  document.querySelectorAll('[data-wrong]').forEach(b => b.onclick = () => sendCorrection(b.dataset.wrong, ''));
+  document.querySelectorAll('[data-meant]').forEach(b => b.onclick = () => {
+    const box = document.getElementById('meant-' + b.dataset.meant);
+    if (box) box.classList.toggle('hidden');
+  });
+  document.querySelectorAll('[data-meantgo]').forEach(b => b.onclick = () => {
+    const id = b.dataset.meantgo;
+    const input = document.getElementById('meantinput-' + id);
+    sendCorrection(id, input ? input.value.trim() : '');
+  });
+}
+async function sendCorrection(planId, text) {
+  let r;
+  try { r = await api('/correct', {plan_id: planId, text, session: SESSION}); }
+  catch (e) { showError(e); return; }
+  await refreshHistory();
+  const out = document.getElementById('correctout-' + r.plan.plan_id);
+  if (out) { out.innerHTML = renderInlinePlan(r.plan); wireInlinePlan(out, r.plan); }
+}
+function renderInlinePlan(plan) {
+  const warn = (plan.warnings || []).map(w => '⚠ ' + esc(w)).join('<br>');
+  const runLabel = plan.intent === 'propose_look' ? 'Play preview' : (plan.mode === 'structural' ? 'Apply to show' : 'Run');
+  const runBtn = plan.mode !== 'clarify' && plan.mode !== 'design' ? `<button data-runplan class="primary small" style="margin-top:4px">${esc(runLabel)}</button>` : '';
+  const undo = (plan.followup && plan.followup.undo_plan_id)
+    ? `<div class="row" style="margin-top:4px"><button data-undo="${esc(plan.followup.undo_plan_id)}" class="warn small">Undo the previous change (${esc(plan.followup.undo_summary || '')})</button></div>` : '';
+  return `<div class="small" style="margin-top:6px;padding:6px;border:1px solid var(--line);border-radius:6px">
+        <div><b>${esc(plan.summary)}</b> <span class="badge">${esc(plan.mode)}</span></div>
+        ${warn ? `<div class="warnbox">${warn}</div>` : ''}
+        ${runBtn}
+        ${undo}
+        <div data-out></div>
+      </div>`;
+}
+function wireInlinePlan(container, plan) {
+  const runBtn = container.querySelector('[data-runplan]');
+  if (runBtn) runBtn.onclick = async () => {
+    if (['delete_look', 'add_fixture', 'fixture_edit.readdress'].includes(plan.intent) && !confirm(plan.summary + '\n\nApply this change to the show?')) return;
+    const out = container.querySelector('[data-out]') || container;
+    await executeWithBlocked(plan.plan_id, out);
+    refreshShow(); refreshHistorySoon();
+  };
+  const undoBtn = container.querySelector('[data-undo]');
+  if (undoBtn) undoBtn.onclick = async () => {
+    if (!confirm('Undo the previous change?')) return;
+    const out = document.createElement('div'); container.appendChild(out);
+    await executeWithBlocked(undoBtn.dataset.undo, out);
+    refreshShow(); refreshHistorySoon();
+  };
+}
+
+/* ==================== stale re-aim (header) ==================== */
+async function checkStale() {
+  let s;
+  try { s = await api("/stage/stale"); } catch (e) { return; }
+  const n = (s.looks || []).length + (s.designs || []).length;
+  const b = document.getElementById("reaimBtn");
+  if (b) { b.classList.toggle("hidden", n === 0); b.textContent = `Re-aim after layout change (${n})`; }
+}
+const reaimBtn = document.getElementById("reaimBtn");
+if (reaimBtn) reaimBtn.onclick = async () => {
+  let r;
+  try { r = await api("/reaim", {}); } catch (e) { showError(e); return; }
+  const p = r.plan;
+  if (!confirm(p.summary)) return;
+  await executeWithBlocked(p.plan_id, document.getElementById("reaimMsg"));
+  refreshShow();
+  checkStale();
+};
+
 init();
 refreshShow();
 setInterval(refreshShow, 15000);
+checkStale();
+setInterval(checkStale, 60000);
+let initialTab = 'command';
+try { initialTab = localStorage.getItem('lightai_tab') || 'command'; } catch (e) { /* ignore */ }
+setTab(initialTab);
+setInterval(() => { if (!document.hidden && !$('#tab-claude').classList.contains('hidden')) refreshClaudeRuns(); }, 10000);
 </script>
 </body>
 </html>

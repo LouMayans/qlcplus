@@ -49,6 +49,8 @@ class LightCommand(BaseModel):
     ambiguities: list[str] = Field(default_factory=list)
     needs_confirmation: bool = False
     clarify: Optional[str] = None
+    corrects: Optional[str] = None  # plan_id of the command this one corrects
+    spatial: dict[str, Any] = Field(default_factory=dict)  # order / aim / spread read from the words (3D stage)
     latency_ms: float = 0.0
 
     def first(self, slot: str) -> Optional[SlotValue]:

@@ -178,3 +178,30 @@
 - text: "move fixture 16 to universe 1 address 300"
   intent: fixture_edit.readdress
   expect: {target: [16], address: {universe: 0, address: 299}}
+# --- iteration 10 (labels v4): whole shows go to Claude; corrections re-plan the previous command; new effect words
+- text: "Can you create 3 different Shows that resemble fast strobing but changing in light a dreamy way"
+  intent: design_show
+  slots: ignore  # the designer reads the words itself
+- text: "design a 20 minute techno show for the drop"
+  intent: design_show
+  slots: ignore
+- text: "make me a dreamy show using the spots and the tetras"
+  intent: design_show
+  slots: ignore
+- text: "i said spots not washes"
+  intent: correction
+  expect: {target_zone: spots}
+  plan: refuse  # alone there is nothing to correct: it asks for the whole command
+- text: "you misunderstood me"
+  intent: correction
+  expect: {}
+  plan: refuse
+- text: "pink pixel wave on the tetras"
+  intent: create_look
+  expect: {target_zone: tetras, color: [pink], movement: pixel_wave}
+- text: "slow color morph on the washes"
+  intent: create_look
+  expect: {target_zone: washes, movement: color_morph, rate: {word: slow}}
+- text: "Create a yellow strobing lightshow with all of the fixtures "
+  intent: design_show
+  slots: ignore  # the start of the operator's own command (2026-09-28; the full one also asked for a button): v7 said add_widget at 0.998

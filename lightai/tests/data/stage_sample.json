@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "units": "in",
+  "room": {"width": 480, "depth": 360, "height": 180, "haze": 0.3},
+  "anchor": [240, 180, 0],
+  "fixtures": {
+    "1": {"model": "Test/Mover", "pos": [120, 60, 170], "rot": [0, 0, 0], "hang": "hung"},
+    "2": {"model": "Test/Mover", "pos": [360, 60, 170], "rot": [0, 0, 0], "hang": "hung"},
+    "3": {"model": "Test/Mover", "pos": [120, 300, 170], "rot": [0, 0, 0], "hang": "hung", "invertPan": true, "panOffset": 10},
+    "4": {"model": "Test/Mover", "pos": [360, 300, 170], "rot": [0, 0, 90], "hang": "hung", "invertTilt": true, "tiltOffset": -5},
+    "5": {"model": "Test/Mover", "pos": [240, 20, 0], "rot": [0, 0, 0], "hang": "floor"},
+    "6": {"model": "Test/Par", "pos": [30, 180, 90], "rot": [0, 0, -90], "hang": "wall"},
+    "7": {"model": "Test/Par", "pos": [450, 180, 90], "rot": [0, 0, 90], "hang": "wall"}
+  },
+  "models": {},
+  "objects": [
+    {"id": "o1", "prop": "dj", "name": "DJ console", "category": "dj", "aliases": ["the booth", "dj", "dj booth"], "pos": [240, 40, 24]},
+    {"id": "o2", "prop": "floor", "name": "Dance floor", "category": "floor_area", "aliases": [], "pos": [240, 180, 0]},
+    {"id": "o3", "prop": "pt", "name": "Dance floor centre", "category": "point", "aliases": ["middle of the floor"], "pos": [240, 180, 0]},
+    {"id": "o4", "prop": "bar", "name": "Bar", "category": "bar", "aliases": ["the bar"], "pos": [240, 340, 0]}
+  ],
+  "propDefs": {
+    "floor": {"name": "Dance floor", "parts": [{"shape": "box", "size": [240, 200, 1], "pos": [0, 0, 0]}]},
+    "bar": {"name": "Bar", "parts": [{"shape": "box", "size": [200, 30, 42], "pos": [0, 0, 21]}]},
+    "dj": {"name": "DJ", "parts": [{"shape": "box", "size": [80, 30, 40], "pos": [0, 0, 20]}]},
+    "pt": {"name": "Point", "parts": []}
+  }
+}

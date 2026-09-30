@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic sample hand-built for lightai tests, following the documented xLights .xsq layout
+     (cross-checked against a real xLights export, teslamotors/light-show on GitHub, GPL-3.0).
+     Not a real captured show. -->
+<xsequence BaseChannel="0" ChanCtrlBasic="0" ChanCtrlColor="0" FixedPointTiming="1">
+  <head>
+    <version>2023.20</version>
+    <author>Test Rig</author>
+    <song>Neon Nights</song>
+    <artist>DJ Synthetic</artist>
+    <sequenceTiming>25 ms</sequenceTiming>
+    <sequenceType>Media</sequenceType>
+    <mediaFile>neon_nights.mp3</mediaFile>
+    <sequenceDuration>30.0</sequenceDuration>
+  </head>
+  <ColorPalettes>
+    <ColorPalette>C_BUTTON_Palette1=#FF0000,C_BUTTON_Palette2=#FFFFFF,C_CHECKBOX_Palette1=1,C_CHECKBOX_Palette2=1</ColorPalette>
+    <ColorPalette>C_BUTTON_Palette1=#0000FF,C_CHECKBOX_Palette1=1</ColorPalette>
+  </ColorPalettes>
+  <DisplayElements>
+    <Element collapsed="0" type="model" name="Par 1" visible="1"/>
+    <Element collapsed="0" type="model" name="Par 2" visible="1"/>
+    <Element collapsed="0" type="model" name="Par 3" visible="1"/>
+    <Element collapsed="0" type="timing" name="Song Structure" visible="1" active="1"/>
+  </DisplayElements>
+  <ElementEffects>
+    <Element type="model" name="Par 1">
+      <EffectLayer>
+        <Effect ref="0" name="Bars" id="0" startTime="0" endTime="5000" palette="0"/>
+        <Effect ref="0" name="Bars" id="1" startTime="22000" endTime="25000" palette="0"/>
+      </EffectLayer>
+    </Element>
+    <Element type="model" name="Par 2">
+      <EffectLayer>
+        <Effect ref="1" name="ColorWash" id="0" startTime="5000" endTime="10000" palette="0"/>
+      </EffectLayer>
+    </Element>
+    <Element type="model" name="Par 3">
+      <EffectLayer>
+        <Effect ref="2" name="Shockwave" id="0" startTime="15000" endTime="20000" palette="1"/>
+        <Effect ref="3" name="Strobe" id="1" startTime="20000" endTime="22000" palette="1"/>
+      </EffectLayer>
+    </Element>
+    <Element type="timing" name="Song Structure">
+      <EffectLayer>
+        <Effect label="Intro" startTime="0" endTime="8000"/>
+        <Effect label="Drop" startTime="8000" endTime="20000"/>
+        <Effect label="" startTime="20000" endTime="30000"/>
+      </EffectLayer>
+    </Element>
+  </ElementEffects>
+</xsequence>

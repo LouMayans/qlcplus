@@ -19,8 +19,11 @@ def look_hash(look: Look) -> str:
     p = look.params.to_dict()
     p.pop("name", None)
     compiled = [(f.type, sorted((str(k), v) for k, v in f.values.items()), f.efx,
-                 [(e.id, e.start_offset, e.direction) for e in f.efx_fixtures]) for f in look.functions]
-    blob = json.dumps({"recipe": look.recipe, "params": p, "compiled": compiled}, sort_keys=True, default=str)
+                 [(e.id, e.start_offset, e.direction) for e in f.efx_fixtures]) + ((f.matrix,) if getattr(f, "matrix", None) else ())
+                for f in look.functions]  # the matrix only when there is one: every older look keeps its hash
+    groups =[[(h.x, h.y, h.fixture, h.head) for h in g.group_heads] for g in getattr(look, "groups", [])]
+    blob = json.dumps({"recipe": look.recipe, "params": p, "compiled": compiled, **({"groups": groups} if groups else {})},
+                      sort_keys=True, default=str)
     return hashlib.sha1(blob.encode()).hexdigest()[:16]
 
 
@@ -61,16 +64,42 @@ class Sidecar:
         self.looks[str(look.main_id)] = entry
         return entry
 
+    @property
+    def designs(self) -> dict:
+        """Whole shows made by the designer, keyed by their top-level function ID."""
+        return self.data.setdefault("designs", {})
+
+    def add_design(self, show, text: str = "", source: str = "design", job_id: str = "") -> dict:
+        entry = {
+            "main_id": show.main_id,
+            "title": show.title,
+            "kind": show.kind,
+            "ids": show.ids,
+            "sections": [{k: v for k, v in s.items() if k != "layers"} | {"layers": [dict(x) for x in s["layers"]]}
+                         for s in show.sections],
+            "spec": show.spec,
+            "text": text,
+            "source": source,
+            "job_id": job_id,
+            "facts_used": show.facts_used,
+            "created": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        }
+        self.designs[str(show.main_id)] = entry
+        return entry
+
     def remove(self, main_id: int) -> Optional[dict]:
-        return self.looks.pop(str(main_id), None)
+        return self.looks.pop(str(main_id), None) or self.designs.pop(str(main_id), None)
 
     def using_fact(self, fact_prefix: str) -> list:
-        return [e for e in self.looks.values() if any(f.startswith(fact_prefix) for f in e.get("facts_used", []))]
+        return [e for e in list(self.looks.values()) + list(self.designs.values())
+                if any(f.startswith(fact_prefix) for f in e.get("facts_used", []))]
 
     def prune(self, existing_ids: set) -> list:
-        gone = [k for k, e in self.looks.items() if e.get("main_id") not in existing_ids]
-        for k in gone:
-            self.looks.pop(k, None)
+        gone = []
+        for table in (self.looks, self.designs):
+            for k in [k for k, e in table.items() if e.get("main_id") not in existing_ids]:
+                table.pop(k, None)
+                gone.append(k)
         return gone
 
     def save(self) -> None:

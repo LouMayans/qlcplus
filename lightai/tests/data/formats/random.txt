@@ -1,0 +1,3 @@
+Just a plain text file with an extension no decoder in lightai.mine.formats registers, used by
+lightai tests to exercise decode_file's generic "no decoder recognizes this file" NotDecodable
+message (as opposed to the more specific hint for a named closed format like .ssproj).

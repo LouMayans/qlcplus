@@ -104,6 +104,16 @@ def build_parser() -> argparse.ArgumentParser:
     ev = sub.add_parser("evaluate", help="evaluate a model directory (default: current)")
     ev.add_argument("model_dir", nargs="?", default=None)
     ev.add_argument("--promote-if-better", action="store_true")
+
+    rf = sub.add_parser("refs", help="the private reference library of shows from other programs (<data_dir>/references)")
+    rf.add_argument("action", choices=["index", "list", "query"])
+    rf.add_argument("text", nargs="*", help="for query: the request, e.g. 'dreamy strobe show'")
+    rf.add_argument("-k", type=int, default=5)
+    rf.add_argument("--force", action="store_true", help="for index: decode every file again")
+
+    rs = sub.add_parser("research", help="research a lighting-design topic on the web and extend the mood vocabulary")
+    rs.add_argument("topic")
+    rs.add_argument("--deep", action="store_true", help="use the deep (opus) model instead of the default")
     return parser
 
 
@@ -119,6 +129,11 @@ def main(argv: list[str] | None = None) -> int:
         return bench_main(args)
     if args.cmd == "serve":
         from lightai.api.server import serve_main
+
+        if sys.platform == "win32":  # the server's own window says what it is and how to stop it
+            import ctypes
+
+            ctypes.windll.kernel32.SetConsoleTitleW(f"lightai server on port {getattr(args, 'port', None) or 8765} - close this window to stop it")
 
         return serve_main(args)
     if args.cmd == "repl":
@@ -210,6 +225,14 @@ def main(argv: list[str] | None = None) -> int:
             ok, why = promote(d, rep)
             print(("PROMOTED " if ok else "NOT PROMOTED: ") + why)
         return 0 if rep["pass"] else 1
+    if args.cmd == "refs":
+        from lightai.mine.index import refs_main
+
+        return refs_main(args)
+    if args.cmd == "research":
+        from lightai.design.research import research_main
+
+        return research_main(args)
     return 2
 
 

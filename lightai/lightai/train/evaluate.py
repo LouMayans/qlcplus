@@ -89,6 +89,9 @@ def evaluate_model_dir(model_dir: Path, rig: Optional[Rig] = None) -> dict:
         lat.append(cmd.latency_ms)
         want = expected_projection(item, rig)
         got = projection(cmd)
+        if item.get("slots") == "ignore":  # e.g. design_show: Claude reads the words itself, only the intent matters
+            want = {k: v for k, v in want.items() if k in ("intent", "clarify")}
+            got = {k: v for k, v in got.items() if k in ("intent", "clarify")}
         diffs = compare(want, got)
         if not diffs and not want.get("clarify") and cmd.intent != "none":
             try:  # the gate also proves each golden sentence turns into a runnable plan
@@ -135,19 +138,32 @@ def evaluate_model_dir(model_dir: Path, rig: Optional[Rig] = None) -> dict:
     return report
 
 
+def baseline_metrics(current: Path) -> dict:
+    """The current model's scores on today's data, to compare a candidate with. Its saved metrics.json is from an older
+    dev split (the split reshuffles whenever rows are added: v7 saved 0.990 slot F1 but scores 0.968 on the data v8 was
+    judged on), so it is re-evaluated with the same code and data; the saved file is only the fallback."""
+    try:
+        return dict(evaluate_model_dir(current), measured="on the same data")
+    except Exception:  # noqa: BLE001 - a missing or broken current model must not block the comparison
+        mfile = current / "metrics.json"
+        try:
+            return dict(json.loads(mfile.read_text(encoding="utf-8")), measured="saved metrics") if mfile.exists() else {}
+        except ValueError:
+            return {}
+
+
 def promote(model_dir: Path, report: dict, force: bool = False) -> tuple:
     cfg = load_config()
     if not force and not report.get("pass"):
         failed = [k for k, v in report.get("gates", {}).items() if not v]
         return False, f"gates failed: {failed}"
     current = cfg.current_model_dir()
-    if current and not force:
-        mfile = current / "metrics.json"
-        if mfile.exists():
-            old = json.loads(mfile.read_text(encoding="utf-8"))
+    if current and not force and current.resolve() != Path(model_dir).resolve():
+        old = baseline_metrics(current)
+        if old:
             for key in ("dev_intent_acc", "dev_slot_f1"):
                 if report[key] + 0.005 < old.get(key, 0):
-                    return False, f"{key} regressed: {report[key]} < {old.get(key)}"
+                    return False, f"{key} regressed: {report[key]} < {old.get(key)} ({old.get('model')} {old.get('measured', '')})"
             if report["golden_pass"] < old.get("golden_pass", 0):
                 return False, "golden suite regressed"
     cfg.models_dir.mkdir(parents=True, exist_ok=True)

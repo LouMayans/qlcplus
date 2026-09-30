@@ -36,6 +36,7 @@ class Session:
         self.gm_changed = False
         self.calibration: Optional[Calibration] = None
         self.rated: dict = {}  # feedback fingerprints already applied (double-click guard)
+        self.executed: OrderedDict = OrderedDict()  # plan_id -> {intent, results} of plans that ran, for undo
         self._n = 0
 
     def new_plan_id(self) -> str:
@@ -53,6 +54,14 @@ class Session:
         if p is not None:
             self.plans.move_to_end(plan_id)
         return p
+
+    last_aim: Optional[dict] = None  # the args of the last live aim that ran ('do it again')
+
+    def record_executed(self, plan: Plan, results: list) -> None:
+        self.executed[plan.plan_id] = {"intent": plan.intent, "mode": plan.mode, "results": results,
+                                       "plan_actions": [a.model_dump() for a in plan.actions if a.op == "edit_stage"]}
+        while len(self.executed) > 50:
+            self.executed.popitem(last=False)
 
     def remember(self, cmd: Optional[LightCommand], plan: Plan) -> None:
         self.store(plan)

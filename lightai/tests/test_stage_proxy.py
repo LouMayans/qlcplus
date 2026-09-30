@@ -37,8 +37,9 @@ def test_http_proxy_against_fake_upstream(tmp_path):
         app, _, _ = make_app(fake.url + "/qlcplusWS", tmp_path)
         c = TestClient(app)
         r = c.get("/stage")
-        assert r.status_code == 200 and r.text == "<html>stage</html>"
-        assert r.headers["content-type"] == "text/html"
+        assert r.status_code == 200 and r.text.startswith("<html>stage</html>")
+        assert r.headers["content-type"].startswith("text/html")
+        assert 'id = "lightai-console-link"' in r.text and 'a.target = "lightai-console"' in r.text  # the way back
         assert c.get("/stage.css").content == b"body{color:red}"
         assert c.get("/stage-app.js").content == b"console.log(1)"
         assert c.get("/stage-lib/index.json").json() == {"ok": True}

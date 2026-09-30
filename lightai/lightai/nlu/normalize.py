@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 from typing import Optional
 
@@ -67,6 +68,13 @@ PRIORITIES = [
     (r"\b(base|background|low priority|default)\b", 0),
 ]
 MOVEMENT_RECIPES = [
+    # the iteration-10 effects first: 'pixel wave' is no pan/tilt wave, 'strobe chase' no color chase
+    (r"pixel[\s-]*(chase|run)|matrix[\s-]*(chase|run)", "pixel_chase"),
+    (r"pixel[\s-]*wave|matrix[\s-]*wave", "pixel_wave"),
+    (r"colou?r[\s-]*morph|\bmorph|fade through colou?rs?", "color_morph"),
+    (r"(dimmer|intensity|brightness)[\s-]*wave", "dimmer_wave"),
+    (r"strobe[\s-]*(chase|run)", "strobe_chase"),
+    (r"strobe[\s-]*bursts?|\bbursts?\b", "strobe_burst"),
     (r"breath|pulse|puls|throb|heartbeat|swell", "breathe"),
     (r"ballyhoo|search|random sweep|crazy|all over|chaos", "ballyhoo"),
     (r"figure[\s-]*(8|eight)|infinity|eights?\b", "figure8"),
@@ -238,11 +246,22 @@ def norm_angle(raw: str, context_before: str = "") -> dict:
     return {"deg": int(round(deg)), "relative": relative}
 
 
+def _dist(mm: float, **extra) -> dict:
+    """mm (rounded, as before) plus exact inches for the 3D stage, which works in inches ('a foot' is 12 in, not 12.008)."""
+    return {"mm": int(round(mm)), "in": round(mm / 25.4, 3), **extra}
+
+
 def norm_distance(raw: str) -> dict:
     t = raw.lower()
     t = re.sub(r"\bhalf an? (meter|metre|foot)\b", r"0.5 \1", t)
     t = re.sub(r"\b(a|an|one) (meter|metre|foot|inch|centimeter|centimetre)\b", r"1 \2", t)
     t = re.sub(r"\ba couple (of )?", "2 ", t)
+    few = re.search(r"\ba few (inch|inches|foot|feet|cm|centimeters?|centimetres?)\b", t)
+    if few:
+        return _dist(3 * DIST_UNITS[few.group(1)], assumed=f"a few {few.group(1)} = 3 {few.group(1)}")
+    pairs = [(float(n), u) for n, u in re.findall(r"(-?\d+(?:\.\d+)?)\s*([a-z]+)", t) if u in DIST_UNITS]
+    if len(pairs) > 1:  # '3 feet 6 inches'
+        return _dist(sum(n * DIST_UNITS[u] for n, u in pairs))
     m = re.search(r"(-?\d+(?:\.\d+)?)\s*([a-z]+)?", t)
     num = float(m.group(1)) if m else parse_number(t)
     unit = m.group(2) if m and m.group(2) in DIST_UNITS else None
@@ -253,11 +272,96 @@ def norm_distance(raw: str) -> dict:
                 break
     if num is None:
         if re.search(r"\b(a bit|a little|slightly|nudge|tad)\b", t):
-            return {"mm": 250, "assumed": "a bit = 25 cm"}
+            return _dist(250, assumed="a bit = 25 cm")
         return {}
     if unit is None:
-        return {"mm": int(round(num * 10)), "assumed": "no unit given; read as centimeters"}
-    return {"mm": int(round(num * DIST_UNITS[unit]))}
+        return _dist(num * 10, assumed="no unit given; read as centimeters")
+    return _dist(num * DIST_UNITS[unit])
+
+
+_UNIT_IN = {"ft": 12.0, "foot": 12.0, "feet": 12.0, "in": 1.0, "inch": 1.0, "inches": 1.0, "m": 39.3701, "meter": 39.3701,
+            "meters": 39.3701, "metre": 39.3701, "metres": 39.3701, "cm": 0.393701, "centimeter": 0.393701, "centimeters": 0.393701}
+_LEN_RE = re.compile(r"(-?\d+(?:\.\d+)?)\s*(feet|foot|ft|inches|inch|in|meters?|metres?|m|centimeters?|cm)?\b")
+
+
+def _length_in(part: str, unit: Optional[str]) -> tuple:
+    """'5 feet 6 inches' / '5' -> (inches or None, the unit it used or None)."""
+    found = [(float(n), u) for n, u in _LEN_RE.findall(part)]
+    if not found:
+        return None, unit
+    if len(found) > 1 and all(u for _, u in found):  # compound: 5 feet 6 inches
+        return sum(n * _UNIT_IN[u] for n, u in found), found[0][1]
+    n, u = found[0]
+    return (n * _UNIT_IN[u], u) if u else (None, None) if unit is None else (n * _UNIT_IN[unit], unit)
+
+
+_WORD_NUM = {w: i for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen "
+                                          "fifteen sixteen seventeen eighteen nineteen twenty".split())}
+_WORD_NUM.update({"thirty": 30, "forty": 40, "fifty": 50, "sixty": 60, "half": 0.5})
+
+
+def norm_coordinates(raw: str) -> dict:
+    """A spot in the room, in inches: '5 foot by 5 foot', '5 by 5 feet', 'x 10 y 20', '10 ft, 6 ft', '(5, 5)', '5 by 5 by 8'.
+    x runs across the room, y from the DJ's back wall into the room, z up (the 3D stage's own axes). A number with no unit
+    takes the unit said next to it; with no unit at all the numbers are feet, the unit the operator uses for the room."""
+    t = raw.lower().replace("(", " ").replace(")", " ")
+    t = re.sub(r"\b(a|an) (foot|meter|metre|inch)\b", r"1 \2", t)
+    t = re.sub(r"\b(" + "|".join(sorted(_WORD_NUM, key=len, reverse=True)) + r")\b", lambda m: str(_WORD_NUM[m.group(1)]), t)
+    t = re.sub(r"\b(\d+(?:\.\d+)?) and (?:a )?0\.5\b", lambda m: f"{float(m.group(1)) + 0.5:g}", t)  # 'five and a half
+    out: dict = {}
+    labeled = re.findall(r"\b([xyz])\s*(?:=|:|is|at|of)?\s*(-?\d+(?:\.\d+)?(?:\s*(?:feet|foot|ft|inches|inch|in|meters?|metres?|m|cm)\b)?)", t)
+    parts = [v for _, v in labeled] if len(labeled) >= 2 else [x for x in re.split(r"\s*(?:\bby\b|\bx\b|,|\band\b|/)\s*", t) if x.strip()]
+    axes = [a for a, _ in labeled] if len(labeled) >= 2 else ["x", "y", "z"][:len(parts)]
+    units = [(_LEN_RE.findall(x) or [("", "")])[-1][1] or None for x in parts]
+    fallback = next((u for u in units if u), None)
+    assumed = fallback is None
+    for axis, part in zip(axes, parts):
+        own = next((u for n, u in _LEN_RE.findall(part) if u), None)
+        val, _ = _length_in(part, own or fallback or "ft")
+        if val is None:
+            return {}
+        out[axis] = round(val, 2)
+    if not ({"x", "y"} <= set(out)):
+        return {}
+    if assumed:
+        out["assumed"] = "no unit given; read as feet"
+    return out
+
+
+PLACE_RELATIONS = [  # the longest wording first: 'to the left of' before 'on', 'on top of' before 'on'
+    (r"\b(?:in the middle of|in the cent(?:er|re) of|middle of|cent(?:er|re) of)\b", "center_of"),
+    (r"\b(?:to the left of|on the left of|left of|left side of)\b", "left_of"),
+    (r"\b(?:to the right of|on the right of|right of|right side of)\b", "right_of"),
+    (r"\b(?:in front of|infront of|facing)\b", "in_front_of"),
+    (r"\b(?:behind|in back of|back of)\b", "behind"),
+    (r"\b(?:between)\b", "between"),
+    (r"\b(?:away from|further from|farther from)\b", "away_from"),
+    (r"\b(?:towards?|closer to|nearer to|nearer|in the direction of)\b", "toward"),
+    (r"\b(?:on (?:either|both|each) sides? of|either side of|both sides of)\b", "both_sides_of"),
+    (r"\b(?:along|alongside of|lined up along)\b", "along"),
+    (r"\b(?:on top of|onto)\b", "on"),
+    (r"\b(?:under|below|beneath|underneath)\b", "under"),
+    (r"\b(?:next to|beside|besides|alongside|by)\b", "next_to"),
+    (r"\b(?:near|close to|around|at)\b", "near"),
+    (r"\b(?:inside|within|in)\b", "in"),
+    (r"\b(?:on|over)\b", "on"),
+]
+
+
+def norm_place(raw: str) -> dict:
+    """'next to the dj booth' -> {relation: next_to, ref: 'dj booth'}; 'between the bar and the entrance' -> two refs.
+    The planner finds the refs among the 3D stage's objects, places and fixtures."""
+    t = raw.lower().strip()
+    for pat, rel in PLACE_RELATIONS:
+        m = re.search(pat, t)
+        if m:
+            rest = t[m.end():].strip()
+            refs = [re.sub(r"^(?:the|a|an)\s+", "", r.strip()) for r in re.split(r"\s+and\s+", rest)] if rel == "between" else \
+                [re.sub(r"^(?:the|a|an)\s+", "", rest)]
+            refs = [r for r in refs if r]
+            return {"relation": rel, "ref": refs[0], **({"refs": refs} if len(refs) > 1 else {})} if refs else {"relation": rel}
+    ref = re.sub(r"^(?:the|a|an)\s+", "", t)
+    return {"relation": "near", "ref": ref} if ref else {}
 
 
 def norm_direction(raw: str) -> dict:
@@ -434,7 +538,7 @@ class TargetResolver:
         return out
 
     def resolve(self, raw: str) -> dict:
-        t = re.sub(r"\s+", " ", raw.lower().strip())
+        t = re.sub(r"\s+", " ", raw.lower().replace("_", " ").strip())  # 'led_walls' as written in a zone list
         t = re.sub(r"(\u2019|')s?$|[.?!,\u00b0]+$", "", t).strip()
         if t not in self.rig.zone_aliases and f"the {t}" in self.rig.zone_aliases:
             t = f"the {t}"  # 'rig', 'room', 'left', 'right' are zones, not fragments of a fixture name
@@ -551,6 +655,9 @@ class TargetResolver:
                  if p and not p.isdigit() and re.search(r"(?<![a-z0-9])" + re.escape(p) + r"(?![a-z0-9])", fx.name.lower())]
         if len(cands) == 1:
             return [cands[0].id], "fixture name (partial)"
+        got = self._spatial(p)
+        if got[0]:
+            return got
         from lightai.rig.house import house_models, match_house_models
 
         hits = match_house_models(self.rig, p, house=house_models(self.rig, only_rig=True), need_model_word=True, zones=False)
@@ -560,6 +667,47 @@ class TargetResolver:
             if ids:
                 return ids, "model " + " / ".join(f"{e['manufacturer']} {e['model']}" for e in top)
         return [], None
+
+    SPATIAL = re.compile(r"^(?:(?P<what>.+?)\s+)?(?P<prep>over|above|on|near|by|next to|at|in)\s+(?:the\s+)?(?P<where>.+)$")
+
+    def _spatial(self, p: str) -> tuple:
+        """Groups from the 3D stage: 'the fixtures over the dance floor', 'spots near the dj', 'front row washes',
+        'the lights by the bar'. A kind or zone before it narrows the group ('washes in the front row')."""
+        groups = self.rig.stage_groups()
+        if not groups:
+            return [], None
+        p = re.sub(r"^(?:the|all the|all)\s+", "", p.strip())
+        bare = re.sub(r"\s+(?:fixtures?|lights?|units?)$", "", p)
+        if bare in groups:
+            return list(groups[bare]), f"stage group {bare}"
+        m = re.fullmatch(r"(front|back)\s+row\s+(.+)", bare) or re.fullmatch(r"(.+?)\s+(?:in|on)\s+the\s+(front|back)\s+row", bare)
+        if m:
+            row, what = (m.group(1), m.group(2)) if m.group(1) in ("front", "back") else (m.group(2), m.group(1))
+            return self._narrow(groups.get(f"{row} row", []), what, f"stage group {row} row")
+        m = self.SPATIAL.fullmatch(bare)
+        if not m:
+            return [], None
+        where = re.sub(r"^the\s+", "", m.group("where"))
+        prep = m.group("prep")
+        name = f"over the {where}" if prep in ("over", "above", "on") else f"near the {where}"
+        if name not in groups and prep in ("near", "by", "next to", "at"):
+            st = self.rig.stage
+            pl = st.place(where) if st else None
+            if pl is not None:  # any place in the stage file: within 14 ft of it
+                ids = [i for i in self.rig.fixtures if st.pos(i) is not None
+                       and math.hypot(st.pos(i)[0] - pl.pos[0], st.pos(i)[1] - pl.pos[1]) <= 168]
+                return self._narrow(ids, m.group("what") or "", f"stage near {pl.name}")
+        if name not in groups:
+            return [], None
+        return self._narrow(groups[name], m.group("what") or "", f"stage group {name}")
+
+    def _narrow(self, ids: list, what: str, via: str) -> tuple:
+        what = re.sub(r"^(?:the|all the|all)\s+", "", (what or "").strip())
+        if not what or re.fullmatch(r"(?:fixtures?|lights?|units?|everything|all)", what):
+            return list(ids), via
+        sub = self.resolve(what)
+        keep = [i for i in sub.get("fixture_ids") or [] if i in set(ids)]
+        return (keep, f"{sub.get('via')} {via}") if keep else ([], None)
 
     def label(self, raw: str) -> str:
         t = re.sub(r"^((and|or|plus|also|on|to|for|at|with|the|a|an|all)\s+)+", "", raw.strip(" ,&"), flags=re.I)
@@ -634,6 +782,10 @@ def normalize_slot(rig: Rig, slot: str, raw: str, context_before: str = "", inte
         return norm_angle(raw, context_before)
     if slot == "distance":
         return norm_distance(raw)
+    if slot == "coordinates":
+        return norm_coordinates(raw)
+    if slot == "place":
+        return norm_place(raw)
     if slot == "direction":
         return norm_direction(raw)
     if slot == "name":

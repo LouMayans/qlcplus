@@ -1,6 +1,6 @@
 # Label set for the lightai language model. Bump labels_version whenever an intent or slot
 # is added, renamed or removed; every dataset row, correction and model records it.
-labels_version: 3
+labels_version: 4
 
 intents:
   create_look: "build a new look/function in the show file"
@@ -15,8 +15,8 @@ intents:
   set_level: "live intensity override on fixtures, fog or the grand master"
   set_channel: "live override of one raw channel"
   release: "clear live overrides"
-  fixture_edit.rotate: "rotate a fixture on the 2D stage map"
-  fixture_edit.move: "move a fixture on the 2D stage map"
+  fixture_edit.rotate: "rotate, flip or mount fixtures or objects (tables, stools...) in the room's 3D stage (2D map without one)"
+  fixture_edit.move: "move or place fixtures or objects by a distance, at coordinates or next to something (3D stage; 2D map without one)"
   fixture_edit.rename: "rename a fixture in the patch"
   fixture_edit.readdress: "move fixtures to another DMX universe / address in the patch"
   query.functions: "list or search existing functions"
@@ -27,6 +27,10 @@ intents:
   delete_look: "delete a look lightai made"
   add_widget: "add a Virtual Console button for a function"
   add_fixture: "patch a new fixture from the library"
+  design_show: "ask for one or more whole shows (a set, sequence or routine over time) for Claude to design"
+  correction: "say the previous command was misunderstood or misspoken, and usually what was meant instead"
+  scene.add: "add objects to the room's 3D stage: tables, high tops, stools, chairs, speakers, a booth"
+  scene.remove: "remove objects from the room's 3D stage"
   none: "not a lighting request"
 
 slots:
@@ -49,4 +53,7 @@ slots:
   fixture_model: "V3, BEAM230 V2, the wash model, Chauvet Intimidator Spot 260"
   mode: "a fixture mode: 14 channel mode, extended"
   address: "a DMX address: universe 2 address 150, dmx 289"
-  count: "how many fixtures: 3, three, a couple of"
+  count: "how many fixtures or objects: 3, three, a couple of"
+  object: "a kind of object to add to the 3D stage: high top table, stools, chairs, speaker, couch"
+  coordinates: "a spot in the room: 5 foot by 5 foot, x 10 y 20, 12 by 30 feet"
+  place: "where, next to something: next to the dj booth, by the bar, in front of the stage, on the truss"

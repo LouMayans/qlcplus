@@ -35,11 +35,52 @@ If QLC+ web auth is on (`-wa`), put `{"username": "...", "password": "..."}` in 
 | `lightai repl` | The same in the terminal (`:y` apply, `:p` preview, `:keep`, `:ok`, `:fast`, `:saw pink 5`, `:bpm 128`) |
 | `lightai parse "slow blue wash breathing at 60 BPM" --plan` | Print the JSON only; nothing runs |
 | `lightai do "washes at 40%" --yes` | One-shot: parse, plan and execute |
+| `lightai research "strobe techniques for dreamy techno"` | Claude researches it on the web, writes a cited report to `knowledge/research/` and adds mood words |
+| `lightai refs index` / `list` / `query "dreamy strobe show"` | The private library of shows from other programs (xLights, Light-O-Rama, Vixen 3, MVR) in `C:\lightai-data\references` |
 
 (Run as `C:\lightai-env\venv\Scripts\python -m lightai ...` from this folder, or double-click
 `tools\start-lightai.bat`, which starts the server and opens the console in your browser.)
 
+**Shortcut:** the **lightai** icon on the desktop and in the Start menu opens the console in Chrome, starting the lightai
+server first when it isn't running (`tools\open_lightai.pyw`, run by the venv's `pythonw`). The server then runs in its
+own minimized window, *lightai server on port 8765*; close that window to stop it. To put the icon on the taskbar:
+right-click it (desktop: *Show more options*) and choose **Pin to taskbar** (Windows 11 doesn't let programs pin
+themselves). In the console, **3D Stage** opens the room's 3D stage in its own tab (the same tab every time); the
+stage's **lightai console** button comes back to the console.
+In the 3D stage, the **arrow keys** look around like a middle-drag (Shift: faster); WASD moves, Q/E go down/up.
+
 Things you can say:
+- **Design with Claude** (console, Design tab): "Create 3 different shows that resemble fast strobing but changing in
+  light a dreamy way", "a 5-minute build-up show" (a length makes a timeline show). Claude designs with the rig, the room
+  and the reference library; lightai checks and builds it. Preview it in 3D, apply, run, refine, or rotate shows through
+  the night. The Claude tab shows every run: searches, pages read, tokens and your plan's usage.
+- **Room words:** "aim the spots at the DJ", "cross the beams over the dance floor", "spots circle left to right",
+  "washes pink center out", "pixel wave on the tetras".
+- **Corrections:** "no, I meant the spots", "what I meant was swarms", "that's wrong" (the console offers to undo).
+- **The 3D stage, by voice** (the room's `<show>.stage.json`; an open 3D page updates by itself):
+  - *Move:* "move fixture 12 one foot to the left", "move table 3 with its chairs a foot to the right from the stage",
+    "raise fixture 5 six inches", "move the dj booth 6 inches back", "move table 1 closer to the bar",
+    "put the potted plants by the bar".
+  - *Place:* "place fixture 7 at 5 foot by 5 foot" (measured like the 3D editor shows it: from the dance-floor centre,
+    x to the DJ's right, y towards the bar), "put table 2 next to the dj booth", "put the high top in the middle of the dance floor".
+  - *Turn, flip, mount:* "rotate cocktail table 1 90 degrees" (clockwise seen from above unless you say counter-clockwise),
+    "turn table 2 with its stools 45 degrees counterclockwise", "rotate fixture 8 upside down", "mount fixture 4 on the wall",
+    "stand fixture 3 on the floor".
+  - *Add:* "add a high top table and 4 stools next to the DJ booth", "add 2 speakers on either side of the stage",
+    "add 3 high tops along the bar", "add a couch in the vip area", "put a table with 4 chairs at 10 by 20 feet".
+    Kinds it can draw: high-top, cocktail table, table, stool, chair, sofa/couch/booth, speaker, plant, pillar, podium,
+    riser, screen (the show's own props when it has them, simple shapes otherwise).
+  - *Remove:* "remove bar stool 4", "remove table 4 and its stools", "delete the stools by the bar".
+  - *Line the 3D stage up with the real room by eye ("triangulating"), live, nothing saved until you say so:*
+    "place spot 2 white beam no flashing on straight down" (it knows spot 2 hangs upside down), then "point spot 3 right
+    where the beam ends and hits the floor" or "all beams point to spot 2's beam that ends on the floor". lightai reads
+    spot 2's pan/tilt from QLC+, follows its beam down to the floor in the 3D stage, and aims the others there. If a real
+    beam misses, that fixture's 3D position is off: move it ("move spot 3 six inches left") and say **"do it again"**
+    until the beams meet. "release" lets go of the aims.
+  - Left and right are as seen from the DJ booth (the 3D view's default camera); add "from the dance floor" for the
+    other way round, or say "stage left" / "house right". Back is towards the DJ's wall, front towards the bar.
+    Every change can be undone ("that's wrong" or Undo in the History tab), and lightai keeps its own backups in
+    `C:\lightai-data\stage-backups`.
 - **New looks:** "slow blue wash breathing at 60 BPM", "pink and blue chase on the pars", "big fast white sweep on the beams", "mirrored green circles on the spots", "orange strobe on the tetras as an override".
 - **Assume and try:** "make an assumption on fixture 5 and make it move". It previews live, then asks how it looked. Press *Keep it* to save the look.
 - **Fix the rig map:** "fixture 3 needs to be rotated 90 degrees", "move wash 1 left 50 cm", "rename fixture 21 to DJ Wall".

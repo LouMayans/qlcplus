@@ -9,6 +9,7 @@ answered only when fork=True.
 from __future__ import annotations
 
 import asyncio
+import json
 import socket
 import threading
 from collections import defaultdict
@@ -28,8 +29,10 @@ def free_port() -> int:
 
 
 class FakeQlc:
-    def __init__(self, project: Optional[Path] = None, fork: bool = True) -> None:
+    def __init__(self, project: Optional[Path] = None, fork: bool = True, stage: bool = False) -> None:
         self.fork = fork
+        self.stage = stage  # a build with the 3D stage: lightaiVersion 3, saveStage
+        self.stage_rev = 0
         self.project = Path(project) if project else None
         self.functions: dict = {}
         self.values: dict = defaultdict(int)
@@ -149,7 +152,18 @@ class FakeQlc:
             if not self.fork:
                 return [head]
             if cmd == "lightaiVersion":
-                return [head + "2"]
+                return [head + ("3" if self.stage else "2")]
+            if cmd == "saveStage" and self.stage:  # webaccessstage.cpp saveStage: the file next to the open show
+                payload = msg.split("|", 2)[2] if msg.count("|") >= 2 else ""
+                try:
+                    doc = json.loads(payload)
+                except ValueError:
+                    return [head + "ERR|invalid JSON"]
+                if "version" not in doc or not self.project:
+                    return [head + "ERR|missing version"]
+                self.project.with_name(self.project.stem + ".stage.json").write_text(json.dumps(doc, indent=4), encoding="utf-8")
+                self.stage_rev += 1
+                return [head + f"OK|{self.stage_rev}"]
             if cmd == "getProjectFile":
                 return [head + f"{self.project or ''}|{1 if self.modified else 0}"]
             if cmd == "loadProjectFile" and len(p) > 2:
@@ -202,6 +216,22 @@ class FakeQlc:
         if p[0] == "GM_VALUE" and len(p) >= 2:
             self.gm = int(p[1])
             return []
+        if p[0] == "LOOP" and len(p) >= 2:  # the fork's server-side rotation (webaccess.cpp handleLoopCommand)
+            loop = self.__dict__.setdefault("loop_state", {"fids": [], "interval": 10, "running": False, "index": 0})
+            if p[1] == "SET" and len(p) > 2:
+                loop["fids"] = [int(x) for x in p[2].split(",") if x.strip().lstrip("-").isdigit() and int(x) in self.functions]
+                loop["index"] = 0
+            elif p[1] == "INTERVAL" and len(p) > 2:
+                loop["interval"] = max(1, int(float(p[2])))
+            elif p[1] == "START" and loop["fids"]:
+                loop["running"] = True
+                self.functions[loop["fids"][0]]["running"] = True
+            elif p[1] == "STOP":
+                loop["running"] = False
+                for f in loop["fids"]:
+                    self.functions[f]["running"] = False
+            cur = loop["fids"][loop["index"]] if loop["running"] and loop["fids"] else 0
+            return [f"LOOP|STATE|{1 if loop['running'] else 0}|{loop['interval']}|{cur}|{','.join(map(str, loop['fids']))}"]
         return []
 
 

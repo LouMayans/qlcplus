@@ -47,6 +47,91 @@ class Planner:
             return [f"QLC+API|loadProjectFile|{self.cfg.project_path}", "(stock QLC+: POST the file to /loadProject)"]
         return []
 
+    INDIVIDUAL = re.compile(r"\b(?:spot|fixture|beam|wash|mover|moving head|head|par|light)s?\s*#?\s*\d+\b", re.I)
+
+    def _live_aim(self, cmd: LightCommand) -> bool:
+        """Calibration aims run live (held until 'release', nothing saved): an aim at another beam's floor spot, or
+        numbered fixtures sent somewhere ('place spot 2 straight down', 'point spot 3 at the dj'). Zones aimed at a
+        place ('aim the spots at the dj') stay a saved look."""
+        if cmd.spatial.get("aim_beam"):
+            return True
+        targets = cmd.slots.get("target") or []
+        return bool(cmd.spatial.get("aim")) and bool(targets) and all(self.INDIVIDUAL.search(sv.raw) for sv in targets)
+
+    def _aim_live(self, cmd: LightCommand) -> Plan:
+        """A live aim: see rig/aim_live.py. The target is worked out again when it runs (a beam reference uses the
+        reference fixture's pan/tilt as QLC+ outputs them then)."""
+        from lightai.nlu.normalize import normalize_slot
+
+        if self.rig.stage is None:
+            return self._plan(cmd.intent, "clarify", "This show has no 3D stage file, so there's nothing to aim with.")
+        beam = cmd.spatial.get("aim_beam")
+        ref_ids = []
+        if beam:
+            ref_ids = list(beam.get("fixture_ids") or [])
+            if not ref_ids:
+                last = self.session.last_aim or {}
+                ref_ids = list(last.get("fixtures") or [])[:1]
+                if not ref_ids:
+                    return self._plan(cmd.intent, "clarify", "Which fixture's beam? e.g. 'where spot 2's beam lands'")
+        ids = [i for i in target_ids(cmd) if i not in ref_ids] if cmd.slots.get("target") else []
+        if not ids:
+            return self._plan(cmd.intent, "clarify", "Which fixtures should point there? e.g. 'point spot 3 where spot 2's beam lands'")
+        movers = [i for i in ids if self.rig.fixtures[i].has("pan") and self.rig.fixtures[i].has("tilt")]
+        if not movers:
+            return self._plan(cmd.intent, "clarify", "Those fixtures can't pan or tilt, so they can't be aimed.")
+        color = cmd.first("color").value.get("name") if cmd.first("color") and cmd.first("color").value.get("name") else "white"
+        level = cmd.first("intensity").value.get("level") if cmd.first("intensity") else None
+        intensity = float(level) if level is not None else 1.0
+        if beam:
+            ref = self.rig.fixtures[ref_ids[0]]
+            target = {"beam_of": ref_ids[0]}
+            where = f"where {ref.name}'s beam lands"
+        elif cmd.spatial.get("aim") == "down":
+            target = {"down": True}
+            where = "straight down"
+        else:
+            target = {"place": cmd.spatial["aim"]}
+            where = f"at {cmd.spatial['aim']}"
+        names = ", ".join(self.rig.fixtures[i].name for i in movers[:6]) + (f" and {len(movers) - 6} more" if len(movers) > 6 else "")
+        args = {"fixtures": movers, "target": target, "color": color, "intensity": intensity}
+        assumptions = [{"fact": f"{color}, shutter open (no strobe), dimmer {intensity:.0%}", "source": "live aim"},
+                       {"fact": "live until you say 'release': nothing is saved in the show", "source": "live aim"}]
+        if beam:
+            assumptions.append({"fact": f"{self.rig.fixtures[ref_ids[0]].name}'s pan/tilt are read from QLC+ when this runs, and "
+                                        "followed down to the floor with the 3D stage", "source": "3D stage"})
+        skipped = [i for i in ids if i not in movers]
+        warnings = [f"can't pan/tilt, left alone: {', '.join(self.rig.fixtures[i].name for i in skipped)}"] if skipped else []
+        return self._plan(cmd.intent, "live", f"Point {names} {where} (live)", actions=[
+            Action(op="aim_live", args=args, describe=f"aim {len(movers)} fixture(s) {where}")],
+            assumptions=assumptions, warnings=warnings, followup={"aim": args})
+
+    def again_aim(self, text: str) -> Optional[Plan]:
+        """'do it again': the last live aim, planned again (it is worked out again against the 3D stage as it is now)."""
+        last = self.session.last_aim
+        if not last:
+            return None
+        names = ", ".join(self.rig.fixtures[i].name for i in last["fixtures"][:6] if i in self.rig.fixtures)
+        t = last["target"]
+        where = ("where " + self.rig.fixtures[t["beam_of"]].name + "'s beam lands") if t.get("beam_of") in self.rig.fixtures \
+            else "straight down" if t.get("down") else f"at {t.get('place') or 'the same spot'}"
+        return self._plan("create_look", "live", f"Again: point {names} {where} (live, with the 3D stage as it is now)",
+                          actions=[Action(op="aim_live", args=dict(last), describe="the last aim, worked out again")],
+                          followup={"aim": dict(last)})
+
+    def _design_show(self, cmd: LightCommand) -> Plan:
+        """A whole show (or several) is Claude's job, started from the console's Design tab: nothing changes here."""
+        from lightai.design.jobs import parse_request
+
+        count, minutes = parse_request(cmd.text)
+        what = f"{count} show{'' if count == 1 else 's'}" + (f", {minutes:g} minutes long" if minutes else ", looping until stopped")
+        return self._plan("design_show", "design", f"Design with Claude: {what}. Nothing changes in QLC+ until you apply one.",
+                          followup={"design": {"text": cmd.text, "count": count, "minutes": minutes}})
+
+    def _correction(self, cmd: LightCommand) -> Plan:
+        """Only reached with no earlier command this session: the app corrects the previous command when there is one."""
+        return self._plan("correction", "clarify", "There's nothing to correct yet. Say the whole command the way you meant it.")
+
     def _plan(self, intent: str, mode: str, summary: str, **kw) -> Plan:
         return Plan(plan_id=self.session.new_plan_id(), intent=intent, mode=mode, summary=summary, show=str(self.cfg.project_path), **kw)
 
@@ -56,6 +141,8 @@ class Planner:
             self.session.remember(cmd, p)
             return p
         handler = getattr(self, "_" + cmd.intent.replace(".", "_"), None)
+        if cmd.intent in ("create_look", "propose_look") and self._live_aim(cmd):
+            handler = self._aim_live
         if handler is None:
             p = self._plan(cmd.intent, "clarify", f"I can't do '{cmd.intent}' yet.")
         else:
@@ -133,6 +220,23 @@ class Planner:
         params = LookParams(recipe=recipe, targets=targets, target_label=label, colors=colors, intensity=float(intensity),
                             bpm=bpm, period_ms=period, rate_word=rate_word, fade_ms=fade, size=size, priority=priority, mirror=mirror,
                             color_map=color_map)
+        sp = getattr(cmd, "spatial", None) or {}
+        if sp:  # left to right, centre out, aim at the dj, cross, fan, straight down (3D stage)
+            params.order, params.aim, params.spread = sp.get("order"), sp.get("aim"), sp.get("spread")
+            if params.aim and not move:
+                params.recipe = "position"
+        from lightai.design.moods import apply_mood, find_mood
+
+        mood = find_mood(cmd.text)
+        if mood is not None:
+            explicit = {"recipe": bool(move) or params.recipe == "position", "rate": bool(rate.get("word") or rate.get("bpm")),
+                        "fade": fv is not None, "colors": bool(cmd.slots.get("color")), "intensity": iv is not None,
+                        "size": sv is not None}
+            if mood[0] and cmd.slots.get("color"):  # said colors win; drop the 'no color given' note
+                pass
+            else:
+                assumptions = [a for a in assumptions if not a["fact"].startswith("no color given")]
+            assumptions += apply_mood(params, mood, explicit, self.rig)
         return params, assumptions
 
     def _fixture_facts(self, ids: list, limit: int = 3) -> list:
@@ -459,7 +563,36 @@ class Planner:
         unis = sorted({fx.universe + 1 for fx in self.rig.fixtures.values()})
         return self._plan("release", "live", "Release all Simple Desk overrides", actions=[Action(op="reset_universes", args={"universes": unis})])
 
+    def _scene(self, fn, cmd: LightCommand) -> Plan:
+        """A 3D-stage edit (rig/scene_plans.py); its questions come back as a clarify plan."""
+        from lightai.rig.scene import SceneError
+
+        try:
+            return fn(self, cmd)
+        except SceneError as exc:
+            return self._plan(cmd.intent, "clarify", str(exc))
+
+    def _scene_add(self, cmd: LightCommand) -> Plan:
+        from lightai.rig import scene_plans
+
+        if scene_plans.scene_of(self) is None:
+            return self._plan(cmd.intent, "clarify", "This show has no 3D stage yet: open /stage once and save it, then add objects.")
+        return self._scene(scene_plans.plan_add, cmd)
+
+    def _scene_remove(self, cmd: LightCommand) -> Plan:
+        from lightai.rig import scene_plans
+
+        if scene_plans.scene_of(self) is None:
+            return self._plan(cmd.intent, "clarify", "This show has no 3D stage yet.")
+        return self._scene(scene_plans.plan_remove, cmd)
+
     def _fixture_edit_rotate(self, cmd: LightCommand) -> Plan:
+        from lightai.rig import scene_plans
+
+        if scene_plans.wants_3d(self, cmd):  # the room's 3D stage; the 2D map only without one (or when asked)
+            return self._scene(scene_plans.plan_rotate, cmd)
+        if not any("deg" in (sv.value or {}) for sv in cmd.slots.get("angle") or []):
+            return self._plan(cmd.intent, "clarify", "By how many degrees? e.g. '90 degrees', 'a quarter turn'")
         # 'counter clockwise' can leave a second angle span ('clockwise') with no degrees: use the one with a number
         ang = next((dict(sv.value) for sv in cmd.slots.get("angle") or [] if "deg" in sv.value), dict(cmd.first("angle").value))
         dirs = {sv.value.get("dir") for sv in cmd.slots.get("direction") or []}
@@ -483,6 +616,12 @@ class Planner:
                           assumptions=assumptions, warnings=extra + self._structural_warnings(), needs_confirmation=True)
 
     def _fixture_edit_move(self, cmd: LightCommand) -> Plan:
+        from lightai.rig import scene_plans
+
+        if scene_plans.wants_3d(self, cmd):  # the room's 3D stage; the 2D map only without one (or when asked)
+            return self._scene(scene_plans.plan_move, cmd)
+        if cmd.first("direction") is None:
+            return self._plan(cmd.intent, "clarify", "Which way? e.g. 'left 50 cm' (coordinates and 'next to' need the show's 3D stage)")
         d = cmd.first("direction").value.get("dir")
         dist = cmd.first("distance")
         if dist and "mm" not in dist.value:

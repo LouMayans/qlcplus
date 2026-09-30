@@ -32,6 +32,13 @@ MOVEMENT_WORDS = {
     "strobe": ["strobe", "strobing", "flash", "flicker", "lightning"],
     "color_wash": ["wash", "static", "solid", "fill", "flat wash"],
     "blackout_kill": ["blackout", "kill"],
+    # iteration 10: the new effects (compiler/recipes_fx.py, recipes_pixel.py)
+    "color_morph": ["color morph", "colour morph", "morph", "fade through colors"],
+    "dimmer_wave": ["dimmer wave", "intensity wave"],
+    "strobe_chase": ["strobe chase", "strobe run"],
+    "strobe_burst": ["strobe burst", "strobe bursts"],
+    "pixel_chase": ["pixel chase", "pixel run"],
+    "pixel_wave": ["pixel wave", "matrix wave"],
 }
 RATES = [
     "slow", "slowly", "fast", "quick", "medium", "super fast", "very slow", "half time", "double time", "chill",
@@ -62,6 +69,34 @@ SIZE_FB = ["bigger", "smaller", "too small", "too big", "wider", "tighter"]
 OBSERVED_EXTRA = ["nothing", "dark", "the one next to it", "off", "white", "no light", "the wrong one"]
 MODELS = ["v3", "v2", "beam230 v2", "beam230", "wash", "vpar", "base model", "beam230 v3", "revolver wash", "tetra bar"]
 ONOFF = ["on", "off", "50%", "full", "half"]
+
+
+SCENE_KINDS = ["high top table", "high top", "high-top", "cocktail table", "bar table", "round table", "table", "chair", "chairs",
+               "stool", "stools", "bar stool", "bar stools", "couch", "sofa", "booth", "speaker", "speakers", "subwoofer", "sub",
+               "pillar", "column", "plant", "potted plant", "podium", "riser", "dj table", "screen", "tv", "tables"]
+SCENE_COORDS = ["5 foot by 5 foot", "5 by 5 feet", "x 10 y 20", "12 by 30 feet", "10 ft by 6 ft", "3 meters by 4 meters",
+                "20 feet by 15 feet", "x 24 y 8", "6 by 9", "minus 5 by 10 feet", "four feet by twelve feet", "8 ft, 14 ft",
+                "5 feet 6 inches by 10 feet", "x 3 y 7 z 12"]
+SCENE_PLACES = ["next to the dj booth", "by the bar", "in front of the stage", "behind the dj booth", "near the entrance",
+                "in the vip area", "on the left of the dance floor", "between the bar and the entrance", "closer to the bar",
+                "away from the stage", "along the bar", "on either side of the stage", "next to table 2", "by the speakers",
+                "in the middle of the dance floor", "to the right of the dj console", "near the back wall", "beside the door"]
+SCENE_DIST = ["one foot", "a foot", "2 feet", "6 inches", "a couple of feet", "3 feet", "18 inches", "half a foot",
+              "a few inches", "4 ft", "10 inches", "3 feet 6 inches", "a meter", "1 foot", "two feet"]
+SCENE_FALLBACK = ["table 1", "table 2", "cocktail table 3", "bar stool 4", "the high top", "the couch", "speaker stack l"]
+
+
+def scene_object_names(rig: Rig) -> list:
+    """The show's own 3D-stage object names ('cocktail table 3', 'bar stool 2', 'dj console'), for scene sentences."""
+    try:
+        from lightai.rig.stage import stage_path
+
+        doc = json.loads(stage_path(rig.cfg.project_path).read_text(encoding="utf-8"))
+    except (OSError, ValueError, AttributeError):
+        return SCENE_FALLBACK
+    skip = re.compile(r"wall|ceiling|foam|centre|center|marker|dance floor|entrance|truss")
+    names = sorted({(o.get("name") or "").lower() for o in doc.get("objects") or [] if o.get("name") and not skip.search((o.get("name") or "").lower())})
+    return names or SCENE_FALLBACK
 
 
 def ai_look_names(rig: Rig, n: int, seed: int = 5) -> list:
@@ -176,6 +211,17 @@ def fillers(rig: Rig) -> dict:
                                          "to the left", "to the right", "left", "right", "ccw", "cw"]),
         "target2": ("target", targets),
         # iteration 5: several fixtures at once, re-addressing
+        "scene_obj": ("target", scene_object_names(rig) + ["high top", "couch", "stools", "chairs", "tables", "bar stools",
+                                                            "cocktail tables", "dj booth", "stage deck", "speaker stacks"]),
+        "object": ("object", SCENE_KINDS),
+        "object2": ("object", SCENE_KINDS),
+        "coords": ("coordinates", SCENE_COORDS),
+        "splace": ("place", SCENE_PLACES),  # not {place}: that one is a literal list of venue words
+        "dist_ft": ("distance", SCENE_DIST),
+        "dir_lr": ("direction", ["left", "right", "stage left", "stage right", "back", "forward", "front", "backwards"]),
+        "dir_verb": ("direction", ["raise", "lower", "lift"]),
+        "dir_ud": ("direction", ["up", "down", "higher", "lower"]),
+        "upside": ("angle", ["upside down"]),
         "count": ("count", ["2", "3", "4", "5", "6", "8", "10", "12", "two", "three", "four", "five", "six", "a couple of", "a pair of", "3x"]),
         "mode2": ("mode", ["7address type", "7 address", "7 channel type", "7-ch", "14ch", "16 channel", "3 address", "4 channel type",
                            "6-channel", "8 dmx channel", "7 address type"]),
@@ -248,7 +294,9 @@ def read_corrections(path: Path, labels_version: int) -> list:
             continue
         if any(t != "O" and t[2:] not in L["slots"] for t in tags):
             continue
-        rows.append({"intent": c["intent"], "marked": c["marked"], "source": "correction"})
+        # the operator's own corrections count most; Claude's labels (the nightly teacher) count once
+        weight = r.get("weight") if isinstance(r.get("weight"), int) else (1 if r.get("source") == "claude" else None)
+        rows.append({"intent": c["intent"], "marked": c["marked"], "source": "correction", "weight": weight})
     return rows
 
 
@@ -269,7 +317,7 @@ def build_dataset(rig: Optional[Rig] = None, seed: int = 13, scale: float = 1.0,
                 rows.append({"intent": intent, "marked": expand(t["t"], fill, rnd), "source": f"grammar:{intent}:{ti}"})
     rows += read_seed()
     corr = read_corrections(cfg.data_dir / "corrections.jsonl", L["version"])
-    rows += corr * corrections_weight
+    rows += [r for r in corr for _ in range(r["weight"] if r.get("weight") else corrections_weight)]
     out, seen = [], set()
     for r in rows:
         key = (r["intent"], r["marked"].lower())

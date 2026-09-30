@@ -392,18 +392,40 @@ class Rig:
             m = re.search(r"#\s*(\d+)", fx.name)
             if m:
                 self.fixture_aliases.setdefault(f"{fx.kind} #{m.group(1)}", fx.id)
-        for fid, fx in self.fixtures.items():
-            if fid not in self.stage_order and fx.pos:
-                pass
+
+    @property
+    def stage(self):
+        """The show's 3D stage file (<show>.stage.json), read live; None when the show has none."""
+        from lightai.rig.stage import Stage
+
+        return Stage.load(self.cfg.project_path)
+
+    def stage_groups(self) -> dict:
+        """Location groups from the 3D stage ('over the dance floor', 'front row', 'near the bar', ...)."""
+        st = self.stage
+        if st is None:
+            return {}
+        key = (st.hash, bool(getattr(self.cfg, "positions_final", False)))
+        cached = getattr(self, "_stage_groups", None)
+        if cached and cached[0] == key:
+            return cached[1]
+        groups = st.groups(sorted(self.fixtures), positions_final=key[1])
+        self._stage_groups = (key, groups)
+        return groups
 
     def ordered(self, ids: list) -> list:
-        """Stage order left to right; fixtures not in the stage map follow by monitor X position."""
+        """Stage order left to right: the hand-made stage_order first, then the 3D stage's X, then the 2D monitor X."""
         rank = {fid: i for i, fid in enumerate(self.stage_order)}
+        st = self.stage
+
         def key(fid):
             if fid in rank:
                 return (0, rank[fid], 0.0)
+            p = st.pos(fid) if st is not None else None
+            if p is not None:
+                return (1, 0, p[0])
             pos = self.fixtures[fid].pos if fid in self.fixtures else None
-            return (1, 0, pos["x"] if pos else float(fid))
+            return (2, 0, pos["x"] if pos else float(fid))
         return sorted(ids, key=key)
 
     def zone_of_phrase(self, phrase: str) -> Optional[str]:

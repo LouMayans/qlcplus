@@ -44,6 +44,19 @@ def nightly_main(args) -> int:
     from lightai.prefs import Prefs
 
     print("taste model:", Prefs(cfg).train(), flush=True)
+    if getattr(cfg, "teacher_enabled", True):  # Claude labels what the local model missed; gated by the retrain below
+        try:
+            import asyncio
+            from types import SimpleNamespace
+
+            from lightai.design.backend import ClaudeCodeBackend
+            from lightai.design.runlog import RunLog
+            from lightai.design.teacher import label_sessions
+
+            summary = asyncio.run(label_sessions(SimpleNamespace(cfg=cfg, model=None), ClaudeCodeBackend(cfg, RunLog(cfg.data_dir))))
+            print("teacher:", {k: v for k, v in summary.items() if k != "runs"}, flush=True)
+        except Exception as exc:  # never let the teacher stop the nightly job
+            print(f"teacher skipped: {exc}", flush=True)
     current = cfg.current_model_dir()
     stamp = json.loads((current / "meta.json").read_text(encoding="utf-8"))["created"] if current else "19700101T000000Z"
     n_new = new_examples_since(cfg, stamp)

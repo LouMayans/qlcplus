@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Synthetic sample hand-built for lightai tests. Vixen 3 round-trips a .NET
+     DataContractSerializer object graph rather than a hand-authored schema; the element names
+     used here (EffectNodeSurrogate / StartTime / TimeSpan / TypeId / TargetNodes /
+     ChannelNodeReferenceSurrogate / Name, Length, MarkCollection / Name / Marks) come straight
+     from VixenLights/Vixen's NodeSurrogate.cs, EffectNodeSurrogate.cs and TimedSequenceData.cs
+     (source-available). The surrounding wrapper element names are simplified, since the decoder
+     deliberately scans for the names above anywhere in the tree rather than assuming one exact
+     nesting (Vixen's real polymorphic collection wrappers aren't nailed down by any spec). The
+     <Colors> block is likewise a simplified stand-in for Vixen's real (undocumented, per-effect)
+     color storage, included only to exercise the decoder's best-effort color scavenger. Not a
+     real captured show. -->
+<TimedSequenceData version="9">
+  <Length>PT1M0S</Length>
+  <Colors>
+    <Color>3366CC</Color>
+    <Color>#FF9900</Color>
+  </Colors>
+  <_effectNodeSurrogates>
+    <EffectNodeSurrogate>
+      <TypeId>32cff8e0-5b10-4466-a093-0d232c55aac0</TypeId>
+      <InstanceId>11111111-1111-1111-1111-111111111111</InstanceId>
+      <StartTime>PT0S</StartTime>
+      <TimeSpan>PT5S</TimeSpan>
+      <TargetNodes>
+        <ChannelNodeReferenceSurrogate>
+          <NodeId>aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa</NodeId>
+          <Name>Spot 1</Name>
+        </ChannelNodeReferenceSurrogate>
+      </TargetNodes>
+    </EffectNodeSurrogate>
+    <EffectNodeSurrogate>
+      <TypeId>affea852-85b1-418f-9cdf-0b9735154bb5</TypeId>
+      <InstanceId>22222222-2222-2222-2222-222222222222</InstanceId>
+      <StartTime>PT5S</StartTime>
+      <TimeSpan>PT10S</TimeSpan>
+      <TargetNodes>
+        <ChannelNodeReferenceSurrogate>
+          <NodeId>bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb</NodeId>
+          <Name>Spot 2</Name>
+        </ChannelNodeReferenceSurrogate>
+      </TargetNodes>
+    </EffectNodeSurrogate>
+    <EffectNodeSurrogate>
+      <TypeId>83bdd6f7-19c7-4598-b8e3-7ce28c44e7db</TypeId>
+      <InstanceId>33333333-3333-3333-3333-333333333333</InstanceId>
+      <StartTime>PT15S</StartTime>
+      <TimeSpan>PT20S</TimeSpan>
+      <TargetNodes>
+        <ChannelNodeReferenceSurrogate>
+          <NodeId>cccccccc-cccc-cccc-cccc-cccccccccccc</NodeId>
+          <Name>Spot 3</Name>
+        </ChannelNodeReferenceSurrogate>
+      </TargetNodes>
+    </EffectNodeSurrogate>
+    <EffectNodeSurrogate>
+      <TypeId>{ffffffff-ffff-ffff-ffff-ffffffffffff}</TypeId>
+      <InstanceId>44444444-4444-4444-4444-444444444444</InstanceId>
+      <StartTime>PT40S</StartTime>
+      <TimeSpan>PT5S</TimeSpan>
+      <TargetNodes>
+        <ChannelNodeReferenceSurrogate>
+          <NodeId>dddddddd-dddd-dddd-dddd-dddddddddddd</NodeId>
+          <Name>Spot 3</Name>
+        </ChannelNodeReferenceSurrogate>
+      </TargetNodes>
+    </EffectNodeSurrogate>
+  </_effectNodeSurrogates>
+  <LabeledMarkCollections>
+    <MarkCollection>
+      <Name>Phrases</Name>
+      <Marks>
+        <TimeSpan>PT0S</TimeSpan>
+        <TimeSpan>PT30S</TimeSpan>
+        <TimeSpan>PT60S</TimeSpan>
+      </Marks>
+    </MarkCollection>
+  </LabeledMarkCollections>
+</TimedSequenceData>

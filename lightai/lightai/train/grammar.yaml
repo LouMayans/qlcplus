@@ -96,6 +96,10 @@ release:
   - {n: 50, t: "<release|reset|give back|let go of|clear|drop the overrides on|free up> <the |>{target}"}
   - {n: 40, t: "<release overrides|clear overrides|reset the simple desk|clear the manual levels|release everything|hand control back to the looks|drop all overrides|reset all overrides|release all channels|clear the desk>"}
 fixture_edit.rotate:
+  # --- iteration 10: the 3D scene: objects, flips and mounting
+  - {n: 30, t: "<rotate|turn|spin> <the |>{scene_obj} {angle}<| {direction_rot}>"}
+  - {n: 20, t: "<flip|rotate|turn|hang> <the |>{target} {upside}"}
+  - {n: 15, t: "<mount|put> <the |>{target} on the <wall|floor>"}
   - {n: 60, t: "<rotate|turn|spin> <the |>{target} <by |>{angle}<| on the map| in the monitor| on the stage map|>"}
   - {n: 50, t: "<hey |>{target} <needs to be|should be|has to be> rotated <by |>{angle}"}
   - {n: 30, t: "<set|change> the rotation of <the |>{target} to {angle}"}
@@ -106,6 +110,15 @@ fixture_edit.rotate:
   - {n: 60, t: "<rotate|turn|spin> <the |>{target} {angle} {direction_rot2}"}
   - {n: 40, t: "<rotate|turn|spin> <the |>{target} {direction_rot2} <by |>{angle}"}
 fixture_edit.move:
+  # --- iteration 10: the 3D scene: objects and fixtures, feet/inches, coordinates, places, 'with its chairs'
+  - {n: 50, t: "<move|shift|slide|nudge|push|bump> <the |>{scene_obj} {dist_ft} <to the |>{dir_lr}<| from the stage| from the dance floor| as seen from the bar| from where the dj stands|>"}
+  - {n: 30, t: "<move|shift> <the |>{scene_obj} <with its chairs|with the stools|and its chairs|with its stools|together with its stools> {dist_ft} <to the |>{dir_lr}"}
+  - {n: 30, t: "<place|put|move|set> <the |>{scene_obj} <at|on|to> {coords}"}
+  - {n: 30, t: "<put|move|place|slide> <the |>{scene_obj} {splace}"}
+  - {n: 25, t: "<place|put|move> <the |>{target} <at|on|to> {coords}"}
+  - {n: 25, t: "{dir_verb} <the |>{target} {dist_ft}"}
+  - {n: 20, t: "<move|put|bring> <the |>{target} {dist_ft} {dir_ud}"}
+  - {n: 20, t: "<move|shift> <the |>{scene_obj} {dist_ft} {splace}"}
   - {n: 60, t: "<move|shift|nudge|slide|drag|bump> <the |>{target} {distance} {direction}"}
   - {n: 40, t: "<move|shift|nudge|slide|drag|bump> <the |>{target} {direction} <by |>{distance}"}
   - {n: 30, t: "<the |>{target} should be {distance} further {direction}"}
@@ -174,7 +187,7 @@ fixture_edit.readdress:
   - {n: 30, t: "<the |>{target} should <be at|be on|start at> {address_any}"}
   - {n: 30, t: "<move|shift|put> <the |>{target} to the next free address on {address_u}"}
 none:
-  - {n: 80, t: "<is|are> the {place} <open|closed|still open|working|busy|full|ready|clean|locked|on fire|packed|empty>"}
+  - {n: 80, t: "<is|are> the {splace} <open|closed|still open|working|busy|full|ready|clean|locked|on fire|packed|empty>"}
   - {n: 40, t: "is it <raining|snowing|cold|hot|late|busy|crowded|windy|raining outside|cold outside> <tonight|today|>"}
   - {n: 60, t: "what's the {info} <of the room|of the club|tonight|for friday|for the vip room|>"}
   - {n: 50, t: "how many <people|guests|drinks|tables|bottles|tickets|staff> <are inside|did we sell|are left|are booked|are working|>"}
@@ -194,3 +207,25 @@ none:
   - {n: 40, t: "<turn|put|set> the <tv|aircon|heater|fridge|mic|hand dryer> <up|down|off|on|at {pct}>"}
   - {n: 40, t: "<stop|kill|cut|release|clear> the <ticket sales|coat check line|guest list queue|playlist|tab for table 4>"}
   - {n: 30, t: "<go dark|black out|kill the lights> <on the group chat|at home|in the office|in the staff room>"}
+# --- iteration 10 (labels v4): whole shows for Claude to design; corrections of the previous command (only the meant
+#     values are tagged, never the rejected ones)
+design_show:
+  - {n: 40, t: "<create|make|design|build|program|put together|come up with|whip up|draft> a <dreamy|hypnotic|euphoric|dark|techno|house|latin|disco|chill|high energy|90s|ambient|reggaeton|hip hop> <show|light show|set|sequence|routine><| for tonight| for the opening| for the drop| for the countdown| for the late set>"}
+  - {n: 30, t: "<create|make|design|build|put together|come up with|give me> <2|3|two|three|four|a few|a couple of> <different |>shows <that feel|that look|that are> <dreamy|hypnotic|energetic|dark|euphoric|chill|trippy|aggressive><| with {movement}| with lots of {movement}| in {color} and {color2}>"}
+  - {n: 25, t: "<can you|could you|please|> <design|make|build|program> a <5|10|15|20|30|45> minute <show|light show|set|sequence><| for the drop| for the opening| that builds up| in {color}| using the {target}>"}
+  - {n: 20, t: "<i want|we need|i need|let's get> a <new |>show <with|full of> {movement} on the {target}<| {rate}>"}
+correction:
+  - {n: 30, t: "<i said|i asked for|i wanted|i was talking about|it should have been|it was supposed to be|i was asking for> the {target}"}
+  - {n: 25, t: "<i said|i asked for|i wanted|it should have been|it was supposed to be> {color}<| instead>"}
+  - {n: 20, t: "not the <washes|spots|beams|pars|tetras|movers|swarms>, the {target}"}
+  - {n: 20, t: "wrong <color|colour>, i <wanted|said|asked for|meant> {color}"}
+  - {n: 20, t: "wrong <fixtures|lights|zone|ones>, i <meant|said|wanted> the {target}"}
+  - {n: 15, t: "<you misunderstood me|you got it wrong|that's not what i asked for|that isn't what i said|you misheard me|i didn't ask for that>"}
+scene.add:
+  - {n: 50, t: "<add|put|place|drop|set up|bring in> <a|an|one> {object}<| and {count} {object2}> {splace}"}
+  - {n: 30, t: "<add|put|place> {count} {object} <at|on> {coords}"}
+  - {n: 25, t: "<we need|can you add|i want|let's add|add> <a|an> {object} {splace}"}
+  - {n: 20, t: "<add|put> a {object} with {count} {object2} <at {coords}|{splace}>"}
+scene.remove:
+  - {n: 40, t: "<remove|delete|take out|get rid of|clear> <the |>{scene_obj}<| {splace}>"}
+  - {n: 15, t: "<remove|delete|take out> <the |>{scene_obj} and its <chairs|stools>"}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic sample hand-built for lightai tests, following the documented LOR .lms layout
+     (cross-checked against Cryptkeeper's libreorama, MIT, and xLights' own LORMusic.cpp LOR
+     importer, GPL-3.0). Not a real captured show. -->
+<sequence musicFilename="club_anthem.wav">
+  <channels>
+    <channel name="Par L" color="255" unit="1" circuit="1" savedIndex="0">
+      <effect type="intensity" intensity="100" startCentisecond="1000" endCentisecond="1500"/>
+      <effect type="intensity" startIntensity="0" endIntensity="100" startCentisecond="1500" endCentisecond="2000"/>
+    </channel>
+    <channel name="Par R" color="65280" unit="1" circuit="2" savedIndex="1">
+      <effect type="shimmer" startCentisecond="2000" endCentisecond="2500"/>
+    </channel>
+    <channel name="Strobe" color="16711680" unit="1" circuit="3" savedIndex="2">
+      <effect type="twinkle" startCentisecond="0" endCentisecond="500"/>
+      <effect type="intensity" intensity="0" startCentisecond="500" endCentisecond="1000"/>
+    </channel>
+  </channels>
+  <timingGrids>
+    <timingGrid type="fixed" name="Beat Grid">
+      <timing centisecond="0"/>
+      <timing centisecond="50"/>
+      <timing centisecond="100"/>
+      <timing centisecond="150"/>
+      <timing centisecond="200"/>
+      <timing centisecond="250"/>
+      <timing centisecond="300"/>
+      <timing centisecond="350"/>
+      <timing centisecond="400"/>
+      <timing centisecond="450"/>
+    </timingGrid>
+    <timingGrid type="freeform" name="Phrases">
+      <timing centisecond="0"/>
+      <timing centisecond="1000"/>
+      <timing centisecond="2000"/>
+    </timingGrid>
+  </timingGrids>
+  <tracks>
+    <track totalCentiseconds="3000"/>
+  </tracks>
+</sequence>

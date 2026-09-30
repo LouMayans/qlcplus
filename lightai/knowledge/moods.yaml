@@ -1,0 +1,263 @@
+version: 1
+# Mood words -> recipe, rate, fade, palette and intensity ranges for the show designer and for offline commands.
+# Sources: .claude/memory/lighting/lightshow-design-principles.md (Mood by genre), effect-recipes-cookbook.md.
+moods:
+  dreamy:
+    words: [dreamy, dream, ethereal, floaty, hazy, soft, floaty]
+    recipes: [color_morph, breathe, dimmer_wave, circle_wave]
+    avoid: [strobe, strobe_chase]
+    rate: [very_slow, slow]
+    fade_ms: [3000, 8000]
+    palette: [lavender, pink, cyan, blue]
+    intensity: [0.3, 0.7]
+    movement_size: [small, medium]
+    strobe: none
+    orders: [center_out, circular]
+    notes: "Slow color morphs with gentle dimmer waves; keep movement flowing and organic."
+
+  ethereal:
+    words: [ethereal, airy, light, angelic, transcendent, spiritual]
+    recipes: [breathe, color_morph, circle_wave, dimmer_wave]
+    avoid: [strobe, strobe_burst, ballyhoo]
+    rate: [very_slow, slow]
+    fade_ms: [2500, 7000]
+    palette: [cool white, lavender, cyan, white]
+    intensity: [0.2, 0.6]
+    movement_size: [tiny, small]
+    strobe: none
+    orders: [center_out, outside_in]
+    notes: "Pastel, high-saturation pastels; use cool tones and ultra-smooth fades for an air of weightlessness."
+
+  calm:
+    words: [calm, chill, mellow, relax, relaxed, serene, peaceful, zen]
+    recipes: [color_wash, breathe, dimmer_wave, circle]
+    avoid: [strobe, ballyhoo, running_light]
+    rate: [very_slow, slow]
+    fade_ms: [4000, 10000]
+    palette: [teal, blue, cyan, cool white]
+    intensity: [0.25, 0.5]
+    movement_size: [small, medium]
+    strobe: none
+    orders: [circular, center_out]
+    notes: "Deep blues and teals; minimal movement, long fades for a meditative vibe."
+
+  romantic:
+    words: [romantic, intimate, sensual, passionate, love, tender]
+    recipes: [color_morph, breathe, dimmer_wave, color_chase]
+    avoid: [strobe, ballyhoo]
+    rate: [slow, medium]
+    fade_ms: [2000, 6000]
+    palette: [pink, warm white, red, magenta]
+    intensity: [0.4, 0.75]
+    movement_size: [small, medium]
+    strobe: none
+    orders: [center_out, circular]
+    notes: "Warm pinks and reds; gentle, slow color fades with mid-range intensity for intimacy."
+
+  warm:
+    words: [warm, cozy, intimate, golden, toasty, heat]
+    recipes: [color_wash, breathe, dimmer_wave, color_morph]
+    avoid: [strobe_chase, ballyhoo]
+    rate: [slow, medium]
+    fade_ms: [3000, 7000]
+    palette: [orange, amber, warm white, red]
+    intensity: [0.5, 0.8]
+    movement_size: [medium, big]
+    strobe: none
+    orders: [center_out, back_to_front]
+    notes: "Ambers and warm whites; low-saturation pastels for comfort without harshness."
+
+  cold:
+    words: [cold, icy, frozen, frosty, winter, arctic, chilled, cool]
+    recipes: [color_wash, circle_wave, dimmer_wave, color_morph]
+    avoid: [strobe_burst, running_light]
+    rate: [very_slow, slow]
+    fade_ms: [3500, 8000]
+    palette: [cyan, blue, cool white, purple]
+    intensity: [0.3, 0.65]
+    movement_size: [small, medium]
+    strobe: none
+    orders: [circular, center_out]
+    notes: "Cyans and deep blues; slow, hypnotic movement for an icy, contemplative mood."
+
+  dark:
+    words: [dark, moody, brooding, sullen, gloomy, ominous]
+    recipes: [color_wash, dimmer_wave, circle, ballyhoo]
+    avoid: [color_chase]
+    rate: [slow, medium]
+    fade_ms: [2000, 5000]
+    palette: [blue, purple, red, uv]
+    intensity: [0.15, 0.4]
+    movement_size: [small, medium]
+    strobe: accents
+    orders: [circular, random]
+    notes: "Deep saturations, low intensity; reserve strobe for dramatic accents only."
+
+  mysterious:
+    words: [mysterious, enigmatic, secretive, shadowy, cryptic, unknown]
+    recipes: [color_morph, circle, ballyhoo, dimmer_wave]
+    avoid: [color_chase]
+    rate: [slow, medium]
+    fade_ms: [2500, 6000]
+    palette: [purple, blue, magenta, uv]
+    intensity: [0.2, 0.55]
+    movement_size: [small, medium]
+    strobe: accents
+    orders: [circular, random, center_out]
+    notes: "Purples and deep blues; use irregular movement (ballyhoo) with occasional strobe accents."
+
+  hypnotic:
+    words: [hypnotic, trance, mesmerizing, repetitive, steady, pulsing]
+    recipes: [circle_wave, dimmer_wave, running_light, color_morph]
+    avoid: [ballyhoo, strobe_burst]
+    rate: [slow, medium]
+    fade_ms: [1500, 4000]
+    palette: [blue, cyan, purple, pink]
+    intensity: [0.4, 0.75]
+    movement_size: [small, medium]
+    strobe: none
+    orders: [circular, center_out, outside_in]
+    notes: "Repetitive, smooth wave patterns; beat-synced movement that lulls the listener."
+
+  psychedelic:
+    words: [psychedelic, trippy, surreal, tripendicular, mind-bending, kaleidoscopic]
+    recipes: [color_chase, ballyhoo, figure8, strobe_chase]
+    avoid: [dimmer_wave, breathe]
+    rate: [fast, very_fast]
+    fade_ms: [500, 2000]
+    palette: [magenta, cyan, lime, purple]
+    intensity: [0.6, 0.95]
+    movement_size: [big, huge]
+    strobe: bursts
+    orders: [random, counter_circular, circular]
+    notes: "Rapid color changes, wild movement patterns; use strobe bursts for disorientation."
+
+  energetic:
+    words: [energetic, lively, upbeat, vibrant, alive, dynamic]
+    recipes: [color_chase, running_light, circle, strobe_chase]
+    avoid: [dimmer_wave]
+    rate: [fast, very_fast]
+    fade_ms: [1000, 2500]
+    palette: [red, orange, yellow, lime]
+    intensity: [0.6, 0.9]
+    movement_size: [medium, big]
+    strobe: accents
+    orders: [left_to_right, right_to_left, center_out]
+    notes: "Fast-moving chases, quick fades; high intensity with strategic strobe accents."
+
+  euphoric:
+    words: [euphoric, joyful, blissful, ecstatic, elated, transcendent, happy]
+    recipes: [color_chase, running_light, circle, strobe_burst]
+    avoid: [circle_wave, dimmer_wave]
+    rate: [medium, fast]
+    fade_ms: [1000, 3000]
+    palette: [white, yellow, magenta, cyan]
+    intensity: [0.7, 1.0]
+    movement_size: [big, huge]
+    strobe: bursts
+    orders: [center_out, circular, random]
+    notes: "Full saturation, high intensity, white snaps; strobe bursts on beat-drops for crowd elevation."
+
+  aggressive:
+    words: [aggressive, brutal, harsh, heavy, intense, violent, hard]
+    recipes: [strobe, strobe_burst, ballyhoo, figure8]
+    avoid: [breathe, dimmer_wave]
+    rate: [fast, very_fast]
+    fade_ms: [0, 500]
+    palette: [red, white, magenta, orange]
+    intensity: [0.8, 1.0]
+    movement_size: [huge, big]
+    strobe: constant
+    orders: [random, circular, counter_circular]
+    notes: "Constant strobing, sharp fades, maximum movement; no smooth transitions."
+
+  festive:
+    words: [festive, party, celebration, playful, fun, colorful, cheery]
+    recipes: [color_chase, running_light, figure8, strobe_burst]
+    avoid: [dimmer_wave, breathe]
+    rate: [fast, very_fast]
+    fade_ms: [1000, 3000]
+    palette: [red, yellow, pink, cyan]
+    intensity: [0.7, 0.95]
+    movement_size: [medium, big]
+    strobe: accents
+    orders: [random, left_to_right, center_out]
+    notes: "Multi-color rainbows, fast chases, celebratory strobes; upbeat and crowd-facing."
+
+  buildup:
+    words: [buildup, build, tension, rise, climax, anticipation, swell]
+    recipes: [color_chase, strobe_chase, dimmer_wave, circle]
+    avoid: [breathe]
+    rate: [medium, fast, very_fast]
+    fade_ms: [500, 2000]
+    palette: [white, cyan, magenta, red]
+    intensity: [0.5, 0.9]
+    movement_size: [medium, big, huge]
+    strobe: bursts
+    orders: [center_out, circular, random]
+    notes: "Accelerating strobes and movement; intensity and rate rise steadily toward the peak."
+
+  drop:
+    words: [drop, release, impact, peak, hit, explosive, crash, bang]
+    recipes: [strobe_burst, color_morph, circle, running_light]
+    avoid: [breathe, dimmer_wave]
+    rate: [fast, very_fast]
+    fade_ms: [0, 500]
+    palette: [white, red, magenta, cyan]
+    intensity: [0.95, 1.0]
+    movement_size: [huge, big]
+    strobe: bursts
+    orders: [center_out, circular, random]
+    notes: "Snapped, maximum intensity; full beams + blinder hits + strobe bursts simultaneously."
+
+  minimal:
+    words: [minimal, sparse, empty, negative space, restrained, austere]
+    recipes: [color_wash, position, dimmer_wave, circle]
+    avoid: [ballyhoo, color_chase, strobe]
+    rate: [very_slow, slow]
+    fade_ms: [3000, 10000]
+    palette: [blue, white, cyan, purple]
+    intensity: [0.1, 0.35]
+    movement_size: [tiny, small]
+    strobe: none
+    orders: [center_out, circular]
+    notes: "One or two fixtures only; silence is the design element; ultra-long fades."
+
+  glamorous:
+    words: [glamorous, elegant, sophisticated, chic, luxe, upscale]
+    recipes: [color_morph, color_wash, circle_wave, figure8]
+    avoid: [ballyhoo, strobe_burst]
+    rate: [slow, medium]
+    fade_ms: [2000, 5000]
+    palette: [magenta, pink, warm white, amber]
+    intensity: [0.6, 0.85]
+    movement_size: [small, medium]
+    strobe: none
+    orders: [circular, center_out]
+    notes: "Smooth, flowing movement; monochromatic or analogous palettes; refined, controlled intensity."
+
+  ambient:
+    words: [ambient, background, atmospheric, floating, atmospheric, spatial]
+    recipes: [breathe, color_morph, dimmer_wave, circle_wave]
+    avoid: [strobe, running_light, ballyhoo]
+    rate: [very_slow, slow]
+    fade_ms: [4000, 12000]
+    palette: [cool white, lavender, cyan, teal]
+    intensity: [0.15, 0.4]
+    movement_size: [tiny, small]
+    strobe: none
+    orders: [circular, center_out]
+    notes: "Imperceptible, supportive; fades so long they feel static; designed to be forgotten."
+
+  floating:
+    words: [floating, weightless, zero-gravity, suspended, drift, gliding]
+    recipes: [circle_wave, breathe, color_morph, dimmer_wave]
+    avoid: [strobe, running_light]
+    rate: [very_slow, slow]
+    fade_ms: [3000, 8000]
+    palette: [cyan, lavender, cool white, blue]
+    intensity: [0.25, 0.6]
+    movement_size: [small, medium]
+    strobe: none
+    orders: [circular, center_out, outside_in]
+    notes: "Organic wave movement with gentle phase offsets; low gravity, high air."

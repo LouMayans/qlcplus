@@ -259,7 +259,31 @@ class Workspace:
                 c.tail = pad
             children[-1].tail = "\n" + " " * level
 
+    def add_fixture_group(self, el) -> None:
+        """A <FixtureGroup> goes where QLC+ saves them: after the fixtures and the other groups, before channel groups,
+        palettes and functions. QLC+ loads the file in order, and an RGB Matrix loaded before its group caches zero
+        steps: its pattern stays frozen until someone edits it."""
+        self._indent_new(el, 2)
+        kids = [c for c in self.engine if isinstance(c.tag, str)]
+        anchor = ([c for c in kids if local(c) == "FixtureGroup"] or [c for c in kids if local(c) == "Fixture"] or [None])[-1]
+        if anchor is not None:
+            el.tail = anchor.tail
+            anchor.tail = "\n  "
+            anchor.addnext(el)
+            return
+        first = next((c for c in kids if local(c) in ("ChannelsGroup", "Palette", "Function", "Monitor")), None)
+        if first is None:
+            anchor = kids[-1]
+            el.tail = anchor.tail
+            anchor.tail = "\n  "
+            anchor.addnext(el)
+            return
+        el.tail = "\n  "
+        first.addprevious(el)
+
     def add_function(self, el) -> None:
+        if local(el) == "FixtureGroup":  # never after the functions that use it
+            return self.add_fixture_group(el)
         self._indent_new(el, 2)
         existing = self.function_els()
         if existing:

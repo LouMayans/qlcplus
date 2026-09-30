@@ -476,6 +476,293 @@ class Parser:
             cmd.slots["fixture_model"] = [SlotValue(raw=rest, value=v)]
             cmd.ambiguities.append(f"read the fixture model as '{rest}'")
 
+    AIM = re.compile(r"\b(?:aim|point|focus|shine|hit|put)\b\s+(?P<what>.+?)\s+(?:at|on|onto|to|towards|over)\s+(?:the\s+)?(?P<place>[a-z][a-z ]*?)"
+                     r"(?=\s+(?:with|in|and|while|using|at\s+\d)\b|[,.!?]|$)")
+    CROSS = re.compile(r"\b(?:criss[- ]?cross|cross(?:ing|ed)?)\b(?:\s+(?P<what>.+?))?\s+(?:over|on|above|at)\s+(?:the\s+)?(?P<place>[a-z][a-z ]*?)(?=[,.!?]|$|\s+(?:with|in|and)\b)")
+
+    FX_REF = r"(?:spot|fixture|beam|wash|mover|moving head|head|par|light)\s*#?\s*\d+"
+    BEAM_REFS = [
+        # 'right where the beam ends and collides with the floor', 'where spot 2's beam lands', 'where it hits the floor'
+        re.compile(r"\b(?:right |just |exactly )?(?:to |at |on |onto )?(?:the (?:spot|point|place) )?where\s+"
+                   r"(?:(?P<fx>" + FX_REF + r")(?:'s)?(?:\s+(?:beam|light))?|(?:the |its |that |their )?(?:beam|light)s?|it|they)\s+"
+                   r"(?:beam\s+)?(?:ends?|lands?|hits?|collides?|meets?|touches?|falls?|is pointing|points?|is aimed|shines?)\b"
+                   r"(?:[^.,;!?]*?\b(?:floor|ground|deck))?", re.I),
+        # 'to spot 2 beam that ends on the floor', 'at spot 2's beam', 'the end of spot 2's beam'
+        re.compile(r"\b(?:at|to|on|onto|towards?|into)\s+(?:the\s+)?(?:end of\s+|tip of\s+)?(?:the\s+)?(?P<fx>" + FX_REF + r")(?:'s)?\s+"
+                   r"(?:beam|light|spot on the floor|floor spot)\b(?:\s+(?:that|which)?\s*(?:ends?|lands?|hits?|meets?)\s+(?:on\s+)?"
+                   r"(?:the\s+)?(?:floor|ground))?", re.I),
+        # 'the same spot as spot 2'
+        re.compile(r"\b(?:the\s+)?same\s+(?:spot|place|point)\s+(?:as|like)\s+(?P<fx>" + FX_REF + r")\b", re.I),
+    ]
+
+    def beam_refs(self, cmd: LightCommand) -> None:
+        """'point spot 3 right where the beam ends and hits the floor', 'all beams to spot 2's beam that ends on the floor':
+        aim at the floor spot another beam lands on (worked out live when the command runs). The reference fixture and
+        the words of the phrase are taken out of the targets; with no fixture named, it is the last one aimed."""
+        low = cmd.text.lower()
+        for pat in self.BEAM_REFS:
+            m = pat.search(low)
+            if not m:
+                continue
+            phrase = m.group(0)
+            ref = m.group("fx") if "fx" in pat.groupindex else None
+            ids = []
+            if ref:
+                val = normalize_slot(self.rig, "target", ref)
+                ids = [int(i) for i in val.get("fixture_ids") or []] if not val.get("unresolved") else []
+            cmd.spatial["aim_beam"] = {"fixture_ids": ids} if ids else {"last": True}
+            for slot in ("target", "function_ref", "movement", "direction", "place", "coordinates"):
+                vals = cmd.slots.get(slot) or []
+                keep = [sv for sv in vals if not (sv.raw.lower().strip() and sv.raw.lower().strip() in phrase)]
+                if len(keep) < len(vals):
+                    if keep:
+                        cmd.slots[slot] = keep
+                    else:
+                        cmd.slots.pop(slot, None)
+            if cmd.intent not in ("create_look", "propose_look") or cmd.confidence < 0.8:
+                cmd.ambiguities.append(f"aiming at a beam's floor spot is a live aim (model said {cmd.intent} at {cmd.confidence:.2f})")
+                cmd.intent_top = [("create_look", 1.0)] + [t for t in cmd.intent_top if t[0] != "create_look"]
+                cmd.intent, cmd.confidence = "create_look", max(cmd.confidence, 0.9)
+            self.drop_stray_targets(cmd)
+            if cmd.slots.pop("function_ref", None) is not None:  # 'point' / 'aim' tagged as a function name: an aim uses none
+                cmd.ambiguities.append("an aim names no function: ignored the function words")
+            who = ref or "the last aimed fixture"
+            cmd.ambiguities.append(f"aim where {who}'s beam lands (worked out live when it runs)")
+            return
+
+    def drop_stray_targets(self, cmd: LightCommand) -> None:
+        """In an aim, a tag that is no fixture ('beam no' of 'white beam no flashing') is dropped when a real fixture is
+        named too."""
+        tv = cmd.slots.get("target") or []
+        good = [sv for sv in tv if sv.value.get("fixture_ids") and not sv.value.get("unresolved")]
+        if good and len(good) < len(tv):
+            cmd.ambiguities.append("ignored " + ", ".join(f"'{sv.raw}'" for sv in tv if sv not in good) + " (no fixture)")
+            cmd.slots["target"] = good
+        if good and cmd.slots.get("function_ref"):  # 'white' of 'white beam' read as a function name: an aim names none
+            fr = cmd.slots.pop("function_ref")
+            cmd.ambiguities.append("an aim names no function: ignored " + ", ".join(f"'{sv.raw}'" for sv in fr))
+
+    SCENE_INTENTS = ("fixture_edit.move", "fixture_edit.rotate", "scene.remove")
+    _UNIT = r"(?:\s*(?:feet|foot|ft|inches|inch|in|meters?|metres?|m|cm))?"
+    COORDS_RE = re.compile(r"(?P<lead>\b(?:at|on|onto|to)\s+(?:the\s+)?(?:(?:coordinates?|coords?|position|location|point|spot|mark)\s+)?"
+                           r"|\b(?:coordinates?|coords?|position|location)\s+)"
+                           r"(?P<c>(?:x\s*)?-?\d+(?:\.\d+)?" + _UNIT + r"\s*(?:by|x|,)\s*(?:y\s*)?-?\d+(?:\.\d+)?" + _UNIT
+                           + r"(?:\s*(?:by|x|,)\s*(?:z\s*)?-?\d+(?:\.\d+)?" + _UNIT + r")?)", re.I)
+
+    TRAILING = re.compile(r"(?:\s+(?:by|to|at|on|onto|with|and|for|from|of|in|into|right|left|just|exactly|straight|directly))+$", re.I)
+
+    def trim_targets(self, cmd: LightCommand) -> None:
+        """'fixture 5 by' (v9 tagged the 'by' of 'by 2 feet' into the target): a trailing little word is not part of a name."""
+        for sv in cmd.slots.get("target") or []:
+            raw = sv.raw.strip()
+            if not self.TRAILING.search(raw) or (sv.value.get("fixture_ids") and not sv.value.get("unresolved")):
+                continue
+            short = self.TRAILING.sub("", raw)
+            val = normalize_slot(self.rig, "target", short)
+            if val.get("fixture_ids") and not val.get("unresolved"):
+                cmd.ambiguities.append(f"read '{raw}' as '{short}'")
+                sv.raw, sv.value = short, val
+
+    def scene_coordinates(self, cmd: LightCommand) -> None:
+        """'place fixture 7 on coordinate 5 foot by 5 foot', 'at position 5 by 5 feet', 'at the spot 4 by 6 feet': the
+        whole phrase is the coordinates; the tagger's stray 'coordinate' / '5' / 'spot 4' targets inside it are dropped.
+        Needs a lead-in (at / on / to / coordinate / position): 'move fixture 5 by 2 feet' is a 2-foot move."""
+        if cmd.intent not in ("fixture_edit.move", "scene.add"):
+            return
+        m = self.COORDS_RE.search(cmd.text)
+        if not m:
+            return
+        val = normalize_slot(self.rig, "coordinates", m.group("c"))
+        if not val:
+            return
+        phrase = m.group(0).lower()
+        dropped = []
+        for slot in ("target", "direction", "distance", "coordinates", "place"):
+            vals = cmd.slots.get(slot) or []
+            keep = [sv for sv in vals if not (sv.raw.lower().strip() and sv.raw.lower().strip() in phrase)]
+            dropped += [sv.raw for sv in vals if sv not in keep and slot != "coordinates"]
+            if slot in cmd.slots:
+                if keep:
+                    cmd.slots[slot] = keep
+                else:
+                    cmd.slots.pop(slot)
+        cmd.slots["coordinates"] = [SlotValue(raw=m.group("c"), value=val)]
+        if dropped:
+            cmd.ambiguities.append(f"read '{m.group(0).strip()}' as coordinates (not {', '.join(repr(d) for d in dropped)})")
+
+    def scene_things(self, cmd: LightCommand) -> None:
+        """'move table 3 a foot left', 'remove bar stool 4': targets that are objects in the room's 3D stage, not fixtures.
+        An object word ('table', 'stool', 'the bar') wins over a weak fixture match."""
+        if cmd.intent not in self.SCENE_INTENTS or not cmd.slots.get("target"):
+            return
+        try:
+            from lightai.rig.scene import Scene, read_doc
+            from lightai.rig.scene_plans import OBJECT_WORD
+            from lightai.rig.stage import stage_path
+
+            path = stage_path(self.rig.cfg.project_path)
+            if not path.exists():
+                return
+            scene = Scene(read_doc(path), self.rig)
+        except (OSError, ValueError, AttributeError):
+            return
+        for sv in cmd.slots["target"]:
+            v = sv.value or {}
+            fixture_ok = bool(v.get("fixture_ids")) and not v.get("unresolved") and not v.get("weak") and not v.get("ambiguous")
+            if fixture_ok and not OBJECT_WORD.search(sv.raw):
+                continue
+            ids, cands = scene.find(sv.raw)
+            if ids:
+                sv.value = {"objects": ids, "fixture_ids": []}
+                names = [(scene.obj(i) or {}).get("name", i) for i in ids]
+                shown = ", ".join(names[:4]) + (f" and {len(names) - 4} more" if len(names) > 4 else "")
+                cmd.ambiguities.append(f"read '{sv.raw}' as {shown} (3D stage)")
+            elif cands and not fixture_ok:
+                sv.value = {"objects": [], "fixture_ids": [], "candidates": cands}
+                names = ", ".join((scene.obj(c) or {}).get("name", c) for c in cands[:4])
+                cmd.clarify = f"Which one: {names}?"
+
+    GENERIC_MODELS = {"fixture", "fixtures", "light", "lights", "unit", "units", "head", "heads", "one", "ones", "thing", "things"}
+    PATCH_CUE = re.compile(r"\b(?:fixtures?|units?|lights?|heads?|machines?|movers?|patch|patched|hang|mount|install|universe|address|dmx|"
+                           r"to (?:the )?(?:project|show|patch|rig))\b|\b(?:a|an|one|two|three|four|five|six|\d+)\s+[a-z]", re.I)
+
+    def tidy_models_and_moods(self, cmd: LightCommand) -> None:
+        """v9: 'add par fixture to project' tagged 'fixture' as a second model; 'dreamy blue wash' tagged 'dreamy' as a color;
+        'add fog' read as patching a fixture. A mood word goes to the mood (the planner applies it), a generic word is no
+        model, and a patch request needs a sign of patching (a number, 'a', an address, 'fixture', 'to the show'...)."""
+        models = cmd.slots.get("fixture_model") or []
+        if len(models) > 1:
+            keep = [sv for sv in models if sv.raw.lower().strip() not in self.GENERIC_MODELS]
+            if keep and len(keep) < len(models):
+                cmd.slots["fixture_model"] = keep
+                cmd.ambiguities.append("ignored the generic word(s): " + ", ".join(sv.raw for sv in models if sv not in keep))
+        colors = cmd.slots.get("color") or []
+        if colors:
+            from lightai.design.moods import find_mood
+
+            keep = [sv for sv in colors if not (sv.value.get("unresolved") and find_mood(sv.raw))]
+            if len(keep) < len(colors):
+                cmd.ambiguities.extend(f"'{sv.raw}' is the mood, not a color" for sv in colors if sv not in keep)
+                if keep:
+                    cmd.slots["color"] = keep
+                else:
+                    cmd.slots.pop("color", None)
+        if cmd.intent == "add_fixture" and not (cmd.slots.get("count") or cmd.slots.get("address") or cmd.slots.get("mode")) \
+                and not self.PATCH_CUE.search(cmd.text) and not any(sv.raw.lower().endswith("s") for sv in cmd.slots.get("fixture_model") or []):
+            cmd.ambiguities.append(f"nothing says patch a fixture (model said add_fixture at {cmd.confidence:.2f})")
+            cmd.intent, cmd.confidence = "none", 0.0
+            cmd.clarify = "Do you want to patch a new fixture into the show? Say e.g. 'add a fog machine to universe 1'."
+
+    JUNK_MOVES = {"do", "doing", "make", "go", "going", "some", "a", "the"}
+    SIZE_HEAD = re.compile(r"^(tiny|small|medium|big|huge|large|wide|narrow)\s+(.+)$", re.I)
+
+    def tidy_look_slots(self, cmd: LightCommand) -> None:
+        """'make the spots do red circles': 'do' tagged as a movement; 'big fast white sweep': 'big fast' tagged as one
+        speed. A filler word is no movement, and a size word at the start of a speed is the size."""
+        from lightai.nlu.normalize import norm_rate, norm_size
+
+        moves = cmd.slots.get("movement") or []
+        junk = [sv for sv in moves if sv.raw.lower().strip() in self.JUNK_MOVES]
+        if junk:
+            keep = [sv for sv in moves if sv not in junk]
+            if keep:
+                cmd.slots["movement"] = keep
+            else:
+                cmd.slots.pop("movement", None)
+            cmd.ambiguities.append("ignored filler movement word(s): " + ", ".join(sv.raw for sv in junk))
+        for sv in list(cmd.slots.get("size") or []):  # v9: 'big fast' tagged as one size
+            m = self.SIZE_HEAD.match(sv.raw.strip())
+            if not m or cmd.slots.get("rate"):
+                continue
+            size, rate = norm_size(m.group(1)), norm_rate(m.group(2))
+            if size and (rate.get("word") or rate.get("bpm")):
+                sv.raw, sv.value = m.group(1), size
+                cmd.slots["rate"] = [SlotValue(raw=m.group(2), value=rate)]
+                cmd.ambiguities.append(f"split '{m.group(0)}' into size '{m.group(1)}' + speed '{m.group(2)}'")
+        for sv in list(cmd.slots.get("rate") or []):
+            m = self.SIZE_HEAD.match(sv.raw.strip())
+            if not m or cmd.slots.get("size"):
+                continue
+            size, rate = norm_size(m.group(1)), norm_rate(m.group(2))
+            if size and rate:
+                cmd.slots["size"] = [SlotValue(raw=m.group(1), value=size)]
+                sv.raw, sv.value = m.group(2), rate
+                cmd.ambiguities.append(f"split '{m.group(0)}' into size '{m.group(1)}' + speed '{m.group(2)}'")
+
+    def spatial_words(self, cmd: LightCommand) -> None:
+        """'left to right', 'centre out', 'aim the spots at the dj', 'cross the beams over the dance floor',
+        'straight down': read from the words for the 3D stage, and taken back out of the fixture targets."""
+        from lightai.rig.stage import ORDER_WORDS
+
+        st = self.rig.stage
+        low = cmd.text.lower()
+        spent: list = []
+        for phrase, order in sorted(ORDER_WORDS.items(), key=lambda kv: -len(kv[0])):
+            if re.search(r"(?<![a-z])" + re.escape(phrase) + r"(?![a-z])", low):
+                cmd.spatial["order"] = order
+                spent += phrase.split()
+                break
+        if st is not None and not cmd.spatial.get("aim_beam"):  # a beam's floor spot is the aim (beam_refs)
+            m = self.CROSS.search(low)
+            if m and st.place(m.group("place")) is not None:
+                cmd.spatial.update(aim=m.group("place"), spread="cross")
+                spent += m.group("place").split()
+            else:
+                m = self.AIM.search(low)
+                if m and st.place(m.group("place")) is not None:
+                    cmd.spatial["aim"] = m.group("place")
+                    spent += m.group("place").split()
+        if re.search(r"\bstraight down\b|\bpoint(?:ing)? (?:straight )?down\b", low):
+            cmd.spatial["aim"] = "down"
+            spent += ["straight", "down", "point", "pointing"]
+            self.drop_stray_targets(cmd)
+        if re.search(r"\bfan(?:ned|ning)? out\b|\bspread (?:them )?out\b|\bin a fan\b", low):
+            cmd.spatial["spread"] = "fan"
+        tv = cmd.slots.get("target") or []
+        for a, b in zip(tv, tv[1:]):  # 'the beams' + 'dance floor' tagged apart: 'the beams over the dance floor' is one group
+            m = re.search(re.escape(a.raw.lower()) + r"\s+(?:over|above|near|by|next to|in|on|at)\s+(?:the\s+)?" + re.escape(b.raw.lower())
+                          + r"(?P<more>\s+[a-z]+)?", low)
+            if m and not (cmd.spatial.get("aim") and set(b.raw.lower().split()) <= set(spent) | {"the"}):
+                phrases = [m.group(0), m.group(0)[:m.start("more") - m.start()]] if m.group("more") else [m.group(0)]
+                for phrase in phrases:  # 'dance' + 'floor': the whole place name first
+                    val = normalize_slot(self.rig, "target", phrase)
+                    if val.get("fixture_ids"):
+                        cmd.slots["target"] = [x for x in tv if x is not a and x is not b] + [SlotValue(raw=phrase, value=val)]
+                        cmd.ambiguities.append(f"'{phrase}' is one group of fixtures")
+                        break
+                else:
+                    continue
+                break
+        if cmd.intent in ("feedback", "none") and cmd.confidence < 0.8 and cmd.first("target") is not None:
+            from lightai.design.moods import find_mood
+
+            mood = find_mood(cmd.text)
+            if mood is not None:  # 'something hypnotic on the spots': try a look in that mood (a live preview)
+                cmd.ambiguities.append(f"'{mood[2]}' asks for a look in the '{mood[0]}' mood (model said {cmd.intent} at {cmd.confidence:.2f})")
+                cmd.intent_top = [("propose_look", 1.0)] + [t for t in cmd.intent_top if t[0] != "propose_look"]
+                cmd.intent, cmd.confidence = "propose_look", max(cmd.confidence, 0.9)
+        if not cmd.spatial:
+            return
+        words = set(spent) | {"left", "right", "centre", "center", "out", "in", "middle"}
+        for slot in ("target", "direction", "function_ref", "movement"):
+            keep = []
+            for sv in cmd.slots.get(slot) or []:
+                raw = set(re.sub(r"^(?:the|all the)\s+", "", sv.raw.lower()).split())
+                if raw and raw <= words and slot in ("direction", "movement") and not (slot == "movement" and sv.value.get("recipe")) \
+                        or (slot in ("target", "function_ref") and raw and raw <= set(spent) | {"center", "centre"}):
+                    continue  # 'dance floor' / 'center' were the place or the order, not fixtures
+                keep.append(sv)
+            if slot in cmd.slots:
+                cmd.slots[slot] = keep
+                if not keep:
+                    cmd.slots.pop(slot)
+        if cmd.spatial.get("aim") and cmd.intent not in ("create_look", "propose_look", "update_look", "design_show", "correction") \
+                and cmd.first("target"):
+            cmd.ambiguities.append(f"aiming at {cmd.spatial['aim']} is a look (model said {cmd.intent} at {cmd.confidence:.2f})")
+            cmd.intent_top = [("create_look", 1.0)] + [t for t in cmd.intent_top if t[0] != "create_look"]
+            cmd.intent, cmd.confidence = "create_look", max(cmd.confidence, 0.9)
+        cmd.ambiguities.append("from the 3D stage: " + ", ".join(f"{k} {v}" for k, v in cmd.spatial.items()))
+
     def level_only(self, cmd: LightCommand) -> None:
         """'mayans beam230 at 50%' read as 'create a look' (0.94): a sentence that is only fixtures and a percentage, with
         fixtures that resolve, is a level change."""
@@ -757,6 +1044,13 @@ class Parser:
                         cmd.ambiguities.append(f"split '{head} {tail}' into {slot} '{head}' + color '{tail}'")
                         break
                 break
+        self.tidy_look_slots(cmd)
+        self.tidy_models_and_moods(cmd)
+        self.trim_targets(cmd)
+        self.scene_coordinates(cmd)
+        self.scene_things(cmd)
+        self.beam_refs(cmd)
+        self.spatial_words(cmd)  # last: earlier steps may turn order or place words into targets
 
     def guard(self, cmd: LightCommand) -> None:
         """Unslotted, not-quite-certain commands with no lighting word at all are treated as out of scope."""

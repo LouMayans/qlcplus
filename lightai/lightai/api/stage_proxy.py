@@ -66,13 +66,40 @@ _UNREACHABLE_HTML = """<!doctype html><meta charset="utf-8"><title>QLC+ unreacha
 <body style="font:15px system-ui,sans-serif;padding:48px;color:#333;max-width:640px">
 <h1 style="margin-top:0">QLC+ isn't running on {host}:{port}</h1>
 <p>The 3D stage view is served by QLC+ itself; lightai only proxies it. Start QLC+ (with the
-3D stage fork build) on that host/port and reload this page.</p></body>"""
+3D stage fork build) on that host/port and reload this page.</p>
+<p><a href="/" target="lightai-console">&larr; back to the lightai console</a></p></body>"""
 
 _NO_STAGE_HTML = """<!doctype html><meta charset="utf-8"><title>No 3D stage</title>
 <body style="font:15px system-ui,sans-serif;padding:48px;color:#333;max-width:640px">
 <h1 style="margin-top:0">This QLC+ build has no 3D stage</h1>
 <p>QLC+ answered, but it doesn't know a <code>/stage</code> route. Install the fork build that
-includes the 3D stage visualizer.</p></body>"""
+includes the 3D stage visualizer.</p>
+<p><a href="/" target="lightai-console">&larr; back to the lightai console</a></p></body>"""
+
+# A way back to the console, added to the stage page on its way through (QLC+ itself is untouched): a small link in the
+# page's top bar (#topbar-left), or a floating one if the page ever changes shape. It targets the console's tab by name.
+_CONSOLE_LINK = """<style>#lightai-console-link{margin-left:12px;padding:3px 10px;border:1px solid rgba(160,180,210,.45);
+border-radius:999px;color:inherit;text-decoration:none;font-size:12px;white-space:nowrap;align-self:center}
+#lightai-console-link:hover{border-color:#39d5ff;color:#39d5ff}
+#lightai-console-link.float{position:fixed;left:12px;bottom:12px;z-index:99999;background:rgba(10,14,22,.88);color:#e8eef7}</style>
+<script>(function () {
+  var t = new URLSearchParams(location.search).get("token");
+  var a = document.createElement("a");
+  a.id = "lightai-console-link";
+  a.href = "/" + (t ? "?token=" + encodeURIComponent(t) : "");
+  a.target = "lightai-console";
+  a.title = "Back to the lightai console";
+  a.textContent = "\u2190 lightai console";
+  var bar = document.getElementById("topbar-left");
+  if (bar) { bar.appendChild(a); } else { a.className = "float"; document.body.appendChild(a); }
+})();</script>
+"""
+
+
+def with_console_link(html: str) -> str:
+    """The stage page with the way back to the console, just before </body> (or at the end)."""
+    i = html.lower().rfind("</body>")
+    return html + _CONSOLE_LINK if i < 0 else html[:i] + _CONSOLE_LINK + html[i:]
 
 
 def _verify_for(host: str, tls_server_name: Optional[str]):
@@ -240,6 +267,10 @@ def add_stage_routes(app: FastAPI, ai_getter: Callable[[], object], token: Optio
         if resp.status_code == 404 and full_path == _STAGE_PREFIX:
             await resp.aclose()
             return HTMLResponse(_NO_STAGE_HTML, status_code=404)
+        if full_path == _STAGE_PREFIX and resp.status_code == 200 and "html" in resp.headers.get("content-type", ""):
+            body = (await resp.aread()).decode("utf-8", "replace")
+            await resp.aclose()
+            return HTMLResponse(with_console_link(body), headers={"cache-control": "no-store"})
         headers = {k: v for k, v in resp.headers.items() if k.lower() in _COPY_HEADERS}
         return StreamingResponse(_body_iter(resp), status_code=resp.status_code, headers=headers)
 
